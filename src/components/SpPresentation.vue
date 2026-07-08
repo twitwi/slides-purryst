@@ -1,60 +1,111 @@
 <template>
-  <div class="sp-presentation">
-    <div class="sp-viewport" :style="containerStyle">
-      <div class="sp-scale-wrap" :style="transformStyle">
-        <div class="sp-global-top">
-          <slot name="global-top" />
-        </div>
+  <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }">
+    <!-- === MAIN (non-presenter) LAYOUT === -->
+    <template v-if="!presenter">
+      <div class="sp-viewport" :style="containerStyle">
+        <div class="sp-scale-wrap" :style="transformStyle">
+          <div class="sp-global-top">
+            <slot name="global-top" />
+          </div>
 
-        <Transition :name="transitionClass" mode="out-in">
-          <SpSlide
-            v-if="current"
-            :key="currentIndex"
-            :slide="current"
-            :html="activeHtml"
-            :components="props.components"
-          />
-        </Transition>
+          <Transition :name="transitionClass" mode="out-in">
+            <SpSlide
+              v-if="current"
+              :key="currentIndex"
+              :slide="current"
+              :html="activeHtml"
+              :components="props.components"
+            />
+          </Transition>
 
-        <div class="sp-global-bottom">
-          <slot name="global-bottom">
-            <footer class="sp-slide-footer">
-              <span>{{ currentIndex + 1 }}</span>
-              <span>{{ author }}</span>
-            </footer>
-          </slot>
+          <div class="sp-global-bottom">
+            <slot name="global-bottom">
+              <footer class="sp-slide-footer">
+                <span>{{ currentIndex + 1 }}</span>
+                <span>{{ author }}</span>
+              </footer>
+            </slot>
+          </div>
         </div>
       </div>
-    </div>
 
-    <nav class="sp-nav">
-      <button class="sp-nav-btn" :disabled="isFirst && isFirstStep" aria-label="Previous" @click="prevSlide">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <span class="sp-nav-counter">{{ currentIndex + 1 }} / {{ total }}</span>
-      <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="nextSlide">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <button class="sp-nav-btn sp-fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (F)" @click="toggleFullscreen">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M3 3h3M3 13h3M13 3h-3M13 13h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M3 6v4M13 6v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </nav>
+      <nav class="sp-nav">
+        <button class="sp-nav-btn" :disabled="isFirst && isFirstStep" aria-label="Previous" @click="prevSlide">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <span class="sp-nav-counter">{{ currentIndex + 1 }} / {{ total }}</span>
+        <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="nextSlide">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="sp-nav-btn sp-fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (F)" @click="toggleFullscreen">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 3h3M3 13h3M13 3h-3M13 13h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M3 6v4M13 6v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="sp-nav-btn" :class="{ active: presenterActive }" aria-label="Toggle presenter" title="Presenter (P)" @click="togglePresenter">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.3" fill="none"/>
+            <rect x="5" y="6" width="6" height="4" rx=".5" stroke="currentColor" stroke-width="1" fill="none"/>
+            <path d="M6 13v1h4v-1" stroke="currentColor" stroke-width="1.3" fill="none"/>
+          </svg>
+        </button>
+      </nav>
 
-    <div class="sp-progress">
-      <div class="sp-progress-bar" :style="{ width: progressPercent + '%' }" />
-    </div>
+      <div class="sp-progress">
+        <div class="sp-progress-bar" :style="{ width: progressPercent + '%' }" />
+      </div>
+    </template>
+
+    <!-- === PRESENTER LAYOUT === -->
+    <template v-else>
+      <div class="sp-presenter-layout">
+        <div class="sp-presenter-main">
+          <div class="sp-presenter-preview">
+            <div class="sp-presenter-slide-wrap" :style="presenterScaleStyle">
+              <SpSlide
+                v-if="current"
+                :key="currentIndex"
+                :slide="current"
+                :html="activeHtml"
+                :components="props.components"
+              />
+            </div>
+          </div>
+          <div class="sp-presenter-next">
+            <div class="sp-presenter-next-label">Next</div>
+            <div class="sp-presenter-next-slide-wrap" :style="presenterNextScaleStyle">
+              <SpSlide
+                v-if="nextSlideData"
+                :key="'next-' + (currentIndex + 1)"
+                :slide="nextSlideData"
+                :html="nextHtml"
+                :components="props.components"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="sp-presenter-sidebar">
+          <div class="sp-presenter-info">
+            <div class="sp-presenter-num">{{ currentIndex + 1 }} <small>/ {{ total }}</small></div>
+            <div class="sp-presenter-progress"><div class="sp-presenter-progress-bar" :style="{ width: progressPercent + '%' }" /></div>
+          </div>
+          <div class="sp-presenter-notes">
+            <h3>Speaker Notes</h3>
+            <div id="sp-presenter-notes-content">No notes</div>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, provide } from 'vue'
+import { computed, ref, watch, onMounted, provide, onUnmounted } from 'vue'
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps } from '../composables/useSteps'
@@ -102,7 +153,7 @@ const {
   processHtml
 } = useSteps()
 
-const { openPresenterWindow, syncState } = usePresenter()
+const { openPresenterWindow, closePresenter, presenterActive, syncState, channel } = usePresenter()
 
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
 
@@ -127,13 +178,42 @@ const activeHtml = computed(() => {
   return processHtml(slide.html, stepIndex.value)
 })
 
+const nextSlideData = computed(() => {
+  if (currentIndex.value >= total.value - 1) return null
+  return slides.value[currentIndex.value + 1] ?? null
+})
+
+const nextHtml = computed(() => {
+  if (!nextSlideData.value) return ''
+  return processHtml(nextSlideData.value.html, 0)
+})
+
+const presenterScaleStyle = computed(() => {
+  const s = Math.min(1, 800 / props.designWidth, 450 / props.designHeight)
+  return {
+    transform: `scale(${s})`,
+    width: props.designWidth + 'px',
+    height: props.designHeight + 'px',
+    flexShrink: 0,
+  }
+})
+
+const presenterNextScaleStyle = computed(() => {
+  const s = Math.min(1, 240 / props.designWidth, 135 / props.designHeight)
+  return {
+    transform: `scale(${s})`,
+    width: props.designWidth + 'px',
+    height: props.designHeight + 'px',
+    flexShrink: 0,
+  }
+})
+
 function nextSlide() {
   if (!isLastStep.value) {
     nextStep()
   } else if (currentIndex.value < total.value - 1) {
     next()
   }
-  syncIfPresenter()
 }
 
 function prevSlide() {
@@ -142,12 +222,6 @@ function prevSlide() {
   } else if (currentIndex.value > 0) {
     prev()
   }
-  syncIfPresenter()
-}
-
-function goToSlide(index: number) {
-  goTo(index)
-  syncIfPresenter()
 }
 
 function toggleFullscreen() {
@@ -158,9 +232,12 @@ function toggleFullscreen() {
   }
 }
 
-function syncIfPresenter() {
-  if (!props.presenter) return
-  syncState({ slide: currentIndex.value, step: stepIndex.value, totalSlides: total.value })
+function togglePresenter() {
+  if (presenterActive.value) {
+    closePresenter()
+  } else {
+    openPresenterWindow()
+  }
 }
 
 watch(current, (slide, old) => {
@@ -170,10 +247,34 @@ watch(current, (slide, old) => {
   }
 })
 
+watch([currentIndex, stepIndex], () => {
+  if (!props.presenter) {
+    syncState(currentIndex.value, stepIndex.value)
+  }
+})
+
+if (channel) {
+  if (props.presenter) {
+    channel.addEventListener('message', (e: MessageEvent) => {
+      if (e.data?.type === 'sync') {
+        goTo(e.data.slide)
+        stepIndex.value = e.data.step
+      }
+    })
+    channel.postMessage({ type: 'presenter-ready' })
+  } else {
+    channel.addEventListener('message', (e: MessageEvent) => {
+      if (e.data?.type === 'presenter-ready') {
+        syncState(currentIndex.value, stepIndex.value)
+      }
+    })
+  }
+}
+
 useNavigation({
-  next() { nextSlide() },
-  prev() { prevSlide() },
-  goTo(i: number) { goToSlide(i) },
+  next: nextSlide,
+  prev: prevSlide,
+  goTo: goTo,
   currentIndex,
   current,
   total,
@@ -183,15 +284,17 @@ useNavigation({
   totalSteps,
   isLastStep,
   isFirstStep,
+  onPresenterToggle: togglePresenter,
 })
 
 onMounted(() => {
   if (current.value) {
     buildSteps(current.value)
   }
-  if (props.presenter) {
-    openPresenterWindow()
-  }
+})
+
+onUnmounted(() => {
+  channel?.close()
 })
 
 function updateSlides(templateHtml: string) {

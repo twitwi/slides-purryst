@@ -47,6 +47,9 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     document.getElementById('app') ??
     document.body
 
+  const params = new URLSearchParams(window.location.search)
+  const isPresenter = options.presenter ?? params.has('presenter')
+
   const app = createApp(SpPresentation, {
     slides,
     transition,
@@ -54,6 +57,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     designHeight,
     author,
     components: merged,
+    presenter: isPresenter,
   })
   const vm = app.mount(target) as any
 

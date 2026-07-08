@@ -1,7 +1,7 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import type { Navigation } from '../types'
 
-export function useNavigation(actions: Navigation) {
+export function useNavigation(actions: Navigation & { onPresenterToggle?: () => void }) {
   let touchStartX = 0
   let touchStartY = 0
   let hashTimer: ReturnType<typeof setTimeout> | null = null
@@ -79,6 +79,10 @@ export function useNavigation(actions: Navigation) {
         if (document.fullscreenElement) {
           document.exitFullscreen().catch(() => {})
         }
+        break
+      case 'p':
+        e.preventDefault()
+        actions.onPresenterToggle?.()
         break
     }
   }
