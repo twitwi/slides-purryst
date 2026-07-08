@@ -163,8 +163,11 @@ function syncIfPresenter() {
   syncState({ slide: currentIndex.value, step: stepIndex.value, totalSlides: total.value })
 }
 
-watch(current, (slide) => {
+watch(current, (slide, old) => {
   buildSteps(slide)
+  if (old?.num !== slide?.num) {
+    stepIndex.value = 0
+  }
 })
 
 useNavigation({
@@ -196,11 +199,17 @@ function updateSlides(templateHtml: string) {
   tmp.innerHTML = templateHtml
   const newSlides = parseElementToSlides(tmp)
   if (newSlides.length === 0) return
-  const idx = Math.min(currentIndex.value, newSlides.length - 1)
+  const oldIdx = currentIndex.value
+  const oldStep = stepIndex.value
+  const idx = Math.min(oldIdx, newSlides.length - 1)
   setSlides(newSlides)
   currentIndex.value = idx
   buildSteps(current.value)
-  stepIndex.value = 0
+  if (idx === oldIdx) {
+    stepIndex.value = Math.min(oldStep, totalSteps.value - 1)
+  } else {
+    stepIndex.value = 0
+  }
 }
 
 defineExpose({ updateSlides })

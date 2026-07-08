@@ -8,6 +8,7 @@
   "module": "./dist/slides-purryst.js",
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "dev:typst": "node scripts/dev.mjs --typst",
     "build": "vite build",
     "build:slides": "typst compile --root . --input \"slides-purryst-path=../dist/slides-purryst.es.js\" --input \"slides-purryst-css-path=../dist/slides-purryst.css\" --input \"slides-purryst-module=true\" --format html --features html example/slides.typ example/index.html",
     "build:slides:pp": "pnpm build:slides && npx prettier --write --parser html example/index.html",

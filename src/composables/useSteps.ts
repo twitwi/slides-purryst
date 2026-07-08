@@ -63,9 +63,7 @@ export function useSteps() {
   function build(slide: SlideData | null) {
     const t = buildSteps(slide)
     totalSteps.value = t
-    stepIndex.value = 0
-    isFirstStep.value = true
-    isLastStep.value = t <= 1
+    isLastStep.value = t <= 1 || stepIndex.value >= t - 1
   }
 
   function nextStep() {
