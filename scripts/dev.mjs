@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
 
-const vite = spawn('npx', ['vite', '--port', '3334', '--open', '/example/dev.html'], {
+const vite = spawn('npx', ['vite', '--port', '3334', '--open', '/example/demo-slidespurr.html'], {
   stdio: 'inherit',
   cwd: root,
   shell: true,

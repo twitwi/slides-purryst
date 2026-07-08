@@ -6,6 +6,11 @@ export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
 
   return {
+    server: {
+      watch: {
+        ignored: ['**/example/index.html']
+      }
+    },
     plugins: [vue()],
     resolve: {
       alias: {
