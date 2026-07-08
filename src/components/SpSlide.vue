@@ -28,13 +28,3 @@ watch(() => props.html, (html) => {
   })
 }, { immediate: true })
 </script>
-
-<style scoped>
-.sp-slide {
-  width: 100%;
-  height: 100%;
-  padding: 2rem 3rem 3rem;
-  overflow-y: auto;
-  position: relative;
-}
-</style>

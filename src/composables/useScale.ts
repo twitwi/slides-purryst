@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 export function useScale(designWidth = 1920, designHeight = 1080) {
   const vw = ref(window.innerWidth)
@@ -9,25 +9,27 @@ export function useScale(designWidth = 1920, designHeight = 1080) {
     vh.value = window.innerHeight
   }
 
-  const transformStyle = {
-    get() {
-      const s = Math.min(vw.value / designWidth, vh.value / designHeight)
-      const ox = (vw.value - designWidth * s) / (2 * s)
-      const oy = (vh.value - designHeight * s) / (2 * s)
-      return {
-        transform: `scale(${s}) translate(${ox}px, ${oy}px)`,
-        transformOrigin: 'top left',
-        width: designWidth + 'px',
-        height: designHeight + 'px',
-      }
-    }
-  }
+  const scale = computed(() => {
+    const s = Math.min(vw.value / designWidth, vh.value / designHeight)
+    return Math.min(s, 1)
+  })
 
-  const containerStyle = {
-    get() {
-      return { width: vw.value + 'px', height: vh.value + 'px' }
+  const transformStyle = computed(() => {
+    const s = scale.value
+    const ox = (vw.value - designWidth * s) / (2 * s)
+    const oy = (vh.value - designHeight * s) / (2 * s)
+    return {
+      transform: `scale(${s}) translate(${ox}px, ${oy}px)`,
+      transformOrigin: 'top left',
+      width: designWidth + 'px',
+      height: designHeight + 'px',
     }
-  }
+  })
+
+  const containerStyle = computed(() => ({
+    width: vw.value + 'px',
+    height: vh.value + 'px',
+  }))
 
   onMounted(() => {
     update()
