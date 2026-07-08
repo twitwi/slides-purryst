@@ -18,6 +18,9 @@
       ></div>
       <div class="sp-drag-rotate-line"></div>
       <div class="sp-drag-rotate-handle" @mousedown.stop="startRotate"></div>
+      <button class="sp-drag-save-btn" :title="saveTooltip" @mousedown.stop @click.stop="saveToSource">
+        Save
+      </button>
     </div>
   </div>
 </template>
@@ -26,17 +29,32 @@
 import { computed, ref, onMounted } from 'vue'
 
 const props = withDefaults(defineProps<{
+  at?: string
   x?: number | string
   y?: number | string
   w?: number | string
   h?: number | string
   rotate?: number | string
 }>(), {
+  at: '',
   x: 0,
   y: 0,
   w: 'auto',
   h: 'auto',
   rotate: 0,
+})
+
+const parsedAt = computed(() => {
+  if (!props.at) return null
+  const parts = props.at.split('|')
+  if (parts.length < 5) return null
+  return {
+    x: parseFloat(parts[0]),
+    y: parseFloat(parts[1]),
+    w: /^\d+\.?\d*$/.test(parts[2]) ? parts[2] : parts[2],
+    h: /^\d+\.?\d*$/.test(parts[3]) ? parts[3] : parts[3],
+    rotate: parseFloat(parts[4]),
+  }
 })
 
 const el = ref<HTMLElement | null>(null)
@@ -69,12 +87,18 @@ function getSlideScale(): number {
   return 1
 }
 
+function resolveProp(name: 'x' | 'y' | 'w' | 'h' | 'rotate'): number | string {
+  const p = parsedAt.value
+  if (p) return p[name]
+  return props[name]
+}
+
 function syncFromProps() {
-  ix.value = parseNumeric(props.x)
-  iy.value = parseNumeric(props.y)
-  iw.value = props.w
-  ih.value = props.h
-  ir.value = parseNumeric(props.rotate)
+  ix.value = parseNumeric(resolveProp('x'))
+  iy.value = parseNumeric(resolveProp('y'))
+  iw.value = resolveProp('w')
+  ih.value = resolveProp('h')
+  ir.value = parseNumeric(resolveProp('rotate'))
 }
 
 function enterEditMode() {
@@ -90,8 +114,53 @@ function exitEditMode() {
   editing.value = false
 }
 
+function saveToSource() {
+  const newAttrs = attrString()
+  const oldAttrs = attrString(true)
+
+  fetch('/__sp_edit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ oldAttrs, newAttrs }),
+  })
+    .then(async r => {
+      const data = await r.json()
+      if (r.ok && data.ok) {
+        editing.value = false
+      } else {
+        console.error('SP edit failed:', r.status, data)
+        fallbackCopy(newAttrs)
+      }
+    })
+    .catch((err) => {
+      console.error('SP edit error:', err)
+      fallbackCopy(newAttrs)
+    })
+}
+
+function attrString(useProps = false): string {
+  const x = useProps ? resolveProp('x') : Math.round(ix.value)
+  const y = useProps ? resolveProp('y') : Math.round(iy.value)
+  const w = useProps ? resolveProp('w') : iw.value
+  const h = useProps ? resolveProp('h') : ih.value
+  const r = useProps ? resolveProp('rotate') : Math.round(ir.value * 10) / 10
+
+  return `at="${x}|${y}|${w}|${h}|${r}"`
+}
+
+function fallbackCopy(attrs: string) {
+  navigator.clipboard?.writeText(attrs).catch(() => {})
+  alert(
+    `Could not auto-save to source.\n\nCopy this attribute and replace the existing sp-drag at attribute manually:\n\n${attrs}`
+  )
+}
+
+const saveTooltip = computed(() => {
+  return `Save: x=${Math.round(ix.value)} y=${Math.round(iy.value)} w=${iw.value} h=${ih.value} rotate=${Math.round(ir.value * 10) / 10}`
+})
+
 function toggleEdit() {
-  if (editing.value) exitEditMode()
+  if (editing.value) saveToSource()
   else enterEditMode()
 }
 
@@ -99,6 +168,12 @@ const px = (n: number | string) =>
   typeof n === 'number' ? n + 'px' : /^\d+(\.\d+)?$/.test(n) ? n + 'px' : n
 
 const style = computed(() => {
+  const left = resolveProp('x')
+  const top = resolveProp('y')
+  const width = resolveProp('w')
+  const height = resolveProp('h')
+  const rotate = resolveProp('rotate')
+
   if (editing.value) {
     return {
       position: 'absolute' as const,
@@ -111,12 +186,12 @@ const style = computed(() => {
   }
   return {
     position: 'absolute' as const,
-    left: px(props.x),
-    top: px(props.y),
-    width: px(props.w),
-    height: px(props.h),
-    transform: props.rotate && props.rotate !== 0 && props.rotate !== '0'
-      ? `rotate(${props.rotate}deg)` : undefined,
+    left: px(left),
+    top: px(top),
+    width: px(width),
+    height: px(height),
+    transform: rotate && rotate !== 0 && rotate !== '0'
+      ? `rotate(${rotate}deg)` : undefined,
   }
 })
 
@@ -315,44 +390,66 @@ onMounted(() => {
 
 .sp-drag-handle {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   background: #fff;
-  border: 1px solid #3b82f6;
+  border: 2px solid #3b82f6;
   pointer-events: auto;
   z-index: 2;
 }
 
-.sp-handle-nw { top: -5px; left: -5px; cursor: nwse-resize; }
-.sp-handle-n  { top: -5px; left: calc(50% - 5px); cursor: ns-resize; }
-.sp-handle-ne { top: -5px; right: -5px; cursor: nesw-resize; }
-.sp-handle-e  { top: calc(50% - 5px); right: -5px; cursor: ew-resize; }
-.sp-handle-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
-.sp-handle-s  { bottom: -5px; left: calc(50% - 5px); cursor: ns-resize; }
-.sp-handle-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
-.sp-handle-w  { top: calc(50% - 5px); left: -5px; cursor: ew-resize; }
+.sp-handle-nw { top: -7px; left: -7px; cursor: nwse-resize; }
+.sp-handle-n  { top: -7px; left: calc(50% - 7px); cursor: ns-resize; }
+.sp-handle-ne { top: -7px; right: -7px; cursor: nesw-resize; }
+.sp-handle-e  { top: calc(50% - 7px); right: -7px; cursor: ew-resize; }
+.sp-handle-se { bottom: -7px; right: -7px; cursor: nwse-resize; }
+.sp-handle-s  { bottom: -7px; left: calc(50% - 7px); cursor: ns-resize; }
+.sp-handle-sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
+.sp-handle-w  { top: calc(50% - 7px); left: -7px; cursor: ew-resize; }
 
 .sp-drag-rotate-line {
   position: absolute;
-  top: -22px;
+  top: -32px;
   left: calc(50% - 1px);
   width: 2px;
-  height: 20px;
+  height: 28px;
   background: #3b82f6;
   pointer-events: none;
 }
 
 .sp-drag-rotate-handle {
   position: absolute;
-  top: -28px;
-  left: calc(50% - 6px);
-  width: 12px;
-  height: 12px;
+  top: -38px;
+  left: calc(50% - 8px);
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #fff;
   border: 2px solid #3b82f6;
   cursor: grab;
   pointer-events: auto;
   z-index: 2;
+}
+
+.sp-drag-save-btn {
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 14px;
+  font-size: 12px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 3;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.sp-drag-save-btn:hover {
+  background: #2563eb;
 }
 </style>

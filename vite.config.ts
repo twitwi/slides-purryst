@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
-import { watch } from 'fs'
+import { watch, readFileSync, writeFileSync } from 'fs'
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
@@ -32,6 +32,83 @@ export default defineConfig(({ mode }) => {
             req.on('close', () => {
               const i = clients.indexOf(res)
               if (i !== -1) clients.splice(i, 1)
+            })
+          })
+
+          server.middlewares.use('/__sp_edit', (req, res) => {
+            res.setHeader('Access-Control-Allow-Origin', '*')
+            res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+            if (req.method === 'OPTIONS') {
+              res.writeHead(204)
+              res.end()
+              return
+            }
+            if (req.method !== 'POST') {
+              res.writeHead(405)
+              res.end('Method not allowed')
+              return
+            }
+
+            let body = ''
+            req.on('data', (chunk) => { body += chunk })
+            req.on('end', () => {
+              try {
+                const data = JSON.parse(body)
+                const filePath = data.file
+                  ? resolve(__dirname, data.file)
+                  : htmlFile
+
+                const content = readFileSync(filePath, 'utf-8')
+
+                const oldAt = data.oldAttrs?.trim()
+                const newAt = data.newAttrs?.trim()
+
+                const atRegex = /at="([^"]*)"/
+                const oldMatch = oldAt?.match(atRegex)
+                if (!oldMatch) {
+                  res.writeHead(400)
+                  res.end(JSON.stringify({ error: 'oldAttrs must include at="..." attribute' }))
+                  return
+                }
+
+                const oldVal = oldMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                const tagRegex = new RegExp(`(<sp-drag\\s[^>]*?at=")${oldVal}(")`)
+                const match = content.match(tagRegex)
+                if (!match) {
+                  res.writeHead(404)
+                  res.end(JSON.stringify({
+                    error: 'sp-drag tag not found',
+                    oldAt,
+                  }))
+                  return
+                }
+
+                const newMatch = newAt?.match(atRegex)
+                if (!newMatch) {
+                  res.writeHead(400)
+                  res.end(JSON.stringify({ error: 'newAttrs must include at="..." attribute' }))
+                  return
+                }
+
+                const newVal = newMatch[1]
+                const before = match[0]
+                const after = `${match[1]}${newVal}${match[2]}`
+                const updated = content.replace(before, after)
+
+                if (updated === content) {
+                  res.writeHead(404)
+                  res.end(JSON.stringify({ error: 'Replacement produced no change' }))
+                  return
+                }
+
+                writeFileSync(filePath, updated, 'utf-8')
+                res.writeHead(200, { 'Content-Type': 'application/json' })
+                res.end(JSON.stringify({ ok: true }))
+              } catch (err: any) {
+                res.writeHead(500)
+                res.end(JSON.stringify({ error: err.message, stack: err.stack }))
+              }
             })
           })
 
