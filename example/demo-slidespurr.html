@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>SlidesPurryst Demo</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>SlidesPurr Demo</title>
 </head>
 <body>
 
@@ -13,6 +14,7 @@
     <h1>SlidesPurryst</h1>
     <p>Where Typst meets Vue in purr-fect harmony.</p>
     <p style="color:#64748b;font-size:0.9em">Arrow keys or Space to navigate</p>
+    <p>NB: this demo file is not using typst</p>
   </sp-slide>
 
   <sp-slide steps="2">
@@ -53,12 +55,13 @@
     <h2>Built-in Components</h2>
     <p><code>sp-alternatives</code> cycles children per step:</p>
     <sp-alternatives>
-      <p style="background:#dbeafe;padding:0.5em;border-radius:6px">Alternative 1</p>
-      <p style="background:#dcfce7;padding:0.5em;border-radius:6px">Alternative 2</p>
-      <p style="background:#fef9c3;padding:0.5em;border-radius:6px">Alternative 3</p>
+      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
+      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2</p>
+      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3</p>
     </sp-alternatives>
     <sp-pause></sp-pause>
     <p>Step through to cycle!</p>
+    <sp-pause></sp-pause>
   </sp-slide>
 </template>
 
