@@ -2,12 +2,14 @@ import { createApp } from 'vue'
 import type { Component } from 'vue'
 import SpPresentation from './components/SpPresentation.vue'
 import SpAlternatives from './components/SpAlternatives.vue'
+import SpDrag from './components/SpDrag.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
 import './style.css'
 
 const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
+  'sp-drag': SpDrag,
 }
 
 function resolveEl(el?: string | HTMLElement): HTMLElement | null {

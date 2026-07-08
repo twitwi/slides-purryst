@@ -21,7 +21,7 @@
     <h2>Step Reveal</h2>
     <p>Always visible.</p>
     <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
-    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2</div></sp-step>
+    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
   </sp-slide>
 
   <sp-slide transition="slide-up">
@@ -49,6 +49,18 @@
     <h2>Vue Components</h2>
     <p>Custom components work inside slides.</p>
     <my-counter :count="5"></my-counter>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Drag</h3>
+    <sp-pause></sp-pause>
+    <sp-drag x="100" y="80" w="700" h="auto" :rotate="15">
+      <div style="color: black;background:#dbeafe;padding:1em;border-radius:8px;border:2px solid #3b82f6">Draggable box</div>
+    </sp-drag>
+    <sp-pause></sp-pause>
+    <sp-drag x="500" y="200" w="500" h="80">
+      <div style="color: black;background:#dcfce7;padding:1em;border-radius:8px;border:2px solid #22c55e">Another box</div>
+    </sp-drag>
   </sp-slide>
 
   <sp-slide>
