@@ -1,0 +1,27 @@
+{
+  "name": "slides-purryst",
+  "version": "0.1.0",
+  "description": "SlidesPurryst: Where Typst meets Vue in purr-fect harmony.",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/slides-purryst.umd.cjs",
+  "module": "./dist/slides-purryst.js",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build",
+    "build:slides": "typst compile --root . --input \"slides-purryst-path=../dist/slides-purryst.es.js\" --input \"slides-purryst-css-path=../dist/slides-purryst.css\" --input \"slides-purryst-module=true\" --format html --features html example/slides.typ example/index.html",
+    "build:slides:pp": "pnpm build:slides && npx prettier --write --parser html example/index.html",
+    "watch:slides": "typst watch --no-serve --root . --input \"slides-purryst-path=../dist/slides-purryst.es.js\" --input \"slides-purryst-css-path=../dist/slides-purryst.css\" --input \"slides-purryst-module=true\" --format html --features html example/slides.typ example/index.html",
+    "clean": "rm -f example/index.html",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "typescript": "^5.7.3",
+    "vite": "^6.3.4",
+    "vue-tsc": "^2.2.8"
+  }
+}
