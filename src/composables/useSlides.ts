@@ -44,7 +44,6 @@ export function useSlides(initial?: SlideData[]) {
 
   function setSlides(s: SlideData[]) {
     slides.value = s
-    currentIndex.value = 0
   }
 
   return { slides, currentIndex, current, total, goTo, next, prev, setSlides }

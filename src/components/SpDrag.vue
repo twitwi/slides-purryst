@@ -129,10 +129,7 @@ function saveToSource() {
   })
     .then(async r => {
       const data = await r.json()
-      console.log('SP edit response:', r.status, data)
-      if (r.ok && data.ok) {
-        editing.value = false
-      } else {
+      if (!r.ok || !data.ok) {
         console.error('SP edit failed:', r.status, data)
         fallbackCopy(newAttrs)
       }
