@@ -26,7 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, inject, onMounted } from 'vue'
+
+const slideIndex = inject('slideIndex', ref(0))
 
 const props = withDefaults(defineProps<{
   at?: string
@@ -121,10 +123,11 @@ function saveToSource() {
   fetch('/__sp_edit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ oldAttrs, newAttrs }),
+    body: JSON.stringify({ oldAttrs, newAttrs, slide: slideIndex.value }),
   })
     .then(async r => {
       const data = await r.json()
+      console.log('SP edit response:', r.status, data)
       if (r.ok && data.ok) {
         editing.value = false
       } else {
@@ -366,6 +369,7 @@ onMounted(() => {
 .sp-drag-editing {
   cursor: move;
   user-select: none;
+  opacity: 0.85;
 }
 
 .sp-drag-edit-overlay {

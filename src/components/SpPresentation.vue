@@ -158,6 +158,7 @@ const { openPresenterWindow, closePresenter, presenterActive, syncState, channel
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
 
 provide('stepIndex', stepIndex)
+provide('slideIndex', currentIndex)
 
 const transitionClass = computed(() => {
   const t = current.value?.transition ?? props.transition

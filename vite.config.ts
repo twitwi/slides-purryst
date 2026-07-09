@@ -74,7 +74,43 @@ export default defineConfig(({ mode }) => {
 
                 const oldVal = oldMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
                 const tagRegex = new RegExp(`(<sp-drag\\s[^>]*?at=")${oldVal}(")`)
-                const match = content.match(tagRegex)
+
+                const slideIndex = typeof data.slide === 'number' ? data.slide : -1
+
+                let match: RegExpExecArray | null = null
+                let slideStart = 0
+                let sliceEnd = content.length
+                if (slideIndex >= 0) {
+                  const slideRegex = /<sp-slide[\s>]/g
+                  let slideCount = 0
+                  let slideMatch
+                  while ((slideMatch = slideRegex.exec(content)) !== null) {
+                    if (slideCount === slideIndex) {
+                      slideStart = slideMatch.index
+                      break
+                    }
+                    slideCount++
+                  }
+                  if (slideCount !== slideIndex) {
+                    res.writeHead(404)
+                    res.end(JSON.stringify({ error: `Slide index ${slideIndex} not found` }))
+                    return
+                  }
+                  const nextSlideRegex = /<sp-slide[\s>]/g
+                  nextSlideRegex.lastIndex = slideStart + 1
+                  const nextMatch = nextSlideRegex.exec(content)
+                  sliceEnd = nextMatch ? nextMatch.index : content.length
+                  const slice = content.slice(slideStart, sliceEnd)
+                  tagRegex.lastIndex = 0
+                  const sliceMatch = tagRegex.exec(slice)
+                  if (sliceMatch) {
+                    match = sliceMatch
+                    match.index = slideStart + sliceMatch.index
+                  }
+                } else {
+                  match = tagRegex.exec(content)
+                }
+
                 if (!match) {
                   res.writeHead(404)
                   res.end(JSON.stringify({
@@ -94,7 +130,15 @@ export default defineConfig(({ mode }) => {
                 const newVal = newMatch[1]
                 const before = match[0]
                 const after = `${match[1]}${newVal}${match[2]}`
-                const updated = content.replace(before, after)
+
+                let updated: string
+                if (slideIndex >= 0) {
+                  updated = content.slice(0, slideStart) +
+                    content.slice(slideStart, sliceEnd).replace(before, after) +
+                    content.slice(sliceEnd)
+                } else {
+                  updated = content.replace(before, after)
+                }
 
                 if (updated === content) {
                   res.writeHead(404)
