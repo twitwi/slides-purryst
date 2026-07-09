@@ -82,6 +82,20 @@
           </div>
         </div>
       </div>
+
+      <div v-if="showGoPrompt" class="sp-go-prompt" @click.self="closeGoPrompt">
+        <div class="sp-go-prompt-box">
+          <input
+            ref="goPromptInput"
+            v-model="goPromptValue"
+            class="sp-go-prompt-input"
+            placeholder="slide number or search text…"
+            @keydown.enter="handleGoSubmit"
+            @keydown.escape="closeGoPrompt"
+          />
+          <div v-if="goPromptResult" class="sp-go-prompt-result">{{ goPromptResult }}</div>
+        </div>
+      </div>
     </template>
 
     <!-- === PRESENTER LAYOUT === -->
@@ -359,6 +373,71 @@ function goToOverviewSlide(i: number) {
   stepIndex.value = 0
 }
 
+const showGoPrompt = ref(false)
+const goPromptValue = ref('')
+const goPromptResult = ref('')
+const goPromptInput = ref<HTMLInputElement | null>(null)
+
+interface SlideHeading {
+  index: number
+  texts: string[]
+}
+
+const slideSearchIndex = computed<SlideHeading[]>(() => {
+  return slides.value.map((s, i) => {
+    const d = document.createElement('div')
+    d.innerHTML = s.html
+    const texts: string[] = []
+    d.querySelectorAll('h1,h2,h3').forEach(el => {
+      const t = el.textContent?.trim()
+      if (t) texts.push(t)
+    })
+    return { index: i, texts }
+  })
+})
+
+function onGoPrompt() {
+  showGoPrompt.value = true
+  goPromptValue.value = ''
+  goPromptResult.value = ''
+  requestAnimationFrame(() => goPromptInput.value?.focus())
+}
+
+function handleGoSubmit() {
+  const val = goPromptValue.value.trim()
+  if (!val) return
+
+  const num = parseInt(val, 10)
+  if (/^\d+$/.test(val) && num >= 1 && num <= total.value) {
+    const idx = num - 1
+    showGoPrompt.value = false
+    goTo(idx)
+    stepIndex.value = 0
+    return
+  }
+
+  const q = val.toLowerCase()
+  for (const entry of slideSearchIndex.value) {
+    for (const t of entry.texts) {
+      if (t.toLowerCase().includes(q)) {
+        showGoPrompt.value = false
+        goTo(entry.index)
+        stepIndex.value = 0
+        return
+      }
+    }
+  }
+
+  goPromptResult.value = `No slide matches "${val}"`
+  requestAnimationFrame(() => goPromptInput.value?.select())
+}
+
+function closeGoPrompt() {
+  showGoPrompt.value = false
+  goPromptValue.value = ''
+  goPromptResult.value = ''
+}
+
 watch(current, (slide, old) => {
   buildSteps(slide)
   if (old?.num !== slide?.num) {
@@ -405,6 +484,7 @@ useNavigation({
   isFirstStep,
   onPresenterToggle: togglePresenter,
   onOverviewToggle: () => showOverview.value = !showOverview.value,
+  onGoPrompt,
 })
 
 onMounted(() => {

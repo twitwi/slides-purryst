@@ -395,3 +395,50 @@ sp-step { display: none; }
   font-variant-numeric: tabular-nums;
   z-index: 1;
 }
+
+.sp-go-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  padding-top: 20vh;
+}
+
+.sp-go-prompt-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  padding: 0.75rem;
+  height: fit-content;
+}
+
+.sp-go-prompt-input {
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  width: 280px;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.sp-go-prompt-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+.sp-go-prompt-result {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #ef4444;
+  padding: 0 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .sp-go-prompt-box { background: #1e293b; border-color: #334155; }
+  .sp-go-prompt-input { background: #0f172a; border-color: #475569; color: #e2e8f0; }
+  .sp-go-prompt-input:focus { border-color: #3b82f6; }
+}

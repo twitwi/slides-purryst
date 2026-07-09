@@ -1,7 +1,7 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import type { Navigation } from '../types'
 
-export function useNavigation(actions: Navigation & { onPresenterToggle?: () => void; onOverviewToggle?: () => void }) {
+export function useNavigation(actions: Navigation & { onPresenterToggle?: () => void; onOverviewToggle?: () => void; onGoPrompt?: () => void }) {
   let touchStartX = 0
   let touchStartY = 0
   let hashTimer: ReturnType<typeof setTimeout> | null = null
@@ -90,6 +90,10 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
       case 'o':
         e.preventDefault()
         actions.onOverviewToggle?.()
+        break
+      case 'g':
+        e.preventDefault()
+        actions.onGoPrompt?.()
         break
     }
   }
