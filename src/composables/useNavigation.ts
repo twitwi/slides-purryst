@@ -26,6 +26,9 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
           actions.prevStep()
         } else if (actions.currentIndex.value > 0) {
           actions.goTo(actions.currentIndex.value - 1)
+          setTimeout(() => {
+            actions.stepIndex.value = actions.totalSteps.value - 1
+          })
         }
         break
       case 'ArrowUp':
