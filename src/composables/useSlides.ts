@@ -11,7 +11,7 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
       html,
       num: parseInt(el.getAttribute('num') || '0', 10) || i + 1,
       steps: parseInt(el.getAttribute('steps') || '0', 10),
-      transition: el.getAttribute('transition') || 'fade',
+      transition: el.getAttribute('transition') || '',
     })
   })
   return slides

@@ -29,6 +29,13 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     const template = document.getElementById('sp-content') as HTMLTemplateElement | null
     if (template?.content) {
       slides = parseElementToSlides(template.content)
+      if (transition) {
+        slides.forEach(sl => {
+          if (sl.transition === '') {
+            sl.transition = transition
+          }
+        })
+      }
     }
   }
 
