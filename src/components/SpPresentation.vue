@@ -30,36 +30,48 @@
       </div>
 
       <nav class="sp-nav" :class="{ locked: navLocked }">
-        <button class="sp-nav-btn sp-nav-lock" :class="{ locked: navLocked }" :title="navLocked ? 'Unlock nav' : 'Lock nav visible'" @click="navLocked = !navLocked">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <rect x="3" y="5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/>
-            <path d="M4.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" stroke-width="1.2" fill="none"/>
-          </svg>
-        </button>
-        <button class="sp-nav-btn" :disabled="isFirst && isFirstStep" aria-label="Previous" @click="prevSlide">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span class="sp-nav-counter" @click="onGoPrompt">{{ currentIndex + 1 }} / {{ total }}</span>
-        <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="nextSlide">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button class="sp-nav-btn sp-fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (F)" @click="toggleFullscreen">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M3 3h3M3 13h3M13 3h-3M13 13h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M3 6v4M13 6v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button class="sp-nav-btn" :class="{ active: presenterActive }" aria-label="Toggle presenter" title="Presenter (P)" @click="togglePresenter">
+        <div class="sp-nav-bar">
+          <button class="sp-nav-btn sp-nav-lock" :class="{ locked: navLocked }" :title="navLocked ? 'Unlock nav' : 'Lock nav visible'" @click="navLocked = !navLocked">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="3" y="5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/>
+              <path d="M4.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+            </svg>
+          </button>
+          <button class="sp-nav-btn" :disabled="isFirst && isFirstStep" aria-label="Previous" @click="prevSlide">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <span class="sp-nav-counter" @click="onGoPrompt">{{ currentIndex + 1 }} / {{ total }}</span>
+          <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="nextSlide">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="sp-nav-btn sp-fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen (F)" @click="toggleFullscreen">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 3h3M3 13h3M13 3h-3M13 13h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M3 6v4M13 6v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="sp-nav-btn" :class="{ active: presenterActive }" aria-label="Toggle presenter" title="Presenter (P)" @click="togglePresenter">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.3" fill="none"/>
             <rect x="5" y="6" width="6" height="4" rx=".5" stroke="currentColor" stroke-width="1" fill="none"/>
             <path d="M6 13v1h4v-1" stroke="currentColor" stroke-width="1.3" fill="none"/>
           </svg>
         </button>
+        </div>
+        <div class="sp-nav-pills">
+          <button
+            v-for="i in total"
+            :key="i"
+            class="sp-nav-pill"
+            :class="{ active: i - 1 === currentIndex }"
+            @click="goTo(i - 1); stepIndex = 0"
+            :aria-label="'Go to slide ' + i"
+          ></button>
+        </div>
       </nav>
 
       <div class="sp-progress">
