@@ -59,6 +59,29 @@
       <div class="sp-progress">
         <div class="sp-progress-bar" :style="{ width: progressPercent + '%' }" />
       </div>
+
+      <div v-if="showOverview" class="sp-overview" @click.self="showOverview = false">
+        <div class="sp-overview-grid" ref="overviewGridEl">
+          <div
+            v-for="(slide, i) in slides"
+            :key="i"
+            class="sp-overview-thumb"
+            :class="{ active: i === currentIndex }"
+            @click="goToOverviewSlide(i)"
+          >
+            <div class="sp-overview-thumb-stage">
+              <div :style="overviewScaleStyle">
+                <SpSlide
+                  :slide="slide"
+                  :html="overviewHtmls[i]"
+                  :components="props.components"
+                />
+              </div>
+            </div>
+            <div class="sp-overview-thumb-num">{{ i + 1 }}</div>
+          </div>
+        </div>
+      </div>
     </template>
 
     <!-- === PRESENTER LAYOUT === -->
@@ -283,6 +306,59 @@ function togglePresenter() {
   }
 }
 
+const showOverview = ref(false)
+const overviewScale = ref(0.15)
+const overviewGridEl = ref<HTMLElement | null>(null)
+let overviewObserver: ResizeObserver | null = null
+
+const overviewScaleStyle = computed(() => ({
+  transform: `scale(${overviewScale.value})`,
+  transformOrigin: 'top left',
+  width: props.designWidth + 'px',
+  height: props.designHeight + 'px',
+}))
+
+const overviewHtmls = computed(() => {
+  return slides.value.map(s => {
+    const steps = computeSlideSteps(s)
+    return processHtml(s.html, Math.max(0, steps - 1))
+  })
+})
+
+function setupOverviewObserver() {
+  overviewObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      const grid = entry.target as HTMLElement
+      const first = grid.firstElementChild as HTMLElement | null
+      if (first) {
+        overviewScale.value = first.clientWidth / props.designWidth
+      }
+    }
+  })
+  if (overviewGridEl.value) {
+    overviewObserver.observe(overviewGridEl.value)
+  }
+}
+
+function teardownOverviewObserver() {
+  overviewObserver?.disconnect()
+  overviewObserver = null
+}
+
+watch(showOverview, (v) => {
+  if (v) {
+    requestAnimationFrame(() => setupOverviewObserver())
+  } else {
+    teardownOverviewObserver()
+  }
+})
+
+function goToOverviewSlide(i: number) {
+  showOverview.value = false
+  goTo(i)
+  stepIndex.value = 0
+}
+
 watch(current, (slide, old) => {
   buildSteps(slide)
   if (old?.num !== slide?.num) {
@@ -328,6 +404,7 @@ useNavigation({
   isLastStep,
   isFirstStep,
   onPresenterToggle: togglePresenter,
+  onOverviewToggle: () => showOverview.value = !showOverview.value,
 })
 
 onMounted(() => {
