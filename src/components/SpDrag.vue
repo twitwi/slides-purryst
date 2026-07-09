@@ -7,7 +7,9 @@
     @dblclick="toggleEdit"
     @mousedown="startDrag"
   >
-    <slot />
+    <div class="sp-drag-content" :class="{ 'sp-drag-content-blocked': editing }">
+      <slot />
+    </div>
     <div v-if="editing" class="sp-drag-edit-overlay">
       <div class="sp-drag-edit-border"></div>
       <div
@@ -26,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, onMounted } from 'vue'
+import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
 
 const slideIndex = inject('slideIndex', ref(0))
 
@@ -203,17 +205,21 @@ let dragStartX = 0
 let dragStartY = 0
 let dragOrigX = 0
 let dragOrigY = 0
+let interacting = 0
 
 function stopDrag() {
+  if (!isDragging) return
   isDragging = false
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
+  setTimeout(() => interacting--, 0)
 }
 
 function startDrag(e: MouseEvent) {
   if (!editing.value) return
   cleanup()
   isDragging = true
+  interacting++
   dragStartX = e.clientX
   dragStartY = e.clientY
   dragOrigX = ix.value
@@ -241,15 +247,18 @@ let resizeOrigW = 0
 let resizeOrigH = 0
 
 function stopResize() {
+  if (!resizing) return
   resizing = false
   document.removeEventListener('mousemove', onResize)
   document.removeEventListener('mouseup', stopResize)
+  setTimeout(() => interacting--, 0)
 }
 
 function startResize(e: MouseEvent, dir: string) {
   if (!editing.value) return
   cleanup()
   resizing = true
+  interacting++
   resizeDir = dir
   resizeStartX = e.clientX
   resizeStartY = e.clientY
@@ -325,15 +334,18 @@ let rotateStartAngle = 0
 let rotateOrigR = 0
 
 function stopRotate() {
+  if (!rotating) return
   rotating = false
   document.removeEventListener('mousemove', onRotate)
   document.removeEventListener('mouseup', stopRotate)
+  setTimeout(() => interacting--, 0)
 }
 
 function startRotate(e: MouseEvent) {
   if (!editing.value) return
   cleanup()
   rotating = true
+  interacting++
   const rect = el.value!.getBoundingClientRect()
   rotateCenterX = rect.left + rect.width / 2
   rotateCenterY = rect.top + rect.height / 2
@@ -358,7 +370,20 @@ function cleanup() {
 
 onMounted(() => {
   syncFromProps()
+  document.addEventListener('click', handleOutsideClick)
 })
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick)
+})
+
+function handleOutsideClick(e: MouseEvent) {
+  if (!editing.value) return
+  if (interacting > 0) return
+  if (!el.value) return
+  if (el.value.contains(e.target as Node)) return
+  saveToSource()
+}
 </script>
 
 <style scoped>
@@ -370,6 +395,10 @@ onMounted(() => {
   cursor: move;
   user-select: none;
   opacity: 0.85;
+}
+
+.sp-drag-content-blocked {
+  pointer-events: none;
 }
 
 .sp-drag-edit-overlay {
