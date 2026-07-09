@@ -1,4 +1,4 @@
-export type { SPSlidesOptions, SlideData, Navigation, PresenterState } from './types'
+export type { SPSlidesOptions, SlideData, Navigation, PresenterState, Transformer } from './types'
 
 export { createSlidesPurryst } from './core'
 
@@ -14,4 +14,7 @@ export { default as SpSlide } from './components/SpSlide.vue'
 export { default as SpAlternatives } from './components/SpAlternatives.vue'
 export { default as SpDrag } from './components/SpDrag.vue'
 export { default as SpInclude } from './components/SpInclude.vue'
+export { default as SpSvg } from './components/SpSvg.vue'
 export { default as SpStyle } from './components/SpStyle.vue'
+
+export * from './transformers/svg'

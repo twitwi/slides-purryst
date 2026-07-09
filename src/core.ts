@@ -4,6 +4,7 @@ import SpPresentation from './components/SpPresentation.vue'
 import SpAlternatives from './components/SpAlternatives.vue'
 import SpDrag from './components/SpDrag.vue'
 import SpInclude from './components/SpInclude.vue'
+import SpSvg from './components/SpSvg.vue'
 import SpStyle from './components/SpStyle.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
@@ -13,6 +14,7 @@ const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
   'sp-drag': SpDrag,
   'sp-include': SpInclude,
+  'sp-svg': SpSvg,
   'sp-style': SpStyle,
 }
 

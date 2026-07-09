@@ -88,10 +88,10 @@
 
   <sp-slide>
     <h2>Inline SVG</h2>
-    <p>Move your mouse en the cat</p>
-    <sp-include src="./slides-purryst-banner-sticker.svg"></sp-include>
-    <sp-drag at="864|92|536.855728897988|416.7575186864567|35">
-      <sp-include src="./slides-purryst-banner-sticker.svg" wrap></sp-include>
+    <p>Move your mouse on the cat</p>
+    <sp-svg src="./slides-purryst-banner-sticker.svg"></sp-svg>
+    <sp-drag at="1197|207|759.4423673400632|267.9878776869065|35">
+      <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
     <sp-style>
       h2 { filter: blur(2px); }
@@ -101,7 +101,12 @@
   <sp-style>
     svg #cat:not(:hover) { filter: blur(5px); }
     svg #cat:hover {
-      #catfill { fill: yellow; }
+      #catfill {
+        fill: yellow;
+        .smallcat & {
+          fill: chartreuse;
+        }
+      }
       #catTongue { fill: chartreuse; }
       #catT, #catV {
         filter: blur(10px);

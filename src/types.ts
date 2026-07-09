@@ -32,6 +32,8 @@ export interface SPSlidesOptions {
   components?: Record<string, Component>
 }
 
+export type Transformer = (root: Element) => void
+
 export interface PresenterState {
   slide: number
   step: number
