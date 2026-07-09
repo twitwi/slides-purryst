@@ -402,7 +402,7 @@ sp-step { display: none; }
   z-index: 1000;
   display: flex;
   justify-content: center;
-  padding-top: 20vh;
+  padding-top: 15vh;
 }
 
 .sp-go-prompt-box {
@@ -411,7 +411,11 @@ sp-step { display: none; }
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   padding: 0.75rem;
+  width: 520px;
+  max-width: 90vw;
   height: fit-content;
+  max-height: 75vh;
+  overflow-y: auto;
 }
 
 .sp-go-prompt-input {
@@ -419,7 +423,7 @@ sp-step { display: none; }
   border-radius: 4px;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;
-  width: 280px;
+  width: 100%;
   outline: none;
   box-sizing: border-box;
   font-family: inherit;
@@ -430,15 +434,75 @@ sp-step { display: none; }
   box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
 }
 
-.sp-go-prompt-result {
+.sp-go-results {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sp-go-result {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.sp-go-result:hover,
+.sp-go-result.focused {
+  background: #f1f5f9;
+}
+
+.sp-go-result-thumb {
+  width: 210px;
+  height: 118px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.sp-go-result-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-go-result-num {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.sp-go-result-heading {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #1e293b;
+  word-break: break-word;
+}
+
+.sp-go-result-heading mark {
+  background: #fef08a;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.sp-go-no-results {
   margin-top: 0.5rem;
   font-size: 0.85rem;
-  color: #ef4444;
-  padding: 0 0.25rem;
+  color: #94a3b8;
+  padding: 0.5rem 0.25rem;
 }
 
 @media (prefers-color-scheme: dark) {
   .sp-go-prompt-box { background: #1e293b; border-color: #334155; }
   .sp-go-prompt-input { background: #0f172a; border-color: #475569; color: #e2e8f0; }
   .sp-go-prompt-input:focus { border-color: #3b82f6; }
+  .sp-go-result:hover,
+  .sp-go-result.focused { background: #1e293b; }
+  .sp-go-result-heading { color: #e2e8f0; }
+  .sp-go-result-heading mark { background: #854d0e; color: #fef08a; }
+  .sp-go-result-num { color: #94a3b8; }
+  .sp-go-no-results { color: #64748b; }
 }
