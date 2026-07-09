@@ -3,6 +3,7 @@ export type { SPSlidesOptions, SlideData, Navigation, PresenterState } from './t
 export { createSlidesPurryst } from './core'
 
 export { useScale } from './composables/useScale'
+export { useElementScale } from './composables/useElementScale'
 export { useSteps, buildSteps, processHtml } from './composables/useSteps'
 export { useNavigation } from './composables/useNavigation'
 export { useSlides, parseElementToSlides } from './composables/useSlides'

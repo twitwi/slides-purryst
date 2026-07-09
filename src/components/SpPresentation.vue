@@ -8,7 +8,7 @@
             <slot name="global-top" />
           </div>
 
-          <Transition :name="transitionClass" mode="out-in">
+          <Transition :name="transitionClass" mode="out-in" :duration="0.2">
             <SpSlide
               v-if="current"
               :key="currentIndex"
@@ -63,10 +63,10 @@
 
     <!-- === PRESENTER LAYOUT === -->
     <template v-else>
-      <div class="sp-presenter-layout">
+      <div class="sp-presenter-layout" :style="presenterGridStyle">
         <div class="sp-presenter-main">
-          <div class="sp-presenter-preview">
-            <div class="sp-presenter-slide-wrap" :style="presenterScaleStyle">
+          <div class="sp-presenter-preview" ref="previewContainerEl">
+            <div :style="previewScaleStyle" class="sp-slide-scaler">
               <SpSlide
                 v-if="current"
                 :key="currentIndex"
@@ -76,19 +76,26 @@
               />
             </div>
           </div>
-          <div class="sp-presenter-next">
+          <div class="sp-presenter-vdivider" @mousedown="startVdividerDrag"></div>
+          <div class="sp-presenter-next" :style="{ height: nextHeight + 'px' }">
             <div class="sp-presenter-next-label">Next</div>
-            <div class="sp-presenter-next-slide-wrap" :style="presenterNextScaleStyle">
-              <SpSlide
-                v-if="nextSlideData"
-                :key="'next-' + (currentIndex + 1)"
-                :slide="nextSlideData"
-                :html="nextHtml"
-                :components="props.components"
-              />
+            <div class="sp-presenter-next-slide-wrap" ref="nextContainerEl">
+              <div :style="nextScaleStyle" class="sp-slide-scaler">
+                <SpSlide
+                  v-if="nextSlideData"
+                  :key="'next-' + (currentIndex + 1)"
+                  :slide="nextSlideData"
+                  :html="nextHtml"
+                  :components="props.components"
+                />
+              </div>
             </div>
           </div>
         </div>
+        <div
+          class="sp-presenter-divider"
+          @mousedown="startDividerDrag"
+        ></div>
         <div class="sp-presenter-sidebar">
           <div class="sp-presenter-info">
             <div class="sp-presenter-num">{{ currentIndex + 1 }} <small>/ {{ total }}</small></div>
@@ -108,10 +115,11 @@
 import { computed, ref, watch, onMounted, provide, onUnmounted } from 'vue'
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
-import { useSteps } from '../composables/useSteps'
+import { useSteps, buildSteps as computeSlideSteps } from '../composables/useSteps'
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
+import { useElementScale } from '../composables/useElementScale'
 import SpSlide from './SpSlide.vue'
 
 const props = withDefaults(defineProps<{
@@ -157,6 +165,59 @@ const { openPresenterWindow, closePresenter, presenterActive, syncState, channel
 
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
 
+const previewContainerEl = ref<HTMLElement | null>(null)
+const nextContainerEl = ref<HTMLElement | null>(null)
+const { transformStyle: previewScaleStyle } = useElementScale(previewContainerEl, props.designWidth, props.designHeight)
+const { transformStyle: nextScaleStyle } = useElementScale(nextContainerEl, props.designWidth, props.designHeight)
+
+const sidebarWidth = ref(280)
+let dividerDragging = false
+
+function startDividerDrag(e: MouseEvent) {
+  dividerDragging = true
+  document.addEventListener('mousemove', onDividerDrag)
+  document.addEventListener('mouseup', stopDividerDrag)
+  e.preventDefault()
+}
+
+function onDividerDrag(e: MouseEvent) {
+  if (!dividerDragging) return
+  const w = window.innerWidth - e.clientX
+  sidebarWidth.value = Math.max(160, Math.min(600, w))
+}
+
+function stopDividerDrag() {
+  dividerDragging = false
+  document.removeEventListener('mousemove', onDividerDrag)
+  document.removeEventListener('mouseup', stopDividerDrag)
+}
+
+const presenterGridStyle = computed(() => ({
+  gridTemplateColumns: `1fr 6px ${sidebarWidth.value}px`,
+}))
+
+const nextHeight = ref(260)
+let vdividerDragging = false
+
+function startVdividerDrag(e: MouseEvent) {
+  vdividerDragging = true
+  document.addEventListener('mousemove', onVdividerDrag)
+  document.addEventListener('mouseup', stopVdividerDrag)
+  e.preventDefault()
+}
+
+function onVdividerDrag(e: MouseEvent) {
+  if (!vdividerDragging) return
+  const h = window.innerHeight - e.clientY
+  nextHeight.value = Math.max(120, Math.min(600, h))
+}
+
+function stopVdividerDrag() {
+  vdividerDragging = false
+  document.removeEventListener('mousemove', onVdividerDrag)
+  document.removeEventListener('mouseup', stopVdividerDrag)
+}
+
 provide('stepIndex', stepIndex)
 provide('slideIndex', currentIndex)
 
@@ -186,27 +247,8 @@ const nextSlideData = computed(() => {
 
 const nextHtml = computed(() => {
   if (!nextSlideData.value) return ''
-  return processHtml(nextSlideData.value.html, 0)
-})
-
-const presenterScaleStyle = computed(() => {
-  const s = Math.min(1, 800 / props.designWidth, 450 / props.designHeight)
-  return {
-    transform: `scale(${s})`,
-    width: props.designWidth + 'px',
-    height: props.designHeight + 'px',
-    flexShrink: 0,
-  }
-})
-
-const presenterNextScaleStyle = computed(() => {
-  const s = Math.min(1, 240 / props.designWidth, 135 / props.designHeight)
-  return {
-    transform: `scale(${s})`,
-    width: props.designWidth + 'px',
-    height: props.designHeight + 'px',
-    flexShrink: 0,
-  }
+  const steps = computeSlideSteps(nextSlideData.value)
+  return processHtml(nextSlideData.value.html, Math.max(0, steps - 1))
 })
 
 function nextSlide() {
@@ -296,6 +338,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   channel?.close()
+  stopDividerDrag()
+  stopVdividerDrag()
 })
 
 function updateSlides(templateHtml: string) {
