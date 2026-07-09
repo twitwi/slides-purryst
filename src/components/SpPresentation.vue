@@ -29,13 +29,19 @@
         </div>
       </div>
 
-      <nav class="sp-nav">
+      <nav class="sp-nav" :class="{ locked: navLocked }">
+        <button class="sp-nav-btn sp-nav-lock" :class="{ locked: navLocked }" :title="navLocked ? 'Unlock nav' : 'Lock nav visible'" @click="navLocked = !navLocked">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="3" y="5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/>
+            <path d="M4.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          </svg>
+        </button>
         <button class="sp-nav-btn" :disabled="isFirst && isFirstStep" aria-label="Previous" @click="prevSlide">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
-        <span class="sp-nav-counter">{{ currentIndex + 1 }} / {{ total }}</span>
+        <span class="sp-nav-counter" @click="onGoPrompt">{{ currentIndex + 1 }} / {{ total }}</span>
         <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="nextSlide">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -177,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, provide, onUnmounted } from 'vue'
+import { computed, ref, watch, onMounted, provide, onUnmounted, nextTick } from 'vue'
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, buildSteps as computeSlideSteps } from '../composables/useSteps'
@@ -329,6 +335,9 @@ function prevSlide() {
     prevStep()
   } else if (currentIndex.value > 0) {
     prev()
+    nextTick(() => {
+      stepIndex.value = totalSteps.value - 1
+    })
   }
 }
 
@@ -349,6 +358,7 @@ function togglePresenter() {
 }
 
 const showOverview = ref(false)
+const navLocked = ref(false)
 const overviewScale = ref(0.15)
 const overviewGridEl = ref<HTMLElement | null>(null)
 let overviewObserver: ResizeObserver | null = null
