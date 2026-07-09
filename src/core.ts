@@ -4,6 +4,7 @@ import SpPresentation from './components/SpPresentation.vue'
 import SpAlternatives from './components/SpAlternatives.vue'
 import SpDrag from './components/SpDrag.vue'
 import SpInclude from './components/SpInclude.vue'
+import SpStyle from './components/SpStyle.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
 import './style.css'
@@ -12,6 +13,7 @@ const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
   'sp-drag': SpDrag,
   'sp-include': SpInclude,
+  'sp-style': SpStyle,
 }
 
 function resolveEl(el?: string | HTMLElement): HTMLElement | null {
@@ -65,6 +67,35 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   })
   const vm = app.mount(target) as any
 
+  let globalStyleEls: HTMLStyleElement[] = []
+  function injectGlobalStyles(root: ParentNode) {
+    Array.from(root.children).forEach(el => {
+      if (el.tagName.toLowerCase() === 'sp-style') {
+        const css = el.textContent?.trim()
+        if (!css) return
+        const s = document.createElement('style')
+        s.textContent = css
+        document.head.appendChild(s)
+        globalStyleEls.push(s)
+      }
+    })
+  }
+  function removeGlobalStyles() {
+    globalStyleEls.forEach(s => s.remove())
+    globalStyleEls = []
+  }
+  function reapplyGlobalStyles(html: string) {
+    removeGlobalStyles()
+    const d = document.createElement('div')
+    d.innerHTML = html
+    injectGlobalStyles(d)
+  }
+
+  const template = document.getElementById('sp-content') as HTMLTemplateElement | null
+  if (template?.content) {
+    injectGlobalStyles(template.content)
+  }
+
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
     const es = new EventSource('/__sp_events')
     es.addEventListener('update', () => {
@@ -72,7 +103,10 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
         .then(r => r.text())
         .then(html => {
           const m = html.match(/<template id="sp-content">([\s\S]*?)<\/template>/)
-          if (m) vm.updateSlides?.(m[1])
+          if (m) {
+            vm.updateSlides?.(m[1])
+            reapplyGlobalStyles(m[1])
+          }
         })
         .catch(() => {})
     })

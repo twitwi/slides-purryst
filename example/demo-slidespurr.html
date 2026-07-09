@@ -91,7 +91,17 @@
     <p>Move your mouse en the cat</p>
     <sp-include src="./slides-purryst-banner-sticker.svg"></sp-include>
   </sp-slide>
-
+    
+  <sp-style>
+    svg #cat:not(:hover) { filter: blur(5px); }
+    svg #cat:hover {
+      #catfill { fill: yellow; }
+      #catTongue { fill: chartreuse; }
+      #catT, #catV {
+        filter: blur(10px);
+      }
+    }
+  </sp-style>
 
 </template>
 
