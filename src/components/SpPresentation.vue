@@ -8,7 +8,7 @@
             <slot name="global-top" />
           </div>
 
-          <Transition :name="transitionClass" mode="out-in" :duration="0.2">
+          <Transition :name="transitionClass" mode="out-in" :duration="0.2" @after-enter="onSlideEnter">
             <SpSlide
               v-if="current"
               :key="currentIndex"
@@ -572,12 +572,17 @@ watch([currentIndex, stepIndex], () => {
   }
 })
 
-watch([currentIndex, stepIndex], () => {
+watch(() => stepIndex.value, () => {
   nextTick(() => {
     const slide = document.querySelector('.sp-slide')
     if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
   })
-}, { immediate: true })
+})
+
+function onSlideEnter() {
+  const slide = document.querySelector('.sp-slide')
+  if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
+}
 
 if (channel) {
   if (props.presenter) {
@@ -619,6 +624,7 @@ onMounted(() => {
   if (current.value) {
     buildSteps(current.value)
   }
+  onSlideEnter()
 })
 
 onUnmounted(() => {

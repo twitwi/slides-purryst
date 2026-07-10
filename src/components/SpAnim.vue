@@ -141,13 +141,14 @@ watch(stepIndex, (curr) => {
       applyStep(s)
     }
   } else {
-    // Going backward — re-evaluate all steps from scratch
     const container = getContainer()
     const allSelectors = getAllSelectors(rawParts.value)
     for (const sel of allSelectors) {
       const targets = container.querySelectorAll<HTMLElement>(sel)
       for (const el of targets) {
-        el.classList.remove('anim-shown', 'anim-hidden')
+        if (el.hasAttribute('data-sp-from')) continue
+        el.classList.add('anim-hidden')
+        el.classList.remove('anim-shown')
       }
     }
     for (let s = 1; s <= curr; s++) {
