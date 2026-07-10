@@ -119,6 +119,9 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
         actions.prevStep()
       } else if (actions.currentIndex.value > 0) {
         actions.prev()
+        setTimeout(() => {
+          actions.stepIndex.value = actions.totalSteps.value - 1
+        })
       }
     }
   }

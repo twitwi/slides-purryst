@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import type { SlideData } from '../types'
 
 function parseSpec(spec: string | null): number {
@@ -186,32 +186,23 @@ export function processHtml(html: string, stepIndex: number): string {
 export function useSteps() {
   const stepIndex: Ref<number> = ref(0)
   const totalSteps: Ref<number> = ref(1)
-  const isFirstStep = ref(true)
-  const isLastStep = ref(false)
+  const isFirstStep = computed(() => stepIndex.value === 0)
+  const isLastStep = computed(() => totalSteps.value <= 1 || stepIndex.value >= totalSteps.value - 1)
 
   function build(slide: SlideData | null) {
-    const t = buildSteps(slide)
-    totalSteps.value = t
-    isLastStep.value = t <= 1 || stepIndex.value >= t - 1
+    totalSteps.value = buildSteps(slide)
   }
 
   function nextStep() {
     if (stepIndex.value < totalSteps.value - 1) {
       stepIndex.value++
-      updateFlags()
     }
   }
 
   function prevStep() {
     if (stepIndex.value > 0) {
       stepIndex.value--
-      updateFlags()
     }
-  }
-
-  function updateFlags() {
-    isFirstStep.value = stepIndex.value === 0
-    isLastStep.value = totalSteps.value <= 1 || stepIndex.value >= totalSteps.value - 1
   }
 
   return {

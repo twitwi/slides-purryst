@@ -3,11 +3,13 @@
 ## TODO easy
 
 - [ ] when I edit a draggable but don't move it, then I get an error when it tries to write the (non-)change
-- [ ] add touch/swipe so we can use on mobile easily 
-- [ ] fix ts errors in pnpm build
+- [ ] allow speaker notes, they should be also html content
+- [ ] integrate shiki, report on increase in bundle size
+- [ ] make a target for the lib that is single file (include dependencies like vue), even the css, for use as a single js script src="..."
 
 ## TODO
 
+- [ ] export as standalone single file, by serializing the cache inside the main file (to not have dependency on the includes)
 - [ ] inline svg, allow rewrap in svg, with automatic re-boxing, maybe <sp-rebox :pad="[10]"><sp-include .... or have a <sp-svg that has options (and reuses <sp-include)
 - [ ] typst side
 - [ ] build and provide a toc-like data structure so slides can use it (see how done already for goto/search)
