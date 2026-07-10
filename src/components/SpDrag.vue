@@ -436,20 +436,21 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-edit-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -8px;
+  left: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
   pointer-events: none;
   z-index: 1;
+  overflow: visible;
 }
 
 .sp-drag-edit-border {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
   border: 2px dashed #3b82f6;
   pointer-events: none;
 }
@@ -464,18 +465,18 @@ function handleOutsideClick(e: MouseEvent) {
   z-index: 2;
 }
 
-.sp-handle-nw { top: -7px; left: -7px; cursor: nwse-resize; }
-.sp-handle-n  { top: -7px; left: calc(50% - 7px); cursor: ns-resize; }
-.sp-handle-ne { top: -7px; right: -7px; cursor: nesw-resize; }
-.sp-handle-e  { top: calc(50% - 7px); right: -7px; cursor: ew-resize; }
-.sp-handle-se { bottom: -7px; right: -7px; cursor: nwse-resize; }
-.sp-handle-s  { bottom: -7px; left: calc(50% - 7px); cursor: ns-resize; }
-.sp-handle-sw { bottom: -7px; left: -7px; cursor: nesw-resize; }
-.sp-handle-w  { top: calc(50% - 7px); left: -7px; cursor: ew-resize; }
+.sp-handle-nw { top: 1px; left: 1px; cursor: nwse-resize; }
+.sp-handle-n  { top: 1px; left: 50%; margin-left: -7px; cursor: ns-resize; }
+.sp-handle-ne { top: 1px; right: 1px; cursor: nesw-resize; }
+.sp-handle-e  { top: 50%; margin-top: -7px; right: 1px; cursor: ew-resize; }
+.sp-handle-se { bottom: 1px; right: 1px; cursor: nwse-resize; }
+.sp-handle-s  { bottom: 1px; left: 50%; margin-left: -7px; cursor: ns-resize; }
+.sp-handle-sw { bottom: 1px; left: 1px; cursor: nesw-resize; }
+.sp-handle-w  { top: 50%; margin-top: -7px; left: 1px; cursor: ew-resize; }
 
 .sp-drag-rotate-line {
   position: absolute;
-  top: -32px;
+  top: -24px;
   left: calc(50% - 1px);
   width: 2px;
   height: 28px;
@@ -485,7 +486,7 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-rotate-handle {
   position: absolute;
-  top: -38px;
+  top: -30px;
   left: calc(50% - 8px);
   width: 16px;
   height: 16px;
@@ -499,7 +500,7 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-save-btn {
   position: absolute;
-  bottom: -32px;
+  bottom: -24px;
   left: 50%;
   transform: translateX(-50%);
   padding: 4px 14px;
