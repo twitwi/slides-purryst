@@ -2,7 +2,9 @@
 
 ## TODO easy
 
-- [ ] when I edit a draggable but don't move it, then I get an error when it tries to write the (non-)change 
+- [ ] when I edit a draggable but don't move it, then I get an error when it tries to write the (non-)change
+- [ ] add touch/swipe so we can use on mobile easily 
+- [ ] fix ts errors in pnpm build
 
 ## TODO
 

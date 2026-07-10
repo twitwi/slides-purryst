@@ -29,6 +29,7 @@ export interface SPSlidesOptions {
   designWidth?: number
   designHeight?: number
   author?: string
+  presenter?: boolean
   components?: Record<string, Component>
 }
 

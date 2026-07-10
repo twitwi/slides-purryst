@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
 import { watch, readFileSync, writeFileSync } from 'fs'
 
@@ -15,6 +16,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
+      dts({ rollupTypes: true }),
       {
         name: 'sp-reload',
         configureServer(server) {

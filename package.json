@@ -5,7 +5,19 @@
   "type": "module",
   "files": ["dist"],
   "main": "./dist/slides-purryst.umd.cjs",
-  "module": "./dist/slides-purryst.js",
+  "module": "./dist/slides-purryst.es.js",
+  "types": "./dist/slides-purryst.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/slides-purryst.d.ts",
+      "import": "./dist/slides-purryst.es.js",
+      "require": "./dist/slides-purryst.umd.cjs"
+    },
+    "./style.css": "./dist/slides-purryst.css"
+  },
+  "sideEffects": [
+    "./dist/slides-purryst.css"
+  ],
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "dev:typst": "node scripts/dev.mjs --typst",
@@ -16,13 +28,16 @@
     "clean": "rm -f example/index.html",
     "preview": "vite preview"
   },
-  "dependencies": {
+  "peerDependencies": {
+    "vue-tsc": "^2.2.8",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "typescript": "^5.7.3",
     "vite": "^6.3.4",
-    "vue-tsc": "^2.2.8"
+    "vite-plugin-dts": "^4.5.3",
+    "vue-tsc": "^2.2.8",
+    "vue": "^3.5.13"
   }
 }

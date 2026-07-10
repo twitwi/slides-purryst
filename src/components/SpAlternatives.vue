@@ -8,7 +8,7 @@
 import { inject, computed, useSlots, type VNode } from 'vue'
 
 const stepIndex = inject<{ value: number }>('stepIndex') ?? { value: 0 }
-const slots = useSlots()
+const slots = useSlots() as { default?: (...args: any[]) => VNode[] }
 
 const children = computed(() => {
   const defaultSlot = slots.default?.() ?? []
