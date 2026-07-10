@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import type { Component } from 'vue'
 import SpPresentation from './components/SpPresentation.vue'
+import { spApi } from './sp-api'
 import SpAlternatives from './components/SpAlternatives.vue'
 import SpAnim from './components/SpAnim.vue'
 import SpDrag from './components/SpDrag.vue'
@@ -113,6 +114,11 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     components: merged,
     presenter: isPresenter,
   })
+  app.config.globalProperties.$sp = spApi
+  app.provide('sp-api', spApi)
+  if (typeof globalThis !== 'undefined') {
+    ;(globalThis as any).__sp__ = spApi
+  }
   const vm = app.mount(target) as any
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {

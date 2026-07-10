@@ -195,7 +195,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, provide, onUnmounted, nextTick } from 'vue'
+import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, nextTick } from 'vue'
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, buildSteps as computeSlideSteps } from '../composables/useSteps'
@@ -205,6 +205,7 @@ import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
 import { useElementScale } from '../composables/useElementScale'
 import SpSlide from './SpSlide.vue'
+import { spApi } from '../sp-api'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -402,6 +403,20 @@ try { navLocked.value = localStorage.getItem('sp-nav-locked') === 'true' } catch
 watch(navLocked, v => {
   try { localStorage.setItem('sp-nav-locked', v ? 'true' : 'false') } catch {}
 })
+
+watchEffect(() => {
+  spApi.navLocked = navLocked.value
+  spApi.currentIndex = currentIndex.value
+  spApi.stepIndex = stepIndex.value
+  spApi.total = total.value
+})
+spApi.toggleNavLock = () => { navLocked.value = !navLocked.value }
+spApi.goTo = goTo
+spApi.next = next
+spApi.prev = prev
+spApi.nextSlide = nextSlide
+spApi.prevSlide = prevSlide
+
 const overviewScale = ref(0.15)
 const overviewGridEl = ref<HTMLElement | null>(null)
 let overviewObserver: ResizeObserver | null = null
