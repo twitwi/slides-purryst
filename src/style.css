@@ -227,8 +227,9 @@ sp-step { display: none; }
 sp-anim { display: none; }
 .sp-anim-ghost { display: none; }
 
+[data-sp-from] { display: none; }
 .sp-vis-hidden { display: none !important; }
-.sp-vis-shown { }
+.sp-vis-shown { display: revert; }
 .anim-hidden { opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
 .anim-shown { opacity: 1; pointer-events: auto; transition: opacity 0.35s ease; }
 
