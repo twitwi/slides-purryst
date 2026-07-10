@@ -6,6 +6,7 @@ export interface SlideData {
   steps: number
   transition: string
   noToc?: boolean
+  transitionDuration?: number
 }
 
 export interface Navigation {
@@ -27,6 +28,7 @@ export interface SPSlidesOptions {
   slides?: SlideData[]
   el?: string | HTMLElement
   transition?: string
+  transitionDuration?: number
   designWidth?: number
   designHeight?: number
   author?: string

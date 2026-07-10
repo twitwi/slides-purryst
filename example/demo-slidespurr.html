@@ -49,9 +49,14 @@
     <img src="./slides-purryst-banner.svg" style="transform: scale(-1,1)" />
   </sp-slide>
 
-  <sp-slide transition="zoom">
-    <h3>This one is "zoom"</h3>
+  <sp-slide transition="zoom" transition-duration="600" >
+    <h3>This one is "zoom" (with 600ms)</h3>
     <img src="./slides-purryst-banner.svg" />
+  </sp-slide>
+
+  <sp-slide transition="fade" transition-duration="100" >
+    <h3>This one is "fade" (with 100ms)</h3>
+    <img src="./slides-purryst-banner.svg" style="transform: scale(-1,1)"/>
   </sp-slide>
 
   <sp-slide>
@@ -68,7 +73,7 @@
 
 
   <sp-slide>
-    <h2>Some authoring features</h2>
+    <h2>Some interesting features</h2>
   </sp-slide>
 
   <sp-slide>
@@ -126,7 +131,7 @@
       <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
   </sp-slide>
-    
+  
 
 
 
@@ -274,7 +279,9 @@
 <script type="module">
 import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
-createSlidesPurryst({ components: { 'my-counter': Counter } })
+createSlidesPurryst({
+  components: { 'my-counter': Counter },
+})
 </script>
 </body>
 </html>

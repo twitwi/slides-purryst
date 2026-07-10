@@ -1,5 +1,5 @@
 <template>
-  <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }">
+  <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
     <!-- === MAIN (non-presenter) LAYOUT === -->
     <template v-if="!presenter">
       <div class="sp-viewport" :style="containerStyle">
@@ -8,7 +8,7 @@
             <slot name="global-top" />
           </div>
 
-          <Transition :name="transitionClass" mode="out-in" :duration="0.2" @after-enter="onSlideEnter">
+          <Transition :name="transitionClass" mode="out-in" :duration="effectiveTransitionDuration" @after-enter="onSlideEnter">
             <SpSlide
               v-if="current"
               :key="currentIndex"
@@ -209,6 +209,7 @@ import SpSlide from './SpSlide.vue'
 const props = withDefaults(defineProps<{
   slides: SlideData[]
   transition?: string
+  transitionDuration?: number
   presenter?: boolean
   designWidth?: number
   designHeight?: number
@@ -216,6 +217,7 @@ const props = withDefaults(defineProps<{
   components?: Record<string, any>
 }>(), {
   transition: 'fade',
+  transitionDuration: 200,
   presenter: false,
   designWidth: 1920,
   designHeight: 1080,
@@ -315,6 +317,17 @@ const transitionClass = computed(() => {
   const t = current.value?.transition ?? props.transition
   return `sp-${t}`
 })
+
+const effectiveTransitionDuration = computed(() =>
+  current.value.transition === '' ? 0 :
+  current.value?.transitionDuration ?? props.transitionDuration
+)
+
+const rootStyle = computed(() => ({
+  '--sp-design-width': `${props.designWidth}px`,
+  '--sp-design-height': `${props.designHeight}px`,
+  '--sp-transition-duration': `${effectiveTransitionDuration.value / 1000}s`
+}))
 
 const isFirst = computed(() => currentIndex.value === 0)
 const isLast = computed(() => currentIndex.value === total.value - 1)

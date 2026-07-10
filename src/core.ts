@@ -30,7 +30,7 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 }
 
 export function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, designWidth, designHeight, author, components } = options
+  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components } = options
 
   if (!slides) {
     const template = document.getElementById('sp-content') as HTMLTemplateElement | null
@@ -106,6 +106,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   const app = createApp(SpPresentation, {
     slides,
     transition,
+    transitionDuration,
     designWidth,
     designHeight,
     author,

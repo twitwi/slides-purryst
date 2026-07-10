@@ -56,6 +56,9 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
       num: parseInt(el.getAttribute('num') || '0', 10) || i + 1,
       steps: parseInt(el.getAttribute('steps') || '0', 10),
       transition: el.getAttribute('transition') || '',
+      transitionDuration: el.hasAttribute('transition-duration')
+        ? parseFloat(el.getAttribute('transition-duration')!)
+        : undefined,
       noToc: el.hasAttribute('no-toc'),
     })
   })
