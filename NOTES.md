@@ -20,6 +20,7 @@
 - [ ] ensure scalable styles e.g. TOC, so that if I wrap it changing the font size, it adapts
 - [ ] explore if we can rationalize that:     <h3>Explicit <code>&amp;lt;sp-step at="..."></code></h3>
 - [ ] consider gsap or an alternative (anime.js?) for svg animations or text animations or transitions
+- [ ] consider history management (think about when to push)
 
 ## Design
 

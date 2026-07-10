@@ -72,6 +72,7 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
         ? parseFloat(el.getAttribute('transition-duration')!)
         : undefined,
       noToc: el.hasAttribute('no-toc'),
+      fakeEnd: el.hasAttribute('fake-end'),
       notes,
     })
   })

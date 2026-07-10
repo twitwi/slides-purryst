@@ -8,6 +8,7 @@ export interface SlideData {
   noToc?: boolean
   notes?: string
   transitionDuration?: number
+  fakeEnd?: boolean
 }
 
 export interface Navigation {

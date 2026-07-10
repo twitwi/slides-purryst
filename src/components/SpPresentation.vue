@@ -21,7 +21,7 @@
           <div class="sp-global-bottom">
             <slot name="global-bottom">
               <footer class="sp-slide-footer">
-                <span>{{ currentIndex + 1 }}</span>
+                <span>{{ currentIndex + 1 }} / {{ effectiveTotal }}</span>
                 <span>{{ author }}</span>
               </footer>
             </slot>
@@ -42,7 +42,7 @@
               <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
-          <span class="sp-nav-counter" @click="onGoPrompt">{{ currentIndex + 1 }} / {{ total }}</span>
+          <span class="sp-nav-counter" @click="onGoPrompt">{{ currentIndex + 1 }} / {{ effectiveTotal }}</span>
           <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="nextSlide">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -64,7 +64,7 @@
         </div>
         <div class="sp-nav-pills">
           <button
-            v-for="i in total"
+            v-for="i in effectiveTotal"
             :key="i"
             class="sp-nav-pill"
             :class="{ active: i - 1 === currentIndex }"
@@ -338,6 +338,21 @@ const progressPercent = computed(() => {
   return ((currentIndex.value + 1) / total.value) * 100
 })
 
+const fakeEndIndices = computed(() => {
+  const indices = slides.value
+    .map((s, i) => s.fakeEnd ? i : -1)
+    .filter(i => i >= 0)
+  const realLast = total.value - 1
+  if (realLast >= 0 && !indices.includes(realLast)) indices.push(realLast)
+  return indices.sort((a, b) => a - b)
+})
+
+const effectiveLast = computed(() =>
+  fakeEndIndices.value.find(i => i >= currentIndex.value) ?? total.value - 1
+)
+
+const effectiveTotal = computed(() => effectiveLast.value + 1)
+
 const activeHtml = computed(() => {
   const slide = current.value
   if (!slide) return ''
@@ -409,6 +424,9 @@ watchEffect(() => {
   spApi.currentIndex = currentIndex.value
   spApi.stepIndex = stepIndex.value
   spApi.total = total.value
+  spApi.effectiveLast = effectiveLast.value
+  spApi.effectiveTotal = effectiveTotal.value
+  spApi.fakeEndIndices = fakeEndIndices.value
 })
 spApi.toggleNavLock = () => { navLocked.value = !navLocked.value }
 spApi.goTo = goTo
