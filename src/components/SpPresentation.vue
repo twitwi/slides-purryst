@@ -67,7 +67,12 @@
             v-for="i in effectiveTotal"
             :key="i"
             class="sp-nav-pill"
-            :class="{ active: i - 1 === currentIndex }"
+            :class="{
+              active: i - 1 === currentIndex,
+              'sp-nav-pill-h1': slideHeadingLevels[i - 1] === 1,
+              'sp-nav-pill-h2': slideHeadingLevels[i - 1] === 2,
+              'sp-nav-pill-h3': slideHeadingLevels[i - 1] === 3,
+            }"
             @click="goTo(i - 1); stepIndex = 0"
             :aria-label="'Go to slide ' + i"
           ></button>
@@ -514,6 +519,16 @@ const slideSearchIndex = computed<SlideHeading[]>(() => {
       if (t) texts.push(t)
     })
     return { index: i, texts }
+  })
+})
+
+const slideHeadingLevels = computed(() => {
+  return slides.value.map(s => {
+    const d = document.createElement('div')
+    d.innerHTML = s.html
+    const h = d.querySelector('h1,h2,h3')
+    if (!h) return 0
+    return parseInt(h.tagName[1])
   })
 })
 
