@@ -19,10 +19,24 @@ function parsePartActions(part: string): AnimAction[] {
   const actions: AnimAction[] = []
   const actionStrs = part.split('^').map(s => s.trim())
   for (const a of actionStrs) {
-    if (a.startsWith('@+class ')) {
+    if (a.startsWith('@add(')) {
+      const comma = a.indexOf(',')
+      if (comma !== -1) {
+        const cls = a.slice(5, comma).trim()
+        const sel = a.slice(comma + 1).replace(/\)\s*$/, '').trim()
+        actions.push({ type: 'addClass', className: cls, selector: sel })
+      }
+    } else if (a.startsWith('@remove(')) {
+      const comma = a.indexOf(',')
+      if (comma !== -1) {
+        const cls = a.slice(8, comma).trim()
+        const sel = a.slice(comma + 1).replace(/\)\s*$/, '').trim()
+        actions.push({ type: 'removeClass', className: cls, selector: sel })
+      }
+    } else if (a.startsWith('@+class ')) { // backward-compat
       const m = a.match(/^@\+class\s+(\S+)\s+(.+)$/)
       if (m) actions.push({ type: 'addClass', className: m[1], selector: m[2] })
-    } else if (a.startsWith('@-class ')) {
+    } else if (a.startsWith('@-class ')) { // backward-compat
       const m = a.match(/^@-class\s+(\S+)\s+(.+)$/)
       if (m) actions.push({ type: 'removeClass', className: m[1], selector: m[2] })
     } else if (a.startsWith('-')) {
@@ -57,7 +71,13 @@ function getAllSelectors(parts: string[]): string[] {
     const trimmed = part.trim()
     const actionStrs = trimmed.split('^').map(s => s.trim())
     for (const a of actionStrs) {
-      if (a.startsWith('@+class ') || a.startsWith('@-class ')) {
+      if (a.startsWith('@add(') || a.startsWith('@remove(')) {
+        const comma = a.indexOf(',')
+        if (comma !== -1) {
+          const sel = a.slice(comma + 1).replace(/\)\s*$/, '').trim()
+          result.push(sel)
+        }
+      } else if (a.startsWith('@+class ') || a.startsWith('@-class ')) {
         const m = a.match(/^(?:@[+-]class\s+\S+\s+)(.+)$/)
         if (m) result.push(m[1])
       } else if (a.startsWith('-')) {
