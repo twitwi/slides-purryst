@@ -214,6 +214,7 @@ import { useElementScale } from '../composables/useElementScale'
 import SpSlide from './SpSlide.vue'
 import { spApi } from '../sp-api'
 import { exportStandalone } from '../export'
+import { highlightCode } from '../composables/useCodeHighlight'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -787,7 +788,18 @@ onMounted(() => {
     nextTick(() => syncUrl())
     window.addEventListener('hashchange', onHashChange)
   }
+  highlightAllSlides()
 })
+
+async function highlightAllSlides() {
+  for (let i = 0; i < slides.value.length; i++) {
+    const s = slides.value[i]
+    const highlighted = await highlightCode(s.html)
+    if (highlighted !== s.html) {
+      slides.value[i] = { ...s, html: highlighted }
+    }
+  }
+}
 
 onUnmounted(() => {
   channel?.close()

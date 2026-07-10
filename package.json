@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "SlidesPurryst: Where Typst meets Vue in purr-fect harmony.",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/slides-purryst.umd.cjs",
   "module": "./dist/slides-purryst.es.js",
   "types": "./dist/slides-purryst.d.ts",
@@ -29,15 +31,18 @@
     "preview": "vite preview"
   },
   "peerDependencies": {
-    "vue-tsc": "^2.2.8",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.2.8"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "typescript": "^5.7.3",
     "vite": "^6.3.4",
     "vite-plugin-dts": "^4.5.3",
-    "vue-tsc": "^2.2.8",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.2.8"
+  },
+  "dependencies": {
+    "shiki": "^4.3.1"
   }
 }
