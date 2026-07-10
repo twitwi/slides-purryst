@@ -6,8 +6,14 @@
 ### TOC
 
 ```
-<!-- Default — ordered list with slide numbers -->
+<!-- Default — ordered list with slide numbers, start at h2 -->
 <sp-toc />
+```
+
+```
+<sp-toc :start="1" />            <!-- show all levels, no section grouping -->
+<sp-toc :start="3" />            <!-- only h3+ -->
+<sp-toc :start="1" :end="2" />   <!-- only h1 and h2 -->
 ```
 
 ```
