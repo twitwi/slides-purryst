@@ -63,19 +63,21 @@
         </button>
         </div>
         <div class="sp-nav-pills">
-          <button
-            v-for="i in effectiveTotal"
-            :key="i"
-            class="sp-nav-pill"
-            :class="{
-              active: i - 1 === currentIndex,
-              'sp-nav-pill-h1': slideHeadingLevels[i - 1] === 1,
-              'sp-nav-pill-h2': slideHeadingLevels[i - 1] === 2,
-              'sp-nav-pill-h3': slideHeadingLevels[i - 1] === 3,
-            }"
-            @click="goTo(i - 1); stepIndex = 0"
-            :aria-label="'Go to slide ' + i"
-          ></button>
+          <template v-for="pill in visiblePills" :key="pill.type === 'pill' ? 'p' + pill.index : pill.id">
+            <span v-if="pill.type === 'ellipsis'" class="sp-nav-pill-ellipsis">…</span>
+            <button
+              v-else
+              class="sp-nav-pill"
+              :class="{
+                active: pill.index === currentIndex,
+                'sp-nav-pill-h1': slideHeadingLevels[pill.index] === 1,
+                'sp-nav-pill-h2': slideHeadingLevels[pill.index] === 2,
+                'sp-nav-pill-h3': slideHeadingLevels[pill.index] === 3,
+              }"
+              @click="goTo(pill.index); stepIndex = 0"
+              :aria-label="'Go to slide ' + (pill.index + 1)"
+            ></button>
+          </template>
         </div>
       </nav>
 
@@ -342,6 +344,31 @@ const isLast = computed(() => currentIndex.value === total.value - 1)
 const progressPercent = computed(() => {
   if (total.value === 0) return 0
   return ((currentIndex.value + 1) / total.value) * 100
+})
+
+type PillItem = { type: 'pill'; index: number } | { type: 'ellipsis'; id: string }
+
+const visiblePills = computed<PillItem[]>(() => {
+  const n = effectiveTotal.value
+  if (n <= 20) {
+    return Array.from({ length: n }, (_, i) => ({ type: 'pill' as const, index: i }))
+  }
+  const items: PillItem[] = []
+  const cur = currentIndex.value
+  const head = 3
+  const tail = 3
+  const windowBefore = 2
+  const windowAfter = 2
+  const windowStart = Math.max(head, cur - windowBefore)
+  const windowEnd = Math.min(n - 1 - tail, cur + windowAfter)
+
+  for (let i = 0; i < head; i++) items.push({ type: 'pill', index: i })
+  if (windowStart > head) items.push({ type: 'ellipsis', id: 'pre' })
+  for (let i = windowStart; i <= windowEnd; i++) items.push({ type: 'pill', index: i })
+  if (windowEnd < n - 1 - tail) items.push({ type: 'ellipsis', id: 'post' })
+  for (let i = n - tail; i < n; i++) items.push({ type: 'pill', index: i })
+
+  return items
 })
 
 const fakeEndIndices = computed(() => {
