@@ -3,6 +3,7 @@
 ## TODO easy
 
 - [ ] when I edit a draggable but don't move it, then I get an error when it tries to write the (non-)change
+- [ ] when a sp-drag has no at= or an empty at="", allow the insertion of the newline moved coordinates
 - [ ] allow speaker notes, they should be also html content
 - [ ] integrate shiki, report on increase in bundle size
 - [ ] make a target for the lib that is single file (include dependencies like vue), even the css, for use as a single js script src="..."

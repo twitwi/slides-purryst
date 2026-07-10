@@ -576,6 +576,15 @@ sp-anim { display: none; }
   padding: 0;
   margin: 0;
 }
+.sp-toc-section {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  padding: 0.35em 0.5em 0.2em;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 0.15em;
+}
 .sp-toc li {
   cursor: pointer;
   padding: 0.3em 0.5em;
@@ -613,4 +622,5 @@ sp-anim { display: none; }
   .sp-toc li:hover { background: #1e293b; }
   .sp-toc-active { background: #1e3a5f; color: #60a5fa; }
   .sp-toc-num { color: #64748b; }
+  .sp-toc-section { color: #64748b; border-bottom-color: #334155; }
 }

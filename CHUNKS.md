@@ -14,11 +14,13 @@
 ```html
 <!-- Default — ordered list with slide numbers, start at h2 -->
 <sp-toc />
+<sp-toc :highlight="1" /> <!-- highlight section n+1 -->
 ```
 
 ```html
 <sp-toc :start="1" />            <!-- show all levels, no section grouping -->
 <sp-toc :start="3" />            <!-- only h3+ -->
+<sp-toc :start="3" context />    <!-- only h3+, show parent h2 faded -->
 <sp-toc :start="1" :end="2" />   <!-- only h1 and h2 -->
 ```
 
