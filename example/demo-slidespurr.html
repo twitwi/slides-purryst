@@ -92,7 +92,7 @@
     <sp-svg src="./slides-purryst-banner-sticker.svg"></sp-svg>
     <br/>
     <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" height="200"></sp-svg>
-    <sp-drag at="1197|207|759.4423673400632|267.9878776869065|35">
+    <sp-drag at="1187|187|759.4423673400632|267.9878776869065|35">
       <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
     <sp-style>
@@ -100,6 +100,57 @@
     </sp-style>
   </sp-slide>
     
+  <sp-slide transition="fade">
+    <h2><code>sp-anim</code> — @jump (vis groups)</h2>
+    <p>Always visible</p>
+    <sp-anim spec="@jump(1)" />
+    <p>Appears on click 1</p>
+    <sp-anim spec="@jump(1)" />
+    <p>Appears on click 2</p>
+    <sp-anim spec="@jump(1)" />
+    <p>Appears on click 3</p>
+  </sp-slide>
+
+  <sp-slide transition="fade">
+    <h2><code>sp-anim</code> — selectors (actions)</h2>
+    <p>Always visible</p>
+    <sp-anim spec="li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)" />
+    <ul>
+      <li>First</li>
+      <li>Second</li>
+      <li>Third</li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide transition="fade">
+    <h2><code>sp-anim</code> — @children</h2>
+    <sp-anim spec="@children(ul)" />
+    <ul>
+      <li>First item</li>
+      <li>Second item</li>
+      <li>Third item</li>
+      <li>Fourth item</li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide transition="fade">
+    <h2><code>sp-anim</code> — Combined</h2>
+    <p>Always visible heading</p>
+    <sp-anim spec=".step1 | .step2 | @children(ul)" />
+    <div class="step1" style="padding:.3em .6em;background:#dbeafe;border-radius:6px">Step 1</div>
+    <div class="step2" style="padding:.3em .6em;background:#dcfce7;color:#166534;border-radius:6px">Step 2</div>
+    <ul>
+      <li>Child A</li>
+      <li>Child B</li>
+      <li>Child C</li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide>
+    <h1>END</h1>
+  </sp-slide>
+
+  <!-- global style -->
   <sp-style>
     svg #cat:not(:hover) { filter: blur(5px); }
     svg #cat:hover {

@@ -1,11 +1,55 @@
 import { ref, computed } from 'vue'
 import type { SlideData } from '../types'
 
+function serializeNode(node: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) {
+    return node.textContent || ''
+  }
+  if (node.nodeType === Node.COMMENT_NODE) {
+    return `<!--${node.textContent}-->`
+  }
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return ''
+  }
+  const el = node as Element
+  const tag = el.tagName.toLowerCase()
+
+  const voidTags = ['sp-anim', 'sp-pause']
+  if (voidTags.includes(tag)) {
+    let s = `<${tag}`
+    for (let j = 0; j < el.attributes.length; j++) {
+      const a = el.attributes[j]
+      s += ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`
+    }
+    s += `></${tag}>`
+    s += serializeChildren(el)
+    return s
+  }
+
+  let s = `<${tag}`
+  for (let j = 0; j < el.attributes.length; j++) {
+    const a = el.attributes[j]
+    s += ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`
+  }
+  s += '>'
+  s += serializeChildren(el)
+  s += `</${tag}>`
+  return s
+}
+
+function serializeChildren(el: Element): string {
+  let html = ''
+  for (let i = 0; i < el.childNodes.length; i++) {
+    html += serializeNode(el.childNodes[i])
+  }
+  return html
+}
+
 export function parseElementToSlides(root: ParentNode): SlideData[] {
   const els = root.querySelectorAll('sp-slide')
   const slides: SlideData[] = []
   els.forEach((el, i) => {
-    const html = el.innerHTML.trim()
+    const html = serializeChildren(el).trim()
     if (!html) return
     slides.push({
       html,

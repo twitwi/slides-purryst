@@ -199,6 +199,7 @@ import { computed, ref, watch, onMounted, provide, onUnmounted, nextTick } from 
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, buildSteps as computeSlideSteps } from '../composables/useSteps'
+import { scanVisibility } from '../composables/useVisibility'
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
@@ -570,6 +571,13 @@ watch([currentIndex, stepIndex], () => {
     syncState(currentIndex.value, stepIndex.value)
   }
 })
+
+watch([currentIndex, stepIndex], () => {
+  nextTick(() => {
+    const slide = document.querySelector('.sp-slide')
+    if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
+  })
+}, { immediate: true })
 
 if (channel) {
   if (props.presenter) {

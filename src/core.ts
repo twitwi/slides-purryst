@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import type { Component } from 'vue'
 import SpPresentation from './components/SpPresentation.vue'
 import SpAlternatives from './components/SpAlternatives.vue'
+import SpAnim from './components/SpAnim.vue'
 import SpDrag from './components/SpDrag.vue'
 import SpInclude from './components/SpInclude.vue'
 import SpSvg from './components/SpSvg.vue'
@@ -12,6 +13,7 @@ import './style.css'
 
 const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
+  'sp-anim': SpAnim,
   'sp-drag': SpDrag,
   'sp-include': SpInclude,
   'sp-svg': SpSvg,

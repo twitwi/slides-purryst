@@ -1,5 +1,9 @@
 
 
+## TODO easy
+
+- [ ] when I edit a draggable but don't move it, then I get an error when it tries to write the (non-)change 
+
 ## TODO
 
 - [ ] inline svg, allow rewrap in svg, with automatic re-boxing, maybe <sp-rebox :pad="[10]"><sp-include .... or have a <sp-svg that has options (and reuses <sp-include)

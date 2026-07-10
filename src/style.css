@@ -224,6 +224,13 @@ body {
 
 sp-pause { display: none; }
 sp-step { display: none; }
+sp-anim { display: none; }
+.sp-anim-ghost { display: none; }
+
+.sp-vis-hidden { display: none !important; }
+.sp-vis-shown { }
+.anim-hidden { opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+.anim-shown { opacity: 1; pointer-events: auto; transition: opacity 0.35s ease; }
 
 /* Presenter mode */
 .sp-presenter-mode {
