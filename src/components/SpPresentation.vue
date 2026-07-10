@@ -636,10 +636,11 @@ watch(current, (slide, old) => {
   }
 })
 
+const isBroadcasting = ref(false)
+
 watch([currentIndex, stepIndex], () => {
-  if (!props.presenter) {
-    syncState(currentIndex.value, stepIndex.value)
-  }
+  if (isBroadcasting.value) return
+  syncState(currentIndex.value, stepIndex.value)
 }, { flush: 'post' })
 
 watch(() => stepIndex.value, () => {
@@ -691,23 +692,25 @@ function onHashChange() {
 }
 
 if (channel) {
+  channel.addEventListener('message', (e: MessageEvent) => {
+    if (e.data?.type === 'sync') {
+      isBroadcasting.value = true
+      if (e.data.slide !== currentIndex.value) {
+        skipStepReset = true
+      }
+      goTo(e.data.slide)
+      stepIndex.value = e.data.step
+      nextTick(() => { isBroadcasting.value = false })
+    }
+    if (e.data?.type === 'presenter-ready') {
+      syncState(currentIndex.value, stepIndex.value)
+    }
+    if (e.data?.type === 'presenter-close') {
+      closePresenter()
+    }
+  })
   if (props.presenter) {
-    channel.addEventListener('message', (e: MessageEvent) => {
-      if (e.data?.type === 'sync') {
-        if (e.data.slide !== currentIndex.value) {
-          skipStepReset = true
-        }
-        goTo(e.data.slide)
-        stepIndex.value = e.data.step
-      }
-    })
     channel.postMessage({ type: 'presenter-ready' })
-  } else {
-    channel.addEventListener('message', (e: MessageEvent) => {
-      if (e.data?.type === 'presenter-ready') {
-        syncState(currentIndex.value, stepIndex.value)
-      }
-    })
   }
 }
 
