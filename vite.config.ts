@@ -65,21 +65,10 @@ export default defineConfig(({ mode }) => {
 
                 const oldAt = data.oldAttrs?.trim()
                 const newAt = data.newAttrs?.trim()
-
-                const atRegex = /at="([^"]*)"/
-                const oldMatch = oldAt?.match(atRegex)
-                if (!oldMatch) {
-                  res.writeHead(400)
-                  res.end(JSON.stringify({ error: 'oldAttrs must include at="..." attribute' }))
-                  return
-                }
-
-                const oldVal = oldMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                const tagRegex = new RegExp(`(<sp-drag\\s[^>]*?at=")${oldVal}(")`)
+                const isInsert = oldAt === '__sp_insert__'
 
                 const slideIndex = typeof data.slide === 'number' ? data.slide : -1
 
-                let match: RegExpExecArray | null = null
                 let slideStart = 0
                 let sliceEnd = content.length
                 if (slideIndex >= 0) {
@@ -102,7 +91,59 @@ export default defineConfig(({ mode }) => {
                   nextSlideRegex.lastIndex = slideStart + 1
                   const nextMatch = nextSlideRegex.exec(content)
                   sliceEnd = nextMatch ? nextMatch.index : content.length
-                  const slice = content.slice(slideStart, sliceEnd)
+                }
+
+                const slice = content.slice(slideStart, sliceEnd)
+
+                if (isInsert) {
+                  const newMatch = newAt?.match(/at="([^"]*)"/)
+                  if (!newMatch) {
+                    res.writeHead(400)
+                    res.end(JSON.stringify({ error: 'newAttrs must include at="..." attribute' }))
+                    return
+                  }
+                  const newVal = newMatch[1]
+                  const insertRegex = /<sp-drag\b([^>]*?)(\/?\s*>)/i
+                  const insertMatch = insertRegex.exec(slice)
+                  if (!insertMatch) {
+                    res.writeHead(404)
+                    res.end(JSON.stringify({ error: 'sp-drag tag not found for insert' }))
+                    return
+                  }
+                  const attrs = insertMatch[1]
+                  const closer = insertMatch[2]
+                  let updated: string
+                  if (slideIndex >= 0) {
+                    const before = content.slice(slideStart, sliceEnd)
+                    const after = before.replace(insertRegex, `<sp-drag${attrs} at="${newVal}"${closer}`)
+                    updated = content.slice(0, slideStart) + after + content.slice(sliceEnd)
+                  } else {
+                    updated = content.replace(insertRegex, `<sp-drag$1 at="${newVal}"$2`)
+                  }
+                  if (updated === content) {
+                    res.writeHead(404)
+                    res.end(JSON.stringify({ error: 'Insertion produced no change' }))
+                    return
+                  }
+                  writeFileSync(filePath, updated, 'utf-8')
+                  res.writeHead(200, { 'Content-Type': 'application/json' })
+                  res.end(JSON.stringify({ ok: true }))
+                  return
+                }
+
+                const atRegex = /at="([^"]*)"/
+                const oldMatch = oldAt?.match(atRegex)
+                if (!oldMatch) {
+                  res.writeHead(400)
+                  res.end(JSON.stringify({ error: 'oldAttrs must include at="..." attribute' }))
+                  return
+                }
+
+                const oldVal = oldMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                const tagRegex = new RegExp(`(<sp-drag\\s[^>]*?at=")${oldVal}(")`)
+
+                let match: RegExpExecArray | null = null
+                if (slideIndex >= 0) {
                   tagRegex.lastIndex = 0
                   const sliceMatch = tagRegex.exec(slice)
                   if (sliceMatch) {

@@ -122,10 +122,20 @@ function saveToSource() {
   const newAttrs = attrString()
   const oldAttrs = attrString(true)
 
+  if (oldAttrs === newAttrs) {
+    exitEditMode()
+    return
+  }
+
+  const hasAt = !!props.at
   fetch('/__sp_edit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ oldAttrs, newAttrs, slide: slideIndex.value }),
+    body: JSON.stringify({
+      oldAttrs: hasAt ? oldAttrs : '__sp_insert__',
+      newAttrs,
+      slide: slideIndex.value,
+    }),
   })
     .then(async r => {
       const data = await r.json()
