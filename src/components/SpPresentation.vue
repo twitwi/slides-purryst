@@ -397,6 +397,11 @@ function togglePresenter() {
 
 const showOverview = ref(false)
 const navLocked = ref(false)
+try { navLocked.value = localStorage.getItem('sp-nav-locked') === 'true' } catch {}
+
+watch(navLocked, v => {
+  try { localStorage.setItem('sp-nav-locked', v ? 'true' : 'false') } catch {}
+})
 const overviewScale = ref(0.15)
 const overviewGridEl = ref<HTMLElement | null>(null)
 let overviewObserver: ResizeObserver | null = null

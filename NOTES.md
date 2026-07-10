@@ -4,13 +4,10 @@
 
 - [ ] sp-drag put the handles around the object (currently it may conflict with the scrollbars)
 - [ ] toolbar show pills with different styles (whether h1 h2 h3 containing slides)
-- [ ] when a sp-drag has no at= or an empty at="", allow the insertion of the newline moved coordinates
-- [ ] allow speaker notes, they should be also html content
+- [ ] toolbar manage something when there are too many pills, maybe beyond 20 pills, show first-pills...pills(incl current)...last-pills (with proper handling of side effects)
 - [ ] integrate shiki, report on increase in bundle size
 - [ ] make a target for the lib that is single file (include dependencies like vue), even the css, for use as a single js script src="..."
-- [ ] save some small info to local storage, including the toolbar lock
 - [ ] total slide count (access/provide and show by default) + have a boolean on a slide to say it is a "fake end" (so the maximum displayed is this one as long is it is not passed)... so there are actually 2 concepts of "last slide number" (the current last to display) and "last slide numbers" (list with the numbers of all "fake end" slides + the last slide unconditionally)
-- [ ] allow controlling the duration of transition (+ default)
 
 ## TODO
 
