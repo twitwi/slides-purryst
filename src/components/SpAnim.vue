@@ -148,6 +148,37 @@ function applyStep(step: number) {
   }
 }
 
+function reverseAction(el: HTMLElement, action: AnimAction) {
+  switch (action.type) {
+    case 'show':
+      el.classList.add('anim-hidden')
+      el.classList.remove('anim-shown')
+      break
+    case 'hide':
+      el.classList.add('anim-shown')
+      el.classList.remove('anim-hidden')
+      break
+    case 'addClass':
+      if (action.className) el.classList.remove(action.className)
+      break
+    case 'removeClass':
+      if (action.className) el.classList.add(action.className)
+      break
+  }
+}
+
+function reverseStep(step: number) {
+  const actions = stepActions.value[step - 1]
+  if (!actions) return
+  const container = getContainer()
+  for (const a of actions) {
+    const targets = container.querySelectorAll<HTMLElement>(a.selector)
+    for (const el of targets) {
+      reverseAction(el, a)
+    }
+  }
+}
+
 watch(stepIndex, (curr) => {
   if (curr === previousStep) return
   if (curr > previousStep) {
@@ -155,15 +186,9 @@ watch(stepIndex, (curr) => {
       applyStep(s)
     }
   } else {
-    const container = getContainer()
-    const allSelectors = getAllSelectors(rawParts.value)
-    for (const sel of allSelectors) {
-      const targets = container.querySelectorAll<HTMLElement>(sel)
-      for (const el of targets) {
-        if (el.hasAttribute('data-sp-from')) continue
-        el.classList.add('anim-hidden')
-        el.classList.remove('anim-shown')
-      }
+    // Reverse steps (curr, previousStep] in reverse order, then re-apply 1..curr
+    for (let s = previousStep; s > curr; s--) {
+      reverseStep(s)
     }
     for (let s = 1; s <= curr; s++) {
       applyStep(s)
