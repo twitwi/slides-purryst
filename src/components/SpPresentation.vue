@@ -186,7 +186,7 @@
           </div>
           <div class="sp-presenter-notes">
             <h3>Speaker Notes</h3>
-            <div id="sp-presenter-notes-content">No notes</div>
+            <div class="sp-presenter-notes-content" v-html="currentNotes"></div>
           </div>
         </div>
       </div>
@@ -341,6 +341,12 @@ const activeHtml = computed(() => {
   const slide = current.value
   if (!slide) return ''
   return processHtml(slide.html, stepIndex.value)
+})
+
+const currentNotes = computed(() => {
+  const slide = current.value
+  if (!slide?.notes) return 'No notes'
+  return slide.notes
 })
 
 const nextSlideData = computed(() => {

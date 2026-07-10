@@ -6,6 +6,7 @@ export interface SlideData {
   steps: number
   transition: string
   noToc?: boolean
+  notes?: string
   transitionDuration?: number
 }
 

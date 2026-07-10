@@ -15,6 +15,9 @@ function serializeNode(node: Node): string {
   const tag = el.tagName.toLowerCase()
 
   const voidTags = ['sp-anim', 'sp-pause', 'sp-toc', 'sp-include', 'sp-svg']
+
+  if (tag === 'sp-notes') return ''
+
   if (voidTags.includes(tag)) {
     let s = `<${tag}`
     for (let j = 0; j < el.attributes.length; j++) {
@@ -51,6 +54,15 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
   els.forEach((el, i) => {
     const html = serializeChildren(el).trim()
     if (!html) return
+
+    let notes: string | undefined = el.getAttribute('notes') ?? undefined
+    if (!notes) {
+      const notesEl = el.querySelector('sp-notes')
+      if (notesEl) {
+        notes = serializeChildren(notesEl).trim()
+      }
+    }
+
     slides.push({
       html,
       num: parseInt(el.getAttribute('num') || '0', 10) || i + 1,
@@ -60,6 +72,7 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
         ? parseFloat(el.getAttribute('transition-duration')!)
         : undefined,
       noToc: el.hasAttribute('no-toc'),
+      notes,
     })
   })
   return slides

@@ -2,7 +2,8 @@
 
 ## TODO easy
 
-- [ ] when I edit a draggable but don't move it, then I get an error when it tries to write the (non-)change
+- [ ] sp-drag put the handles around the object (currently it may conflict with the scrollbars)
+- [ ] toolbar show pills with different styles (whether h1 h2 h3 containing slides)
 - [ ] when a sp-drag has no at= or an empty at="", allow the insertion of the newline moved coordinates
 - [ ] allow speaker notes, they should be also html content
 - [ ] integrate shiki, report on increase in bundle size
@@ -20,6 +21,7 @@
 - [ ] come back to fixing step and last slide behavior of left button in the nav bar
 - [ ] ensure scalable styles e.g. TOC, so that if I wrap it changing the font size, it adapts
 - [ ] explore if we can rationalize that:     <h3>Explicit <code>&amp;lt;sp-step at="..."></code></h3>
+- [ ] consider gsap or an alternative (anime.js?) for svg animations or text animations or transitions
 
 ## Design
 
