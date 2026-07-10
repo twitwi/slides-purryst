@@ -38,20 +38,24 @@ const items = computed(() => {
   let filtered = all.filter(item => item.level >= props.start && item.level <= props.end)
 
   if (props.start > 1) {
-    const h1s = all.filter(item => item.level === 1)
-    if (h1s.length) {
-      const cur = currentIndex.value
-      const active = h1s.slice().reverse().find(h => h.slideIndex <= cur)
+    const parentLevel = props.start - 1
+    const cur = currentIndex.value
 
-      let sectionStart = 0
-      let sectionEnd = Infinity
-      if (active) {
-        sectionStart = active.slideIndex
-        const idx = h1s.indexOf(active)
-        if (idx + 1 < h1s.length) {
-          sectionEnd = h1s[idx + 1].slideIndex
-        }
-      }
+    const parent = all.slice().reverse().find(
+      item => item.level === parentLevel && item.slideIndex <= cur
+    )
+
+    if (!parent) {
+      console.warn(
+        `[sp-toc] no h${parentLevel} before slide ${cur + 1}, showing all`
+      )
+    } else {
+      const boundaries = all.filter(item => item.level < props.start)
+      const idx = boundaries.indexOf(parent)
+      const sectionStart = parent.slideIndex
+      const sectionEnd = idx + 1 < boundaries.length
+        ? boundaries[idx + 1].slideIndex
+        : Infinity
 
       filtered = filtered.filter(
         item => item.slideIndex >= sectionStart && item.slideIndex < sectionEnd

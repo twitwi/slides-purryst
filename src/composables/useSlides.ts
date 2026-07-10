@@ -14,7 +14,7 @@ function serializeNode(node: Node): string {
   const el = node as Element
   const tag = el.tagName.toLowerCase()
 
-  const voidTags = ['sp-anim', 'sp-pause']
+  const voidTags = ['sp-anim', 'sp-pause', 'sp-toc', 'sp-include', 'sp-svg']
   if (voidTags.includes(tag)) {
     let s = `<${tag}`
     for (let j = 0; j < el.attributes.length; j++) {
