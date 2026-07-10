@@ -146,6 +146,31 @@
     </ul>
   </sp-slide>
 
+  <sp-slide transition="fade">
+    <h2><code>sp-anim</code> — @add / @remove</h2>
+    <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
+    <div style="display:flex;align-items:center;gap:2em">
+      <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
+      <div style="font-size: 70%">
+        <p><strong>Effects per step:</strong></p>
+        <ol>
+          <li><code>@add(glow, #catfill)</code> — cat fill glows</li>
+          <li><code>@remove(glow, #catfill) ^ @add(pulse, #catTongue)</code> — fill glow off, tongue pulses</li>
+          <li><code>@add(dim, #cat)</code> — whole cat dims</li>
+        </ol>
+      </div>
+    </div>
+    <sp-anim spec="@add(glow, #catfill) | @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)" />
+    <sp-style>
+      #catTongue { fill: red; }
+      .glow { filter: drop-shadow(0 0 14px gold); transition: filter .3s; }
+      .pulse { animation: pulse 0.5s ease-in-out 3; }
+      .dim { opacity: 0.3; transition: opacity 0.3s; }
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+      #cat { filter: none !important; }
+    </sp-style>
+  </sp-slide>
+
   <sp-slide>
     <h1>END</h1>
   </sp-slide>

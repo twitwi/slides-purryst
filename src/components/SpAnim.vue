@@ -71,13 +71,7 @@ function getAllSelectors(parts: string[]): string[] {
     const trimmed = part.trim()
     const actionStrs = trimmed.split('^').map(s => s.trim())
     for (const a of actionStrs) {
-      if (a.startsWith('@add(') || a.startsWith('@remove(')) {
-        const comma = a.indexOf(',')
-        if (comma !== -1) {
-          const sel = a.slice(comma + 1).replace(/\)\s*$/, '').trim()
-          result.push(sel)
-        }
-      } else if (a.startsWith('@+class ') || a.startsWith('@-class ')) {
+      if (a.startsWith('@+class ') || a.startsWith('@-class ')) {
         const m = a.match(/^(?:@[+-]class\s+\S+\s+)(.+)$/)
         if (m) result.push(m[1])
       } else if (a.startsWith('-')) {
@@ -87,7 +81,7 @@ function getAllSelectors(parts: string[]): string[] {
       } else if (a.startsWith('@children(')) {
         const m = a.match(/^@children\((.+)\)$/)
         if (m) result.push(m[1] + ' > *')
-      } else {
+      } else if (!a.startsWith('@')) {
         result.push(a)
       }
     }
