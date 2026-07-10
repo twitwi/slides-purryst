@@ -8,7 +8,7 @@
 import { inject, computed, useSlots, type VNode } from 'vue'
 
 const props = withDefaults(defineProps<{
-  at?: number
+  at?: number | string
 }>(), {
   at: 0,
 })
@@ -23,7 +23,7 @@ const children = computed(() => {
 
 const activeIndex = computed(() => {
   if (children.value.length === 0) return -1
-  const offset = stepIndex.value - props.at
+  const offset = stepIndex.value - (typeof props.at === 'string' ? parseInt(props.at, 10) : props.at)
   if (offset < 0) return -1
   return offset % children.value.length
 })

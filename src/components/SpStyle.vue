@@ -34,3 +34,4 @@ onUnmounted(() => {
   styleEl.value?.remove()
 })
 </script>
+<template></template>

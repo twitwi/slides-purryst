@@ -20,9 +20,9 @@ import type { SlideData } from '../types'
 import { useSlideTree } from '../composables/useSlideTree'
 
 const props = withDefaults(defineProps<{
-  start?: number
-  end?: number
-  highlight?: number
+  start?: number | string
+  end?: number | string
+  highlight?: number | string
   context?: boolean
 }>(), {
   start: 2,
@@ -31,6 +31,12 @@ const props = withDefaults(defineProps<{
   context: false,
 })
 
+const ensureInt = (v: number | string) => {
+  const n = typeof v === 'string' ? parseInt(v, 10) : v
+  if (isNaN(n)) throw new Error(`Invalid number: ${v}`)
+  return n
+}
+
 const slides = inject<{ value: SlideData[] }>('slides')!
 const currentIndex = inject<{ value: number }>('slideIndex')!
 const goTo = inject<(n: number) => void>('goTo')!
@@ -38,15 +44,15 @@ const goTo = inject<(n: number) => void>('goTo')!
 const slidesRef = computed(() => slides.value)
 const { tree } = useSlideTree(slidesRef)
 
-const activeIdx = computed(() => currentIndex.value + props.highlight)
+const activeIdx = computed(() => currentIndex.value + ensureInt(props.highlight))
 
 const items = computed(() => {
   const all = tree.value
 
-  let filtered = all.filter(item => item.level >= props.start && item.level <= props.end)
+  let filtered = all.filter(item => item.level >= ensureInt(props.start) && item.level <= ensureInt(props.end))
 
-  if (props.start > 1) {
-    const parentLevel = props.start - 1
+  if (ensureInt(props.start) > 1) {
+    const parentLevel = ensureInt(props.start) - 1
     const cur = activeIdx.value
 
     const parent = all.slice().reverse().find(
@@ -58,7 +64,7 @@ const items = computed(() => {
         `[sp-toc] no h${parentLevel} before slide ${cur + 1}, showing all`
       )
     } else {
-      const boundaries = all.filter(item => item.level < props.start)
+      const boundaries = all.filter(item => item.level < ensureInt(props.start))
       const idx = boundaries.indexOf(parent)
       const sectionStart = parent.slideIndex
       const sectionEnd = idx + 1 < boundaries.length
@@ -75,9 +81,9 @@ const items = computed(() => {
 })
 
 const activeSection = computed(() => {
-  if (props.start <= 1) return null
+  if (ensureInt(props.start) <= 1) return null
   const all = tree.value
-  const parentLevel = props.start - 1
+  const parentLevel = ensureInt(props.start) - 1
   const cur = activeIdx.value
   const parent = all.slice().reverse().find(
     item => item.level === parentLevel && item.slideIndex <= cur
