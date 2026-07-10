@@ -12,6 +12,7 @@ export async function exportStandalone(): Promise<void> {
   for (const el of linkEls) {
     const href = el.getAttribute('href')
     if (!href) continue
+    if (href.includes('slides-purryst')) continue
     try {
       const r = await fetch(new URL(href, window.location.href).href)
       if (r.ok) styles.push(await r.text())
@@ -45,8 +46,7 @@ ${styles.length ? `<style>\n${styles.join('\n')}\n</style>` : ''}
 ${slidesHtml}
 </template>
 ${cacheTemplate}
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="./slides-purryst.umd.cjs"></script>
+<script src="./slides-purryst.bundle.js"></script>
 <script>
 SlidesPurryst.createSlidesPurryst(${optsJson}).mount()
 </script>

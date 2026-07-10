@@ -37,7 +37,7 @@ NB:
 - [x] toolbar show pills with different styles (whether h1 h2 h3 containing slides)
 - [x] toolbar manage something when there are too many pills, maybe beyond 20 pills, show first-pills...pills(incl current)...last-pills (with proper handling of side effects)
 - [x] integrate shiki, report on increase in bundle size
-- [ ] make a target for the lib that is single file (include dependencies like vue), even the css, for use as a single js script src="..."
+- [x] make a target for the lib that is single file (include dependencies like vue), even the css, for use as a single js script src="..."
 
 ## TODO
 
