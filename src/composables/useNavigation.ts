@@ -1,10 +1,9 @@
-import { onMounted, onUnmounted, watch } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import type { Navigation } from '../types'
 
 export function useNavigation(actions: Navigation & { onPresenterToggle?: () => void; onOverviewToggle?: () => void; onGoPrompt?: () => void }) {
   let touchStartX = 0
   let touchStartY = 0
-  let hashTimer: ReturnType<typeof setTimeout> | null = null
 
   function onKeydown(e: KeyboardEvent) {
     const t = e.target as HTMLElement
@@ -124,52 +123,15 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
     }
   }
 
-  function updateHash() {
-    if (hashTimer) clearTimeout(hashTimer)
-    hashTimer = setTimeout(() => {
-      const idx = actions.currentIndex.value
-      const step = actions.stepIndex.value
-      const hash = step > 0 ? `#${idx + 1}/${step}` : `#${idx + 1}`
-      history.replaceState(null, '', hash)
-    }, 100)
-  }
-
-  function onHashChange() {
-    const hash = location.hash.slice(1)
-    if (!hash) return
-    const m = hash.match(/^(\d+)(?:\/(\d+))?$/)
-    if (!m) return
-    const idx = parseInt(m[1], 10) - 1
-    if (idx < 0 || idx >= actions.total.value) return
-    actions.goTo(idx)
-    if (m[2]) {
-      const targetStep = parseInt(m[2], 10)
-      while (actions.stepIndex.value < targetStep) {
-        if (!actions.nextStep()) break
-      }
-    }
-  }
-
-  watch(() => actions.currentIndex.value, () => {
-    updateHash()
-    actions.stepIndex.value = 0
-  })
-
-  watch(() => actions.stepIndex.value, updateHash)
-
   onMounted(() => {
     window.addEventListener('keydown', onKeydown)
     window.addEventListener('touchstart', onTouchStart, { passive: true })
     window.addEventListener('touchend', onTouchEnd, { passive: true })
-    window.addEventListener('hashchange', onHashChange)
-    if (location.hash) onHashChange()
   })
 
   onUnmounted(() => {
     window.removeEventListener('keydown', onKeydown)
     window.removeEventListener('touchstart', onTouchStart)
     window.removeEventListener('touchend', onTouchEnd)
-    window.removeEventListener('hashchange', onHashChange)
-    if (hashTimer) clearTimeout(hashTimer)
   })
 }

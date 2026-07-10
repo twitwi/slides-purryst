@@ -245,6 +245,8 @@ const {
   processHtml
 } = useSteps()
 
+let skipStepReset = false
+
 const { openPresenterWindow, closePresenter, presenterActive, syncState, channel } = usePresenter()
 
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
@@ -562,7 +564,12 @@ function closeGoPrompt() {
 watch(current, (slide, old) => {
   buildSteps(slide)
   if (old?.num !== slide?.num) {
-    stepIndex.value = 0
+    if (skipStepReset) {
+      stepIndex.value = Math.min(Math.max(stepIndex.value, 0), Math.max(0, totalSteps.value - 1))
+      skipStepReset = false
+    } else {
+      stepIndex.value = 0
+    }
   }
 })
 
@@ -570,7 +577,7 @@ watch([currentIndex, stepIndex], () => {
   if (!props.presenter) {
     syncState(currentIndex.value, stepIndex.value)
   }
-})
+}, { flush: 'post' })
 
 watch(() => stepIndex.value, () => {
   nextTick(() => {
@@ -579,15 +586,47 @@ watch(() => stepIndex.value, () => {
   })
 })
 
+watch([currentIndex, stepIndex], () => {
+  if (!props.presenter) {
+    syncUrl()
+  }
+}, { flush: 'post' })
+
 function onSlideEnter() {
   const slide = document.querySelector('.sp-slide')
   if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
+}
+
+function syncUrl() {
+  const hash = `#${currentIndex.value}/${stepIndex.value}`
+  history.replaceState(null, '', hash)
+}
+
+function parseHash() {
+  const m = location.hash.match(/^#(\d+)(?:\/(\d+))?$/)
+  if (!m) return
+  const slideIdx = parseInt(m[1], 10)
+  const step = m[2] !== undefined ? parseInt(m[2], 10) : 0
+  if (slideIdx >= 0 && slideIdx < total.value) {
+    if (slideIdx !== currentIndex.value) {
+      skipStepReset = true
+    }
+    goTo(slideIdx)
+    stepIndex.value = step
+  }
+}
+
+function onHashChange() {
+  parseHash()
 }
 
 if (channel) {
   if (props.presenter) {
     channel.addEventListener('message', (e: MessageEvent) => {
       if (e.data?.type === 'sync') {
+        if (e.data.slide !== currentIndex.value) {
+          skipStepReset = true
+        }
         goTo(e.data.slide)
         stepIndex.value = e.data.step
       }
@@ -625,12 +664,18 @@ onMounted(() => {
     buildSteps(current.value)
   }
   onSlideEnter()
+  if (!props.presenter) {
+    parseHash()
+    nextTick(() => syncUrl())
+    window.addEventListener('hashchange', onHashChange)
+  }
 })
 
 onUnmounted(() => {
   channel?.close()
   stopDividerDrag()
   stopVdividerDrag()
+  window.removeEventListener('hashchange', onHashChange)
 })
 
 function updateSlides(templateHtml: string) {
