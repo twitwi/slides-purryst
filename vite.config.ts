@@ -226,7 +226,7 @@ export default defineConfig(({ mode }) => {
             `slides-purryst.${format}.${format === 'umd' ? 'cjs' : 'js'}`
         },
         rollupOptions: {
-          external: ['vue'],
+          external: ['vue', 'shiki'],
           output: {
             globals: { vue: 'Vue' },
             assetFileNames: (chunk) => {

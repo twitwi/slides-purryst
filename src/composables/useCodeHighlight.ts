@@ -6,11 +6,15 @@ async function ensureHighlighter() {
   if (highlighter) return
   if (initPromise) return initPromise
   initPromise = (async () => {
-    const { createHighlighter } = await import('shiki')
-    highlighter = await createHighlighter({
-      langs: ['ts', 'js', 'tsx', 'jsx', 'html', 'css', 'json', 'bash', 'sh', 'python', 'rust', 'go', 'vue'],
-      themes: ['dark-plus', 'material-theme'],
-    })
+    try {
+      const { createHighlighter } = await import('shiki')
+      highlighter = await createHighlighter({
+        langs: ['ts', 'js', 'tsx', 'jsx', 'html', 'css', 'json', 'bash', 'sh', 'python', 'rust', 'go', 'vue'],
+        themes: ['dark-plus', 'material-theme'],
+      })
+    } catch {
+      highlighter = null as never
+    }
   })()
   return initPromise
 }

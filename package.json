@@ -24,6 +24,7 @@
     "dev": "node scripts/dev.mjs",
     "dev:typst": "node scripts/dev.mjs --typst",
     "build": "vite build",
+    "build:bundle": "vite build --config vite.bundle.ts",
     "build:slides": "typst compile --root . --input \"slides-purryst-path=../dist/slides-purryst.es.js\" --input \"slides-purryst-css-path=../dist/slides-purryst.css\" --input \"slides-purryst-module=true\" --format html --features html example/slides.typ example/index.html",
     "build:slides:pp": "pnpm build:slides && npx prettier --write --parser html example/index.html",
     "watch:slides": "typst watch --no-serve --root . --input \"slides-purryst-path=../dist/slides-purryst.es.js\" --input \"slides-purryst-css-path=../dist/slides-purryst.css\" --input \"slides-purryst-module=true\" --format html --features html example/slides.typ example/index.html",
@@ -38,6 +39,7 @@
     "@vitejs/plugin-vue": "^5.2.3",
     "typescript": "^5.7.3",
     "vite": "^6.3.4",
+    "vite-plugin-css-injected-by-js": "^5.0.1",
     "vite-plugin-dts": "^4.5.3",
     "vue": "^3.5.13",
     "vue-tsc": "^2.2.8"

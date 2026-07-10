@@ -21,6 +21,9 @@ importers:
       vite:
         specifier: ^6.3.4
         version: 6.4.3
+      vite-plugin-css-injected-by-js:
+        specifier: ^5.0.1
+        version: 5.0.1(vite@6.4.3)
       vite-plugin-dts:
         specifier: ^4.5.3
         version: 4.5.4(rollup@4.62.2)(typescript@5.9.3)(vite@6.4.3)
@@ -881,6 +884,11 @@ packages:
 
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
+
+  vite-plugin-css-injected-by-js@5.0.1:
+    resolution: {integrity: sha512-JSB0jjN4VCKqG7XTUdrwiIl5gA+z2yi/tAl9WHo0X4sdyJ1yrmbLOEjf95TDoDIIuKr4GJIc7lMJG0CT88eEUQ==}
+    peerDependencies:
+      vite: '>8.0.0-0'
 
   vite-plugin-dts@4.5.4:
     resolution: {integrity: sha512-d4sOM8M/8z7vRXHHq/ebbblfaxENjogAAekcfcDCCwAyvGqnPrc7f4NZbvItS+g4WTgerW0xDwSz5qz11JT3vg==}
@@ -1755,6 +1763,10 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
+
+  vite-plugin-css-injected-by-js@5.0.1(vite@6.4.3):
+    dependencies:
+      vite: 6.4.3
 
   vite-plugin-dts@4.5.4(rollup@4.62.2)(typescript@5.9.3)(vite@6.4.3):
     dependencies:
