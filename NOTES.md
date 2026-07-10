@@ -30,13 +30,13 @@ NB:
 
 - [ ] when dragging draggable, disable touch nav
 - [ ] when dragging draggable, arrow keys move the draggable, not the slides
-- [ ] in the overview, disable slide mouse events
-- [ ] sp-drag put the handles around the object (currently it may conflict with the scrollbars)
-- [ ] presenter when changing slide also update the main view (vice versa is already done)
-- [ ] presenter view button detect when the presenter closes the view to update the state
-- [ ] toolbar show pills with different styles (whether h1 h2 h3 containing slides)
-- [ ] toolbar manage something when there are too many pills, maybe beyond 20 pills, show first-pills...pills(incl current)...last-pills (with proper handling of side effects)
-- [ ] integrate shiki, report on increase in bundle size
+- [x] in the overview, disable slide mouse events
+- [ ] sp-drag put the handles around the object (currently it may conflict with the scrollbars) --> actually outside the border it should be
+- [x] presenter when changing slide also update the main view (vice versa is already done)
+- [x] presenter view button detect when the presenter closes the view to update the state
+- [x] toolbar show pills with different styles (whether h1 h2 h3 containing slides)
+- [x] toolbar manage something when there are too many pills, maybe beyond 20 pills, show first-pills...pills(incl current)...last-pills (with proper handling of side effects)
+- [x] integrate shiki, report on increase in bundle size
 - [ ] make a target for the lib that is single file (include dependencies like vue), even the css, for use as a single js script src="..."
 
 ## TODO
