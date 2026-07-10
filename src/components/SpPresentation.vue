@@ -711,6 +711,9 @@ if (channel) {
   })
   if (props.presenter) {
     channel.postMessage({ type: 'presenter-ready' })
+    window.addEventListener('beforeunload', () => {
+      channel?.postMessage({ type: 'presenter-close' })
+    })
   }
 }
 
