@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject, nextTick } from 'vue'
+import type { Ref } from 'vue'
 import type { Transformer } from '../types'
 import { getCachedInclude, preloadInclude } from '../composables/includeCache'
+
+const contentVersion = inject<Ref<number>>('contentVersion')!
 
 const props = withDefaults(defineProps<{
   src: string
@@ -30,6 +33,12 @@ function processContent(text: string): string {
   return d.innerHTML
 }
 
+function notifyContentLoaded() {
+  nextTick(() => {
+    contentVersion.value++
+  })
+}
+
 async function load() {
   error.value = ''
   raw.value = ''
@@ -38,6 +47,7 @@ async function load() {
   if (cached !== undefined) {
     if (cached) {
       raw.value = processContent(cached)
+      notifyContentLoaded()
     }
     return
   }
@@ -47,6 +57,7 @@ async function load() {
     const text = getCachedInclude(props.src)
     if (text) {
       raw.value = processContent(text)
+      notifyContentLoaded()
     } else {
       throw new Error('Failed to load')
     }

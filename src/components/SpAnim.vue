@@ -3,8 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { inject, watch, onMounted, computed } from 'vue'
+import { inject, ref, watch, onMounted, computed } from 'vue'
 import type { Ref } from 'vue'
+
+const contentVersion = inject<Ref<number>>('contentVersion', ref(0))
 
 interface AnimAction {
   type: 'show' | 'hide' | 'addClass' | 'removeClass'
@@ -197,7 +199,7 @@ watch(stepIndex, (curr) => {
   previousStep = curr
 })
 
-onMounted(() => {
+function refresh() {
   const container = getContainer()
   const allSelectors = getAllSelectors(rawParts.value)
   for (const sel of allSelectors) {
@@ -205,6 +207,7 @@ onMounted(() => {
     for (const el of targets) {
       if (el.hasAttribute('data-sp-from')) continue
       el.classList.add('anim-hidden')
+      el.classList.remove('anim-shown')
     }
   }
   previousStep = 0
@@ -212,5 +215,11 @@ onMounted(() => {
     applyStep(s)
   }
   previousStep = stepIndex.value
+}
+
+onMounted(refresh)
+
+watch(contentVersion, () => {
+  refresh()
 })
 </script>

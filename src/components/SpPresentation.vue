@@ -246,6 +246,7 @@ const {
 } = useSteps()
 
 let skipStepReset = false
+const contentVersion = ref(0)
 
 const { openPresenterWindow, closePresenter, presenterActive, syncState, channel } = usePresenter()
 
@@ -306,6 +307,7 @@ function stopVdividerDrag() {
 
 provide('stepIndex', stepIndex)
 provide('slideIndex', currentIndex)
+provide('contentVersion', contentVersion)
 
 const transitionClass = computed(() => {
   const t = current.value?.transition ?? props.transition
@@ -580,6 +582,13 @@ watch([currentIndex, stepIndex], () => {
 }, { flush: 'post' })
 
 watch(() => stepIndex.value, () => {
+  nextTick(() => {
+    const slide = document.querySelector('.sp-slide')
+    if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
+  })
+})
+
+watch(contentVersion, () => {
   nextTick(() => {
     const slide = document.querySelector('.sp-slide')
     if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)

@@ -58,27 +58,6 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     }
   }
 
-  const merged = { ...builtins, ...components }
-
-  const target = resolveEl(el) ??
-    document.getElementById('sp-presentation') ??
-    document.getElementById('app') ??
-    document.body
-
-  const params = new URLSearchParams(window.location.search)
-  const isPresenter = options.presenter ?? params.has('presenter')
-
-  const app = createApp(SpPresentation, {
-    slides,
-    transition,
-    designWidth,
-    designHeight,
-    author,
-    components: merged,
-    presenter: isPresenter,
-  })
-  const vm = app.mount(target) as any
-
   let globalStyleEls: HTMLStyleElement[] = []
   function injectGlobalStyles(root: ParentNode) {
     Array.from(root.children).forEach(el => {
@@ -111,6 +90,27 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
       if (src) preloadInclude(src)
     })
   }
+
+  const merged = { ...builtins, ...components }
+
+  const target = resolveEl(el) ??
+    document.getElementById('sp-presentation') ??
+    document.getElementById('app') ??
+    document.body
+
+  const params = new URLSearchParams(window.location.search)
+  const isPresenter = options.presenter ?? params.has('presenter')
+
+  const app = createApp(SpPresentation, {
+    slides,
+    transition,
+    designWidth,
+    designHeight,
+    author,
+    components: merged,
+    presenter: isPresenter,
+  })
+  const vm = app.mount(target) as any
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
     const es = new EventSource('/__sp_events')
