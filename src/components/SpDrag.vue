@@ -6,6 +6,7 @@
     :style="style"
     @dblclick="toggleEdit"
     @mousedown="startDrag"
+    @touchstart="onTouchStart"
   >
     <div class="sp-drag-content" :class="{ 'sp-drag-content-blocked': editing }">
       <slot />
@@ -17,9 +18,10 @@
         class="sp-drag-handle"
         :class="'sp-handle-' + dir"
         @mousedown.stop="startResize($event, dir)"
+        @touchstart.stop.prevent="startResize($event, dir)"
       ></div>
       <div class="sp-drag-rotate-line"></div>
-      <div class="sp-drag-rotate-handle" @mousedown.stop="startRotate"></div>
+      <div class="sp-drag-rotate-handle" @mousedown.stop="startRotate" @touchstart.stop.prevent="startRotate"></div>
       <button class="sp-drag-save-btn" :title="saveTooltip" @mousedown.stop @click.stop="saveToSource">
         Save
       </button>
@@ -124,11 +126,13 @@ function enterEditMode() {
     if (ih.value === 'auto') ih.value = el.value.offsetHeight || 100
   }
   editing.value = true
+  spApi.dragging = true
   window.addEventListener('keydown', onNudgeKeydown)
 }
 
 function exitEditMode() {
   editing.value = false
+  spApi.dragging = false
   window.removeEventListener('keydown', onNudgeKeydown)
 }
 
@@ -162,6 +166,7 @@ function saveToSource() {
       console.error('SP edit error:', err)
       fallbackCopy(newAttrs)
     })
+    .finally(() => exitEditMode())
 }
 
 function attrString(useProps = false): string {
@@ -194,30 +199,13 @@ const px = (n: number | string) =>
   typeof n === 'number' ? n + 'px' : /^\d+(\.\d+)?$/.test(n) ? n + 'px' : n
 
 const style = computed(() => {
-  const left = resolveProp('x')
-  const top = resolveProp('y')
-  const width = resolveProp('w')
-  const height = resolveProp('h')
-  const rotate = resolveProp('rotate')
-
-  if (editing.value) {
-    return {
-      position: 'absolute' as const,
-      left: px(ix.value),
-      top: px(iy.value),
-      width: px(iw.value),
-      height: px(ih.value),
-      transform: ir.value ? `rotate(${ir.value}deg)` : undefined,
-    }
-  }
   return {
     position: 'absolute' as const,
-    left: px(left),
-    top: px(top),
-    width: px(width),
-    height: px(height),
-    transform: rotate && rotate !== 0 && rotate !== '0'
-      ? `rotate(${rotate}deg)` : undefined,
+    left: px(ix.value),
+    top: px(iy.value),
+    width: px(iw.value),
+    height: px(ih.value),
+    transform: ir.value ? `rotate(${ir.value}deg)` : undefined,
   }
 })
 
@@ -228,36 +216,64 @@ let dragOrigX = 0
 let dragOrigY = 0
 let interacting = 0
 
+function eventXY(e: MouseEvent | TouchEvent): { clientX: number; clientY: number } {
+  if ('touches' in e) {
+    return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY }
+  }
+  return { clientX: e.clientX, clientY: e.clientY }
+}
+
+let lastTapTime = 0
+
+function onTouchStart(e: TouchEvent) {
+  if (editing.value) {
+    e.preventDefault()
+    startDrag(e)
+    return
+  }
+  const now = Date.now()
+  if (now - lastTapTime < 300) {
+    e.preventDefault()
+    toggleEdit()
+    lastTapTime = 0
+    return
+  }
+  lastTapTime = now
+}
+
 function stopDrag() {
   if (!isDragging) return
   isDragging = false
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
-  setTimeout(() => {
-    interacting--
-    if (!interacting) spApi.dragging = false
-  }, 0)
+  document.removeEventListener('touchmove', onDrag)
+  document.removeEventListener('touchend', stopDrag)
+  setTimeout(() => interacting--, 0)
 }
 
-function startDrag(e: MouseEvent) {
+function startDrag(e: MouseEvent | TouchEvent) {
   if (!editing.value) return
   cleanup()
   isDragging = true
   interacting++
-  spApi.dragging = true
-  dragStartX = e.clientX
-  dragStartY = e.clientY
+  const { clientX, clientY } = eventXY(e)
+  dragStartX = clientX
+  dragStartY = clientY
   dragOrigX = ix.value
   dragOrigY = iy.value
   document.addEventListener('mousemove', onDrag)
   document.addEventListener('mouseup', stopDrag)
+  document.addEventListener('touchmove', onDrag, { passive: false })
+  document.addEventListener('touchend', stopDrag)
 }
 
-function onDrag(e: MouseEvent) {
+function onDrag(e: MouseEvent | TouchEvent) {
   if (!isDragging) return
+  e.preventDefault()
   const scale = getSlideScale()
-  const dx = (e.clientX - dragStartX) / scale
-  const dy = (e.clientY - dragStartY) / scale
+  const { clientX, clientY } = eventXY(e)
+  const dx = (clientX - dragStartX) / scale
+  const dy = (clientY - dragStartY) / scale
   ix.value = dragOrigX + dx
   iy.value = dragOrigY + dy
 }
@@ -276,34 +292,37 @@ function stopResize() {
   resizing = false
   document.removeEventListener('mousemove', onResize)
   document.removeEventListener('mouseup', stopResize)
-  setTimeout(() => {
-    interacting--
-    if (!interacting) spApi.dragging = false
-  }, 0)
+  document.removeEventListener('touchmove', onResize)
+  document.removeEventListener('touchend', stopResize)
+  setTimeout(() => interacting--, 0)
 }
 
-function startResize(e: MouseEvent, dir: string) {
+function startResize(e: MouseEvent | TouchEvent, dir: string) {
   if (!editing.value) return
   cleanup()
   resizing = true
   interacting++
-  spApi.dragging = true
+  const { clientX, clientY } = eventXY(e)
   resizeDir = dir
-  resizeStartX = e.clientX
-  resizeStartY = e.clientY
+  resizeStartX = clientX
+  resizeStartY = clientY
   resizeOrigX = ix.value
   resizeOrigY = iy.value
   resizeOrigW = parseNumeric(iw.value)
   resizeOrigH = parseNumeric(ih.value)
   document.addEventListener('mousemove', onResize)
   document.addEventListener('mouseup', stopResize)
+  document.addEventListener('touchmove', onResize, { passive: false })
+  document.addEventListener('touchend', stopResize)
 }
 
-function onResize(e: MouseEvent) {
+function onResize(e: MouseEvent | TouchEvent) {
   if (!resizing) return
+  e.preventDefault()
   const scale = getSlideScale()
-  const dx = (e.clientX - resizeStartX) / scale
-  const dy = (e.clientY - resizeStartY) / scale
+  const { clientX, clientY } = eventXY(e)
+  const dx = (clientX - resizeStartX) / scale
+  const dy = (clientY - resizeStartY) / scale
 
   let x = resizeOrigX
   let y = resizeOrigY
@@ -367,30 +386,33 @@ function stopRotate() {
   rotating = false
   document.removeEventListener('mousemove', onRotate)
   document.removeEventListener('mouseup', stopRotate)
-  setTimeout(() => {
-    interacting--
-    if (!interacting) spApi.dragging = false
-  }, 0)
+  document.removeEventListener('touchmove', onRotate)
+  document.removeEventListener('touchend', stopRotate)
+  setTimeout(() => interacting--, 0)
 }
 
-function startRotate(e: MouseEvent) {
+function startRotate(e: MouseEvent | TouchEvent) {
   if (!editing.value) return
   cleanup()
   rotating = true
   interacting++
-  spApi.dragging = true
   const rect = el.value!.getBoundingClientRect()
+  const { clientX, clientY } = eventXY(e)
   rotateCenterX = rect.left + rect.width / 2
   rotateCenterY = rect.top + rect.height / 2
-  rotateStartAngle = Math.atan2(e.clientY - rotateCenterY, e.clientX - rotateCenterX)
+  rotateStartAngle = Math.atan2(clientY - rotateCenterY, clientX - rotateCenterX)
   rotateOrigR = ir.value
   document.addEventListener('mousemove', onRotate)
   document.addEventListener('mouseup', stopRotate)
+  document.addEventListener('touchmove', onRotate, { passive: false })
+  document.addEventListener('touchend', stopRotate)
 }
 
-function onRotate(e: MouseEvent) {
+function onRotate(e: MouseEvent | TouchEvent) {
   if (!rotating) return
-  const angle = Math.atan2(e.clientY - rotateCenterY, e.clientX - rotateCenterX)
+  e.preventDefault()
+  const { clientX, clientY } = eventXY(e)
+  const angle = Math.atan2(clientY - rotateCenterY, clientX - rotateCenterX)
   let delta = angle - rotateStartAngle
   ir.value = rotateOrigR + delta * (180 / Math.PI)
 }
@@ -401,8 +423,9 @@ function cleanup() {
   stopRotate()
 }
 
+syncFromProps()
+
 onMounted(() => {
-  syncFromProps()
   document.addEventListener('click', handleOutsideClick)
 })
 
@@ -436,10 +459,10 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-edit-overlay {
   position: absolute;
-  top: -8px;
-  left: -8px;
-  width: calc(100% + 16px);
-  height: calc(100% + 16px);
+  top: -16px;
+  left: -16px;
+  width: calc(100% + 32px);
+  height: calc(100% + 32px);
   pointer-events: none;
   z-index: 1;
   overflow: visible;
@@ -447,36 +470,37 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-edit-border {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
   border: 2px dashed #3b82f6;
   pointer-events: none;
 }
 
 .sp-drag-handle {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 30px;
+  height: 30px;
   background: #fff;
-  border: 2px solid #3b82f6;
+  border: 3px solid #3b82f6;
+  border-radius: 3px;
   pointer-events: auto;
   z-index: 2;
 }
 
-.sp-handle-nw { top: 1px; left: 1px; cursor: nwse-resize; }
-.sp-handle-n  { top: 1px; left: 50%; margin-left: -7px; cursor: ns-resize; }
-.sp-handle-ne { top: 1px; right: 1px; cursor: nesw-resize; }
-.sp-handle-e  { top: 50%; margin-top: -7px; right: 1px; cursor: ew-resize; }
-.sp-handle-se { bottom: 1px; right: 1px; cursor: nwse-resize; }
-.sp-handle-s  { bottom: 1px; left: 50%; margin-left: -7px; cursor: ns-resize; }
-.sp-handle-sw { bottom: 1px; left: 1px; cursor: nesw-resize; }
-.sp-handle-w  { top: 50%; margin-top: -7px; left: 1px; cursor: ew-resize; }
+.sp-handle-nw { top: 0; left: 0; cursor: nwse-resize; transform: translate(-50%, -50%); }
+.sp-handle-n  { top: 0; left: 50%; cursor: ns-resize; transform: translate(-50%, -50%); }
+.sp-handle-ne { top: 0; right: 0; cursor: nesw-resize; transform: translate(50%, -50%); }
+.sp-handle-e  { top: 50%; right: 0; cursor: ew-resize; transform: translate(50%, -50%); }
+.sp-handle-se { bottom: 0; right: 0; cursor: nwse-resize; transform: translate(50%, 50%); }
+.sp-handle-s  { bottom: 0; left: 50%; cursor: ns-resize; transform: translate(-50%, 50%); }
+.sp-handle-sw { bottom: 0; left: 0; cursor: nesw-resize; transform: translate(-50%, 50%); }
+.sp-handle-w  { top: 50%; left: 0; cursor: ew-resize; transform: translate(-50%, -50%); }
 
 .sp-drag-rotate-line {
   position: absolute;
-  top: -24px;
+  top: -16px;
   left: calc(50% - 1px);
   width: 2px;
   height: 28px;
@@ -486,13 +510,13 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-rotate-handle {
   position: absolute;
-  top: -30px;
+  top: -22px;
   left: calc(50% - 8px);
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #fff;
-  border: 2px solid #3b82f6;
+  border: 3px solid #3b82f6;
   cursor: grab;
   pointer-events: auto;
   z-index: 2;
@@ -500,11 +524,11 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-save-btn {
   position: absolute;
-  bottom: -24px;
+  bottom: -16px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 4px 14px;
-  font-size: 12px;
+  padding: 6px 18px;
+  font-size: 13px;
   background: #3b82f6;
   color: #fff;
   border: none;
