@@ -7,6 +7,7 @@ import SpDrag from './components/SpDrag.vue'
 import SpInclude from './components/SpInclude.vue'
 import SpSvg from './components/SpSvg.vue'
 import SpStyle from './components/SpStyle.vue'
+import SpToc from './components/SpToc.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
 import { preloadInclude } from './composables/includeCache'
@@ -19,6 +20,7 @@ const builtins: Record<string, Component> = {
   'sp-include': SpInclude,
   'sp-svg': SpSvg,
   'sp-style': SpStyle,
+  'sp-toc': SpToc,
 }
 
 function resolveEl(el?: string | HTMLElement): HTMLElement | null {

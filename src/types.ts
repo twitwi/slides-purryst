@@ -5,6 +5,7 @@ export interface SlideData {
   num: number
   steps: number
   transition: string
+  noToc?: boolean
 }
 
 export interface Navigation {

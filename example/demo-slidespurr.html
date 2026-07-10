@@ -10,32 +10,52 @@
 <body>
 
 <template id="sp-content">
-  <sp-slide transition="fade">
+
+  <sp-slide>
     <h1>SlidesPurryst</h1>
     <p>Where Typst meets Vue in purr-fect harmony.</p>
     <p style="color:#64748b;font-size:0.9em">Arrow keys or Space to navigate</p>
     <p>NB: this demo file is not using typst</p>
-  </sp-slide>
+  </sp-slide>  
 
-  <sp-slide steps="2">
-    <h2>Step Reveal</h2>
-    <p>Always visible.</p>
-    <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
-    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
-  </sp-slide>
+  <sp-slide no-toc>
+    <h2>Here is TOC</h2>
+    <sp-toc />
+  </sp-slide>  
 
-  <sp-slide transition="slide-up">
-    <h2>Transitions</h2>
+  <sp-slide>
+    <h2>Slide Transitions</h2>
+    <p>Do not overuse...</p>
+  </sp-slide>  
+
+  <sp-slide>
+    <h3>Transitions: options</h3>
     <p>Per-slide transitions via <code>transition</code> attribute.</p>
     <ul>
       <li><code>fade</code> — default</li>
       <li><code>slide-up</code> — vertical slide</li>
       <li><code>zoom</code> — scale in/out</li>
     </ul>
+    <p>A "transition" option to createSlidesPurryst, that is used as default.</p>
+  </sp-slide>
+
+  <sp-slide transition="fade">
+    <h3>This one is "fade"</h3>
+    <img src="./slides-purryst-banner.svg" />
+  </sp-slide>
+
+  <sp-slide transition="slide-up">
+    <h3>This one is "slide-up"</h3>
+    <img src="./slides-purryst-banner.svg" style="transform: scale(-1,1)" />
   </sp-slide>
 
   <sp-slide transition="zoom">
-    <h2>Keyboard Navigation</h2>
+    <h3>This one is "zoom"</h3>
+    <img src="./slides-purryst-banner.svg" />
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Keyboard Navigation</h3>
     <ul>
       <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">→</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">Space</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">↓</kbd>: Next</li>
       <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">←</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">↑</kbd>: Previous</li>
@@ -43,6 +63,12 @@
       <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">a</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">z</kbd>: End of prev / next slide</li>
       <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">F</kbd>: Toggle fullscreen</li>
     </ul>
+  </sp-slide>
+
+
+
+  <sp-slide>
+    <h2>Some features</h2>
   </sp-slide>
 
   <sp-slide>
@@ -73,8 +99,15 @@
     </sp-drag>
   </sp-slide>
 
+  <sp-slide steps="2">
+    <h3>Step Reveal</h3>
+    <p>Always visible.</p>
+    <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
+    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
+  </sp-slide>
+
   <sp-slide>
-    <h2>Built-in Components</h2>
+    <h3>Built-in Components</h3>
     <p><code>sp-alternatives</code> cycles children per step:</p>
     <sp-alternatives>
       <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
@@ -87,7 +120,7 @@
   </sp-slide>
 
   <sp-slide>
-    <h2>Inline SVG</h2>
+    <h3>Inline SVG</h3>
     <p>Move your mouse on the cat</p>
     <sp-svg src="./slides-purryst-banner-sticker.svg"></sp-svg>
     <br/>
@@ -100,8 +133,8 @@
     </sp-style>
   </sp-slide>
     
-  <sp-slide transition="fade">
-    <h2><code>sp-anim</code> — @jump (vis groups)</h2>
+  <sp-slide>
+    <h3><code>sp-anim</code> — @jump (vis groups)</h3>
     <p>Always visible</p>
     <sp-anim spec="@jump(1)" />
     <p>Appears on click 1</p>
@@ -111,8 +144,8 @@
     <p>Appears on click 3</p>
   </sp-slide>
 
-  <sp-slide transition="fade">
-    <h2><code>sp-anim</code> — selectors (actions)</h2>
+  <sp-slide>
+    <h3><code>sp-anim</code> — selectors (actions)</h3>
     <p>Always visible</p>
     <sp-anim spec="li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)" />
     <ul>
@@ -122,8 +155,8 @@
     </ul>
   </sp-slide>
 
-  <sp-slide transition="fade">
-    <h2><code>sp-anim</code> — @children</h2>
+  <sp-slide>
+    <h3><code>sp-anim</code> — @children</h3>
     <sp-anim spec="@children(ul)" />
     <ul>
       <li>First item</li>
@@ -133,8 +166,8 @@
     </ul>
   </sp-slide>
 
-  <sp-slide transition="fade">
-    <h2><code>sp-anim</code> — Combined</h2>
+  <sp-slide>
+    <h3><code>sp-anim</code> — Combined</h3>
     <p>Always visible heading</p>
     <sp-anim spec=".step1 | .step2 | @children(ul)" />
     <div class="step1" style="padding:.3em .6em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div>
@@ -146,8 +179,8 @@
     </ul>
   </sp-slide>
 
-  <sp-slide transition="fade">
-    <h2><code>sp-anim</code> — @add / @remove</h2>
+  <sp-slide>
+    <h3><code>sp-anim</code> — @add / @remove</h3>
     <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
     <div style="display:flex;align-items:center;gap:2em">
       <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
@@ -172,6 +205,11 @@
   </sp-slide>
 
   <sp-slide>
+    <h2>Here comes the TOC again</h2>
+    <sp-toc />
+  </sp-slide>
+
+  <sp-slide no-toc>
     <h1>END</h1>
   </sp-slide>
 

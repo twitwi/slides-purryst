@@ -308,6 +308,8 @@ function stopVdividerDrag() {
 provide('stepIndex', stepIndex)
 provide('slideIndex', currentIndex)
 provide('contentVersion', contentVersion)
+provide('slides', slides)
+provide('goTo', goTo)
 
 const transitionClass = computed(() => {
   const t = current.value?.transition ?? props.transition
