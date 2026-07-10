@@ -9,6 +9,7 @@ import SpSvg from './components/SpSvg.vue'
 import SpStyle from './components/SpStyle.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
+import { preloadInclude } from './composables/includeCache'
 import './style.css'
 
 const builtins: Record<string, Component> = {
@@ -105,6 +106,10 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   const template = document.getElementById('sp-content') as HTMLTemplateElement | null
   if (template?.content) {
     injectGlobalStyles(template.content)
+    template.content.querySelectorAll('sp-include').forEach(el => {
+      const src = el.getAttribute('src')
+      if (src) preloadInclude(src)
+    })
   }
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
