@@ -129,14 +129,19 @@
   </sp-slide>
 
   <sp-slide>
-    <h3>Swap content</h3>
-    <p><code>sp-alternatives</code> cycles children per step</p>
-    <sp-alternatives>
+    <h3>Swap content − <code>sp-alternatives</code></h3>
+    <p>it shows children one by one (or cycles if <code>cycle</code>)</p>
+    <sp-alternatives cycle>
       <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
       <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2</p>
       <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3</p>
     </sp-alternatives>
-    <p>Step through to cycle!</p>
+    <p>It can start delayed (with e.g. <code>at="2"</code>)</p>
+    <sp-alternatives at="2">
+      <span style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">3</span>
+      <span style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">4</span>
+      <span style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">5</span>
+    </sp-alternatives>
   </sp-slide>
 
   <sp-slide>

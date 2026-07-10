@@ -93,7 +93,15 @@ export function buildSteps(slide: SlideData | null) {
 
   const maxVisStep = computeMaxVisStep(html)
 
-  return Math.max(pauses + animSteps + 1, maxAt + 1, maxVisStep + 1)
+  let maxAlt = 0
+  const alts = tmp.querySelectorAll('sp-alternatives')
+  alts.forEach(a => {
+    const at = parseInt(a.getAttribute('at') || '0', 10)
+    const needed = at + a.children.length
+    if (needed > maxAlt) maxAlt = needed
+  })
+
+  return Math.max(pauses + animSteps + 1, maxAt + 1, maxVisStep + 1, maxAlt)
 }
 
 function stripAnimHtml(html: string): string {
