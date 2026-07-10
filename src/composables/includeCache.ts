@@ -26,3 +26,14 @@ export function preloadInclude(src: string): Promise<void> {
   pending.set(src, promise)
   return promise
 }
+
+export function serializeCache(): string {
+  return JSON.stringify(Object.fromEntries(cache))
+}
+
+export function loadCache(json: string): void {
+  const data = JSON.parse(json)
+  for (const [k, v] of Object.entries(data)) {
+    cache.set(k, v as string)
+  }
+}

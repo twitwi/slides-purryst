@@ -206,6 +206,7 @@ import { useScale } from '../composables/useScale'
 import { useElementScale } from '../composables/useElementScale'
 import SpSlide from './SpSlide.vue'
 import { spApi } from '../sp-api'
+import { exportStandalone } from '../export'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -434,6 +435,7 @@ spApi.next = next
 spApi.prev = prev
 spApi.nextSlide = nextSlide
 spApi.prevSlide = prevSlide
+spApi.export = exportStandalone
 
 const overviewScale = ref(0.15)
 const overviewGridEl = ref<HTMLElement | null>(null)

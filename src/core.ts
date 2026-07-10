@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import type { Component } from 'vue'
 import SpPresentation from './components/SpPresentation.vue'
-import { spApi } from './sp-api'
+import { spApi, exportInitOptions } from './sp-api'
 import SpAlternatives from './components/SpAlternatives.vue'
 import SpAnim from './components/SpAnim.vue'
 import SpDrag from './components/SpDrag.vue'
@@ -11,7 +11,8 @@ import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
-import { preloadInclude } from './composables/includeCache'
+import { preloadInclude, loadCache } from './composables/includeCache'
+import { exportStandalone } from './export'
 import './style.css'
 
 const builtins: Record<string, Component> = {
@@ -34,7 +35,13 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components } = options
 
   if (!slides) {
-    const template = document.getElementById('sp-content') as HTMLTemplateElement | null
+  const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
+  if (cacheTemplate?.content) {
+    const json = cacheTemplate.content.textContent?.trim()
+    if (json) loadCache(json)
+  }
+
+  const template = document.getElementById('sp-content') as HTMLTemplateElement | null
     if (template?.content) {
       slides = parseElementToSlides(template.content)
       if (transition) {
@@ -104,6 +111,15 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   const params = new URLSearchParams(window.location.search)
   const isPresenter = options.presenter ?? params.has('presenter')
 
+  Object.assign(exportInitOptions, {
+    transition,
+    transitionDuration,
+    designWidth,
+    designHeight,
+    author,
+    el: '#app',
+  })
+
   const app = createApp(SpPresentation, {
     slides,
     transition,
@@ -138,5 +154,6 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     es.addEventListener('connected', () => {}, { once: true })
   }
 
+  ;(app as any).export = exportStandalone
   return app
 }

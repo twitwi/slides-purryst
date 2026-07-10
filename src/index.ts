@@ -1,6 +1,7 @@
 export type { SPSlidesOptions, SlideData, Navigation, PresenterState, Transformer } from './types'
 
 export { createSlidesPurryst } from './core'
+export { exportStandalone } from './export'
 export { spApi } from './sp-api'
 
 export { useScale } from './composables/useScale'

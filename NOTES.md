@@ -9,9 +9,14 @@
 - [ ] make a target for the lib that is single file (include dependencies like vue), even the css, for use as a single js script src="..."
 - [ ] total slide count (access/provide and show by default) + have a boolean on a slide to say it is a "fake end" (so the maximum displayed is this one as long is it is not passed)... so there are actually 2 concepts of "last slide number" (the current last to display) and "last slide numbers" (list with the numbers of all "fake end" slides + the last slide unconditionally)
 - [ ] presenter view button detect when the presenter closes the view to update the state
+- [ ] presenter when changing slide also update the main view (vice versa is already done)
+- [ ] when dragging draggable, disable touch nav
+- [ ] when dragging draggable, arrow keys move the draggable, not the slides
+- [ ] in the overview, disable slide mouse events
 
 ## TODO
 
+- [ ] why is the export inlinesvg not scaling with sp-drag (slide 15)
 - [ ] export as standalone single file, by serializing the cache inside the main file (to not have dependency on the includes)
 - [ ] inline svg, allow rewrap in svg, with automatic re-boxing, maybe <sp-rebox :pad="[10]"><sp-include .... or have a <sp-svg that has options (and reuses <sp-include)
 - [ ] typst side

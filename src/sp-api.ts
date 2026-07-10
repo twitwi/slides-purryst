@@ -14,4 +14,7 @@ export const spApi = reactive({
   prev: () => {},
   nextSlide: () => {},
   prevSlide: () => {},
+  export: () => {},
 })
+
+export const exportInitOptions: Record<string, unknown> = {}
