@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
+import { spApi } from '../sp-api'
 
 const slideIndex = inject('slideIndex', ref(0))
 
@@ -105,6 +106,17 @@ function syncFromProps() {
   ir.value = parseNumeric(resolveProp('rotate'))
 }
 
+function onNudgeKeydown(e: KeyboardEvent) {
+  if (!editing.value) return
+  const step = e.shiftKey ? 10 : 1
+  switch (e.key) {
+    case 'ArrowUp': e.preventDefault(); iy.value -= step; break
+    case 'ArrowDown': e.preventDefault(); iy.value += step; break
+    case 'ArrowLeft': e.preventDefault(); ix.value -= step; break
+    case 'ArrowRight': e.preventDefault(); ix.value += step; break
+  }
+}
+
 function enterEditMode() {
   syncFromProps()
   if (el.value) {
@@ -112,10 +124,12 @@ function enterEditMode() {
     if (ih.value === 'auto') ih.value = el.value.offsetHeight || 100
   }
   editing.value = true
+  window.addEventListener('keydown', onNudgeKeydown)
 }
 
 function exitEditMode() {
   editing.value = false
+  window.removeEventListener('keydown', onNudgeKeydown)
 }
 
 function saveToSource() {
@@ -219,7 +233,10 @@ function stopDrag() {
   isDragging = false
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
-  setTimeout(() => interacting--, 0)
+  setTimeout(() => {
+    interacting--
+    if (!interacting) spApi.dragging = false
+  }, 0)
 }
 
 function startDrag(e: MouseEvent) {
@@ -227,6 +244,7 @@ function startDrag(e: MouseEvent) {
   cleanup()
   isDragging = true
   interacting++
+  spApi.dragging = true
   dragStartX = e.clientX
   dragStartY = e.clientY
   dragOrigX = ix.value
@@ -258,7 +276,10 @@ function stopResize() {
   resizing = false
   document.removeEventListener('mousemove', onResize)
   document.removeEventListener('mouseup', stopResize)
-  setTimeout(() => interacting--, 0)
+  setTimeout(() => {
+    interacting--
+    if (!interacting) spApi.dragging = false
+  }, 0)
 }
 
 function startResize(e: MouseEvent, dir: string) {
@@ -266,6 +287,7 @@ function startResize(e: MouseEvent, dir: string) {
   cleanup()
   resizing = true
   interacting++
+  spApi.dragging = true
   resizeDir = dir
   resizeStartX = e.clientX
   resizeStartY = e.clientY
@@ -345,7 +367,10 @@ function stopRotate() {
   rotating = false
   document.removeEventListener('mousemove', onRotate)
   document.removeEventListener('mouseup', stopRotate)
-  setTimeout(() => interacting--, 0)
+  setTimeout(() => {
+    interacting--
+    if (!interacting) spApi.dragging = false
+  }, 0)
 }
 
 function startRotate(e: MouseEvent) {
@@ -353,6 +378,7 @@ function startRotate(e: MouseEvent) {
   cleanup()
   rotating = true
   interacting++
+  spApi.dragging = true
   const rect = el.value!.getBoundingClientRect()
   rotateCenterX = rect.left + rect.width / 2
   rotateCenterY = rect.top + rect.height / 2

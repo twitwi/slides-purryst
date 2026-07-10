@@ -1,11 +1,13 @@
 import { onMounted, onUnmounted } from 'vue'
 import type { Navigation } from '../types'
+import { spApi } from '../sp-api'
 
 export function useNavigation(actions: Navigation & { onPresenterToggle?: () => void; onOverviewToggle?: () => void; onGoPrompt?: () => void }) {
   let touchStartX = 0
   let touchStartY = 0
 
   function onKeydown(e: KeyboardEvent) {
+    if (spApi.dragging) return
     const t = e.target as HTMLElement
     if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable) return
 
@@ -103,6 +105,7 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
   }
 
   function onTouchEnd(e: TouchEvent) {
+    if (spApi.dragging) return
     const dx = e.changedTouches[0].clientX - touchStartX
     const dy = e.changedTouches[0].clientY - touchStartY
     if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return
