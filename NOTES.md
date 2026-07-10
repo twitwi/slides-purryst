@@ -17,6 +17,8 @@
 - [ ] typst side
 - [ ] build and provide a toc-like data structure so slides can use it (see how done already for goto/search)
 - [ ] come back to fixing step and last slide behavior of left button in the nav bar
+- [ ] ensure scalable styles e.g. TOC, so that if I wrap it changing the font size, it adapts
+- [ ] explore if we can rationalize that:     <h3>Explicit <code>&amp;lt;sp-step at="..."></code></h3>
 
 ## Design
 

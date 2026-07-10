@@ -68,17 +68,17 @@
 
 
   <sp-slide>
-    <h2>Some features</h2>
+    <h2>Some authoring features</h2>
   </sp-slide>
 
   <sp-slide>
-    <h2>Vue Components</h2>
+    <h3>Custom Vue Components</h3>
     <p>Custom components work inside slides.</p>
     <my-counter :count="5"></my-counter>
   </sp-slide>
 
   <sp-slide>
-    <h3>Drag</h3>
+    <h3>Draggable Elements</h3>
     <sp-pause></sp-pause>
     <sp-drag at="287|249|700|246|15">
       <div style="color: black;background:#dbeafe;padding:1em;border-radius:8px;border:2px solid #3b82f6">Draggable box</div>
@@ -99,26 +99,6 @@
     </sp-drag>
   </sp-slide>
 
-  <sp-slide steps="2">
-    <h3>Step Reveal</h3>
-    <p>Always visible.</p>
-    <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
-    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
-  </sp-slide>
-
-  <sp-slide>
-    <h3>Built-in Components</h3>
-    <p><code>sp-alternatives</code> cycles children per step:</p>
-    <sp-alternatives>
-      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
-      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2</p>
-      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3</p>
-    </sp-alternatives>
-    <sp-pause></sp-pause>
-    <p>Step through to cycle!</p>
-    <sp-pause></sp-pause>
-  </sp-slide>
-
   <sp-slide>
     <h3>Inline SVG</h3>
     <p>Move your mouse on the cat</p>
@@ -133,6 +113,32 @@
     </sp-style>
   </sp-slide>
     
+
+
+
+  <sp-slide>
+    <h2>Simple Slide Steps</h2>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Explicit sp-step</h3>
+    <p><code>sp-step</code> declares when its content appears</p>
+    <p>Always visible.</p>
+    <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
+    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Swap content</h3>
+    <p><code>sp-alternatives</code> cycles children per step</p>
+    <sp-alternatives>
+      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
+      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2</p>
+      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3</p>
+    </sp-alternatives>
+    <p>Step through to cycle!</p>
+  </sp-slide>
+
   <sp-slide>
     <h3><code>sp-anim</code> — @jump (vis groups)</h3>
     <p>Always visible</p>
@@ -204,9 +210,14 @@
     </sp-style>
   </sp-slide>
 
-  <sp-slide>
+  <sp-slide no-toc>
     <h2>Here comes the TOC again</h2>
     <sp-toc />
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Here comes the TOC again, full</h3>
+    <sp-toc :end="2"/>
   </sp-slide>
 
   <sp-slide no-toc>
