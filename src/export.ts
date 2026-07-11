@@ -29,10 +29,6 @@ export async function exportStandalone(): Promise<void> {
       if (r.ok) styles.push(await r.text())
     } catch {}
   }
-  document.querySelectorAll('style').forEach(el => {
-    styles.push(el.textContent || '')
-  })
-
   const cacheJson = serializeCache()
   const cacheTemplate = `<template id="sp-cache">${cacheJson.replace(/</g, '&lt;')}</template>`
 
