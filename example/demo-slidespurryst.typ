@@ -100,15 +100,13 @@
 #slide[
   == Draggable Elements
 
-  #pause
-
   #drag(at: "287|249|700|246|15")[
     #block(fill: rgb("#dbeafe"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#3b82f6"))[
       #text(fill: black)[*Draggable box*]
     ]
   ]
 
-  #pause
+  #pause()
 
   #drag(at: "1204|306|830.41|411.49|-39")[
     #block(fill: rgb("#dcfce7"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#22c55e"))[

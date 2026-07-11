@@ -1,10 +1,3 @@
-#let pause = context {
-  if target() == "html" {
-    html.elem("sp-step")
-  } else {
-    v(1em)
-  }
-}
 
 #let step(at: none, type: none, body) = context {
   if target() == "html" {
