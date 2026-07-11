@@ -10,19 +10,21 @@ const useTypst = process.argv.includes('--typst') || process.argv.includes('typs
 const demoFile = useTypst
   ? 'example/demo-slidespurryst.html'
   : 'example/demo-slidespurr.html'
-const output = resolve(root, demoFile)
+const demoTypst = 'example/demo-slidespurryst.typ'
 
 let processes = []
 
 if (useTypst) {
+  const output = resolve(root, demoFile)
+  const outputIntermediate = resolve(root, demoFile + '2')
   const typstArgs = [
     'watch', '--no-serve',
     '--root', root,
-    '--input', 'slides-purryst-path=../dist/slides-purryst.es.js',
-    '--input', 'slides-purryst-css-path=../dist/slides-purryst.css',
+    '--input', 'slides-purryst-path=../src/index.ts',
+    //'--input', 'slides-purryst-css-path=../dist/slides-purryst.css',
     '--input', 'slides-purryst-module=true',
     '--format', 'html', '--features', 'html',
-    'example/demo-slidespurryst.typ', output,
+    demoTypst, output,
   ]
 
   const typst = spawn('typst', typstArgs, { stdio: 'inherit', cwd: root })
@@ -33,16 +35,20 @@ if (useTypst) {
     const mtime = cur.mtimeMs
     if (mtime !== lastMtime) {
       lastMtime = mtime
-      try {
-        execSync('npx prettier --write --parser html "' + output + '"', {
-          cwd: root, stdio: 'ignore', timeout: 10000,
-        })
-      } catch {}
+      //try {
+        //execSync('cp "' + outputIntermediate + '" "' + output + '"', {
+        //  cwd: root, stdio: 'ignore', timeout: 10000,
+        //})
+        //execSync('pnpx prettier --write --parser html "' + output + '"', {
+        //  cwd: root, stdio: 'ignore', timeout: 10000,
+        //})
+      //} catch {}
     }
   })
 }
 
-const vite = spawn('npx', ['vite', '--port', '3334', '--open', '/' + demoFile], {
+//const vite = spawn('pnpm', ['vite', '--port', '3334', '--open', '/' + demoFile], {
+const vite = spawn('pnpm', ['serve-open', '/' + demoFile], {
   stdio: 'inherit',
   cwd: root,
   shell: true,

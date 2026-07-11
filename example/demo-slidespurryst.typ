@@ -74,7 +74,7 @@
 ]
 
 #slide[
-  == Some interesting features
+  = Some interesting features
 ]
 
 #slide[
@@ -84,21 +84,19 @@
 
   #toc(start: "3", ctx: true)
 
-  #drag(at: "1202|62|524.59|961.42|0")[
-    #block(
-      fill: black,
-      inset: 10pt,
-      stroke: 5pt + gray,
-    )[
+  #drag(at: "1096|59|594.1552173913044|847.3330434782608|0")[
+    #component("div", attrs: (style: "font-size: 25px; border: 5px solid gray; background: black; padding: 10px; position: absolute; inset: 0; overflow: scroll;"), body: [
       Full TOC
 
       #toc()
-    ]
+    ])
   ]
 ]
 
 #slide[
   == Draggable Elements
+
+  #pause()
 
   #drag(at: "287|249|700|246|15")[
     #block(fill: rgb("#dbeafe"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#3b82f6"))[
@@ -156,11 +154,28 @@
 
   Use Typst raw blocks for code snippets.
 
-  #component("pre", body: [
-    #component("code", attrs: ("class": "language-typst"), body: [
-      #text("#import \"../typst/slides-purryst/lib.typ\": *\n#show: slides-theme.with(title: \"Demo\")\n\n#slide[ = Hello ]")
-    ])
-  ])
+  //#show "\n": [#{"\n"}#component("span", attrs: (class: "sp-eol"), body: [eol])]
+
+  #show raw.line: (it) => component("span", attrs: (:), body: it)
+
+  ```typst
+#import "../typst/slides-purryst/lib.typ": *
+#show: slides-theme.with(title: "Demo")
+
+#slide[ = Hello ]
+  ```
+
+  //#anim("@children(code)")
+
+]
+
+
+
+
+
+
+#slide[
+  = Some Animations
 ]
 
 #slide[

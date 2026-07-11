@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       watch: {
-        ignored: ['**/example/*.html', '**/*' + htmlFile]
+        ignored: [htmlFile]
       }
     },
     plugins: [

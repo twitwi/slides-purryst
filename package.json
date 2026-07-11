@@ -23,6 +23,8 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "dev:typst": "node scripts/dev.mjs --typst",
+    "serve-open": "vite --port 3334 --open",
+    
     "build": "vite build",
     "build:bundle": "vite build --config vite.bundle.ts",
     "build:slides": "typst compile --root . --input \"slides-purryst-path=../dist/slides-purryst.es.js\" --input \"slides-purryst-css-path=../dist/slides-purryst.css\" --input \"slides-purryst-module=true\" --format html --features html example/slides.typ example/index.html",

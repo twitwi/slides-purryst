@@ -26,6 +26,9 @@ From Slidev general (not in ultracharger):
 
 ## TODO
 
+- [ ] should probably better structure so that countAnimSpecParts is more generic
+- [ ] integrate show raw.line into the typst theme
+- [ ] show rule to map block onto a div, with explicit attributes (of block) transformed in style in div
 - [ ] cache custom components too
 - [ ] (typst) drag will not work with multifile input or even loop probably, or function that creates a drag, etc
 - [ ] (js) drag will also not work if including a file
