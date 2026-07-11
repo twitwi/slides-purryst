@@ -42,8 +42,8 @@
 #slide(transition: "fade")[
   == Fade
 
-  #img(src: path("./slides-purryst-banner.svg")
-)]
+  #img(src: path("./slides-purryst-banner.svg"))
+]
 
 #slide(transition: "slide-up")[
   == Slide Up
@@ -54,8 +54,8 @@
 #slide(transition: "zoom", transitionDuration: "600")[
   == Zoom (600ms)
 
-  #img(src: path("./slides-purryst-banner.svg")
-)]
+  #img(src: path("./slides-purryst-banner.svg"))
+]
 
 #slide(transition: "fade", transitionDuration: "100")[
   == Fade (100ms)
@@ -148,7 +148,7 @@
 
   #svg(src: path("./slides-purryst-banner-sticker.svg"), width: "100%", height: "200")
 
-  #drag(at: "1098|284|564.37|227.06|44.5")[
+  #drag(at: "1112|298|564.37|227.06|44.5")[
     #svg(src: path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
   ]
 ]

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawn, execSync } from 'child_process'
 import { createServer } from 'http'
-import { readFileSync, watch, existsSync } from 'fs'
+import { readFileSync, writeFileSync, watch, existsSync } from 'fs'
 import { join, dirname, extname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -106,6 +106,73 @@ function serveFile(filePath, res) {
 }
 
 createServer((req, res) => {
+  // POST /__sp_edit — apply drag position change back to .typ source
+  if (req.method === 'POST' && req.url === '/__sp_edit') {
+    let body = ''
+    req.on('data', chunk => body += chunk)
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body)
+        if (data.dragId == null) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ ok: false, error: 'Missing dragId' }))
+          return
+        }
+
+        const content = readFileSync(INPUT, 'utf-8')
+        const newMatch = data.newAttrs.match(/at="([^"]+)"/)
+        if (!newMatch) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ ok: false, error: 'Could not parse at value from newAttrs' }))
+          return
+        }
+        const newValue = newMatch[1]
+        const typstNew = `at: "${newValue}"`
+
+        // Find the n-th #drag( call and replace its at value
+        const lines = content.split('\n')
+        const dragId = parseInt(data.dragId, 10)
+        let count = -1
+        let found = false
+
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].includes('#drag(')) {
+            count++
+            if (count === dragId) {
+              // Search this line and next few for at: "old"
+              const searchEnd = Math.min(lines.length, i + 4)
+              for (let j = i; j < searchEnd; j++) {
+                const match = lines[j].match(/at:\s*"([^"]+)"/)
+                if (match) {
+                  lines[j] = lines[j].replace(match[0], typstNew)
+                  found = true
+                  break
+                }
+              }
+              break
+            }
+          }
+        }
+
+        if (!found) {
+          res.writeHead(404, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ ok: false, error: `Could not find drag #${dragId}` }))
+          return
+        }
+
+        writeFileSync(INPUT, lines.join('\n'), 'utf-8')
+        console.log(`[typst] Updated drag #${dragId}: ${typstNew}`)
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ ok: true }))
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ ok: false, error: err.message }))
+      }
+    })
+    return
+  }
+
+  // SSE endpoint for live reload
   if (req.url === '/__typst_reload__') {
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',

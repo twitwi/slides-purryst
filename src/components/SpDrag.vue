@@ -146,13 +146,15 @@ function saveToSource() {
   }
 
   const hasAt = !!props.at
+  const dragId = el.value?.getAttribute('data-drag-id')
+
   fetch('/__sp_edit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       oldAttrs: hasAt ? oldAttrs : '__sp_insert__',
       newAttrs,
-      slide: slideIndex.value,
+      dragId,
     }),
   })
     .then(async r => {
