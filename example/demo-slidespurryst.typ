@@ -42,25 +42,25 @@
 #slide(transition: "fade")[
   == Fade
 
-  #img(src: "./slides-purryst-banner.svg")
-]
+  #img(src: path("./slides-purryst-banner.svg")
+)]
 
 #slide(transition: "slide-up")[
   == Slide Up
 
-  #img(src: "./slides-purryst-banner.svg", style: "transform: scale(-1,1)")
+  #img(src: path("./slides-purryst-banner.svg"), style: "transform: scale(-1,1)")
 ]
 
 #slide(transition: "zoom", transitionDuration: "600")[
   == Zoom (600ms)
 
-  #img(src: "./slides-purryst-banner.svg")
-]
+  #img(src: path("./slides-purryst-banner.svg")
+)]
 
 #slide(transition: "fade", transitionDuration: "100")[
   == Fade (100ms)
 
-  #img(src: "./slides-purryst-banner.svg", style: "transform: scale(-1,1)")
+  #img(src: path("./slides-purryst-banner.svg"), style: "transform: scale(-1,1)")
 ]
 
 #slide[
@@ -104,7 +104,7 @@
 
   #drag(at: "287|249|700|246|15")[
     #block(fill: rgb("#dbeafe"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#3b82f6"))[
-      #text(fill: black)[*Draggable box*]
+      #text(fill: black)[*Draggableo box*]
     ]
   ]
 
@@ -138,7 +138,7 @@
 
   Move your mouse on the cat.
 
-  #svg(src: "./slides-purryst-banner-sticker.svg", height: "400px")
+  #svg(src: path("./slides-purryst-banner-sticker.svg"), height: "400px")
 
   #style("
     h2 { filter: blur(2px); }
@@ -146,10 +146,10 @@
 
   Use `sp-style` in a slide or globally.
 
-  #svg(src: "./slides-purryst-banner-sticker.svg", width: "100%", height: "200")
+  #svg(src: path("./slides-purryst-banner-sticker.svg"), width: "100%", height: "200")
 
   #drag(at: "1098|284|564.37|227.06|44.5")[
-    #svg(src: "./slides-purryst-banner-sticker.svg", wrap: true, class: "smallcat")
+    #svg(src: path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
   ]
 ]
 
@@ -233,7 +233,7 @@
 #slide[
   == Animations: \@add / \@remove
 
-  #svg(src: "./slides-purryst-banner-sticker.svg", width: "100%")
+  #svg(src: path("./slides-purryst-banner-sticker.svg"), width: "100%")
 
   #text(size: 0.7em)[
     Effects per step:

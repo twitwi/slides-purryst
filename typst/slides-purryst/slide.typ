@@ -16,5 +16,6 @@
     html.elem("sp-slide", attrs: attrs)[#body]
   } else {
     body
+    pagebreak()
   }
 }
