@@ -9,9 +9,10 @@ import SpInclude from './components/SpInclude.vue'
 import SpSvg from './components/SpSvg.vue'
 import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
+import SpImg from './components/SpImg.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
-import { preloadInclude, loadCache } from './composables/includeCache'
+import { preloadInclude, loadCache, preloadBinary } from './composables/includeCache'
 import { exportStandalone } from './export'
 import './style.css'
 
@@ -19,6 +20,7 @@ const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
   'sp-anim': SpAnim,
   'sp-drag': SpDrag,
+  'sp-img': SpImg,
   'sp-include': SpInclude,
   'sp-svg': SpSvg,
   'sp-style': SpStyle,
@@ -98,6 +100,22 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     template.content.querySelectorAll('sp-include').forEach(el => {
       const src = el.getAttribute('src')
       if (src) preloadInclude(src)
+    })
+    const imgSrcs = new Set<string>()
+    template.content.querySelectorAll<HTMLImageElement>('img[src]').forEach(el => {
+      const src = el.getAttribute('src')
+      if (src && !src.startsWith('data:') && !src.startsWith('blob:')) imgSrcs.add(src)
+    })
+    template.content.querySelectorAll<HTMLElement>('sp-img[src]').forEach(el => {
+      const src = el.getAttribute('src')
+      if (src && !src.startsWith('data:') && !src.startsWith('blob:')) imgSrcs.add(src)
+    })
+    imgSrcs.forEach(src => {
+      if (src.match(/\.svg(\?|#|$)/i)) {
+        preloadInclude(src)
+      } else {
+        preloadBinary(src)
+      }
     })
   }
 

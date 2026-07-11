@@ -5,7 +5,18 @@ export async function exportStandalone(): Promise<void> {
   const contentEl = document.getElementById('sp-content') as HTMLTemplateElement | null
   if (!contentEl) throw new Error('Export failed: #sp-content not found')
 
-  const slidesHtml = contentEl.innerHTML.trim()
+  let slidesHtml = contentEl.innerHTML.trim()
+
+  const tmp = document.createElement('div')
+  tmp.innerHTML = slidesHtml
+  tmp.querySelectorAll<HTMLImageElement>('img[src]').forEach(img => {
+    const src = img.getAttribute('src')
+    if (!src || src.startsWith('data:') || src.startsWith('blob:')) return
+    const spImg = document.createElement('sp-img')
+    spImg.setAttribute('src', src)
+    img.replaceWith(spImg)
+  })
+  slidesHtml = tmp.innerHTML
 
   const styles: string[] = []
   const linkEls = document.querySelectorAll('link[rel="stylesheet"]')
