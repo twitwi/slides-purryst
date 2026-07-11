@@ -6,7 +6,10 @@
   }
 }
 
-#let pause() = {
-  html.elem("sp-anim", attrs: (spec: "@jump(1)"))
-  //anim("@jump(1)")
+#let pause() = context {
+  if target() == "html" {
+    html.elem("sp-anim", attrs: (spec: "@jump(1)"))
+  } else {
+    [pause()]
+  }
 }

@@ -10,6 +10,6 @@
     if ctx { attrs.insert("context", "") }
     html.elem("sp-toc", attrs: attrs)
   } else {
-    []
+    [((TOC))]
   }
 }
