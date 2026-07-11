@@ -62,7 +62,7 @@ async function load() {
       throw new Error('Failed to load')
     }
   } catch (err: any) {
-    error.value = err.message
+    error.value = `${err.message} (src: ${props.src})`
   }
 }
 

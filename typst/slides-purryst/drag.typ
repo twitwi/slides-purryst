@@ -10,6 +10,6 @@
     if at != "" { attrs.insert("at", at) }
     html.elem("sp-drag", attrs: attrs)[#body]
   } else {
-    body
+    [((DRAG: #body))]
   }
 }

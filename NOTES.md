@@ -21,17 +21,23 @@ From Slidev general (not in ultracharger):
 - [ ] introduce the blackout key (b) to blank the main view from presenter mode as in ultracharger
 - [ ] add a clock to the presenter view (elapsed time, maybe a countdown timer)
 - [ ] have an option cacheIgnore, a pattern to ignore certain paths from the cache (like .gitignore ideally)
+- [ ] bigger buttons for the custom component demo (counter)
 
 
 ## TODO
 
-- [ ] inline svg, allow rewrap in svg, with automatic re-boxing, maybe <sp-rebox :pad="[10]"><sp-include .... or have a <sp-svg that has options (and reuses <sp-include)
-- [ ] typst side
+- [ ] cache custom components too
+- [ ] (typst) drag will not work with multifile input or even loop probably, or function that creates a drag, etc
+- [ ] (js) drag will also not work if including a file
 - [ ] explore if we can rationalize that:     <h3>Explicit <code>&amp;lt;sp-step at="..."></code></h3>
 - [ ] consider gsap or an alternative (anime.js?) for svg animations or text animations or transitions
 - [ ] consider history management (think about when to push)
 - [ ] think about modularity/extensibility (plugins, custom components, etc.)
+- [ ] (typst) (hard) img/svg find a way in typst to make the paths clickable (to go to source) and at the same time properly relative (so need to pass a path... but loose source line etc)
 
+## Feature ideas
+
+- [ ] inline svg, allow rewrap in svg, with automatic re-boxing, maybe <sp-rebox :pad="[10]"><sp-include .... or have a <sp-svg that has options (and reuses <sp-include)
 
 ## Design
 

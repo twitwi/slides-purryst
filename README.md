@@ -1,6 +1,6 @@
 # SlidesPurryst
 
-Where Typst meets Vue in purr-fect harmony.
+Where Typst meets Vue to craft purr-fect slide decks.
 
 
 ## Without typst (= SlidesPurr)

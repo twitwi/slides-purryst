@@ -154,6 +154,7 @@ function saveToSource() {
     body: JSON.stringify({
       oldAttrs: hasAt ? oldAttrs : '__sp_insert__',
       newAttrs,
+      slide: slideIndex.value,
       dragId,
     }),
   })

@@ -7,10 +7,14 @@ git clone <repo>
 cd slides-purryst
 pnpm install
 pnpm build          # builds dist/
-pnpm dev            # vite dev server serving example/demo-slidespurr.html
+pnpm dev            # vite dev server for HTML-based demo
+pnpm dev:typst      # vite + typst watch for .typ-based demo
 ```
 
-Edit `example/demo-slidespurr.html` to try slides interactively.
+- `pnpm dev` — Vite on port 3334, edit `example/demo-slidespurr.html` directly
+- `pnpm dev:typst` — Vite (port 3334) + `typst watch`, edit `example/demo-slidespurryst.typ`  
+  Vue/TS changes get Vite HMR; `.typ` changes trigger recompile + page reload  
+  Double-click a `<sp-drag>` element to edit position, click "Save" to write back to `.typ`
 
 ## Use as a dependency
 

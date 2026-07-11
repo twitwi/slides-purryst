@@ -10,4 +10,4 @@
 #import "component.typ": component
 #import "theme.typ": slides-theme
 
-#let h1(body) = component("h1", body: body)
+#let h1(body, attrs: (:)) = component("h1", body: body, attrs: attrs)

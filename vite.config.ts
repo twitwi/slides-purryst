@@ -2,16 +2,21 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
-import { watch, readFileSync, writeFileSync } from 'fs'
+import { watch, readFileSync, writeFileSync, existsSync } from 'fs'
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
-  const htmlFile = resolve(__dirname, 'example/demo-slidespurr.html')
+  const isTypst = process.env.USETYPST === "true"
+  console.log("VITE:", isTypst, process.env) 
+  const typstFile = resolve(__dirname, 'example/demo-slidespurryst.typ')
+  const htmlFile = isTypst
+    ? resolve(__dirname, 'example/demo-slidespurryst.html')
+    : resolve(__dirname, 'example/demo-slidespurr.html')
 
   return {
     server: {
       watch: {
-        ignored: ['**/example/demo-slidespurr.html']
+        ignored: ['**/example/*.html', '**/*' + htmlFile]
       }
     },
     plugins: [
@@ -57,6 +62,56 @@ export default defineConfig(({ mode }) => {
             req.on('end', () => {
               try {
                 const data = JSON.parse(body)
+
+                // === Typst mode: edit .typ source via dragId ===
+                if (data.dragId != null && existsSync(typstFile)) {
+                  const content = readFileSync(typstFile, 'utf-8')
+                  const newMatch = data.newAttrs?.match(/at="([^"]+)"/)
+                  if (!newMatch) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' })
+                    res.end(JSON.stringify({ ok: false, error: 'Could not parse at value from newAttrs' }))
+                    return
+                  }
+                  const newValue = newMatch[1]
+                  const typstNew = `at: "${newValue}"`
+
+                  const lines = content.split('\n')
+                  const dragId = parseInt(data.dragId, 10)
+                  let count = -1
+                  let found = false
+
+                  for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].includes('#drag(')) {
+                      count++
+                      if (count === dragId) {
+                        const searchEnd = Math.min(lines.length, i + 4)
+                        for (let j = i; j < searchEnd; j++) {
+                          const match = lines[j].match(/at:\s*"([^"]+)"/)
+                          if (match) {
+                            lines[j] = lines[j].replace(match[0], typstNew)
+                            found = true
+                            break
+                          }
+                        }
+                        break
+                      }
+                    }
+                  }
+
+                  if (!found) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' })
+                    res.end(JSON.stringify({ ok: false, error: `Could not find drag #${dragId}` }))
+                    return
+                  }
+
+                  writeFileSync(typstFile, lines.join('\n'), 'utf-8')
+                  console.log(`[sp-edit] Updated drag #${dragId}: ${typstNew}`)
+                  res.writeHead(200, { 'Content-Type': 'application/json' })
+                  res.end(JSON.stringify({ ok: true }))
+                  return
+                }
+
+                // === HTML mode: edit HTML file via oldAttrs + slide ===
                 const filePath = data.file
                   ? resolve(__dirname, data.file)
                   : htmlFile
@@ -66,7 +121,6 @@ export default defineConfig(({ mode }) => {
                 const oldAt = data.oldAttrs?.trim()
                 const newAt = data.newAttrs?.trim()
                 const isInsert = oldAt === '__sp_insert__'
-
                 const slideIndex = typeof data.slide === 'number' ? data.slide : -1
 
                 let slideStart = 0
@@ -156,10 +210,7 @@ export default defineConfig(({ mode }) => {
 
                 if (!match) {
                   res.writeHead(404)
-                  res.end(JSON.stringify({
-                    error: 'sp-drag tag not found',
-                    oldAt,
-                  }))
+                  res.end(JSON.stringify({ error: 'sp-drag tag not found', oldAt }))
                   return
                 }
 
@@ -197,6 +248,22 @@ export default defineConfig(({ mode }) => {
                 res.end(JSON.stringify({ error: err.message, stack: err.stack }))
               }
             })
+          })
+
+          // Inject SSE client into HTML responses
+          server.middlewares.use((req, res, next) => {
+            if (!req.url || !req.url.endsWith('.html')) { next(); return }
+            const origEnd = res.end.bind(res)
+            const origWrite = res.write.bind(res)
+            const chunks: Buffer[] = []
+            res.write = (chunk: any) => { chunks.push(Buffer.from(chunk)); return true }
+            res.end = (chunk?: any) => {
+              if (chunk) chunks.push(Buffer.from(chunk))
+              let html = Buffer.concat(chunks).toString('utf-8')
+              res.setHeader('Content-Length', Buffer.byteLength(html))
+              origEnd(html)
+            }
+            next()
           })
 
           let timer: ReturnType<typeof setTimeout> | null = null

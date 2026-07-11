@@ -7,7 +7,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
 
 const useTypst = process.argv.includes('--typst') || process.argv.includes('typst')
-const demoFile = 'example/demo-slidespurr.html'
+const demoFile = useTypst
+  ? 'example/demo-slidespurryst.html'
+  : 'example/demo-slidespurr.html'
 const output = resolve(root, demoFile)
 
 let processes = []
@@ -20,7 +22,7 @@ if (useTypst) {
     '--input', 'slides-purryst-css-path=../dist/slides-purryst.css',
     '--input', 'slides-purryst-module=true',
     '--format', 'html', '--features', 'html',
-    'example/slides.typ', output,
+    'example/demo-slidespurryst.typ', output,
   ]
 
   const typst = spawn('typst', typstArgs, { stdio: 'inherit', cwd: root })
@@ -44,6 +46,7 @@ const vite = spawn('npx', ['vite', '--port', '3334', '--open', '/' + demoFile], 
   stdio: 'inherit',
   cwd: root,
   shell: true,
+  env: { ...process.env, USETYPST: useTypst }
 })
 processes.push(vite)
 

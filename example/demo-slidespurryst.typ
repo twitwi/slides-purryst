@@ -104,7 +104,7 @@
 
   #drag(at: "287|249|700|246|15")[
     #block(fill: rgb("#dbeafe"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#3b82f6"))[
-      #text(fill: black)[*Draggableo box*]
+      #text(fill: black)[*Draggable box*]
     ]
   ]
 
@@ -148,7 +148,7 @@
 
   #svg(src: path("./slides-purryst-banner-sticker.svg"), width: "100%", height: "200")
 
-  #drag(at: "1112|298|564.37|227.06|44.5")[
+  #drag(at: "1100|267|564.37|227.06|36.2")[
     #svg(src: path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
   ]
 ]
