@@ -1,3 +1,4 @@
+#let slide-counter = counter("sp-slide-id")
 #let slide(
   transition: none,
   transitionDuration: none,
@@ -6,6 +7,8 @@
   bg: none,
   body,
 ) = context {
+  let slideId = slide-counter.get().at(0)
+  slide-counter.step()
   if target() == "html" {
     let attrs = (:)
     if transition != none { attrs.insert("transition", transition) }
@@ -15,6 +18,7 @@
     if bg != none { attrs.insert("bg", bg) }
     html.elem("sp-slide", attrs: attrs)[#body]
   } else {
+    place(bottom + left, text(size: 50pt, str(slideId + 1)))
     body
     pagebreak()
   }
