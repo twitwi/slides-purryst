@@ -654,3 +654,142 @@ sp-anim { display: none; }
   .sp-toc-num { color: #64748b; }
   .sp-toc-section { color: #64748b; border-bottom-color: #334155; }
 }
+
+/* ───── Dev Pane ───── */
+
+.sp-dev-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sp-dev-pane {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: 8px;
+  min-width: 480px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+}
+.sp-dev-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 0;
+}
+.sp-dev-header h2 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.sp-dev-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.4em;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.sp-dev-close:hover { color: #f1f5f9; }
+.sp-dev-section {
+  padding: 12px 20px;
+}
+.sp-dev-section h3 {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.sp-dev-empty {
+  color: #64748b;
+  font-size: 0.85em;
+  padding: 8px 0;
+}
+.sp-dev-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85em;
+  margin-bottom: 8px;
+}
+.sp-dev-table th,
+.sp-dev-table td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid #334155;
+}
+.sp-dev-table th {
+  color: #94a3b8;
+  font-weight: 500;
+}
+.sp-dev-table tbody tr:hover {
+  background: #334155;
+}
+.sp-dev-path {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.9em;
+}
+.sp-dev-num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.sp-dev-btn {
+  background: #334155;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 0.85em;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.15s;
+}
+.sp-dev-btn:hover { background: #475569; }
+.sp-dev-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.sp-dev-del {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1em;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+.sp-dev-del:hover { color: #ef4444; }
+.sp-dev-footer {
+  padding: 8px 20px 16px;
+  color: #475569;
+  font-size: 0.8em;
+}
+.sp-nav-dev {
+  opacity: 0.35;
+  transition: opacity 0.15s;
+  font-size: 11px;
+}
+.sp-nav-dev:hover { opacity: 0.8; }
+
+@media (prefers-color-scheme: dark) {
+  .sp-dev-overlay { background: rgba(0,0,0,0.5); }
+  .sp-dev-pane { background: #0f172a; }
+  .sp-dev-table th { color: #64748b; }
+  .sp-dev-table td { border-bottom-color: #1e293b; }
+  .sp-dev-table tbody tr:hover { background: #1e293b; }
+  .sp-dev-btn { background: #1e293b; border-color: #334155; }
+  .sp-dev-btn:hover { background: #334155; }
+}

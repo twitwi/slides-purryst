@@ -17,9 +17,10 @@ From Slidev general (not in ultracharger):
 
 ## TODO easy
 
+- [ ] in overview mode, esc should leave overview mode
 - [ ] introduce the blackout key (b) to blank the main view from presenter mode as in ultracharger
 - [ ] add a clock to the presenter view (elapsed time, maybe a countdown timer)
-
+- [ ] have an option cacheIgnore, a pattern to ignore certain paths from the cache (like .gitignore ideally)
 
 
 ## TODO

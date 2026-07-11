@@ -60,7 +60,8 @@
             <rect x="5" y="6" width="6" height="4" rx=".5" stroke="currentColor" stroke-width="1" fill="none"/>
             <path d="M6 13v1h4v-1" stroke="currentColor" stroke-width="1.3" fill="none"/>
           </svg>
-        </button>
+          </button>
+          <button class="sp-nav-btn sp-nav-dev" aria-label="Dev tools" title="Dev Tools" @click="toggleDevPane">◆</button>
         </div>
         <div class="sp-nav-pills">
           <template v-for="pill in visiblePills" :key="pill.type === 'pill' ? 'p' + pill.index : pill.id">
@@ -107,6 +108,8 @@
           </div>
         </div>
       </div>
+
+      <SpDevPane :visible="showDevPane" :export-fn="spApi.export" @close="showDevPane = false" />
 
       <div v-if="showGoPrompt" class="sp-go-prompt" @click.self="closeGoPrompt">
         <div class="sp-go-prompt-box">
@@ -212,6 +215,7 @@ import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
 import { useElementScale } from '../composables/useElementScale'
 import SpSlide from './SpSlide.vue'
+import SpDevPane from './SpDevPane.vue'
 import { spApi } from '../sp-api'
 import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
@@ -446,6 +450,7 @@ function togglePresenter() {
 }
 
 const showOverview = ref(false)
+const showDevPane = ref(false)
 const navLocked = ref(false)
 try { navLocked.value = localStorage.getItem('sp-nav-locked') === 'true' } catch {}
 
@@ -807,6 +812,10 @@ onUnmounted(() => {
   stopVdividerDrag()
   window.removeEventListener('hashchange', onHashChange)
 })
+
+function toggleDevPane() {
+  showDevPane.value = !showDevPane.value
+}
 
 function updateSlides(templateHtml: string) {
   const tmp = document.createElement('div')
