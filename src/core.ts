@@ -160,12 +160,14 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
     const es = new EventSource('/__sp_events')
+    let lastTemplateHtml = ''
     es.addEventListener('update', () => {
-      fetch(window.location.href)
-        .then(r => r.text())
-        .then(html => {
-          const m = html.match(/<template id="sp-content">([\s\S]*?)<\/template>/)
-          if (m) {
+      fetch(window.location.href + '?_=' + Date.now())
+      .then(r => r.text())
+      .then(html => {
+          const m = html.match(/<template id="sp-content"([\s\S]*?)<\/template>/)
+          if (m && m[1] !== lastTemplateHtml) {
+            lastTemplateHtml = m[1]
             vm.updateSlides?.(m[1])
             reapplyGlobalStyles(m[1])
           }

@@ -64,7 +64,7 @@ body {
   width: 100%;
   height: 100%;
   padding: 2rem 3rem 3rem;
-  overflow-y: auto;
+  overflow: hidden;
   font-size: 4.5em;
 }
 
@@ -231,6 +231,9 @@ body {
   background: #3b82f6;
   transition: width 0.3s ease;
 }
+
+.sp-none-enter-active,
+.sp-none-leave-active { transition: outline 0s ease; }
 
 .sp-fade-enter-active,
 .sp-fade-leave-active { transition: opacity var(--sp-transition-duration, 0.3s) ease; }

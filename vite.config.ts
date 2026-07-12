@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
       {
         name: 'sp-reload',
         configureServer(server) {
+
           const clients: import('http').ServerResponse[] = []
 
           server.middlewares.use('/__sp_events', (req, res) => {
@@ -267,9 +268,12 @@ export default defineConfig(({ mode }) => {
           })
 
           let timer: ReturnType<typeof setTimeout> | null = null
+          //console.log("WATCHING "+htmlFile)
           watch(htmlFile, () => {
+            //console.log("CHANGED "+htmlFile)
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
+              //console.log("NOTIFY CLIENTS", clients.length)
               clients.forEach((client) => {
                 client.write('event: update\ndata: \n\n')
               })

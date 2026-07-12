@@ -34,7 +34,7 @@ if (useTypst) {
 
   let lastMtime = 0
   let busy = false
-  watchFile(tmp1, { interval: 500 }, (cur) => {
+  watchFile(tmp1, { interval: 300 }, (cur) => {
     if (busy) return
     const mtime = cur.mtimeMs
     if (mtime !== lastMtime) {
@@ -42,12 +42,16 @@ if (useTypst) {
       busy = true
       try {
         const _ = (cmd) => {
-          console.log("DO::: "+cmd)
+          //console.log("DO::: "+cmd)
+          //const st = Date.now()
+          //console.log(new Date())
           execSync(cmd, { cwd: root, stdio: 'ignore', timeout: 1000, })
+          //console.log(st - Date.now())
         }
-        _('cp "' + tmp1 + '" "' + tmp2 + '"')
-        _('pnpm do-prettier-inplace "' + tmp2 + '"')
-        _('cp "' + tmp2 + '" "' + output + '"')
+        _(`cp "${tmp1}" "${tmp2}"`)
+        //_('pnpm SLOW-do-prettier-inplace "' + tmp2 + '"')
+        //_('cp "' + tmp2 + '" "' + output + '"')
+        _(`scripts/quick-html-format.sh ${tmp2} ${output}`)
       } finally {
         busy = false
       }
