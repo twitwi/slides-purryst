@@ -6,17 +6,17 @@ import { watch, readFileSync, writeFileSync, existsSync } from 'fs'
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
-  const isTypst = process.env.USETYPST === "true"
-  console.log("VITE:", isTypst, process.env) 
-  const typstFile = resolve(__dirname, 'example/demo-slidespurryst.typ')
-  const htmlFile = isTypst
-    ? resolve(__dirname, 'example/demo-slidespurryst.html')
-    : resolve(__dirname, 'example/demo-slidespurr.html')
+  const useTypst = process.env.USETYPST === "true"
+  const dir = 'example'
+  const base = `demo-slides${useTypst ? 'purryst' : 'purr'}`
+
+  const htmlFile = resolve(__dirname, `${dir}/${base}.html`)
+  const typstFile = resolve(__dirname, `${dir}/${base}.typ`)
 
   return {
     server: {
       watch: {
-        ignored: [htmlFile]
+        ignored: ["**/demo-*.*", "**/,,*"]
       }
     },
     plugins: [

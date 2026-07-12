@@ -17,6 +17,7 @@ From Slidev general (not in ultracharger):
 
 ## TODO easy
 
+- [ ] dev:typst should compile once before (so the output exists), or loop until it complise once ok
 - [ ] in overview mode, esc should leave overview mode
 - [ ] introduce the blackout key (b) to blank the main view from presenter mode as in ultracharger
 - [ ] add a clock to the presenter view (elapsed time, maybe a countdown timer)
