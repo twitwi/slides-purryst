@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>SlidesPurr Demo</title>
 </head>
 <body>
@@ -32,7 +31,8 @@
     <h3>Transitions: options</h3>
     <p>Per-slide transitions via <code>transition</code> attribute.</p>
     <ul>
-      <li><code>fade</code> — default</li>
+      <li><code>none</code> — default</li>
+      <li><code>fade</code> — opacity fading</li>
       <li><code>slide-up</code> — vertical slide</li>
       <li><code>zoom</code> — scale in/out</li>
     </ul>
@@ -321,6 +321,7 @@ import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
 createSlidesPurryst({
   components: { 'my-counter': Counter },
+  seed: 12345678+90,
 })
 </script>
 </body>

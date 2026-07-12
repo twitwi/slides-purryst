@@ -34,7 +34,7 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 }
 
 export function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components } = options
+  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed } = options
 
   if (!slides) {
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
@@ -56,7 +56,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     }
   }
 
-  if (!designWidth || !designHeight || !author) {
+  if (!designWidth || !designHeight || !author || !seed) {
     const root = document.getElementById('sp-presentation')
     if (root) {
       const dw = root.getAttribute('data-design-width')
@@ -67,6 +67,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
       }
       const da = root.getAttribute('data-author')
       if (da) author = da
+      if (root.dataset.seed) seed = root.dataset.seed
     }
   }
 
@@ -135,6 +136,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     designWidth,
     designHeight,
     author,
+    seed,
     el: '#app',
   })
 
@@ -145,6 +147,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     designWidth,
     designHeight,
     author,
+    seed,
     components: merged,
     presenter: isPresenter,
   })

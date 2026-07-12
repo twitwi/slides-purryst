@@ -229,14 +229,16 @@ const props = withDefaults(defineProps<{
   designHeight?: number
   author?: string
   components?: Record<string, any>
+  seed?: number
 }>(), {
-  transition: 'fade',
+  transition: 'none',
   transitionDuration: 200,
   presenter: false,
   designWidth: 1920,
   designHeight: 1080,
   author: '',
-  components: () => ({})
+  components: () => ({}),
+  seed: 12345678,
 })
 
 const {
@@ -793,8 +795,21 @@ onMounted(() => {
     nextTick(() => syncUrl())
     window.addEventListener('hashchange', onHashChange)
   }
+  setupIconIfNone(props.seed)
   highlightAllSlides()
 })
+
+function setupIconIfNone(seed: number) {
+  if (document.head.querySelectorAll('link[rel=icon]').length == 0) {
+    const [ch, dx, dy, xScale, yScale] = ['🐯', -20, 14, -0.85, 1]
+    const hue = (180 + (seed - 12345678)) % 360
+    const l = document.createElement('link')
+    l.setAttribute('rel', 'icon')
+    l.setAttribute('type', 'image/svg+xml')
+    l.setAttribute('href', `data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20style='filter:hue-rotate(${hue}deg)'%20viewBox='0%200%2016%2016'%3E%3Ctext%20transform='scale(${xScale},${yScale})'%20x='${dx}'%20y='${dy}'%3E${ch}%3C/text%3E%3C/svg%3E`)
+    document.head.append(l)
+  }
+}
 
 async function highlightAllSlides() {
   for (let i = 0; i < slides.value.length; i++) {
