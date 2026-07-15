@@ -27,9 +27,6 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
           actions.prevStep()
         } else if (actions.currentIndex.value > 0) {
           actions.goTo(actions.currentIndex.value - 1)
-          setTimeout(() => {
-            actions.stepIndex.value = actions.totalSteps.value - 1
-          })
         }
         break
       case 'ArrowUp':
@@ -50,9 +47,6 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
         e.preventDefault()
         if (actions.currentIndex.value > 0) {
           actions.goTo(actions.currentIndex.value - 1)
-          setTimeout(() => {
-            actions.stepIndex.value = actions.totalSteps.value - 1
-          })
         }
         break
       case 'z':
@@ -122,9 +116,6 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
         actions.prevStep()
       } else if (actions.currentIndex.value > 0) {
         actions.prev()
-        setTimeout(() => {
-          actions.stepIndex.value = actions.totalSteps.value - 1
-        })
       }
     }
   }

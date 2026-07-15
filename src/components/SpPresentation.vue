@@ -379,7 +379,7 @@ const effectiveTransitionDuration = computed(() =>
 const rootStyle = computed(() => ({
   '--sp-design-width': `${props.designWidth}px`,
   '--sp-design-height': `${props.designHeight}px`,
-  '--sp-transition-duration': `${1000 + effectiveTransitionDuration.value}ms`
+  '--sp-transition-duration': `${effectiveTransitionDuration.value}ms`
 }))
 
 onUpdated(() => {
@@ -474,9 +474,6 @@ function prevSlide() {
     prevStep()
   } else if (currentIndex.value > 0) {
     prev()
-    nextTick(() => {
-      stepIndex.value = totalSteps.value - 1
-    })
   }
 }
 
@@ -748,6 +745,8 @@ watch(current, (slide, old) => {
     if (skipStepReset) {
       stepIndex.value = Math.min(Math.max(stepIndex.value, 0), Math.max(0, totalSteps.value - 1))
       skipStepReset = false
+    } else if (direction.value === -1) {
+      stepIndex.value = Math.max(0, totalSteps.value - 1)
     } else {
       stepIndex.value = 0
     }

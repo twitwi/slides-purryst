@@ -17,6 +17,7 @@ From Slidev general (not in ultracharger):
 
 ## TODO easy
 
+- [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward
 - [ ] dev:typst should compile once before (so the output exists), or loop until it complise once ok
 - [ ] in overview mode, esc should leave overview mode
 - [ ] introduce the blackout key (b) to blank the main view from presenter mode as in ultracharger
@@ -25,7 +26,6 @@ From Slidev general (not in ultracharger):
 - [ ] bigger buttons for the custom component demo (counter)
 - [ ] find or code a fast prettier that maybe does not used bash/awk and handles pre
 - [ ] when loading / parsing hash to jump to a bookmarked slide, blank the screen (or show a loading message) so we don't see the first slide for a fraction of a second before jumping to the bookmarked slide
-
 ## TODO
 
 - [ ] fix/refactor sp-alternative and @jump (vis groups) (animating enter...) + redo anim
