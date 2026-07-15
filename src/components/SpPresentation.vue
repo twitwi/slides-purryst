@@ -329,20 +329,22 @@ provide('contentVersion', contentVersion)
 provide('slides', slides)
 provide('goTo', goTo)
 
-const transitionClass = computed(() => {
+const effectiveTransition = computed(() => {
   const t = current.value?.transition ?? props.transition
-  return `sp-${t}`
+  return t === '' ? 'none' : t
 })
 
+const transitionClass = computed(() => `sp-${effectiveTransition.value}`)
+
 const effectiveTransitionDuration = computed(() =>
-  current.value.transition === '' ? 0 :
+  effectiveTransition.value === 'none' ? 0 :
   current.value?.transitionDuration ?? props.transitionDuration
 )
 
 const rootStyle = computed(() => ({
   '--sp-design-width': `${props.designWidth}px`,
   '--sp-design-height': `${props.designHeight}px`,
-  '--sp-transition-duration': `${effectiveTransitionDuration.value / 1000}s`
+  '--sp-transition-duration': `${effectiveTransitionDuration.value}ms`
 }))
 
 const isFirst = computed(() => currentIndex.value === 0)
@@ -693,17 +695,27 @@ watch([currentIndex, stepIndex], () => {
   syncState(currentIndex.value, stepIndex.value)
 }, { flush: 'post' })
 
-watch(() => stepIndex.value, () => {
+
+function doScanVisibility() {
+  if (viewportEl.value === null) return
+  function maybe(sel: string, index: number) {
+    const el = viewportEl.value?.querySelector('.sp-slide-'+sel)
+    if (el) scanVisibility(el as HTMLElement, index)
+  }
+  maybe('current', stepIndex.value)
+  maybe('next', 0)
+  maybe('prev', 999999)
+}
+
+watch(() => [stepIndex.value, currentIndex.value], () => {
   nextTick(() => {
-    const slide = document.querySelector('.sp-slide')
-    if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
+    doScanVisibility()
   })
 })
 
 watch(contentVersion, () => {
   nextTick(() => {
-    const slide = document.querySelector('.sp-slide')
-    if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
+    doScanVisibility()
   })
 })
 
@@ -714,8 +726,7 @@ watch([currentIndex, stepIndex], () => {
 }, { flush: 'post' })
 
 function onSlideEnter() {
-  const slide = document.querySelector('.sp-slide')
-  if (slide) scanVisibility(slide as HTMLElement, stepIndex.value)
+  doScanVisibility()
 }
 
 function syncUrl() {
