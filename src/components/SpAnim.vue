@@ -1,5 +1,5 @@
 <template>
-  <span class="sp-anim-ghost"></span>
+  <span class="sp-anim-ghost" ref="animEl"></span>
 </template>
 
 <script setup lang="ts">
@@ -15,7 +15,17 @@ interface AnimAction {
 }
 
 const props = defineProps<{ spec: string }>()
-const stepIndex = inject<Ref<number>>('stepIndex')!
+const globalStepIndex = inject<Ref<number>>('stepIndex')!
+
+const animEl = ref<HTMLElement | null>(null)
+
+function getTargetStep() {
+  if (!animEl) return globalStepIndex.value
+  const dfs = getContainer().querySelector("[data-fixed-step]")?.getAttribute('data-fixed-step')
+  if (dfs === undefined || dfs === null) return globalStepIndex.value
+  return parseInt(dfs)
+}
+
 
 function parsePartActions(part: string): AnimAction[] {
   const actions: AnimAction[] = []
@@ -46,6 +56,7 @@ function parsePartActions(part: string): AnimAction[] {
     } else if (a.startsWith('@jump(')) {
       // handled by processHtml; no runtime action
     } else if (a.startsWith('@children(')) {
+      alert("SHOULD NOT?")
       const m = a.match(/^@children\((.+)\)$/)
       if (m) {
         expandChildren(m[1], actions)
@@ -58,8 +69,7 @@ function parsePartActions(part: string): AnimAction[] {
 }
 
 function expandChildren(selector: string, dest: AnimAction[]) {
-  const container = document.querySelector('.sp-slide') || document
-  const parent = container.querySelector(selector) || document.querySelector(selector)
+  const parent = getContainer().querySelector(selector)
   if (parent) {
     for (let i = 0; i < parent.children.length; i++) {
       dest.push({ type: 'show', selector: `${selector} > :nth-child(${i + 1})` })
@@ -114,14 +124,15 @@ const stepActions = computed<AnimAction[][]>(() => {
 })
 
 function applyAction(el: HTMLElement, action: AnimAction) {
+  console.log("ANIM", el, action)
   switch (action.type) {
     case 'show':
-      el.classList.add('anim-shown')
-      el.classList.remove('anim-hidden')
+      el.classList.add('sp-anim-shown')
+      el.classList.remove('sp-anim-hidden')
       break
     case 'hide':
-      el.classList.add('anim-hidden')
-      el.classList.remove('anim-shown')
+      el.classList.add('sp-anim-hidden')
+      el.classList.remove('sp-anim-shown')
       break
     case 'addClass':
       if (action.className) el.classList.add(action.className)
@@ -132,8 +143,14 @@ function applyAction(el: HTMLElement, action: AnimAction) {
   }
 }
 
-function getContainer(): Element | Document {
-  return document.querySelector('.sp-slide') || document
+function getContainer(): Element {
+  let el = animEl.value
+  if (!el) throw "not yet"
+  while (!el.classList.contains('sp-slide')) {
+    el = el.parentElement
+    if (el === null) throw "should not happen"
+  }
+  return el
 }
 
 let previousStep = -1
@@ -153,12 +170,12 @@ function applyStep(step: number) {
 function reverseAction(el: HTMLElement, action: AnimAction) {
   switch (action.type) {
     case 'show':
-      el.classList.add('anim-hidden')
-      el.classList.remove('anim-shown')
+      el.classList.add('sp-anim-hidden')
+      el.classList.remove('sp-anim-shown')
       break
     case 'hide':
-      el.classList.add('anim-shown')
-      el.classList.remove('anim-hidden')
+      el.classList.add('sp-anim-shown')
+      el.classList.remove('sp-anim-hidden')
       break
     case 'addClass':
       if (action.className) el.classList.remove(action.className)
@@ -181,7 +198,8 @@ function reverseStep(step: number) {
   }
 }
 
-watch(stepIndex, (curr) => {
+watch(globalStepIndex, (curr) => {
+  curr = getTargetStep()
   if (curr === previousStep) return
   if (curr > previousStep) {
     for (let s = previousStep + 1; s <= curr; s++) {
@@ -205,16 +223,17 @@ function refresh() {
   for (const sel of allSelectors) {
     const targets = container.querySelectorAll<HTMLElement>(sel)
     for (const el of targets) {
-      if (el.hasAttribute('data-sp-from')) continue
-      el.classList.add('anim-hidden')
-      el.classList.remove('anim-shown')
+      //if (el.hasAttribute('data-sp-from')) continue
+      el.classList.add('sp-anim-hidden')
+      el.classList.remove('sp-anim-shown')
     }
   }
+  const curr = getTargetStep()
   previousStep = 0
-  for (let s = 1; s <= stepIndex.value; s++) {
+  for (let s = 1; s <= curr; s++) {
     applyStep(s)
   }
-  previousStep = stepIndex.value
+  previousStep = curr
 }
 
 onMounted(refresh)
