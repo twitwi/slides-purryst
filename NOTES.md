@@ -23,13 +23,14 @@ From Slidev general (not in ultracharger):
 - [ ] add a clock to the presenter view (elapsed time, maybe a countdown timer)
 - [ ] have an option cacheIgnore, a pattern to ignore certain paths from the cache (like .gitignore ideally)
 - [ ] bigger buttons for the custom component demo (counter)
-
+- [ ] find or code a fast prettier that maybe does not used bash/awk and handles pre
 
 ## TODO
 
+- [ ] fix/refactor sp-alternative and @jump (vis groups) (animating enter...) + redo anim
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
 - [ ] install the prettier (dev dep) + integrate in the script
-- [ ] on purryst, see why there is a glitch between the two Drag slides
+- [ ] on purryst, see why there is a glitch between the two Drag slides -->> TODO FIX the fact that jump(1) is different than pause, and creates some animation
 - [ ] should probably better structure so that countAnimSpecParts is more generic
 - [ ] integrate show raw.line into the typst theme
 - [ ] show rule to map block onto a div, with explicit attributes (of block) transformed in style in div
@@ -41,6 +42,7 @@ From Slidev general (not in ultracharger):
 - [ ] consider history management (think about when to push)
 - [ ] think about modularity/extensibility (plugins, custom components, etc.)
 - [ ] (typst) (hard) img/svg find a way in typst to make the paths clickable (to go to source) and at the same time properly relative (so need to pass a path... but loose source line etc)
+- [ ] extensible slide transitions, handling also the case of non-css animations, typically consider a registry of name->animationhandler, that defines the behavior/attrs of Transition
 
 ## Feature ideas
 
