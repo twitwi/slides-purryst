@@ -52,3 +52,10 @@
 /* Direction-specific: entering from the other side when going backward */
 .sp-swapping.sp-dir-backward.sp-zoom .sp-slide-current { transform: scale(1.1) !important; }
 .sp-swapping.sp-dir-backward.sp-slide-up .sp-slide-current { transform: translateY(calc(-1 * var(--sp-design-height) / 20)) !important; }
+
+/* Direction-specific speed (e.g. 3× faster when going backward) */
+.sp-dir-backward.sp-fade .sp-slide.sp-slide-current,
+.sp-dir-backward.sp-zoom .sp-slide.sp-slide-current,
+.sp-dir-backward.sp-slide-up .sp-slide.sp-slide-current {
+  transition-duration: calc(var(--sp-transition-duration, 0.3s) / 3);
+}
