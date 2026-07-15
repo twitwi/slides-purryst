@@ -2,21 +2,39 @@
   <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
     <!-- === MAIN (non-presenter) LAYOUT === -->
     <template v-if="!presenter">
-      <div class="sp-viewport" :style="containerStyle">
+      <div class="sp-viewport" :style="containerStyle" ref="viewportEl">
         <div class="sp-scale-wrap" :style="transformStyle">
           <div class="sp-global-top">
             <slot name="global-top" />
           </div>
-
-          <Transition :name="transitionClass" mode="out-in" :duration="effectiveTransitionDuration" @after-enter="onSlideEnter">
+          <TransitionGroup tag="div" :name="transitionClass" mode="default" :duration="effectiveTransitionDuration" @after-enter="onSlideEnter">
+            <SpSlide
+              v-if="preloadPrevSlideData"
+              class="sp-slide-prev"
+              :key="currentIndex - 1"
+              :slide="preloadPrevSlideData"
+              :html="preloadPrevHtml"
+              :fixedStep="computeSlideSteps(preloadPrevSlideData) - 1"
+              :components="props.components"
+            />
             <SpSlide
               v-if="current"
+              class="sp-slide-current"
               :key="currentIndex"
               :slide="current"
               :html="activeHtml"
               :components="props.components"
             />
-          </Transition>
+            <SpSlide
+              v-if="preloadNextSlideData"
+              class="sp-slide-next"
+              :key="currentIndex + 1"
+              :slide="preloadNextSlideData"
+              :html="preloadNextHtml"
+              :fixedStep="0"
+              :components="props.components"
+            />
+          </TransitionGroup>
 
           <div class="sp-global-bottom">
             <slot name="global-bottom">
@@ -26,6 +44,7 @@
               </footer>
             </slot>
           </div>
+
         </div>
       </div>
 
@@ -270,6 +289,8 @@ const { openPresenterWindow, closePresenter, presenterActive, syncState, channel
 
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
 
+const viewportEl = ref<HTMLElement | null>(null)
+
 const previewContainerEl = ref<HTMLElement | null>(null)
 const nextContainerEl = ref<HTMLElement | null>(null)
 const { transformStyle: previewScaleStyle } = useElementScale(previewContainerEl, props.designWidth, props.designHeight)
@@ -436,6 +457,29 @@ function prevSlide() {
     })
   }
 }
+
+
+const preloadPrevSlideData = computed(() => {
+  if (currentIndex.value === 0) return null
+  return slides.value[currentIndex.value - 1] ?? null
+})
+
+const preloadPrevHtml = computed(() => {
+  if (!preloadPrevSlideData.value) return ''
+  const steps = computeSlideSteps(preloadPrevSlideData.value)
+  return processHtml(preloadPrevSlideData.value.html, Math.max(0, steps - 1))
+})
+
+const preloadNextSlideData = computed(() => {
+  if (currentIndex.value >= total.value - 1) return null
+  return slides.value[currentIndex.value + 1] ?? null
+})
+
+const preloadNextHtml = computed(() => {
+  if (!preloadNextSlideData.value) return ''
+  return processHtml(preloadNextSlideData.value.html, 0)
+})
+
 
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
@@ -851,6 +895,7 @@ function updateSlides(templateHtml: string) {
   const oldIdx = currentIndex.value
   const oldStep = stepIndex.value
   const idx = Math.min(oldIdx, newSlides.length - 1)
+  skipStepReset = true
   setSlides(newSlides)
   currentIndex.value = idx
   buildSteps(current.value)
@@ -859,6 +904,7 @@ function updateSlides(templateHtml: string) {
   } else {
     stepIndex.value = 0
   }
+  //parseHash()
 }
 
 defineExpose({ updateSlides })

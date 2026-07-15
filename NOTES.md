@@ -24,6 +24,7 @@ From Slidev general (not in ultracharger):
 - [ ] have an option cacheIgnore, a pattern to ignore certain paths from the cache (like .gitignore ideally)
 - [ ] bigger buttons for the custom component demo (counter)
 - [ ] find or code a fast prettier that maybe does not used bash/awk and handles pre
+- [ ] when loading / parsing hash to jump to a bookmarked slide, blank the screen (or show a loading message) so we don't see the first slide for a fraction of a second before jumping to the bookmarked slide
 
 ## TODO
 
