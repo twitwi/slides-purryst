@@ -3,5 +3,5 @@ sp-step { display: none; }
 sp-anim { display: none; }
 .sp-anim-ghost { display: none; }
 
-.sp-anim-hidden { opacity: 0; pointer-events: none; transition: opacity 1000ms ease; }
-.sp-anim-shown { opacity: 1; pointer-events: auto; transition: opacity 1000ms ease; }
+.sp-anim-hidden { opacity: 0; pointer-events: none; transition: opacity 300ms ease; }
+.sp-anim-shown { opacity: 1; pointer-events: auto; transition: opacity 300ms ease; }
