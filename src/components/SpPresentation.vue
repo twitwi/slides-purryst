@@ -7,7 +7,7 @@
           <div class="sp-global-top">
             <slot name="global-top" />
           </div>
-          <TransitionGroup tag="div" :name="transitionClass" mode="default" :duration="effectiveTransitionDuration" @after-enter="onSlideEnter">
+          <div :class="transitionClass" ref="transitionWrapEl">
             <SpSlide
               v-if="preloadPrevSlideData"
               class="sp-slide-prev"
@@ -34,7 +34,7 @@
               :fixedStep="0"
               :components="props.components"
             />
-          </TransitionGroup>
+          </div>
 
           <div class="sp-global-bottom">
             <slot name="global-bottom">
@@ -224,7 +224,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, nextTick } from 'vue'
+import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick } from 'vue'
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, buildSteps as computeSlideSteps } from '../composables/useSteps'
@@ -290,6 +290,7 @@ const { openPresenterWindow, closePresenter, presenterActive, syncState, channel
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
 
 const viewportEl = ref<HTMLElement | null>(null)
+const transitionWrapEl = ref<HTMLElement | null>(null)
 
 const previewContainerEl = ref<HTMLElement | null>(null)
 const nextContainerEl = ref<HTMLElement | null>(null)
@@ -350,12 +351,25 @@ provide('contentVersion', contentVersion)
 provide('slides', slides)
 provide('goTo', goTo)
 
+const direction = ref(1)
+const shouldSwap = ref(false)
+
+watch(currentIndex, (n, o) => {
+  if (n !== o) {
+    direction.value = n > o ? 1 : -1
+    shouldSwap.value = true
+  }
+})
+
 const effectiveTransition = computed(() => {
   const t = current.value?.transition ?? props.transition
   return t === '' ? 'none' : t
 })
 
-const transitionClass = computed(() => `sp-${effectiveTransition.value}`)
+const transitionClass = computed(() => {
+  const base = `sp-${effectiveTransition.value}`
+  return effectiveTransition.value === 'none' ? base : `${base} sp-dir-${direction.value === 1 ? 'forward' : 'backward'}`
+})
 
 const effectiveTransitionDuration = computed(() =>
   effectiveTransition.value === 'none' ? 0 :
@@ -365,8 +379,16 @@ const effectiveTransitionDuration = computed(() =>
 const rootStyle = computed(() => ({
   '--sp-design-width': `${props.designWidth}px`,
   '--sp-design-height': `${props.designHeight}px`,
-  '--sp-transition-duration': `${effectiveTransitionDuration.value}ms`
+  '--sp-transition-duration': `${1000 + effectiveTransitionDuration.value}ms`
 }))
+
+onUpdated(() => {
+  if (effectiveTransition.value === 'none' || !shouldSwap.value || !transitionWrapEl.value) return
+  shouldSwap.value = false
+  transitionWrapEl.value.classList.add('sp-swapping')
+  transitionWrapEl.value.offsetHeight // force reflow
+  transitionWrapEl.value.classList.remove('sp-swapping')
+})
 
 const isFirst = computed(() => currentIndex.value === 0)
 const isLast = computed(() => currentIndex.value === total.value - 1)
@@ -769,9 +791,7 @@ watch([currentIndex, stepIndex], () => {
   }
 }, { flush: 'post' })
 
-function onSlideEnter() {
-  doScanVisibility()
-}
+
 
 function syncUrl() {
   const hash = `#${currentIndex.value}/${stepIndex.value}`
@@ -844,7 +864,7 @@ onMounted(() => {
   if (current.value) {
     buildSteps(current.value)
   }
-  onSlideEnter()
+  doScanVisibility()
   if (!props.presenter) {
     parseHash()
     nextTick(() => syncUrl())

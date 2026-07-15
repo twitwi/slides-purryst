@@ -1,40 +1,54 @@
-.sp-slide-prev,
-.sp-slide-current,
-.sp-slide-next {
+.sp-slide.sp-slide-prev,
+.sp-slide.sp-slide-current,
+.sp-slide.sp-slide-next {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.sp-slide-prev {
-  transform: translateX(-100%);
+.sp-slide.sp-slide-prev { left: -100%; }
+.sp-slide.sp-slide-current { left: 0; }
+.sp-slide.sp-slide-next { left: 100%; }
+
+/* ── Hide off-screen slides per transition type ── */
+.sp-fade .sp-slide.sp-slide-prev,
+.sp-fade .sp-slide.sp-slide-next,
+.sp-zoom .sp-slide.sp-slide-prev,
+.sp-zoom .sp-slide.sp-slide-next,
+.sp-slide-up .sp-slide.sp-slide-prev,
+.sp-slide-up .sp-slide.sp-slide-next,
+.sp-none .sp-slide.sp-slide-prev,
+.sp-none .sp-slide.sp-slide-next {
+  opacity: 0;
 }
 
-.sp-slide-current {
-  transform: translateX(0);
+/* ── Per-transition transforms for off-screen slides ── */
+.sp-zoom .sp-slide.sp-slide-prev { transform: scale(1.1); }
+.sp-zoom .sp-slide.sp-slide-next { transform: scale(0.8); }
+.sp-slide-up .sp-slide.sp-slide-prev { transform: translateY(calc(-1 * var(--sp-design-height) / 20)); }
+.sp-slide-up .sp-slide.sp-slide-next { transform: translateY(calc(var(--sp-design-height) / 20)); }
+
+/* ── Transition property on the current slide ── */
+.sp-fade .sp-slide.sp-slide-current {
+  transition: opacity var(--sp-transition-duration, 0.3s) ease;
+}
+.sp-zoom .sp-slide.sp-slide-current {
+  transition: opacity var(--sp-transition-duration, 0.3s) ease,
+              transform var(--sp-transition-duration, 0.3s) ease;
+}
+.sp-slide-up .sp-slide.sp-slide-current {
+  transition: opacity var(--sp-transition-duration, 0.3s) ease,
+              transform var(--sp-transition-duration, 0.3s) ease;
 }
 
-.sp-slide-next {
-  transform: translateX(100%);
-}
+/* ── Swapping: start state for current slide when transitioning ── */
+.sp-swapping .sp-slide-current { opacity: 0 !important; }
 
-.sp-slide-move,
-.sp-fade-move,
-.sp-slide-up-move,
-.sp-zoom-move {
-  transition: transform var(--sp-transition-duration, 0.3s) ease;
-}
+.sp-swapping.sp-zoom .sp-slide-current { transform: scale(0.8) !important; }
+.sp-swapping.sp-slide-up .sp-slide-current { transform: translateY(calc(var(--sp-design-height) / 20)) !important; }
 
-.sp-fade-enter-active,
-.sp-fade-leave-active { transition: opacity var(--sp-transition-duration, 0.3s) ease; }
-.sp-fade-enter-from,
-.sp-fade-leave-to { opacity: 0; }
-
-.sp-slide-up-enter-active,
-.sp-slide-up-leave-active { transition: all var(--sp-transition-duration, 0.3s) ease; }
-.sp-slide-up-enter-from { opacity: 0; transform: translateY(calc(var(--sp-design-height) / 20)); }
-.sp-slide-up-leave-to { opacity: 0; transform: translateY(calc(-1 * var(--sp-design-height) / 20)); }
-
-.sp-zoom-enter-active,
-.sp-zoom-leave-active { transition: all var(--sp-transition-duration, 0.3s) ease; }
-.sp-zoom-enter-from { opacity: 0; transform: scale(0.8); }
-.sp-zoom-leave-to { opacity: 0; transform: scale(1.1); }
+/* Direction-specific: entering from the other side when going backward */
+.sp-swapping.sp-dir-backward.sp-zoom .sp-slide-current { transform: scale(1.1) !important; }
+.sp-swapping.sp-dir-backward.sp-slide-up .sp-slide-current { transform: translateY(calc(-1 * var(--sp-design-height) / 20)) !important; }
