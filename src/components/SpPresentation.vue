@@ -146,7 +146,12 @@
             v-for="(slide, i) in slides"
             :key="i"
             class="sp-overview-thumb"
-            :class="{ active: i === currentIndex }"
+            :class="{
+              active: i === currentIndex,
+              'sp-overview-h1': slideHeadingLevels[i] === 1,
+              'sp-overview-h2': slideHeadingLevels[i] === 2,
+              'sp-overview-h3': slideHeadingLevels[i] === 3,
+            }"
             :style="overviewThumbStyle"
             @click="goToOverviewSlide(i)"
           >
