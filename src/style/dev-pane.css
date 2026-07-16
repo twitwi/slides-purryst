@@ -9,7 +9,7 @@
 }
 .sp-dev-pane {
   background: var(--sp-gray-900);
-  color: var(--sp-text);
+  color: var(--sp-gray-50);
   border-radius: var(--sp-radius);
   min-width: 480px;
   max-width: 600px;
@@ -33,7 +33,7 @@
 .sp-dev-close {
   background: none;
   border: none;
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   font-size: 1.4em;
   cursor: pointer;
   padding: 0;
@@ -46,13 +46,13 @@
 .sp-dev-section h3 {
   font-size: 0.9em;
   font-weight: 600;
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: var(--sp-2);
 }
 .sp-dev-empty {
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   font-size: var(--sp-text-sm);
   padding: var(--sp-2) 0;
 }
@@ -69,7 +69,7 @@
   border-bottom: var(--sp-px) solid var(--sp-gray-700);
 }
 .sp-dev-table th {
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   font-weight: 500;
 }
 .sp-dev-table tbody tr:hover {
@@ -89,7 +89,7 @@
 }
 .sp-dev-btn {
   background: var(--sp-gray-700);
-  color: var(--sp-text);
+  color: var(--sp-gray-50);
   border: var(--sp-px) solid var(--sp-gray-600);
   border-radius: var(--sp-radius-sm);
   padding: var(--sp-1_5) var(--sp-4);
@@ -106,7 +106,7 @@
 .sp-dev-del {
   background: none;
   border: none;
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   font-size: 1em;
   cursor: pointer;
   padding: 0 var(--sp-1);
@@ -115,7 +115,7 @@
 .sp-dev-del:hover { color: #ef4444; }
 .sp-dev-footer {
   padding: var(--sp-2) var(--sp-5) var(--sp-4);
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   font-size: var(--sp-text-xs);
 }
 .sp-nav-dev {
@@ -148,7 +148,7 @@
 .sp-dev-config summary::before {
   content: '\25b6';
   font-size: 0.7em;
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   transition: transform var(--sp-fast);
 }
 .sp-dev-config[open] summary::before {
@@ -175,7 +175,7 @@
 .sp-dev-config-label {
   font-family: var(--sp-font-mono);
   font-size: 0.9em;
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
 }
 .sp-dev-config-field input[type="checkbox"] {
   accent-color: var(--sp-accent);
@@ -198,7 +198,7 @@
   font-family: var(--sp-font-mono);
   border: none;
   background: var(--sp-gray-800);
-  color: var(--sp-text-3);
+  color: var(--sp-gray-400);
   cursor: pointer;
   transition: background var(--sp-fast), color var(--sp-fast);
 }
@@ -207,7 +207,7 @@
 }
 .sp-dev-choice-btn:hover {
   background: var(--sp-gray-700);
-  color: var(--sp-text);
+  color: var(--sp-gray-50);
 }
 .sp-dev-choice-btn.active {
   background: var(--sp-accent);

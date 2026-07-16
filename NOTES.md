@@ -5,13 +5,10 @@
 
 ## TODO Now
 
-- [ ] have a proper but very minimal theme, sizing and spacing should be meaningful and harmonious, but no fancy colors as currently (we will have a more fancy theme later). The theme could have a main color (--sp-theme-hue) and a secondary color hue (--sp-theme-secondary-hue)
-- [ ] there should be a switch between dark and light (key 'd', unless proMode is on), a default associated to the pres, and a default associated to the typst theme (future), a button in the popup of the toolbar
 - [ ] presenter view should not animate next slide!
 - [ ] cache custom components source too so we can create a self-contained bundle
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
-
-
+- [ ] up arrow behavior fix
 
 ## TOREVIEW
 
