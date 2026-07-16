@@ -141,16 +141,17 @@
       </div>
 
       <div v-if="showOverview" class="sp-overview" @click.self="showOverview = false">
-        <div class="sp-overview-grid" ref="overviewGridEl">
+        <div class="sp-overview-grid">
           <div
             v-for="(slide, i) in slides"
             :key="i"
             class="sp-overview-thumb"
             :class="{ active: i === currentIndex }"
+            :style="overviewThumbStyle"
             @click="goToOverviewSlide(i)"
           >
             <div class="sp-overview-thumb-stage">
-              <div :style="overviewScaleStyle">
+              <div :style="overviewSlideStyle">
                 <SpSlide
                   :slide="slide"
                   :html="overviewHtmls[i]"
@@ -590,10 +591,12 @@ spApi.nextSlide = nextSlide
 spApi.prevSlide = prevSlide
 spApi.export = exportStandalone
 
-const overviewGridEl = ref<HTMLElement | null>(null)
-let overviewObserver: ResizeObserver | null = null
+const overviewThumbStyle = computed(() => ({
+  width: props.designWidth * config.overviewScale + 'px',
+  height: props.designHeight * config.overviewScale + 'px',
+}))
 
-const overviewScaleStyle = computed(() => ({
+const overviewSlideStyle = computed(() => ({
   transform: `scale(${config.overviewScale})`,
   transformOrigin: 'top left',
   width: props.designWidth + 'px',
@@ -605,34 +608,6 @@ const overviewHtmls = computed(() => {
     const steps = computeSlideSteps(s)
     return processHtml(s.html, Math.max(0, steps - 1))
   })
-})
-
-function setupOverviewObserver() {
-  overviewObserver = new ResizeObserver(entries => {
-    for (const entry of entries) {
-      const grid = entry.target as HTMLElement
-      const first = grid.firstElementChild as HTMLElement | null
-      if (first) {
-        config.overviewScale = first.clientWidth / props.designWidth
-      }
-    }
-  })
-  if (overviewGridEl.value) {
-    overviewObserver.observe(overviewGridEl.value)
-  }
-}
-
-function teardownOverviewObserver() {
-  overviewObserver?.disconnect()
-  overviewObserver = null
-}
-
-watch(showOverview, (v) => {
-  if (v) {
-    requestAnimationFrame(() => setupOverviewObserver())
-  } else {
-    teardownOverviewObserver()
-  }
 })
 
 function goToOverviewSlide(i: number) {
