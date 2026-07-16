@@ -86,6 +86,10 @@
           <div class="sp-nav-more" ref="moreMenuEl">
             <button class="sp-nav-btn sp-nav-more-btn" :class="{ active: showMoreMenu }" aria-label="More options" title="More…" @click="showMoreMenu = !showMoreMenu">⋯</button>
             <div v-if="showMoreMenu" class="sp-nav-more-menu">
+              <button class="sp-nav-more-item" @click="toggleDarkMode(); showMoreMenu = false">
+                <span class="sp-nav-more-icon">{{ darkModeIcon }}</span> Theme: {{ darkModeLabel }}
+              </button>
+              <div class="sp-nav-more-divider"></div>
               <button class="sp-nav-more-item" @click="toggleDevPane(); showMoreMenu = false">
                 <span class="sp-nav-more-icon">◇</span> Dev tools
               </button>
@@ -426,6 +430,35 @@ const loading = ref(true)
 const showMoreMenu = ref(false)
 const moreMenuEl = ref<HTMLElement | null>(null)
 
+function applyDarkMode(mode: 'auto' | 'light' | 'dark') {
+  const el = document.documentElement
+  if (mode === 'auto') {
+    el.removeAttribute('data-dark-mode')
+  } else {
+    el.dataset.darkMode = mode
+  }
+}
+
+function toggleDarkMode() {
+  const order: Array<'auto' | 'light' | 'dark'> = ['auto', 'light', 'dark']
+  const i = order.indexOf(config.darkMode)
+  config.darkMode = order[(i + 1) % order.length]
+}
+
+const darkModeLabel = computed(() => {
+  if (config.darkMode === 'auto') return 'Auto'
+  if (config.darkMode === 'dark') return 'Dark'
+  return 'Light'
+})
+
+const darkModeIcon = computed(() => {
+  if (config.darkMode === 'auto') return '◑'
+  if (config.darkMode === 'dark') return '●'
+  return '○'
+})
+
+watch(() => config.darkMode, applyDarkMode, { immediate: true })
+
 watchEffect(() => {
   spApi.navLocked = config.navLocked
   spApi.currentIndex = currentIndex.value
@@ -629,7 +662,7 @@ useNavigation({
   onGoPrompt,
   onBlackoutToggle: toggleBlackout,
   onBlackoutExit: exitBlackout,
-  onDevPaneToggle: () => { if (config.proMode) toggleDevPane() },
+  onDevPaneToggle: () => { config.proMode ? toggleDevPane() : toggleDarkMode() },
 })
 
 onMounted(() => {

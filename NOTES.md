@@ -5,7 +5,7 @@
 
 ## TODO Now
 
-- [ ] have a proper but very minimal theme, sizing and spacing should be meaningful and harmonious, but no fancy colors as currently (we will have a more fancy theme later)
+- [ ] have a proper but very minimal theme, sizing and spacing should be meaningful and harmonious, but no fancy colors as currently (we will have a more fancy theme later). The theme could have a main color (--sp-theme-hue) and a secondary color hue (--sp-theme-secondary-hue)
 - [ ] there should be a switch between dark and light (key 'd', unless proMode is on), a default associated to the pres, and a default associated to the typst theme (future), a button in the popup of the toolbar
 - [ ] presenter view should not animate next slide!
 - [ ] cache custom components source too so we can create a self-contained bundle
@@ -17,6 +17,7 @@
 
 ## TODO
 
+- [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
 - [ ] by default, pills should have the same color as the h1, h2, h3 border in the overview, can keep size difference too, the current could be circled in a --sp-highlight color or something
 - [ ] check visgroups not working in presenter (but they might go away with the new anim system)
 - [ ] consider history management (think about when to push)

@@ -7,6 +7,7 @@ export interface SpStorageConfig {
   overviewScale: number
   proMode: boolean
   logSteps: boolean
+  darkMode: 'auto' | 'light' | 'dark'
   [key: string]: unknown
 }
 
@@ -15,6 +16,7 @@ const defaults: SpStorageConfig = {
   overviewScale: 0.15,
   proMode: false,
   logSteps: false,
+  darkMode: 'auto',
 }
 
 function load(): SpStorageConfig {

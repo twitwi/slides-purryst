@@ -1,0 +1,162 @@
+/* ================================================================
+   SLIDES-PURRYST THEME
+   Minimal, hue-driven design tokens.
+   Change --sp-theme-hue / --sp-theme-secondary-hue to re-skin.
+   Dark mode: use data-dark-mode="dark" / "light" on <html>,
+   or leave unset to follow OS preference.
+   ================================================================ */
+
+:root {
+  /* ── Hues ── */
+  --sp-theme-hue: 220;
+  --sp-theme-secondary-hue: 150;
+
+  /* ── Semantic colors (light) ── */
+  --sp-bg:            hsl(var(--sp-theme-hue) 15% 97%);
+  --sp-surface:       hsl(var(--sp-theme-hue)  5% 100%);
+  --sp-surface-alt:   hsl(var(--sp-theme-hue) 10% 96%);
+  --sp-text:          hsl(var(--sp-theme-hue) 30% 15%);
+  --sp-text-2:        hsl(var(--sp-theme-hue) 20% 40%);
+  --sp-text-3:        hsl(var(--sp-theme-hue) 15% 58%);
+  --sp-border:        hsl(var(--sp-theme-hue) 12% 88%);
+  --sp-border-2:      hsl(var(--sp-theme-hue) 12% 80%);
+  --sp-accent:        hsl(var(--sp-theme-hue) 65% 50%);
+  --sp-accent-soft:   hsl(var(--sp-theme-hue) 65% 95%);
+  --sp-accent-text:   hsl(var(--sp-theme-hue) 55% 38%);
+  --sp-accent-2:      hsl(var(--sp-theme-secondary-hue) 55% 42%);
+
+  /* ── Gray scale (hue-tinted for harmony) ── */
+  --sp-gray-50:  hsl(var(--sp-theme-hue)  8% 98%);
+  --sp-gray-100: hsl(var(--sp-theme-hue)  8% 95%);
+  --sp-gray-200: hsl(var(--sp-theme-hue) 10% 90%);
+  --sp-gray-300: hsl(var(--sp-theme-hue) 10% 82%);
+  --sp-gray-400: hsl(var(--sp-theme-hue) 10% 64%);
+  --sp-gray-500: hsl(var(--sp-theme-hue) 10% 50%);
+  --sp-gray-600: hsl(var(--sp-theme-hue) 14% 38%);
+  --sp-gray-700: hsl(var(--sp-theme-hue) 18% 28%);
+  --sp-gray-800: hsl(var(--sp-theme-hue) 22% 18%);
+  --sp-gray-900: hsl(var(--sp-theme-hue) 28% 12%);
+  --sp-gray-950: hsl(var(--sp-theme-hue) 32%  6%);
+
+  /* ── Spacing (4-px base) ── */
+  --sp-0:   0;
+  --sp-px:  1px;
+  --sp-0_5: 0.125rem;
+  --sp-1:   0.25rem;
+  --sp-1_5: 0.375rem;
+  --sp-2:   0.5rem;
+  --sp-3:   0.75rem;
+  --sp-4:   1rem;
+  --sp-5:   1.25rem;
+  --sp-6:   1.5rem;
+  --sp-8:   2rem;
+  --sp-10:  2.5rem;
+  --sp-12:  3rem;
+
+  /* ── Typography ── */
+  --sp-font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --sp-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  --sp-text-xs:   0.75rem;
+  --sp-text-sm:   0.875rem;
+  --sp-text-base: 1rem;
+  --sp-text-lg:   1.125rem;
+  --sp-text-xl:   1.25rem;
+  --sp-text-2xl:  1.5rem;
+
+  /* ── Border radius ── */
+  --sp-radius-sm:   4px;
+  --sp-radius:      8px;
+  --sp-radius-lg:   12px;
+  --sp-radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --sp-shadow-sm: 0 1px 2px hsl(var(--sp-theme-hue) 20% 0% / 0.05);
+  --sp-shadow:    0 4px 12px hsl(var(--sp-theme-hue) 20% 0% / 0.10);
+  --sp-shadow-lg: 0 8px 32px hsl(var(--sp-theme-hue) 20% 0% / 0.15);
+
+  /* ── Transitions ── */
+  --sp-ease:      cubic-bezier(0.4, 0, 0.2, 1);
+  --sp-fast:      0.12s var(--sp-ease);
+  --sp-normal:    0.2s  var(--sp-ease);
+  --sp-slow:      0.3s  var(--sp-ease);
+
+  /* ── Code ── */
+  --sp-code-bg:     hsl(var(--sp-theme-hue) 10% 95%);
+  --sp-code-block:  hsl(var(--sp-theme-hue) 25% 14%);
+  --sp-code-text:   hsl(var(--sp-theme-hue) 15% 90%);
+}
+
+/* ── Dark: OS preference (when no explicit data-theme set) ── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dark-mode="light"]) {
+    --sp-bg:            hsl(var(--sp-theme-hue) 18% 10%);
+    --sp-surface:       hsl(var(--sp-theme-hue) 14% 14%);
+    --sp-surface-alt:   hsl(var(--sp-theme-hue) 14% 18%);
+    --sp-text:          hsl(var(--sp-theme-hue) 18% 90%);
+    --sp-text-2:        hsl(var(--sp-theme-hue) 14% 65%);
+    --sp-text-3:        hsl(var(--sp-theme-hue) 12% 50%);
+    --sp-border:        hsl(var(--sp-theme-hue) 12% 24%);
+    --sp-border-2:      hsl(var(--sp-theme-hue) 12% 32%);
+    --sp-accent:        hsl(var(--sp-theme-hue) 60% 58%);
+    --sp-accent-soft:   hsl(var(--sp-theme-hue) 50% 16%);
+    --sp-accent-text:   hsl(var(--sp-theme-hue) 50% 72%);
+    --sp-accent-2:      hsl(var(--sp-theme-secondary-hue) 45% 55%);
+
+    --sp-gray-50:  hsl(var(--sp-theme-hue)  8% 12%);
+    --sp-gray-100: hsl(var(--sp-theme-hue)  8% 16%);
+    --sp-gray-200: hsl(var(--sp-theme-hue) 10% 22%);
+    --sp-gray-300: hsl(var(--sp-theme-hue) 10% 30%);
+    --sp-gray-400: hsl(var(--sp-theme-hue) 10% 46%);
+    --sp-gray-500: hsl(var(--sp-theme-hue) 10% 55%);
+    --sp-gray-600: hsl(var(--sp-theme-hue) 10% 65%);
+    --sp-gray-700: hsl(var(--sp-theme-hue) 10% 78%);
+    --sp-gray-800: hsl(var(--sp-theme-hue) 14% 88%);
+    --sp-gray-900: hsl(var(--sp-theme-hue) 18% 94%);
+    --sp-gray-950: hsl(var(--sp-theme-hue) 22% 98%);
+
+    --sp-shadow-sm: 0 1px 2px hsl(var(--sp-theme-hue) 30% 0% / 0.2);
+    --sp-shadow:    0 4px 12px hsl(var(--sp-theme-hue) 30% 0% / 0.3);
+    --sp-shadow-lg: 0 8px 32px hsl(var(--sp-theme-hue) 30% 0% / 0.4);
+
+    --sp-code-bg:    hsl(var(--sp-theme-hue) 12% 18%);
+    --sp-code-block: hsl(var(--sp-theme-hue) 30% 5%);
+    --sp-code-text:  hsl(var(--sp-theme-hue) 15% 88%);
+  }
+}
+
+/* ── Dark: explicit data-theme="dark" (overrides everything) ── */
+:root[data-dark-mode="dark"] {
+  --sp-bg:            hsl(var(--sp-theme-hue) 18% 10%);
+  --sp-surface:       hsl(var(--sp-theme-hue) 14% 14%);
+  --sp-surface-alt:   hsl(var(--sp-theme-hue) 14% 18%);
+  --sp-text:          hsl(var(--sp-theme-hue) 18% 90%);
+  --sp-text-2:        hsl(var(--sp-theme-hue) 14% 65%);
+  --sp-text-3:        hsl(var(--sp-theme-hue) 12% 50%);
+  --sp-border:        hsl(var(--sp-theme-hue) 12% 24%);
+  --sp-border-2:      hsl(var(--sp-theme-hue) 12% 32%);
+  --sp-accent:        hsl(var(--sp-theme-hue) 60% 58%);
+  --sp-accent-soft:   hsl(var(--sp-theme-hue) 50% 16%);
+  --sp-accent-text:   hsl(var(--sp-theme-hue) 50% 72%);
+  --sp-accent-2:      hsl(var(--sp-theme-secondary-hue) 45% 55%);
+
+  --sp-gray-50:  hsl(var(--sp-theme-hue)  8% 12%);
+  --sp-gray-100: hsl(var(--sp-theme-hue)  8% 16%);
+  --sp-gray-200: hsl(var(--sp-theme-hue) 10% 22%);
+  --sp-gray-300: hsl(var(--sp-theme-hue) 10% 30%);
+  --sp-gray-400: hsl(var(--sp-theme-hue) 10% 46%);
+  --sp-gray-500: hsl(var(--sp-theme-hue) 10% 55%);
+  --sp-gray-600: hsl(var(--sp-theme-hue) 10% 65%);
+  --sp-gray-700: hsl(var(--sp-theme-hue) 10% 78%);
+  --sp-gray-800: hsl(var(--sp-theme-hue) 14% 88%);
+  --sp-gray-900: hsl(var(--sp-theme-hue) 18% 94%);
+  --sp-gray-950: hsl(var(--sp-theme-hue) 22% 98%);
+
+  --sp-shadow-sm: 0 1px 2px hsl(var(--sp-theme-hue) 30% 0% / 0.2);
+  --sp-shadow:    0 4px 12px hsl(var(--sp-theme-hue) 30% 0% / 0.3);
+  --sp-shadow-lg: 0 8px 32px hsl(var(--sp-theme-hue) 30% 0% / 0.4);
+
+  --sp-code-bg:    hsl(var(--sp-theme-hue) 12% 18%);
+  --sp-code-block: hsl(var(--sp-theme-hue) 30% 5%);
+  --sp-code-text:  hsl(var(--sp-theme-hue) 15% 88%);
+}

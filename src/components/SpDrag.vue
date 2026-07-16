@@ -477,7 +477,7 @@ function handleOutsideClick(e: MouseEvent) {
   left: 16px;
   right: 16px;
   bottom: 16px;
-  border: 2px dashed #3b82f6;
+  border: 2px dashed var(--sp-accent);
   pointer-events: none;
 }
 
@@ -485,8 +485,8 @@ function handleOutsideClick(e: MouseEvent) {
   position: absolute;
   width: 30px;
   height: 30px;
-  background: #fff;
-  border: 3px solid #3b82f6;
+  background: var(--sp-surface);
+  border: 3px solid var(--sp-accent);
   border-radius: 3px;
   pointer-events: auto;
   z-index: 2;
@@ -507,7 +507,7 @@ function handleOutsideClick(e: MouseEvent) {
   left: calc(50% - 1px);
   width: 2px;
   height: 28px;
-  background: #3b82f6;
+  background: var(--sp-accent);
   pointer-events: none;
 }
 
@@ -518,8 +518,8 @@ function handleOutsideClick(e: MouseEvent) {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #fff;
-  border: 3px solid #3b82f6;
+  background: var(--sp-surface);
+  border: 3px solid var(--sp-accent);
   cursor: grab;
   pointer-events: auto;
   z-index: 2;
@@ -532,8 +532,8 @@ function handleOutsideClick(e: MouseEvent) {
   transform: translateX(-50%);
   padding: 6px 18px;
   font-size: 13px;
-  background: #3b82f6;
-  color: #fff;
+  background: var(--sp-accent);
+  color: var(--sp-surface);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -544,6 +544,6 @@ function handleOutsideClick(e: MouseEvent) {
 }
 
 .sp-drag-save-btn:hover {
-  background: #2563eb;
+  background: var(--sp-accent-text);
 }
 </style>

@@ -7,27 +7,27 @@
   margin: 0;
 }
 .sp-toc-section {
-  font-size: 0.75em;
+  font-size: var(--sp-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #94a3b8;
-  padding: 0.35em 0.5em 0.2em;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 0.15em;
+  color: var(--sp-text-3);
+  padding: var(--sp-1_5) var(--sp-2) var(--sp-1);
+  border-bottom: var(--sp-px) solid var(--sp-border);
+  margin-bottom: var(--sp-0_5);
 }
 .sp-toc li {
   cursor: pointer;
-  padding: 0.3em 0.5em;
-  border-radius: 4px;
-  transition: background 0.15s;
+  padding: var(--sp-1_5) var(--sp-2);
+  border-radius: var(--sp-radius-sm);
+  transition: background var(--sp-fast);
 }
 .sp-toc li:hover {
-  background: #f1f5f9;
+  background: var(--sp-surface-alt);
 }
 .sp-toc-active {
   font-weight: 700;
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--sp-accent);
+  background: var(--sp-accent-soft);
 }
 .sp-toc li.sp-toc-h1 {
   padding-left: 0;
@@ -43,14 +43,7 @@
 .sp-toc-num {
   display: inline-block;
   min-width: 1.5em;
-  color: #94a3b8;
-  margin-right: 0.5em;
+  color: var(--sp-text-3);
+  margin-right: var(--sp-2);
   font-variant-numeric: tabular-nums;
-}
-
-@media (prefers-color-scheme: dark) {
-  .sp-toc li:hover { background: #1e293b; }
-  .sp-toc-active { background: #1e3a5f; color: #60a5fa; }
-  .sp-toc-num { color: #64748b; }
-  .sp-toc-section { color: #64748b; border-bottom-color: #334155; }
 }

@@ -53,7 +53,7 @@ watch(() => props.src, resolve, { immediate: true })
   height: 24px;
   vertical-align: middle;
   text-align: center;
-  color: #94a3b8;
+  color: var(--sp-text-3);
   font-size: 0.8em;
 }
 </style>
