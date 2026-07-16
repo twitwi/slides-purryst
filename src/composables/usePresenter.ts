@@ -30,9 +30,13 @@ export function usePresenter() {
     channel?.postMessage({ type: 'sync', slide, step })
   }
 
+  function syncBlackout(active: boolean) {
+    channel?.postMessage({ type: 'blackout', active })
+  }
+
   onUnmounted(() => {
     channel?.close()
   })
 
-  return { presenterWindow, presenterActive, openPresenterWindow, closePresenter, syncState, channel }
+  return { presenterWindow, presenterActive, openPresenterWindow, closePresenter, syncState, syncBlackout, channel }
 }

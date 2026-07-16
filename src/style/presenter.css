@@ -139,6 +139,30 @@
   line-height: 1.5;
 }
 
+.sp-presenter-clock {
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #e2e8f0;
+  text-align: center;
+  padding: 0.5rem;
+  background: #0f172a;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.sp-presenter-blackout-badge {
+  text-align: center;
+  padding: 0.5rem;
+  background: #dc2626;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 @media (prefers-color-scheme: dark) {
   .sp-presenter-preview { background: #f5f5f4; color: #1e293b; }
   .sp-presenter-next-slide-wrap { background: #f5f5f4; color: #1e293b; }

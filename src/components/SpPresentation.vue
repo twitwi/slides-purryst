@@ -2,7 +2,10 @@
   <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
     <!-- === MAIN (non-presenter) LAYOUT === -->
     <template v-if="!presenter">
-      <div class="sp-viewport" :style="containerStyle" ref="viewportEl">
+      <div v-if="loading" class="sp-loading">
+        <div class="sp-loading-text">Loading…</div>
+      </div>
+      <div v-show="!loading" class="sp-viewport" :style="containerStyle" ref="viewportEl">
         <div class="sp-scale-wrap" :style="transformStyle">
           <div class="sp-global-top">
             <slot name="global-top" />
@@ -104,6 +107,8 @@
       <div class="sp-progress">
         <div class="sp-progress-bar" :style="{ width: progressPercent + '%' }" />
       </div>
+
+      <div v-if="blackout" class="sp-main-blackout" @click="blackout = false"></div>
 
       <div v-if="showOverview" class="sp-overview" @click.self="showOverview = false">
         <div class="sp-overview-grid" ref="overviewGridEl">
@@ -212,6 +217,8 @@
           <div class="sp-presenter-info">
             <div class="sp-presenter-num">{{ currentIndex + 1 }} <small>/ {{ total }}</small></div>
             <div class="sp-presenter-progress"><div class="sp-presenter-progress-bar" :style="{ width: progressPercent + '%' }" /></div>
+            <div class="sp-presenter-clock">{{ elapsedStr }}</div>
+            <div v-if="blackout" class="sp-presenter-blackout-badge">BLACKED OUT</div>
           </div>
           <div class="sp-presenter-notes">
             <h3>Speaker Notes</h3>
@@ -285,7 +292,7 @@ const {
 let skipStepReset = false
 const contentVersion = ref(0)
 
-const { openPresenterWindow, closePresenter, presenterActive, syncState, channel } = usePresenter()
+const { openPresenterWindow, closePresenter, presenterActive, syncState, syncBlackout, channel } = usePresenter()
 
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
 
@@ -519,6 +526,18 @@ function togglePresenter() {
 const showOverview = ref(false)
 const showDevPane = ref(false)
 const navLocked = ref(false)
+const blackout = ref(false)
+const loading = ref(true)
+
+const startTime = ref(Date.now())
+const nowTime = ref(Date.now())
+let clockTimer: ReturnType<typeof setInterval> | null = null
+const elapsedStr = computed(() => {
+  const elapsed = Math.floor((nowTime.value - startTime.value) / 1000)
+  const m = Math.floor(elapsed / 60)
+  const s = elapsed % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+})
 try { navLocked.value = localStorage.getItem('sp-nav-locked') === 'true' } catch {}
 
 watch(navLocked, v => {
@@ -832,12 +851,27 @@ if (channel) {
     if (e.data?.type === 'presenter-close') {
       closePresenter()
     }
+    if (e.data?.type === 'blackout') {
+      blackout.value = e.data.active
+    }
   })
   if (props.presenter) {
     channel.postMessage({ type: 'presenter-ready' })
     window.addEventListener('beforeunload', () => {
       channel?.postMessage({ type: 'presenter-close' })
     })
+  }
+}
+
+function toggleBlackout() {
+  blackout.value = !blackout.value
+  syncBlackout(blackout.value)
+}
+
+function exitBlackout() {
+  if (blackout.value) {
+    blackout.value = false
+    syncBlackout(false)
   }
 }
 
@@ -856,7 +890,10 @@ useNavigation({
   isFirstStep,
   onPresenterToggle: togglePresenter,
   onOverviewToggle: () => showOverview.value = !showOverview.value,
+  onOverviewExit: () => { showOverview.value = false },
   onGoPrompt,
+  onBlackoutToggle: toggleBlackout,
+  onBlackoutExit: exitBlackout,
 })
 
 onMounted(() => {
@@ -864,10 +901,19 @@ onMounted(() => {
     buildSteps(current.value)
   }
   doScanVisibility()
+  if (props.presenter) {
+    startTime.value = Date.now()
+    clockTimer = setInterval(() => { nowTime.value = Date.now() }, 1000)
+  }
   if (!props.presenter) {
     parseHash()
-    nextTick(() => syncUrl())
+    nextTick(() => {
+      syncUrl()
+      loading.value = false
+    })
     window.addEventListener('hashchange', onHashChange)
+  } else {
+    loading.value = false
   }
   setupIconIfNone(props.seed)
   highlightAllSlides()
@@ -896,6 +942,7 @@ async function highlightAllSlides() {
 }
 
 onUnmounted(() => {
+  if (clockTimer) clearInterval(clockTimer)
   channel?.close()
   stopDividerDrag()
   stopVdividerDrag()
