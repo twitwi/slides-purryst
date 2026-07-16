@@ -134,3 +134,14 @@
   .sp-dev-btn { background: #1e293b; border-color: #334155; }
   .sp-dev-btn:hover { background: #334155; }
 }
+
+.sp-dev-title-clicks {
+  font-size: 0.7em;
+  font-weight: 500;
+  margin-left: 8px;
+  transition: color 0.2s;
+}
+.sp-dev-title-clicks.cool { color: #3b82f6; }
+.sp-dev-title-clicks.mid  { color: #eab308; }
+.sp-dev-title-clicks.warm { color: #f97316; }
+.sp-dev-title-clicks.done { color: #22c55e; }

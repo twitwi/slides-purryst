@@ -3,7 +3,10 @@
     <div v-if="visible" class="sp-dev-overlay" @click.self="$emit('close')">
       <div class="sp-dev-pane">
         <div class="sp-dev-header">
-          <h2>Dev Tools</h2>
+          <h2 @click="onTitleClick">
+            Dev Tools
+            <span v-if="titleClicks > 0" class="sp-dev-title-clicks" :class="titleClickClass">{{ titleClicks }}/9</span>
+          </h2>
           <button class="sp-dev-close" @click="$emit('close')" aria-label="Close">&times;</button>
         </div>
 
@@ -57,6 +60,31 @@ const configContent = computed(() => {
   }
   return JSON.stringify(c, null, 1)
 })
+
+const titleClicks = ref(0)
+let titleClickTimer: ReturnType<typeof setTimeout> | null = null
+const titleClickClass = computed(() => {
+  const pct = titleClicks.value / 9
+  if (pct >= 1) return 'done'
+  if (pct > 0.66) return 'warm'
+  if (pct > 0.33) return 'mid'
+  return 'cool'
+})
+
+function onTitleClick() {
+  titleClicks.value++
+  if (titleClickTimer) clearTimeout(titleClickTimer)
+  if (titleClicks.value >= 9) {
+    config.proMode = true
+    titleClickTimer = setTimeout(() => {
+      titleClicks.value = 0
+    }, 1200)
+    return
+  }
+  titleClickTimer = setTimeout(() => {
+    titleClicks.value = 0
+  }, 2000)
+}
 
 const props = defineProps<{
   visible: boolean
