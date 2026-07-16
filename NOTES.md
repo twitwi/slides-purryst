@@ -15,19 +15,29 @@ From Slidev general (not in ultracharger):
 
 
 
-## TODO easy
+## TODO Easy
 
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward
-- [ ] dev:typst should compile once before (so the output exists), or loop until it complise once ok
-- [ ] in overview mode, esc should leave overview mode
-- [ ] introduce the blackout key (b) to blank the main view from presenter mode as in ultracharger
-- [ ] add a clock to the presenter view (elapsed time, maybe a countdown timer)
-- [ ] have an option cacheIgnore, a pattern to ignore certain paths from the cache (like .gitignore ideally)
-- [ ] bigger buttons for the custom component demo (counter)
-- [ ] find or code a fast prettier that maybe does not used bash/awk and handles pre
-- [ ] when loading / parsing hash to jump to a bookmarked slide, blank the screen (or show a loading message) so we don't see the first slide for a fraction of a second before jumping to the bookmarked slide
+
+## TOREVIEW
+
+- [ ] console.log left in SpAnim.vue
+
+## Done (this round)
+
+- [x] dev:typst compiles once before watching so output exists immediately
+- [x] esc leaves overview mode
+- [x] blackout key (b) blanks the main preview in presenter mode
+- [x] clock in presenter view (elapsed time, updated every second)
+- [x] cacheIgnore option in createSlidesPurryst (array of regex patterns)
+- [x] bigger buttons for Counter.vue demo component
+- [x] loading overlay when parsing hash to prevent first-slide flash
+- [x] replaced bash/awk HTML formatter with JS in dev.mjs (handles `<pre>` properly)
+
 ## TODO
 
+- [ ] can I have a more generic / extensible way to share 
+- [ ] can sp-alternative and sp-step be using some similar things as @jump (vis groups)? maybe need to make them show/hide instead of refreshing their visibility at every step?
 - [ ] fix/refactor sp-alternative and @jump (vis groups) (animating enter...) + redo anim
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
 - [ ] install the prettier (dev dep) + integrate in the script
