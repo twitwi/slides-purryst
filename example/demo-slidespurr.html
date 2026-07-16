@@ -62,12 +62,17 @@
   <sp-slide>
     <h3>Keyboard Navigation</h3>
     <ul>
-      <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">→</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">Space</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">↓</kbd>: Next</li>
-      <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">←</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">↑</kbd>: Previous</li>
-      <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">Home</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">End</kbd>: First / Last</li>
-      <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">a</kbd> / <kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">z</kbd>: End of prev / next slide</li>
-      <li><kbd style="padding:0.1em 0.4em;border:1px solid #cbd5e1;border-radius:3px">F</kbd>: Toggle fullscreen</li>
+      <li><kbd>→</kbd> / <kbd>Spc</kbd>: advance the presentation</li>
+      <li><kbd>←</kbd>: backward</li>
+      <li><kbd>↓</kbd> (next) / <kbd>↑</kbd> (previous) slide (skip steps) </li>
+      <li><kbd>A</kbd> / <kbd>Z</kbd> to browse: previous/next slide's end</li>
+      <li><kbd>G</kbd>: Open goto popup (number, header content)</li>
+      <li><kbd>O</kbd>: Toggle overview</li>
+      <li><kbd>F</kbd>: Toggle fullscreen</li>
     </ul>
+    <sp-style>
+      kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-alt); padding: 0 .2em; margin: 0 0.2em;  }
+    </sp-style>
   </sp-slide>
 
 
