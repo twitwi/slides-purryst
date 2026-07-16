@@ -1,10 +1,47 @@
 import { spawn, execSync } from 'child_process'
-import { watchFile } from 'fs'
+import { watchFile, readFileSync, writeFileSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
+
+function formatHtml(html) {
+  const preTags = []
+  let idx = 0
+  const stripped = html.replace(/<pre[\s>][\s\S]*?<\/pre>/gi, (match) => {
+    const key = `__PRE_${idx}__`
+    preTags.push(match)
+    idx++
+    return key
+  })
+
+  const parts = stripped.split(/(?=<)/)
+  let result = ''
+  let depth = 0
+  for (let part of parts) {
+    const trimmed = part.trim()
+    if (!trimmed) continue
+
+    const isClosing = /^<\//.test(trimmed)
+    const isSelfClosing = /^<[^>]*\/>/.test(trimmed)
+    const isOpenBlock = /^<(?!\/)(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|sp-anim|sp-pause|sp-toc|sp-include|sp-svg)([\s>])/i.test(trimmed) || isSelfClosing
+
+    if (isClosing) depth = Math.max(0, depth - 1)
+    const indent = '  '.repeat(depth)
+    if (!isClosing && !isOpenBlock && !isSelfClosing) depth++
+
+    if (/^<sp-slide[\s>]/i.test(trimmed)) {
+      result += '\n\n'
+    }
+    result += indent + trimmed + '\n'
+  }
+
+  result = result.replace(/__PRE_(\d+)__/g, (_, n) => {
+    return preTags[parseInt(n)]
+  })
+  return result.trim() + '\n'
+}
 
 const useTypst = process.argv.includes('--typst') || process.argv.includes('typst')
 const dir = 'example'
@@ -19,6 +56,16 @@ if (useTypst) {
   const output = resolve(root, demoFile)
   const tmp1 = resolve(root, tmp(1))
   const tmp2 = resolve(root, tmp(2))
+
+  // Ensure initial output exists before watching
+  console.log('Initial typst compile...')
+  try {
+    execSync(`typst compile --root "${root}" --input "slides-purryst-path=../src/index.ts" --input "slides-purryst-module=true" --format html --features html "${demoTypst}" "${tmp1}"`, { cwd: root, stdio: 'inherit', timeout: 60000 })
+    console.log('Initial compile done.')
+  } catch (e) {
+    console.error('Initial typst compile failed, will retry via watch:', e.message)
+  }
+
   const typstArgs = [
     'watch', '--no-serve',
     '--root', root,
@@ -51,7 +98,9 @@ if (useTypst) {
         _(`cp "${tmp1}" "${tmp2}"`)
         //_('pnpm SLOW-do-prettier-inplace "' + tmp2 + '"')
         //_('cp "' + tmp2 + '" "' + output + '"')
-        _(`scripts/quick-html-format.sh ${tmp2} ${output}`)
+        const raw = readFileSync(tmp2, 'utf-8')
+        const formatted = formatHtml(raw)
+        writeFileSync(output, formatted, 'utf-8')
       } finally {
         busy = false
       }
