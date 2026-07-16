@@ -555,6 +555,7 @@ function togglePresenter() {
 }
 
 const config = useStorage()
+spApi.config = config
 const showOverview = ref(false)
 const showDevPane = ref(false)
 const blackout = ref(false)
@@ -921,6 +922,7 @@ useNavigation({
   onGoPrompt,
   onBlackoutToggle: toggleBlackout,
   onBlackoutExit: exitBlackout,
+  onDevPaneToggle: () => { if (config.proMode) toggleDevPane() },
 })
 
 onMounted(() => {

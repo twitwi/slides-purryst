@@ -32,7 +32,7 @@
         <section class="sp-dev-section">
           <h3>Actions</h3>
           <button class="sp-dev-btn" @click="doExport">Export Standalone</button>
-          <button class="sp-dev-btn" @click="doClearStorage">Clear localStorage Keys</button>
+          <button class="sp-dev-btn" @click="doClearStorage" :title="configContent">Clear localStorage Keys</button>
         </section>
 
         <footer class="sp-dev-footer">
@@ -44,8 +44,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { getCacheEntries, clearCache, removeCacheEntry } from '../composables/includeCache'
+import { resetConfig, useStorage } from '../composables/useStorage'
+
+const config = useStorage()
+const configContent = computed(() => {
+  const c: Record<string, unknown> = {}
+  for (const k of Object.keys(config)) {
+    c[k] = config[k]
+  }
+  return JSON.stringify(c, null, 1)
+})
 
 const props = defineProps<{
   visible: boolean
@@ -103,13 +114,7 @@ function doExport() {
 }
 
 function doClearStorage() {
-  const keys: string[] = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i)
-    if (k && k.startsWith('sp-')) keys.push(k)
-  }
-  keys.forEach(k => localStorage.removeItem(k))
-  cacheEntries.value = getCacheEntries()
+  resetConfig()
 }
 
 function shortPath(p: string): string {

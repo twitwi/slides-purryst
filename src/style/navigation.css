@@ -173,6 +173,10 @@
   background: #e2e8f0;
 }
 
+.sp-nav-more-item:has(.active) {
+  color: #2563eb;
+}
+
 .sp-nav-more-icon {
   width: 18px;
   text-align: center;

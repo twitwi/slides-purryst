@@ -5,12 +5,14 @@ const KEY = 'sp-config'
 export interface SpStorageConfig {
   navLocked: boolean
   overviewScale: number
+  proMode: boolean
   [key: string]: unknown
 }
 
 const defaults: SpStorageConfig = {
   navLocked: false,
   overviewScale: 0.15,
+  proMode: false,
 }
 
 function load(): SpStorageConfig {
@@ -30,4 +32,14 @@ watch(config, () => {
 
 export function useStorage() {
   return config
+}
+
+export function resetConfig() {
+  for (const key of Object.keys(config)) {
+    if (key in defaults) {
+      config[key] = defaults[key as keyof SpStorageConfig]
+    } else {
+      delete config[key]
+    }
+  }
 }
