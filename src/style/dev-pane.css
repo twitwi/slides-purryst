@@ -145,3 +145,53 @@
 .sp-dev-title-clicks.mid  { color: #eab308; }
 .sp-dev-title-clicks.warm { color: #f97316; }
 .sp-dev-title-clicks.done { color: #22c55e; }
+
+.sp-dev-config {}
+.sp-dev-config summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.sp-dev-config summary::-webkit-details-marker { display: none; }
+.sp-dev-config summary::before {
+  content: '▶';
+  font-size: 0.7em;
+  color: #64748b;
+  transition: transform 0.15s;
+}
+.sp-dev-config[open] summary::before {
+  transform: rotate(90deg);
+}
+.sp-dev-config summary h3 {
+  display: inline;
+  margin-bottom: 0;
+}
+.sp-dev-config-fields {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sp-dev-config-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.85em;
+  color: #cbd5e1;
+}
+.sp-dev-config-label {
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.9em;
+  color: #94a3b8;
+}
+.sp-dev-config-field input[type="checkbox"] {
+  accent-color: #3b82f6;
+}
+.sp-dev-config-field input[type="range"] {
+  flex: 1;
+  max-width: 120px;
+  accent-color: #3b82f6;
+}

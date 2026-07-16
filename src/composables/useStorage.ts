@@ -6,6 +6,7 @@ export interface SpStorageConfig {
   navLocked: boolean
   overviewScale: number
   proMode: boolean
+  logSteps: boolean
   [key: string]: unknown
 }
 
@@ -13,6 +14,7 @@ const defaults: SpStorageConfig = {
   navLocked: false,
   overviewScale: 0.15,
   proMode: false,
+  logSteps: false,
 }
 
 function load(): SpStorageConfig {

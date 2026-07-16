@@ -38,6 +38,18 @@
           <button class="sp-dev-btn" @click="doClearStorage" :title="configContent">Clear localStorage Keys</button>
         </section>
 
+        <details class="sp-dev-section sp-dev-config">
+          <summary><h3>Config</h3></summary>
+          <div class="sp-dev-config-fields">
+            <label v-for="k in configKeys" :key="k.key" class="sp-dev-config-field">
+              <span class="sp-dev-config-label">{{ k.key }}</span>
+              <input v-if="k.type === 'boolean'" type="checkbox" :checked="!!config[k.key]" @change="config[k.key] = ($event.target as HTMLInputElement).checked" />
+              <input v-else-if="k.type === 'number'" type="range" :min="k.min ?? 0" :max="k.max ?? 1" :step="k.step ?? 0.01" :value="config[k.key]" @input="config[k.key] = parseFloat(($event.target as HTMLInputElement).value)" />
+              <input v-else type="text" :value="config[k.key]" @input="config[k.key] = ($event.target as HTMLInputElement).value" />
+            </label>
+          </div>
+        </details>
+
         <footer class="sp-dev-footer">
           <small>toolbar ◆ to open</small>
         </footer>
@@ -59,6 +71,25 @@ const configContent = computed(() => {
     c[k] = config[k]
   }
   return JSON.stringify(c, null, 1)
+})
+
+interface ConfigField {
+  key: string
+  type: 'boolean' | 'number' | 'string'
+  min?: number
+  max?: number
+  step?: number
+}
+
+const configKnownTypes: Record<string, ConfigField> = {
+  navLocked: { key: 'navLocked', type: 'boolean' },
+  overviewScale: { key: 'overviewScale', type: 'number', min: 0.05, max: 0.5, step: 0.01 },
+  proMode: { key: 'proMode', type: 'boolean' },
+  logSteps: { key: 'logSteps', type: 'boolean' },
+}
+
+const configKeys = computed(() => {
+  return Object.keys(config).filter(k => k !== 'proMode' || config.proMode).map(k => configKnownTypes[k] ?? { key: k, type: 'string' })
 })
 
 const titleClicks = ref(0)

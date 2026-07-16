@@ -583,6 +583,7 @@ interface ClockLogEntry {
   slide: number
   elapsed: number
   heading?: string
+  step?: number
 }
 
 function loadClock(): number {
@@ -621,7 +622,7 @@ const elapsedStr = computed(() => {
 
 const clockTitle = computed(() => {
   const n = clockLog.value.length
-  return n ? `${n} slides logged` : ''
+  return n ? `${n} entries logged` : ''
 })
 
 function logSlideChange(index: number) {
@@ -636,6 +637,12 @@ function logSlideChange(index: number) {
   }
   const elapsed = Math.floor((Date.now() - startTime.value) / 1000)
   clockLog.value.push({ slide: index + 1, elapsed, heading })
+  saveLog()
+}
+
+function logStepChange(index: number, step: number) {
+  const elapsed = Math.floor((Date.now() - startTime.value) / 1000)
+  clockLog.value.push({ slide: index + 1, elapsed, step: step + 1 })
   saveLog()
 }
 
@@ -656,7 +663,10 @@ function exportClockLog() {
   lines.push(`0,0,"Started: ${startedStr}"`)
   for (const entry of clockLog.value) {
     const h = entry.heading ? `"${entry.heading.replace(/"/g, '""')}"` : ''
-    lines.push(`${entry.slide},${entry.elapsed},${h}`)
+    const slideLabel = entry.step !== undefined
+      ? `${entry.slide}.${String(entry.step).padStart(2, '0')}`
+      : String(entry.slide)
+    lines.push(`${slideLabel},${entry.elapsed},${h}`)
   }
   const text = lines.join('\n')
   navigator.clipboard.writeText(text).catch(() => {})
@@ -889,8 +899,13 @@ watch([currentIndex, stepIndex], () => {
   syncState(currentIndex.value, stepIndex.value)
 }, { flush: 'post' })
 
-watch(currentIndex, (n, o) => {
-  if (n !== o && props.presenter) logSlideChange(n)
+watch([currentIndex, stepIndex], ([nIdx, nStep], [oIdx, oStep]) => {
+  if (!props.presenter) return
+  if (nIdx !== oIdx) {
+    logSlideChange(nIdx)
+  } else if (config.logSteps && nStep !== oStep) {
+    logStepChange(nIdx, nStep)
+  }
 })
 
 

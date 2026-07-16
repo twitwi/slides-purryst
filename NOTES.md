@@ -21,14 +21,17 @@ From Slidev general (not in ultracharger):
 
 ## TODO Now
 
+- [ ] presenter view should not animate next slide!
+- [ ] cache custom components source too so we can create a self-contained bundle
+- [ ] have a proper theme, with a switch between dark and light (key 'd', unless proMode is on), a default associated to the pres, and a default associated to the typst theme (future), a button in the popup of the toolbar
+- [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
+
 ## TOREVIEW
 
-- [ ] presenter view should not animate next slide!
 
 ## TODO
 
 - [ ] consider history management (think about when to push)
-- [ ] cache custom components too
 - [ ] consider removing prettier dependency then
 - [ ] can sp-alternative and sp-step be using some similar things as @jump (vis groups)? maybe need to make them show/hide instead of refreshing their visibility at every step?
 - [ ] fix/refactor sp-alternative and @jump (vis groups) (animating enter...) + redo anim
