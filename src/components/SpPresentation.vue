@@ -140,32 +140,6 @@
         <span class="sp-main-blackout-hint">click to dismiss</span>
       </div>
 
-      <SpOverview
-        v-if="showOverview"
-        :slides="slides"
-        :currentIndex="currentIndex"
-        :slideHeadingLevels="slideHeadingLevels"
-        :overviewHtmls="overviewHtmls"
-        :overviewThumbStyle="overviewThumbStyle"
-        :overviewSlideStyle="overviewSlideStyle"
-        :components="props.components"
-        @close="showOverview = false"
-        @select="goToOverviewSlide"
-      />
-
-      <SpDevPane :visible="showDevPane" :export-fn="spApi.export" @close="showDevPane = false" />
-
-      <SpGoPrompt
-        v-if="showGoPrompt"
-        :slides="slides"
-        :overviewHtmls="overviewHtmls"
-        :designWidth="props.designWidth"
-        :designHeight="props.designHeight"
-        :components="props.components"
-        :total="total"
-        @close="closeGoPrompt"
-        @select="goToResult"
-      />
     </template>
 
     <!-- === PRESENTER LAYOUT === -->
@@ -186,6 +160,34 @@
         :computeSlideSteps="computeSlideSteps"
       />
     </template>
+
+    <!-- === SHARED OVERLAYS (both modes) === -->
+    <SpOverview
+      v-if="showOverview"
+      :slides="slides"
+      :currentIndex="currentIndex"
+      :slideHeadingLevels="slideHeadingLevels"
+      :overviewHtmls="overviewHtmls"
+      :overviewThumbStyle="overviewThumbStyle"
+      :overviewSlideStyle="overviewSlideStyle"
+      :components="props.components"
+      @close="showOverview = false"
+      @select="goToOverviewSlide"
+    />
+
+    <SpDevPane :visible="showDevPane" :export-fn="spApi.export" @close="showDevPane = false" />
+
+    <SpGoPrompt
+      v-if="showGoPrompt"
+      :slides="slides"
+      :overviewHtmls="overviewHtmls"
+      :designWidth="props.designWidth"
+      :designHeight="props.designHeight"
+      :components="props.components"
+      :total="total"
+      @close="closeGoPrompt"
+      @select="goToResult"
+    />
   </div>
 </template>
 

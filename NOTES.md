@@ -1,20 +1,4 @@
 
-## NOCOMMIT
-
-Code syntax highlighting — Most technical presentations need this. Could integrate Shiki (same as VitePress) or Prism.js. Natural step since the audience is dev-focused.
-Export — Export to PDF (using Puppeteer/Playwright headless) or a self-contained HTML bundle. High value for distribution.
-Presenter timer — Clock + elapsed time in presenter sidebar. Simple but useful.
-Auto-advance / slideshow mode — Configurable interval, toggle via UI or query param.
-
-From Slidev general (not in ultracharger):
- 6. Drawing/annotation — using Drauu (https://github.com/antfu/drauu) for in-presentation drawing. This is one of Slidev's most praised features.
- 7. Code highlighting — Shiki (https://shiki.style) integration for <pre><code> blocks. You have the basics but no syntax coloring.
- 8. LaTeX math — KaTeX (https://katex.org) for $$...$$ inline/block math.
- 9. Click animations — v-click / v-clicks / v-after directives as a simpler alternative to <Anim>. v-click="n" makes elements appear step-by-step.
-10. Mermaid diagrams — text-to-diagram with  ``mermaid ` code fences.
-
-
-
 ## TODO Easy
 
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward
@@ -26,7 +10,8 @@ From Slidev general (not in ultracharger):
 - [ ] presenter view should not animate next slide!
 - [ ] cache custom components source too so we can create a self-contained bundle
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
-- [ ] 'g' should work in presenter view, also 'o' and 'd'
+
+
 
 ## TOREVIEW
 
