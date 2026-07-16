@@ -323,6 +323,7 @@ import Counter from './Counter.vue'
 createSlidesPurryst({
   components: { 'my-counter': Counter },
   seed: 12345678+90,
+  cacheIgnore: ['huge-.*\\.svg$'],  // don't inline SVGs in the output bundle
 })
 </script>
 </body>

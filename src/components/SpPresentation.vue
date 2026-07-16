@@ -51,9 +51,9 @@
         </div>
       </div>
 
-      <nav class="sp-nav" :class="{ locked: navLocked }">
+      <nav class="sp-nav" :class="{ locked: config.navLocked }">
         <div class="sp-nav-bar">
-          <button class="sp-nav-btn sp-nav-lock" :class="{ locked: navLocked }" :title="navLocked ? 'Unlock nav' : 'Lock nav visible'" @click="navLocked = !navLocked">
+          <button class="sp-nav-btn sp-nav-lock" :class="{ locked: config.navLocked }" :title="config.navLocked ? 'Unlock nav' : 'Lock nav visible'" @click="config.navLocked = !config.navLocked">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <rect x="3" y="5" width="8" height="7" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/>
               <path d="M4.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" stroke-width="1.2" fill="none"/>
@@ -275,6 +275,7 @@ import SpDevPane from './SpDevPane.vue'
 import { spApi } from '../sp-api'
 import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
+import { useStorage } from '../composables/useStorage'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -322,7 +323,7 @@ const {
 let skipStepReset = false
 const contentVersion = ref(0)
 
-const { openPresenterWindow, closePresenter, presenterActive, syncState, syncBlackout, channel } = usePresenter()
+const { openPresenterWindow, closePresenter, presenterActive, syncState, syncBlackout, send, onMessage, channel } = usePresenter()
 
 const { transformStyle, containerStyle } = useScale(props.designWidth, props.designHeight)
 
@@ -553,9 +554,9 @@ function togglePresenter() {
   }
 }
 
+const config = useStorage()
 const showOverview = ref(false)
 const showDevPane = ref(false)
-const navLocked = ref(false)
 const blackout = ref(false)
 const loading = ref(true)
 const showMoreMenu = ref(false)
@@ -570,14 +571,9 @@ const elapsedStr = computed(() => {
   const s = elapsed % 60
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 })
-try { navLocked.value = localStorage.getItem('sp-nav-locked') === 'true' } catch {}
-
-watch(navLocked, v => {
-  try { localStorage.setItem('sp-nav-locked', v ? 'true' : 'false') } catch {}
-})
 
 watchEffect(() => {
-  spApi.navLocked = navLocked.value
+  spApi.navLocked = config.navLocked
   spApi.currentIndex = currentIndex.value
   spApi.stepIndex = stepIndex.value
   spApi.total = total.value
@@ -585,7 +581,7 @@ watchEffect(() => {
   spApi.effectiveTotal = effectiveTotal.value
   spApi.fakeEndIndices = fakeEndIndices.value
 })
-spApi.toggleNavLock = () => { navLocked.value = !navLocked.value }
+spApi.toggleNavLock = () => { config.navLocked = !config.navLocked }
 spApi.goTo = goTo
 spApi.next = next
 spApi.prev = prev
@@ -593,12 +589,11 @@ spApi.nextSlide = nextSlide
 spApi.prevSlide = prevSlide
 spApi.export = exportStandalone
 
-const overviewScale = ref(0.15)
 const overviewGridEl = ref<HTMLElement | null>(null)
 let overviewObserver: ResizeObserver | null = null
 
 const overviewScaleStyle = computed(() => ({
-  transform: `scale(${overviewScale.value})`,
+  transform: `scale(${config.overviewScale})`,
   transformOrigin: 'top left',
   width: props.designWidth + 'px',
   height: props.designHeight + 'px',
@@ -617,7 +612,7 @@ function setupOverviewObserver() {
       const grid = entry.target as HTMLElement
       const first = grid.firstElementChild as HTMLElement | null
       if (first) {
-        overviewScale.value = first.clientWidth / props.designWidth
+        config.overviewScale = first.clientWidth / props.designWidth
       }
     }
   })
@@ -866,33 +861,33 @@ function onHashChange() {
   parseHash()
 }
 
-if (channel) {
-  channel.addEventListener('message', (e: MessageEvent) => {
-    if (e.data?.type === 'sync') {
-      isBroadcasting.value = true
-      if (e.data.slide !== currentIndex.value) {
-        skipStepReset = true
-      }
-      goTo(e.data.slide)
-      stepIndex.value = e.data.step
-      nextTick(() => { isBroadcasting.value = false })
-    }
-    if (e.data?.type === 'presenter-ready') {
-      syncState(currentIndex.value, stepIndex.value)
-    }
-    if (e.data?.type === 'presenter-close') {
-      closePresenter()
-    }
-    if (e.data?.type === 'blackout') {
-      blackout.value = e.data.active
-    }
-  })
-  if (props.presenter) {
-    channel.postMessage({ type: 'presenter-ready' })
-    window.addEventListener('beforeunload', () => {
-      channel?.postMessage({ type: 'presenter-close' })
-    })
+onMessage('sync', (data) => {
+  isBroadcasting.value = true
+  if (data.slide !== currentIndex.value) {
+    skipStepReset = true
   }
+  goTo(data.slide as number)
+  stepIndex.value = data.step as number
+  nextTick(() => { isBroadcasting.value = false })
+})
+
+onMessage('presenter-ready', () => {
+  syncState(currentIndex.value, stepIndex.value)
+})
+
+onMessage('presenter-close', () => {
+  closePresenter()
+})
+
+onMessage('blackout', (data) => {
+  blackout.value = data.active as boolean
+})
+
+if (props.presenter) {
+  send('presenter-ready')
+  window.addEventListener('beforeunload', () => {
+    send('presenter-close')
+  })
 }
 
 function toggleBlackout() {
@@ -977,7 +972,6 @@ async function highlightAllSlides() {
 onUnmounted(() => {
   if (clockTimer) clearInterval(clockTimer)
   document.removeEventListener('click', onDocumentClick, true)
-  channel?.close()
   stopDividerDrag()
   stopVdividerDrag()
   window.removeEventListener('hashchange', onHashChange)

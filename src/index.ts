@@ -10,6 +10,8 @@ export { useSteps, buildSteps, processHtml } from './composables/useSteps'
 export { useNavigation } from './composables/useNavigation'
 export { useSlides, parseElementToSlides } from './composables/useSlides'
 export { usePresenter } from './composables/usePresenter'
+export { useStorage } from './composables/useStorage'
+export type { SpStorageConfig } from './composables/useStorage'
 export { useSlideTree } from './composables/useSlideTree'
 export type { TocItem } from './composables/useSlideTree'
 
