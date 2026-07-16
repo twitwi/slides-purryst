@@ -140,135 +140,51 @@
         <span class="sp-main-blackout-hint">click to dismiss</span>
       </div>
 
-      <div v-if="showOverview" class="sp-overview" @click.self="showOverview = false">
-        <div class="sp-overview-grid">
-          <div
-            v-for="(slide, i) in slides"
-            :key="i"
-            class="sp-overview-thumb"
-            :class="{
-              active: i === currentIndex,
-              'sp-overview-h1': slideHeadingLevels[i] === 1,
-              'sp-overview-h2': slideHeadingLevels[i] === 2,
-              'sp-overview-h3': slideHeadingLevels[i] === 3,
-            }"
-            :style="overviewThumbStyle"
-            @click="goToOverviewSlide(i)"
-          >
-            <div class="sp-overview-thumb-stage">
-              <div :style="overviewSlideStyle">
-                <SpSlide
-                  :slide="slide"
-                  :html="overviewHtmls[i]"
-                  :components="props.components"
-                />
-              </div>
-            </div>
-            <div class="sp-overview-thumb-num">{{ i + 1 }}</div>
-          </div>
-        </div>
-      </div>
+      <SpOverview
+        v-if="showOverview"
+        :slides="slides"
+        :currentIndex="currentIndex"
+        :slideHeadingLevels="slideHeadingLevels"
+        :overviewHtmls="overviewHtmls"
+        :overviewThumbStyle="overviewThumbStyle"
+        :overviewSlideStyle="overviewSlideStyle"
+        :components="props.components"
+        @close="showOverview = false"
+        @select="goToOverviewSlide"
+      />
 
       <SpDevPane :visible="showDevPane" :export-fn="spApi.export" @close="showDevPane = false" />
 
-      <div v-if="showGoPrompt" class="sp-go-prompt" @click.self="closeGoPrompt">
-        <div class="sp-go-prompt-box">
-          <input
-            ref="goPromptInput"
-            v-model="goPromptValue"
-            class="sp-go-prompt-input"
-            placeholder="slide number or search text…"
-            @keydown.enter="handleGoSubmit"
-            @keydown.escape="closeGoPrompt"
-            @keydown.down.prevent="selectNext"
-            @keydown.up.prevent="selectPrev"
-          />
-          <div v-if="goPromptResults.length" class="sp-go-results">
-            <div
-              v-for="(r, i) in goPromptResults"
-              :key="r.index"
-              class="sp-go-result"
-              :class="{ focused: i === goPromptFocused }"
-              @click="goToResult(r.index)"
-              @mouseenter="goPromptFocused = i"
-            >
-              <div class="sp-go-result-thumb">
-                <div :style="goResultScaleStyle">
-                  <SpSlide
-                    :slide="slides[r.index]"
-                    :html="overviewHtmls[r.index]"
-                    :components="props.components"
-                  />
-                </div>
-              </div>
-              <div class="sp-go-result-text">
-                <div class="sp-go-result-num">Slide {{ r.index + 1 }}</div>
-                <div v-for="(t, ti) in r.matches" :key="ti" class="sp-go-result-heading" v-html="highlight(t)"></div>
-              </div>
-            </div>
-          </div>
-          <div v-else-if="goPromptValue && !/^\d*$/.test(goPromptValue)" class="sp-go-no-results">
-            No slides match "{{ goPromptValue }}"
-          </div>
-        </div>
-      </div>
+      <SpGoPrompt
+        v-if="showGoPrompt"
+        :slides="slides"
+        :overviewHtmls="overviewHtmls"
+        :designWidth="props.designWidth"
+        :designHeight="props.designHeight"
+        :components="props.components"
+        :total="total"
+        @close="closeGoPrompt"
+        @select="goToResult"
+      />
     </template>
 
     <!-- === PRESENTER LAYOUT === -->
     <template v-else>
-      <div class="sp-presenter-layout" :style="presenterGridStyle">
-        <div class="sp-presenter-main">
-          <div class="sp-presenter-preview" ref="previewContainerEl">
-            <div :style="previewScaleStyle" class="sp-slide-scaler">
-              <SpSlide
-                v-if="current"
-                :key="currentIndex"
-                :slide="current"
-                :html="activeHtml"
-                :components="props.components"
-              />
-            </div>
-          </div>
-          <div class="sp-presenter-vdivider" @mousedown="startVdividerDrag"></div>
-          <div class="sp-presenter-next" :style="{ height: nextHeight + 'px' }">
-            <div class="sp-presenter-next-label">Next</div>
-            <div class="sp-presenter-next-slide-wrap" ref="nextContainerEl">
-              <div :style="nextScaleStyle" class="sp-slide-scaler">
-                <SpSlide
-                  v-if="nextSlideData"
-                  :key="'next-' + (currentIndex + 1)"
-                  :slide="nextSlideData"
-                  :html="nextHtml"
-                  :components="props.components"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="sp-presenter-divider"
-          @mousedown="startDividerDrag"
-        ></div>
-        <div class="sp-presenter-sidebar">
-          <div class="sp-presenter-info">
-            <div class="sp-presenter-num">{{ currentIndex + 1 }} <small>/ {{ total }}</small></div>
-            <div class="sp-presenter-progress"><div class="sp-presenter-progress-bar" :style="{ width: progressPercent + '%' }" /></div>
-            <div class="sp-presenter-clock" :title="clockTitle">
-              <span class="sp-presenter-clock-time">{{ elapsedStr }}</span>
-              <span v-if="clockFeedback" class="sp-presenter-clock-feedback">{{ clockFeedback }}</span>
-              <span class="sp-presenter-clock-actions">
-                <button class="sp-presenter-clock-btn" title="Export log (CSV)" @click="exportClockLog">⬇</button>
-                <button class="sp-presenter-clock-btn" title="Reset timer" @click="resetClock">↺</button>
-              </span>
-            </div>
-            <div v-if="blackout" class="sp-presenter-blackout-badge" @click="exitBlackout">BLACKED OUT</div>
-          </div>
-          <div class="sp-presenter-notes">
-            <h3>Speaker Notes</h3>
-            <div class="sp-presenter-notes-content" v-html="currentNotes"></div>
-          </div>
-        </div>
-      </div>
+      <SpPresenterView
+        :current="current"
+        :currentIndex="currentIndex"
+        :total="total"
+        :activeHtml="activeHtml"
+        :components="props.components"
+        :progressPercent="progressPercent"
+        :blackout="blackout"
+        :exitBlackout="exitBlackout"
+        :designWidth="props.designWidth"
+        :designHeight="props.designHeight"
+        :config="config"
+        :slides="slides"
+        :computeSlideSteps="computeSlideSteps"
+      />
     </template>
   </div>
 </template>
@@ -282,13 +198,15 @@ import { scanVisibility } from '../composables/useVisibility'
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
-import { useElementScale } from '../composables/useElementScale'
+import { useStorage } from '../composables/useStorage'
 import SpSlide from './SpSlide.vue'
 import SpDevPane from './SpDevPane.vue'
+import SpPresenterView from './SpPresenterView.vue'
+import SpOverview from './SpOverview.vue'
+import SpGoPrompt from './SpGoPrompt.vue'
 import { spApi } from '../sp-api'
 import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
-import { useStorage } from '../composables/useStorage'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -342,59 +260,6 @@ const { transformStyle, containerStyle } = useScale(props.designWidth, props.des
 
 const viewportEl = ref<HTMLElement | null>(null)
 const transitionWrapEl = ref<HTMLElement | null>(null)
-
-const previewContainerEl = ref<HTMLElement | null>(null)
-const nextContainerEl = ref<HTMLElement | null>(null)
-const { transformStyle: previewScaleStyle } = useElementScale(previewContainerEl, props.designWidth, props.designHeight)
-const { transformStyle: nextScaleStyle } = useElementScale(nextContainerEl, props.designWidth, props.designHeight)
-
-const sidebarWidth = ref(280)
-let dividerDragging = false
-
-function startDividerDrag(e: MouseEvent) {
-  dividerDragging = true
-  document.addEventListener('mousemove', onDividerDrag)
-  document.addEventListener('mouseup', stopDividerDrag)
-  e.preventDefault()
-}
-
-function onDividerDrag(e: MouseEvent) {
-  if (!dividerDragging) return
-  const w = window.innerWidth - e.clientX
-  sidebarWidth.value = Math.max(160, Math.min(600, w))
-}
-
-function stopDividerDrag() {
-  dividerDragging = false
-  document.removeEventListener('mousemove', onDividerDrag)
-  document.removeEventListener('mouseup', stopDividerDrag)
-}
-
-const presenterGridStyle = computed(() => ({
-  gridTemplateColumns: `1fr 6px ${sidebarWidth.value}px`,
-}))
-
-const nextHeight = ref(260)
-let vdividerDragging = false
-
-function startVdividerDrag(e: MouseEvent) {
-  vdividerDragging = true
-  document.addEventListener('mousemove', onVdividerDrag)
-  document.addEventListener('mouseup', stopVdividerDrag)
-  e.preventDefault()
-}
-
-function onVdividerDrag(e: MouseEvent) {
-  if (!vdividerDragging) return
-  const h = window.innerHeight - e.clientY
-  nextHeight.value = Math.max(120, Math.min(600, h))
-}
-
-function stopVdividerDrag() {
-  vdividerDragging = false
-  document.removeEventListener('mousemove', onVdividerDrag)
-  document.removeEventListener('mouseup', stopVdividerDrag)
-}
 
 provide('stepIndex', stepIndex)
 provide('slideIndex', currentIndex)
@@ -495,23 +360,6 @@ const activeHtml = computed(() => {
   return processHtml(slide.html, stepIndex.value)
 })
 
-const currentNotes = computed(() => {
-  const slide = current.value
-  if (!slide?.notes) return 'No notes'
-  return slide.notes
-})
-
-const nextSlideData = computed(() => {
-  if (currentIndex.value >= total.value - 1) return null
-  return slides.value[currentIndex.value + 1] ?? null
-})
-
-const nextHtml = computed(() => {
-  if (!nextSlideData.value) return ''
-  const steps = computeSlideSteps(nextSlideData.value)
-  return processHtml(nextSlideData.value.html, Math.max(0, steps - 1))
-})
-
 function nextSlide() {
   if (!isLastStep.value) {
     nextStep()
@@ -576,121 +424,6 @@ const loading = ref(true)
 const showMoreMenu = ref(false)
 const moreMenuEl = ref<HTMLElement | null>(null)
 
-const CLOCK_KEY = 'sp-presentation-clock'
-const LOG_KEY = 'sp-presentation-log'
-
-interface ClockLogEntry {
-  slide: number
-  elapsed: number
-  heading?: string
-  step?: number
-}
-
-function loadClock(): number {
-  try {
-    const raw = localStorage.getItem(CLOCK_KEY)
-    return raw ? JSON.parse(raw) : Date.now()
-  } catch { return Date.now() }
-}
-
-function saveClock() {
-  try { localStorage.setItem(CLOCK_KEY, JSON.stringify(startTime.value)) } catch {}
-}
-
-function loadLog(): ClockLogEntry[] {
-  try {
-    const raw = localStorage.getItem(LOG_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch { return [] }
-}
-
-function saveLog() {
-  try { localStorage.setItem(LOG_KEY, JSON.stringify(clockLog.value)) } catch {}
-}
-
-const clockLog = ref<ClockLogEntry[]>(loadLog())
-const startTime = ref(loadClock())
-const nowTime = ref(Date.now())
-let clockTimer: ReturnType<typeof setInterval> | null = null
-
-const elapsedStr = computed(() => {
-  const elapsed = Math.floor((nowTime.value - startTime.value) / 1000)
-  const m = Math.floor(elapsed / 60)
-  const s = elapsed % 60
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-})
-
-const clockTitle = computed(() => {
-  const n = clockLog.value.length
-  return n ? `${n} entries logged` : ''
-})
-
-function logSlideChange(index: number) {
-  const s = slides.value[index]
-  if (!s) return
-  let heading: string | undefined
-  if (s.html) {
-    const d = document.createElement('div')
-    d.innerHTML = s.html
-    const h = d.querySelector('h1,h2,h3')
-    heading = h?.textContent?.trim() || undefined
-  }
-  const elapsed = Math.floor((Date.now() - startTime.value) / 1000)
-  clockLog.value.push({ slide: index + 1, elapsed, heading })
-  saveLog()
-}
-
-function logStepChange(index: number, step: number) {
-  const elapsed = Math.floor((Date.now() - startTime.value) / 1000)
-  clockLog.value.push({ slide: index + 1, elapsed, step: step + 1 })
-  saveLog()
-}
-
-function resetClock() {
-  if (!confirm('Reset timer and clear slide log?')) return
-  startTime.value = Date.now()
-  nowTime.value = Date.now()
-  clockLog.value = []
-  saveClock()
-  saveLog()
-  showClockFeedback('Reset')
-}
-
-function exportClockLog() {
-  const started = new Date(startTime.value)
-  const startedStr = started.toLocaleString()
-  const lines: string[] = ['slide,elapsed_sec,heading']
-  lines.push(`0,0,"Started: ${startedStr}"`)
-  for (const entry of clockLog.value) {
-    const h = entry.heading ? `"${entry.heading.replace(/"/g, '""')}"` : ''
-    const slideLabel = entry.step !== undefined
-      ? `${entry.slide}.${String(entry.step).padStart(2, '0')}`
-      : String(entry.slide)
-    lines.push(`${slideLabel},${entry.elapsed},${h}`)
-  }
-  const text = lines.join('\n')
-  navigator.clipboard.writeText(text).catch(() => {})
-
-  const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `slides-log-${new Date().toISOString().slice(0, 10)}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
-
-  showClockFeedback('Copied + Downloaded')
-}
-
-const clockFeedback = ref('')
-let clockFeedbackTimer: ReturnType<typeof setTimeout> | null = null
-
-function showClockFeedback(msg: string) {
-  clockFeedback.value = msg
-  if (clockFeedbackTimer) clearTimeout(clockFeedbackTimer)
-  clockFeedbackTimer = setTimeout(() => { clockFeedback.value = '' }, 1500)
-}
-
 watchEffect(() => {
   spApi.navLocked = config.navLocked
   spApi.currentIndex = currentIndex.value
@@ -727,40 +460,6 @@ const overviewHtmls = computed(() => {
   })
 })
 
-function goToOverviewSlide(i: number) {
-  showOverview.value = false
-  goTo(i)
-  stepIndex.value = 0
-}
-
-const showGoPrompt = ref(false)
-const goPromptValue = ref('')
-const goPromptFocused = ref(0)
-const goPromptInput = ref<HTMLInputElement | null>(null)
-
-interface SlideHeading {
-  index: number
-  texts: string[]
-}
-
-interface GoResult {
-  index: number
-  matches: string[]
-}
-
-const slideSearchIndex = computed<SlideHeading[]>(() => {
-  return slides.value.map((s, i) => {
-    const d = document.createElement('div')
-    d.innerHTML = s.html
-    const texts: string[] = []
-    d.querySelectorAll('h1,h2,h3').forEach(el => {
-      const t = el.textContent?.trim()
-      if (t) texts.push(t)
-    })
-    return { index: i, texts }
-  })
-})
-
 const slideHeadingLevels = computed(() => {
   return slides.value.map(s => {
     const d = document.createElement('div')
@@ -771,111 +470,25 @@ const slideHeadingLevels = computed(() => {
   })
 })
 
-const goPromptResults = computed<GoResult[]>(() => {
-  const val = goPromptValue.value.trim().toLowerCase()
-  if (!val || /^\d+$/.test(val)) return []
-  const results: GoResult[] = []
-  for (const entry of slideSearchIndex.value) {
-    const matches: string[] = []
-    for (const t of entry.texts) {
-      if (t.toLowerCase().includes(val)) {
-        matches.push(t)
-      }
-    }
-    if (matches.length) {
-      results.push({ index: entry.index, matches })
-    }
-  }
-  return results
-})
-
-watch(goPromptResults, () => { goPromptFocused.value = 0 })
-
-const goResultScaleStyle = computed(() => {
-  const s = 210 / props.designWidth
-  return {
-    transform: `scale(${s})`,
-    transformOrigin: 'top left',
-    width: props.designWidth + 'px',
-    height: props.designHeight + 'px',
-  }
-})
-
-function highlight(text: string): string {
-  const q = goPromptValue.value.trim()
-  if (!q) return escapeHtml(text)
-  const lower = text.toLowerCase()
-  const qLower = q.toLowerCase()
-  const parts: string[] = []
-  let pos = 0
-  while (pos < text.length) {
-    const idx = lower.indexOf(qLower, pos)
-    if (idx === -1) {
-      parts.push(escapeHtml(text.slice(pos)))
-      break
-    }
-    parts.push(escapeHtml(text.slice(pos, idx)))
-    parts.push('<mark>' + escapeHtml(text.slice(idx, idx + q.length)) + '</mark>')
-    pos = idx + q.length
-  }
-  return parts.join('')
+function goToOverviewSlide(i: number) {
+  showOverview.value = false
+  goTo(i)
+  stepIndex.value = 0
 }
 
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-}
-
-function selectNext() {
-  if (goPromptFocused.value < goPromptResults.value.length - 1) {
-    goPromptFocused.value++
-  }
-}
-
-function selectPrev() {
-  if (goPromptFocused.value > 0) {
-    goPromptFocused.value--
-  }
-}
+const showGoPrompt = ref(false)
 
 function onGoPrompt() {
   showGoPrompt.value = true
-  goPromptValue.value = ''
-  goPromptFocused.value = 0
-  requestAnimationFrame(() => goPromptInput.value?.focus())
-}
-
-function handleGoSubmit() {
-  const val = goPromptValue.value.trim()
-  if (!val) return
-
-  if (/^\d+$/.test(val)) {
-    const num = parseInt(val, 10)
-    if (num >= 1 && num <= total.value) {
-      showGoPrompt.value = false
-      goTo(num - 1)
-      stepIndex.value = 0
-    }
-    return
-  }
-
-  if (goPromptResults.value.length > 0) {
-    const idx = goPromptResults.value[goPromptFocused.value]?.index ?? goPromptResults.value[0].index
-    showGoPrompt.value = false
-    goTo(idx)
-    stepIndex.value = 0
-  }
-}
-
-function goToResult(idx: number) {
-  showGoPrompt.value = false
-  goTo(idx)
-  stepIndex.value = 0
 }
 
 function closeGoPrompt() {
   showGoPrompt.value = false
-  goPromptValue.value = ''
-  goPromptFocused.value = 0
+}
+
+function goToResult(idx: number) {
+  closeGoPrompt()
+  goTo(idx)
 }
 
 watch(current, (slide, old) => {
@@ -898,15 +511,6 @@ watch([currentIndex, stepIndex], () => {
   if (isBroadcasting.value) return
   syncState(currentIndex.value, stepIndex.value)
 }, { flush: 'post' })
-
-watch([currentIndex, stepIndex], ([nIdx, nStep], [oIdx, oStep]) => {
-  if (!props.presenter) return
-  if (nIdx !== oIdx) {
-    logSlideChange(nIdx)
-  } else if (config.logSteps && nStep !== oStep) {
-    logStepChange(nIdx, nStep)
-  }
-})
 
 
 function doScanVisibility() {
@@ -1031,13 +635,6 @@ onMounted(() => {
     buildSteps(current.value)
   }
   doScanVisibility()
-  if (props.presenter) {
-    startTime.value = loadClock()
-    saveClock()
-    nowTime.value = Date.now()
-    clockTimer = setInterval(() => { nowTime.value = Date.now() }, 1000)
-    nextTick(() => logSlideChange(currentIndex.value))
-  }
   if (!props.presenter) {
     parseHash()
     nextTick(() => {
@@ -1076,10 +673,7 @@ async function highlightAllSlides() {
 }
 
 onUnmounted(() => {
-  if (clockTimer) clearInterval(clockTimer)
   document.removeEventListener('click', onDocumentClick, true)
-  stopDividerDrag()
-  stopVdividerDrag()
   window.removeEventListener('hashchange', onHashChange)
 })
 

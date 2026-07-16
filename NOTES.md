@@ -21,16 +21,19 @@ From Slidev general (not in ultracharger):
 
 ## TODO Now
 
+- [ ] have a proper but very minimal theme, sizing and spacing should be meaningful and harmonious, but no fancy colors as currently (we will have a more fancy theme later)
+- [ ] there should be a switch between dark and light (key 'd', unless proMode is on), a default associated to the pres, and a default associated to the typst theme (future), a button in the popup of the toolbar
 - [ ] presenter view should not animate next slide!
 - [ ] cache custom components source too so we can create a self-contained bundle
-- [ ] have a proper theme, with a switch between dark and light (key 'd', unless proMode is on), a default associated to the pres, and a default associated to the typst theme (future), a button in the popup of the toolbar
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
+- [ ] 'g' should work in presenter view, also 'o' and 'd'
 
 ## TOREVIEW
 
-
 ## TODO
 
+- [ ] by default, pills should have the same color as the h1, h2, h3 border in the overview, can keep size difference too, the current could be circled in a --sp-highlight color or something
+- [ ] check visgroups not working in presenter (but they might go away with the new anim system)
 - [ ] consider history management (think about when to push)
 - [ ] consider removing prettier dependency then
 - [ ] can sp-alternative and sp-step be using some similar things as @jump (vis groups)? maybe need to make them show/hide instead of refreshing their visibility at every step?
