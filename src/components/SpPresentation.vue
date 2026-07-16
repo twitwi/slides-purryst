@@ -253,7 +253,14 @@
           <div class="sp-presenter-info">
             <div class="sp-presenter-num">{{ currentIndex + 1 }} <small>/ {{ total }}</small></div>
             <div class="sp-presenter-progress"><div class="sp-presenter-progress-bar" :style="{ width: progressPercent + '%' }" /></div>
-            <div class="sp-presenter-clock">{{ elapsedStr }}</div>
+            <div class="sp-presenter-clock" :title="clockTitle">
+              <span class="sp-presenter-clock-time">{{ elapsedStr }}</span>
+              <span v-if="clockFeedback" class="sp-presenter-clock-feedback">{{ clockFeedback }}</span>
+              <span class="sp-presenter-clock-actions">
+                <button class="sp-presenter-clock-btn" title="Export log (CSV)" @click="exportClockLog">⬇</button>
+                <button class="sp-presenter-clock-btn" title="Reset timer" @click="resetClock">↺</button>
+              </span>
+            </div>
             <div v-if="blackout" class="sp-presenter-blackout-badge" @click="exitBlackout">BLACKED OUT</div>
           </div>
           <div class="sp-presenter-notes">
@@ -569,15 +576,110 @@ const loading = ref(true)
 const showMoreMenu = ref(false)
 const moreMenuEl = ref<HTMLElement | null>(null)
 
-const startTime = ref(Date.now())
+const CLOCK_KEY = 'sp-presentation-clock'
+const LOG_KEY = 'sp-presentation-log'
+
+interface ClockLogEntry {
+  slide: number
+  elapsed: number
+  heading?: string
+}
+
+function loadClock(): number {
+  try {
+    const raw = localStorage.getItem(CLOCK_KEY)
+    return raw ? JSON.parse(raw) : Date.now()
+  } catch { return Date.now() }
+}
+
+function saveClock() {
+  try { localStorage.setItem(CLOCK_KEY, JSON.stringify(startTime.value)) } catch {}
+}
+
+function loadLog(): ClockLogEntry[] {
+  try {
+    const raw = localStorage.getItem(LOG_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch { return [] }
+}
+
+function saveLog() {
+  try { localStorage.setItem(LOG_KEY, JSON.stringify(clockLog.value)) } catch {}
+}
+
+const clockLog = ref<ClockLogEntry[]>(loadLog())
+const startTime = ref(loadClock())
 const nowTime = ref(Date.now())
 let clockTimer: ReturnType<typeof setInterval> | null = null
+
 const elapsedStr = computed(() => {
   const elapsed = Math.floor((nowTime.value - startTime.value) / 1000)
   const m = Math.floor(elapsed / 60)
   const s = elapsed % 60
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 })
+
+const clockTitle = computed(() => {
+  const n = clockLog.value.length
+  return n ? `${n} slides logged` : ''
+})
+
+function logSlideChange(index: number) {
+  const s = slides.value[index]
+  if (!s) return
+  let heading: string | undefined
+  if (s.html) {
+    const d = document.createElement('div')
+    d.innerHTML = s.html
+    const h = d.querySelector('h1,h2,h3')
+    heading = h?.textContent?.trim() || undefined
+  }
+  const elapsed = Math.floor((Date.now() - startTime.value) / 1000)
+  clockLog.value.push({ slide: index + 1, elapsed, heading })
+  saveLog()
+}
+
+function resetClock() {
+  if (!confirm('Reset timer and clear slide log?')) return
+  startTime.value = Date.now()
+  nowTime.value = Date.now()
+  clockLog.value = []
+  saveClock()
+  saveLog()
+  showClockFeedback('Reset')
+}
+
+function exportClockLog() {
+  const started = new Date(startTime.value)
+  const startedStr = started.toLocaleString()
+  const lines: string[] = ['slide,elapsed_sec,heading']
+  lines.push(`0,0,"Started: ${startedStr}"`)
+  for (const entry of clockLog.value) {
+    const h = entry.heading ? `"${entry.heading.replace(/"/g, '""')}"` : ''
+    lines.push(`${entry.slide},${entry.elapsed},${h}`)
+  }
+  const text = lines.join('\n')
+  navigator.clipboard.writeText(text).catch(() => {})
+
+  const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `slides-log-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+
+  showClockFeedback('Copied + Downloaded')
+}
+
+const clockFeedback = ref('')
+let clockFeedbackTimer: ReturnType<typeof setTimeout> | null = null
+
+function showClockFeedback(msg: string) {
+  clockFeedback.value = msg
+  if (clockFeedbackTimer) clearTimeout(clockFeedbackTimer)
+  clockFeedbackTimer = setTimeout(() => { clockFeedback.value = '' }, 1500)
+}
 
 watchEffect(() => {
   spApi.navLocked = config.navLocked
@@ -787,6 +889,10 @@ watch([currentIndex, stepIndex], () => {
   syncState(currentIndex.value, stepIndex.value)
 }, { flush: 'post' })
 
+watch(currentIndex, (n, o) => {
+  if (n !== o && props.presenter) logSlideChange(n)
+})
+
 
 function doScanVisibility() {
   if (viewportEl.value === null) return
@@ -911,8 +1017,11 @@ onMounted(() => {
   }
   doScanVisibility()
   if (props.presenter) {
-    startTime.value = Date.now()
+    startTime.value = loadClock()
+    saveClock()
+    nowTime.value = Date.now()
     clockTimer = setInterval(() => { nowTime.value = Date.now() }, 1000)
+    nextTick(() => logSlideChange(currentIndex.value))
   }
   if (!props.presenter) {
     parseHash()
