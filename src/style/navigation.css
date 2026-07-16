@@ -130,6 +130,90 @@
   transition: width 0.3s ease;
 }
 
+.sp-nav-more {
+  position: relative;
+}
+
+.sp-nav-more-btn {
+  font-size: 1.1rem;
+  line-height: 1;
+  letter-spacing: 0.1em;
+}
+
+.sp-nav-more-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 0.4rem;
+  min-width: 160px;
+  z-index: 200;
+}
+
+.sp-nav-more-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #475569;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.12s;
+  white-space: nowrap;
+}
+
+.sp-nav-more-item:hover {
+  background: #e2e8f0;
+}
+
+.sp-nav-more-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.sp-nav-more-icon-blackout.active {
+  color: #dc2626;
+}
+
+.sp-nav-more-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 0.3rem 0.5rem;
+}
+
+.sp-nav-more-browse {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.sp-nav-more-browse-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.sp-nav-more-browse-btn:hover {
+  background: #e2e8f0;
+}
+
 @media (prefers-color-scheme: dark) {
   .sp-nav { background: rgba(30,41,59,0.9); }
   .sp-nav-btn { color: #94a3b8; }
@@ -144,4 +228,10 @@
   .sp-nav-pill-ellipsis { color: #64748b; }
   .sp-nav-counter { color: #64748b; }
   .sp-progress { background: #1e293b; }
+  .sp-nav-more-menu { background: rgba(30,41,59,0.95); }
+  .sp-nav-more-item { color: #94a3b8; }
+  .sp-nav-more-item:hover { background: #334155; }
+  .sp-nav-more-divider { background: #334155; }
+  .sp-nav-more-browse-btn { color: #94a3b8; }
+  .sp-nav-more-browse-btn:hover { background: #334155; }
 }

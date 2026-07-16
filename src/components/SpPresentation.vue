@@ -83,7 +83,35 @@
             <path d="M6 13v1h4v-1" stroke="currentColor" stroke-width="1.3" fill="none"/>
           </svg>
           </button>
-          <button class="sp-nav-btn sp-nav-dev" aria-label="Dev tools" title="Dev Tools" @click="toggleDevPane">◆</button>
+          <div class="sp-nav-more" ref="moreMenuEl">
+            <button class="sp-nav-btn sp-nav-more-btn" :class="{ active: showMoreMenu }" aria-label="More options" title="More…" @click="showMoreMenu = !showMoreMenu">⋯</button>
+            <div v-if="showMoreMenu" class="sp-nav-more-menu">
+              <button class="sp-nav-more-item" @click="toggleDevPane(); showMoreMenu = false">
+                <span class="sp-nav-more-icon">◇</span> Dev tools
+              </button>
+              <button class="sp-nav-more-item" @click="showOverview = !showOverview; showMoreMenu = false">
+                <span class="sp-nav-more-icon">⊞</span> Overview
+              </button>
+              <div class="sp-nav-more-divider"></div>
+              <button class="sp-nav-more-item" @click="toggleBlackout()">
+                <span class="sp-nav-more-icon sp-nav-more-icon-blackout" :class="{ active: blackout }">●</span> Blackout
+              </button>
+              <div class="sp-nav-more-item sp-nav-more-browse">
+                <button class="sp-nav-more-browse-btn" title="End of previous slide (A)" @click="goToEndOfPrev()">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M4 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <button class="sp-nav-more-browse-btn" title="End of next slide (Z)" @click="goToEndOfNext()">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 13l5-5-5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M12 13V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="sp-nav-pills">
           <template v-for="pill in visiblePills" :key="pill.type === 'pill' ? 'p' + pill.index : pill.id">
@@ -530,6 +558,8 @@ const showDevPane = ref(false)
 const navLocked = ref(false)
 const blackout = ref(false)
 const loading = ref(true)
+const showMoreMenu = ref(false)
+const moreMenuEl = ref<HTMLElement | null>(null)
 
 const startTime = ref(Date.now())
 const nowTime = ref(Date.now())
@@ -917,6 +947,7 @@ onMounted(() => {
   } else {
     loading.value = false
   }
+  document.addEventListener('click', onDocumentClick, true)
   setupIconIfNone(props.seed)
   highlightAllSlides()
 })
@@ -945,14 +976,35 @@ async function highlightAllSlides() {
 
 onUnmounted(() => {
   if (clockTimer) clearInterval(clockTimer)
+  document.removeEventListener('click', onDocumentClick, true)
   channel?.close()
   stopDividerDrag()
   stopVdividerDrag()
   window.removeEventListener('hashchange', onHashChange)
 })
 
+function goToEndOfPrev() {
+  if (currentIndex.value > 0) {
+    goTo(currentIndex.value - 1)
+    nextTick(() => { stepIndex.value = Math.max(0, totalSteps.value - 1) })
+  }
+}
+
+function goToEndOfNext() {
+  if (currentIndex.value < total.value - 1) {
+    goTo(currentIndex.value + 1)
+    nextTick(() => { stepIndex.value = Math.max(0, totalSteps.value - 1) })
+  }
+}
+
 function toggleDevPane() {
   showDevPane.value = !showDevPane.value
+}
+
+function onDocumentClick(e: MouseEvent) {
+  if (showMoreMenu.value && moreMenuEl.value && !moreMenuEl.value.contains(e.target as Node)) {
+    showMoreMenu.value = false
+  }
 }
 
 function updateSlides(templateHtml: string) {
