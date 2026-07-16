@@ -324,16 +324,19 @@ const progressPercent = computed(() => {
 type PillItem = { type: 'pill'; index: number } | { type: 'ellipsis'; id: string }
 
 const visiblePills = computed<PillItem[]>(() => {
+  const base = 5
+  const head = base
+  const tail = base
+  const windowBefore = base
+  const windowAfter = base
+  const nFull = head+tail+1+windowBefore+windowAfter+2
+
   const n = effectiveTotal.value
-  if (n <= 20) {
+  if (n <= nFull) {
     return Array.from({ length: n }, (_, i) => ({ type: 'pill' as const, index: i }))
   }
   const items: PillItem[] = []
   const cur = currentIndex.value
-  const head = 3
-  const tail = 3
-  const windowBefore = 2
-  const windowAfter = 2
   const windowStart = Math.max(head, cur - windowBefore)
   const windowEnd = Math.min(n - 1 - tail, cur + windowAfter)
 

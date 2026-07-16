@@ -124,7 +124,6 @@ const stepActions = computed<AnimAction[][]>(() => {
 })
 
 function applyAction(el: HTMLElement, action: AnimAction) {
-  console.log("ANIM", el, action)
   switch (action.type) {
     case 'show':
       el.classList.add('sp-anim-shown')

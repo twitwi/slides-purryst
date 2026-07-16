@@ -8,20 +8,16 @@
 - [ ] presenter view should not animate next slide!
 - [ ] cache custom components source too so we can create a self-contained bundle
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
-- [ ] up arrow behavior fix
-- [ ] 'z' should not play anims but rather show directly the end state (force the anim to end state)
+- [ ] can sp-alternative and sp-step be using some similar things as @jump (vis groups)? maybe need to make them show/hide instead of refreshing their visibility at every step?
 
 ## TOREVIEW
 
 ## TODO
 
 - [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
-- [ ] by default, pills should have the same color as the h1, h2, h3 border in the overview, can keep size difference too, the current could be circled in a --sp-highlight color or something
 - [ ] check visgroups not working in presenter (but they might go away with the new anim system)
 - [ ] consider history management (think about when to push)
 - [ ] consider removing prettier dependency then
-- [ ] can sp-alternative and sp-step be using some similar things as @jump (vis groups)? maybe need to make them show/hide instead of refreshing their visibility at every step?
-- [ ] fix/refactor sp-alternative and @jump (vis groups) (animating enter...) + redo anim
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
 - [ ] should probably better structure so that countAnimSpecParts is more generic
 - [ ] (typst) integrate show raw.line into the typst theme
