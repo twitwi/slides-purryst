@@ -35,6 +35,9 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
           actions.stepIndex.value = 0
         } else if (actions.currentIndex.value > 0) {
           actions.goTo(actions.currentIndex.value - 1)
+          setTimeout(() => {
+            actions.stepIndex.value = 0
+          })
         }
         break
       case 'ArrowDown':

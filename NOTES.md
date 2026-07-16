@@ -9,6 +9,7 @@
 - [ ] cache custom components source too so we can create a self-contained bundle
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] up arrow behavior fix
+- [ ] 'z' should not play anims but rather show directly the end state (force the anim to end state)
 
 ## TOREVIEW
 
