@@ -55,7 +55,7 @@ let processes = []
 if (useTypst) {
   const output = resolve(root, demoFile)
   const tmp1 = resolve(root, tmp(1))
-  const tmp2 = resolve(root, tmp(2))
+  //const tmp2 = resolve(root, tmp(2))
 
   // Ensure initial output exists before watching
   console.log('Initial typst compile...')
@@ -95,10 +95,10 @@ if (useTypst) {
           execSync(cmd, { cwd: root, stdio: 'ignore', timeout: 1000, })
           //console.log(st - Date.now())
         }
-        _(`cp "${tmp1}" "${tmp2}"`)
+        //_(`cp "${tmp1}" "${tmp2}"`)
         //_('pnpm SLOW-do-prettier-inplace "' + tmp2 + '"')
         //_('cp "' + tmp2 + '" "' + output + '"')
-        const raw = readFileSync(tmp2, 'utf-8')
+        const raw = readFileSync(tmp1, 'utf-8')
         const formatted = formatHtml(raw)
         writeFileSync(output, formatted, 'utf-8')
       } finally {

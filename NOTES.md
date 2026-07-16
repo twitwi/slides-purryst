@@ -36,7 +36,7 @@ From Slidev general (not in ultracharger):
 
 ## TODO
 
-- [ ] can I have a more generic / extensible way to share 
+- [ ] can I have a more generic / extensible way to share synced data and events between views (presenter and main)?
 - [ ] can sp-alternative and sp-step be using some similar things as @jump (vis groups)? maybe need to make them show/hide instead of refreshing their visibility at every step?
 - [ ] fix/refactor sp-alternative and @jump (vis groups) (animating enter...) + redo anim
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...

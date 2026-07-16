@@ -108,7 +108,9 @@
         <div class="sp-progress-bar" :style="{ width: progressPercent + '%' }" />
       </div>
 
-      <div v-if="blackout" class="sp-main-blackout" @click="blackout = false"></div>
+      <div v-if="blackout" class="sp-main-blackout" @click="blackout = false">
+        <span class="sp-main-blackout-hint">click to dismiss</span>
+      </div>
 
       <div v-if="showOverview" class="sp-overview" @click.self="showOverview = false">
         <div class="sp-overview-grid" ref="overviewGridEl">
@@ -218,7 +220,7 @@
             <div class="sp-presenter-num">{{ currentIndex + 1 }} <small>/ {{ total }}</small></div>
             <div class="sp-presenter-progress"><div class="sp-presenter-progress-bar" :style="{ width: progressPercent + '%' }" /></div>
             <div class="sp-presenter-clock">{{ elapsedStr }}</div>
-            <div v-if="blackout" class="sp-presenter-blackout-badge">BLACKED OUT</div>
+            <div v-if="blackout" class="sp-presenter-blackout-badge" @click="exitBlackout">BLACKED OUT</div>
           </div>
           <div class="sp-presenter-notes">
             <h3>Speaker Notes</h3>

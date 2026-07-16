@@ -207,6 +207,7 @@ watch(globalStepIndex, (curr) => {
     }
   } else {
     // Reverse steps (curr, previousStep] in reverse order, then re-apply 1..curr
+    // Reapply is necessary: if I hide twice then undoing the second hide will show the element again, which is not what should be.
     for (let s = previousStep; s > curr; s--) {
       reverseStep(s)
     }
