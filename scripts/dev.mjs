@@ -61,6 +61,9 @@ if (useTypst) {
   console.log('Initial typst compile...')
   try {
     execSync(`typst compile --root "${root}" --input "slides-purryst-path=../src/index.ts" --input "slides-purryst-module=true" --format html --features html "${demoTypst}" "${tmp1}"`, { cwd: root, stdio: 'inherit', timeout: 60000 })
+    const raw = readFileSync(tmp1, 'utf-8')
+    const formatted = formatHtml(raw)
+    writeFileSync(output, formatted, 'utf-8')
     console.log('Initial compile done.')
   } catch (e) {
     console.error('Initial typst compile failed, will retry via watch:', e.message)
