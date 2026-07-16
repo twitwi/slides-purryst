@@ -37,8 +37,8 @@
 }
 
 .sp-overview-h1 { border-color: var(--sp-accent); border-width: 3px; }
-.sp-overview-h2 { border-color: var(--sp-text-3); }
-.sp-overview-h3 { border-color: var(--sp-accent-2); }
+.sp-overview-h2 { border-color: var(--sp-accent-2); }
+.sp-overview-h3 { border-color: var(--sp-text-3); }
 
 .sp-overview-thumb-stage {
   position: absolute;

@@ -6,7 +6,7 @@
   display: grid;
   height: 100vh;
   width: 100vw;
-  background: var(--sp-gray-950);
+  background: var(--sp-bg);
   color: var(--sp-text);
 }
 
@@ -21,7 +21,7 @@
 .sp-presenter-divider {
   width: 6px;
   cursor: col-resize;
-  background: var(--sp-gray-700);
+  background: var(--sp-border-2);
   transition: background var(--sp-fast);
 }
 .sp-presenter-divider:hover {
@@ -46,7 +46,7 @@
 .sp-presenter-vdivider {
   height: 6px;
   cursor: row-resize;
-  background: var(--sp-gray-700);
+  background: var(--sp-border-2);
   transition: background var(--sp-fast);
   flex-shrink: 0;
 }
@@ -77,7 +77,7 @@
 
 .sp-presenter-sidebar {
   padding: var(--sp-4);
-  background: var(--sp-gray-900);
+  background: var(--sp-surface-alt);
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
@@ -103,7 +103,7 @@
 
 .sp-presenter-progress {
   height: 4px;
-  background: var(--sp-gray-700);
+  background: var(--sp-border);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -131,7 +131,8 @@
 
 .sp-presenter-notes-content {
   padding: var(--sp-3);
-  background: var(--sp-gray-950);
+  background: var(--sp-surface);
+  border: var(--sp-px) solid var(--sp-border);
   border-radius: var(--sp-radius-sm);
   min-height: 80px;
   color: var(--sp-text-2);
@@ -145,7 +146,8 @@
   font-variant-numeric: tabular-nums;
   color: var(--sp-text);
   padding: var(--sp-2);
-  background: var(--sp-gray-950);
+  background: var(--sp-surface);
+  border: var(--sp-px) solid var(--sp-border);
   border-radius: var(--sp-radius-sm);
   letter-spacing: 0.05em;
   user-select: none;
@@ -155,7 +157,7 @@
   justify-content: space-between;
   gap: var(--sp-2);
 }
-.sp-presenter-clock:hover { background: var(--sp-gray-900); }
+.sp-presenter-clock:hover { background: var(--sp-surface-alt); }
 
 .sp-presenter-clock-time { transition: opacity var(--sp-fast); }
 .sp-presenter-clock-feedback {
@@ -188,7 +190,7 @@
 }
 .sp-presenter-clock-btn:hover {
   color: var(--sp-text);
-  border-color: var(--sp-gray-600);
+  border-color: var(--sp-border-2);
 }
 
 .sp-presenter-blackout-badge {

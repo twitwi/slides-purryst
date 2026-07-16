@@ -87,7 +87,7 @@
             <button class="sp-nav-btn sp-nav-more-btn" :class="{ active: showMoreMenu }" aria-label="More options" title="More…" @click="showMoreMenu = !showMoreMenu">⋯</button>
             <div v-if="showMoreMenu" class="sp-nav-more-menu">
               <button class="sp-nav-more-item" @click="toggleDarkMode(); showMoreMenu = false">
-                <span class="sp-nav-more-icon">{{ darkModeIcon }}</span> Theme: {{ darkModeLabel }}
+                <span class="sp-nav-more-icon">{{ darkModeIcon }}</span> {{ darkModeLabel }}
               </button>
               <div class="sp-nav-more-divider"></div>
               <button class="sp-nav-more-item" @click="toggleDevPane(); showMoreMenu = false">
@@ -440,22 +440,16 @@ function applyDarkMode(mode: 'auto' | 'light' | 'dark') {
 }
 
 function toggleDarkMode() {
-  const order: Array<'auto' | 'light' | 'dark'> = ['auto', 'light', 'dark']
-  const i = order.indexOf(config.darkMode)
-  config.darkMode = order[(i + 1) % order.length]
+  config.darkMode = config.darkMode === 'dark' ? 'light' : 'dark'
 }
 
-const darkModeLabel = computed(() => {
-  if (config.darkMode === 'auto') return 'Auto'
-  if (config.darkMode === 'dark') return 'Dark'
-  return 'Light'
-})
+const darkModeLabel = computed(() =>
+  config.darkMode === 'dark' ? 'Dark' : 'Light'
+)
 
-const darkModeIcon = computed(() => {
-  if (config.darkMode === 'auto') return '◑'
-  if (config.darkMode === 'dark') return '●'
-  return '○'
-})
+const darkModeIcon = computed(() =>
+  config.darkMode === 'dark' ? '●' : '○'
+)
 
 watch(() => config.darkMode, applyDarkMode, { immediate: true })
 

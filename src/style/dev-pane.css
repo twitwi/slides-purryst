@@ -185,3 +185,31 @@
   max-width: 120px;
   accent-color: var(--sp-accent);
 }
+.sp-dev-choice-group {
+  display: flex;
+  gap: 0;
+  border-radius: var(--sp-radius-sm);
+  overflow: hidden;
+  border: var(--sp-px) solid var(--sp-gray-600);
+}
+.sp-dev-choice-btn {
+  padding: var(--sp-0_5) var(--sp-2);
+  font-size: var(--sp-text-xs);
+  font-family: var(--sp-font-mono);
+  border: none;
+  background: var(--sp-gray-800);
+  color: var(--sp-text-3);
+  cursor: pointer;
+  transition: background var(--sp-fast), color var(--sp-fast);
+}
+.sp-dev-choice-btn + .sp-dev-choice-btn {
+  border-left: var(--sp-px) solid var(--sp-gray-600);
+}
+.sp-dev-choice-btn:hover {
+  background: var(--sp-gray-700);
+  color: var(--sp-text);
+}
+.sp-dev-choice-btn.active {
+  background: var(--sp-accent);
+  color: var(--sp-surface);
+}

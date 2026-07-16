@@ -16,7 +16,7 @@ const defaults: SpStorageConfig = {
   overviewScale: 0.15,
   proMode: false,
   logSteps: false,
-  darkMode: 'auto',
+  darkMode: 'light',
 }
 
 function load(): SpStorageConfig {
