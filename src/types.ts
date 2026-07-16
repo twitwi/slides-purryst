@@ -36,6 +36,8 @@ export interface SPSlidesOptions {
   author?: string
   presenter?: boolean
   components?: Record<string, Component>
+  seed?: number
+  cacheIgnore?: string[]
 }
 
 export type Transformer = (root: Element) => void

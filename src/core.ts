@@ -12,7 +12,7 @@ import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
-import { preloadInclude, loadCache, preloadBinary } from './composables/includeCache'
+import { preloadInclude, loadCache, preloadBinary, setCacheIgnore } from './composables/includeCache'
 import { exportStandalone } from './export'
 import './style.css'
 
@@ -34,7 +34,7 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 }
 
 export function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed } = options
+  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore } = options
 
   if (!slides) {
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
@@ -67,7 +67,8 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
       }
       const da = root.getAttribute('data-author')
       if (da) author = da
-      if (root.dataset.seed) seed = root.dataset.seed
+      const ds = root.dataset.seed
+      if (ds) seed = parseInt(ds, 10)
     }
   }
 
@@ -94,6 +95,8 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     d.innerHTML = html
     injectGlobalStyles(d)
   }
+
+  if (cacheIgnore) setCacheIgnore(cacheIgnore)
 
   const template = document.getElementById('sp-content') as HTMLTemplateElement | null
   if (template?.content) {

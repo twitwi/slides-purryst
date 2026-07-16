@@ -2,6 +2,15 @@ const cache = new Map<string, string>()
 const binaryCache = new Map<string, string>()
 const pending = new Map<string, Promise<void>>()
 const pendingBinary = new Map<string, Promise<void>>()
+let ignorePatterns: RegExp[] = []
+
+export function setCacheIgnore(patterns: string[]) {
+  ignorePatterns = patterns.map(p => new RegExp(p))
+}
+
+function shouldIgnore(src: string): boolean {
+  return ignorePatterns.some(re => re.test(src))
+}
 
 interface CacheMeta {
   size: number
@@ -22,6 +31,7 @@ export function getCachedBinary(src: string): string | undefined {
 }
 
 export function preloadInclude(src: string): Promise<void> {
+  if (shouldIgnore(src)) return Promise.resolve()
   if (cache.has(src)) return Promise.resolve()
   if (pending.has(src)) return pending.get(src)!
 
@@ -46,6 +56,7 @@ export function preloadInclude(src: string): Promise<void> {
 }
 
 export function preloadBinary(src: string): Promise<void> {
+  if (shouldIgnore(src)) return Promise.resolve()
   if (binaryCache.has(src)) return Promise.resolve()
   if (pendingBinary.has(src)) return pendingBinary.get(src)!
 
