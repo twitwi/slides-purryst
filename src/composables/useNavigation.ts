@@ -2,7 +2,7 @@ import { onMounted, onUnmounted } from 'vue'
 import type { Navigation } from '../types'
 import { spApi } from '../sp-api'
 
-export function useNavigation(actions: Navigation & { onPresenterToggle?: () => void; onOverviewToggle?: () => void; onOverviewExit?: () => void; onGoPrompt?: () => void; onBlackoutToggle?: () => void; onBlackoutExit?: () => void; onDevPaneToggle?: () => void }) {
+export function useNavigation(actions: Navigation & { onPresenterToggle?: () => void; onOverviewToggle?: () => void; onOverviewExit?: () => void; onGoPrompt?: () => void; onBlackoutToggle?: () => void; onBlackoutExit?: () => void; onDevPaneToggle?: () => void; onGoPrevBegin?: () => void; onGoNextEnd?: () => void }) {
   let touchStartX = 0
   let touchStartY = 0
 
@@ -34,10 +34,7 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
         if (actions.stepIndex.value > 0) {
           actions.stepIndex.value = 0
         } else if (actions.currentIndex.value > 0) {
-          actions.goTo(actions.currentIndex.value - 1)
-          setTimeout(() => {
-            actions.stepIndex.value = 0
-          })
+          actions.onGoPrevBegin?.()
         }
         break
       case 'ArrowDown':
@@ -55,10 +52,7 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
       case 'z':
         e.preventDefault()
         if (actions.currentIndex.value < actions.total.value - 1) {
-          actions.goTo(actions.currentIndex.value + 1)
-          setTimeout(() => {
-            actions.stepIndex.value = actions.totalSteps.value - 1
-          })
+          actions.onGoNextEnd?.()
         }
         break
       case 'Home':

@@ -258,6 +258,7 @@ const {
 } = useSteps()
 
 let skipStepReset = false
+let targetStepIndex: number | null = null
 const contentVersion = ref(0)
 
 const { openPresenterWindow, closePresenter, presenterActive, syncState, syncBlackout, send, onMessage, channel } = usePresenter()
@@ -523,7 +524,10 @@ function goToResult(idx: number) {
 watch(current, (slide, old) => {
   buildSteps(slide)
   if (old?.num !== slide?.num) {
-    if (skipStepReset) {
+    if (targetStepIndex !== null) {
+      stepIndex.value = Math.min(Math.max(targetStepIndex, 0), Math.max(0, totalSteps.value - 1))
+      targetStepIndex = null
+    } else if (skipStepReset) {
       stepIndex.value = Math.min(Math.max(stepIndex.value, 0), Math.max(0, totalSteps.value - 1))
       skipStepReset = false
     } else if (direction.value === -1) {
@@ -657,6 +661,8 @@ useNavigation({
   onBlackoutToggle: toggleBlackout,
   onBlackoutExit: exitBlackout,
   onDevPaneToggle: () => { config.proMode ? toggleDevPane() : toggleDarkMode() },
+  onGoPrevBegin: goToPrevBegin,
+  onGoNextEnd: goToEndOfNext,
 })
 
 onMounted(() => {
@@ -713,10 +719,17 @@ function goToEndOfPrev() {
   }
 }
 
+function goToPrevBegin() {
+  if (currentIndex.value > 0) {
+    targetStepIndex = 0
+    goTo(currentIndex.value - 1)
+  }
+}
+
 function goToEndOfNext() {
   if (currentIndex.value < total.value - 1) {
+    targetStepIndex = Math.max(0, computeSlideSteps(slides.value[currentIndex.value + 1]) - 1)
     goTo(currentIndex.value + 1)
-    nextTick(() => { stepIndex.value = Math.max(0, totalSteps.value - 1) })
   }
 }
 
