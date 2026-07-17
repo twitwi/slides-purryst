@@ -38,6 +38,7 @@ export interface SPSlidesOptions {
   components?: Record<string, Component>
   seed?: number
   cacheIgnore?: string[]
+  clicksAt?: number
 }
 
 export type Transformer = (root: Element) => void

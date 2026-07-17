@@ -1,6 +1,12 @@
 import { ref, computed, type Ref } from 'vue'
 import type { SlideData } from '../types'
 
+let defaultClicksAt = 1
+
+export function setDefaultClicksAt(value: number) {
+  defaultClicksAt = value
+}
+
 function countAnimSpecParts(spec: string, htmlForQuery?: string): number {
   if (!spec.trim()) return 0
   const parts = spec.split('|').map(s => s.trim())
@@ -47,6 +53,15 @@ export function buildSteps(slide: SlideData | null) {
   tmp.querySelectorAll('sp-step').forEach((s) => {
     const at = parseInt(s.getAttribute('at') || '0', 10)
     maxStep = Math.max(maxStep, at)
+    // Account for from/to range
+    const to = s.getAttribute('to')
+    if (to) {
+      maxStep = Math.max(maxStep, parseInt(to, 10) - 1)
+    }
+    const from = s.getAttribute('from')
+    if (from) {
+      maxStep = Math.max(maxStep, parseInt(from, 10))
+    }
   })
 
   // Count sp-anim spec parts
@@ -64,11 +79,13 @@ export function buildSteps(slide: SlideData | null) {
 
   // Count sp-clicks wrapper
   tmp.querySelectorAll('sp-clicks').forEach(c => {
-    const at = parseInt(c.getAttribute('at') || '0', 10)
+    const at = parseInt(c.getAttribute('at') || String(defaultClicksAt), 10)
     const every = parseInt(c.getAttribute('every') || '1', 10)
     const children = c.children.length
-    const stepsNeeded = at + Math.ceil(children / every)
-    maxStep = Math.max(maxStep, stepsNeeded)
+    if (children > 0) {
+      const lastStep = at + Math.ceil(children / every) - 1
+      maxStep = Math.max(maxStep, lastStep)
+    }
   })
 
   // Count sp-track elements (for sp-meanwhile)
@@ -161,7 +178,7 @@ function processAfterModifier(tmp: Element) {
 
 function processClicksWrapper(tmp: Element) {
   tmp.querySelectorAll('sp-clicks').forEach(clicks => {
-    const at = parseInt(clicks.getAttribute('at') || '0', 10)
+    const at = parseInt(clicks.getAttribute('at') || String(defaultClicksAt), 10)
     const every = parseInt(clicks.getAttribute('every') || '1', 10)
     const animation = clicks.getAttribute('animation') || ''
     const tag = clicks.getAttribute('tag') || 'div'

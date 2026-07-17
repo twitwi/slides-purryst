@@ -10,6 +10,7 @@
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun
 - [ ] make a second theme for the demo, one is the current one, the other is using the same variables etc but slides have pure white background (for light mode) and titles are more colored. Theme could be set by putting a class on the body.
+- [ ] consider allowing style directly in template (no sp-style) so the editor is better handling it
 
 ## TOREVIEW
 
@@ -36,6 +37,7 @@
 - [ ] (slidev discord) blackout should not depend on dark/light mode
 - [ ] (slidev discord) delay for anims
 - [ ] (slidev discord) allow use of v-motion
+- [ ] (slidev discord) allow to play directly the first @anim (at=0?)
 
 ## Feature ideas
 

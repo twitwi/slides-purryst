@@ -14,6 +14,7 @@ import SpImg from './components/SpImg.vue'
 import type { SPSlidesOptions, SlideData } from './types'
 import { parseElementToSlides } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore } from './composables/includeCache'
+import { setDefaultClicksAt } from './composables/useSteps'
 import { exportStandalone } from './export'
 import './style.css'
 
@@ -36,7 +37,11 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 }
 
 export function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore } = options
+  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, clicksAt } = options
+
+  if (clicksAt !== undefined) {
+    setDefaultClicksAt(clicksAt)
+  }
 
   if (!slides) {
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
