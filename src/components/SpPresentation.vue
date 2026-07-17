@@ -200,7 +200,7 @@ import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onU
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, buildSteps as computeSlideSteps } from '../composables/useSteps'
-import { scanVisibility } from '../composables/useVisibility'
+
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
@@ -549,26 +549,16 @@ watch([currentIndex, stepIndex], () => {
 }, { flush: 'post' })
 
 
-function doScanVisibility() {
-  if (viewportEl.value === null) return
-  function maybe(sel: string, index: number) {
-    const el = viewportEl.value?.querySelector('.sp-slide-'+sel)
-    if (el) scanVisibility(el as HTMLElement, index)
-  }
-  maybe('current', stepIndex.value)
-  maybe('next', 0)
-  maybe('prev', 999999)
-}
 
 watch(() => [stepIndex.value, currentIndex.value], () => {
   nextTick(() => {
-    doScanVisibility()
+    // Visibility now handled by SpStep.vue and SpAnim.vue
   })
 })
 
 watch(contentVersion, () => {
   nextTick(() => {
-    doScanVisibility()
+    // Visibility now handled by SpStep.vue and SpAnim.vue
   })
 })
 
@@ -672,7 +662,7 @@ onMounted(() => {
   if (current.value) {
     buildSteps(current.value)
   }
-  doScanVisibility()
+  // Visibility now handled by SpStep.vue and SpAnim.vue
   if (!props.presenter) {
     parseHash()
     nextTick(() => {

@@ -134,7 +134,7 @@
     <p>(use <code>sp-style</code> in a slide or global)</p>
     <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" height="200"></sp-svg>
 
-    <sp-drag at="1289|281|707.2299359907619|287.7049303965147|33.2">
+    <sp-drag at="1279|278|707.2299359907619|287.7049303965147|33.2">
       Draggable cat
       <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
@@ -207,7 +207,7 @@ createSlidesPurryst({
     <p>Always visible</p>
     <sp-anim spec="@jump(1)" />
     <p>Appears on click 1</p>
-    <sp-anim spec="@jump(1)" />
+    <sp-pause />
     <p>Appears on click 2</p>
     <sp-anim spec="@jump(1)" />
     <p>Appears on click 3</p>
@@ -236,7 +236,22 @@ createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — Combined</h3>
+    <h3><code>sp-anim</code> — Combined (visgroups + @children)</h3>
+    <sp-anim spec="@jump(1)" />
+    <p>After pause</p>
+    <sp-anim spec="@children(ul)" />
+    <ul>
+      <li>First item</li>
+      <li>Second item</li>
+      <li>Third item</li>
+      <li>Fourth item</li>
+    </ul>
+    <sp-anim spec="@jump(-1)" />
+    <p>After pause</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — Combined (selectors then children)</h3>
     <p>Always visible heading</p>
     <sp-anim spec=".step1 | .step2 | @children(ul)" />
     <div class="step1" style="padding:.3em .6em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div>
@@ -250,6 +265,7 @@ createSlidesPurryst({
 
   <sp-slide>
     <h3><code>sp-anim</code> — @add / @remove</h3>
+    <img src="./lizard.png" />
     <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
     <div style="display:flex;align-items:center;gap:2em">
       <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
@@ -271,6 +287,84 @@ createSlidesPurryst({
       @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
       #cat { filter: none !important; }
     </sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h2>New Animation Features</h2>
+  </sp-slide>
+
+  <sp-style>
+    .demo-items>*, .d1, .d2, .d3, .d4, .d5 {
+      padding: 0.25em 1em;
+      border-radius: 6px;
+      margin: 0.25em 0;
+      --hue: 220;
+      background: lch(90 40 var(--hue));
+      color: lch(20 20 var(--hue));
+    }
+    .demo-items {
+      >:nth-child(1) { --hue: 220; }
+      >:nth-child(2) { --hue: 120; }
+      >:nth-child(3) { --hue: 60; }
+      >:nth-child(4) { --hue: 330; }
+      >:nth-child(5) { --hue: 0; }
+    }
+    .d1 { --hue: 220; }
+    .d2 { --hue: 120; }
+    .d3 { --hue: 60; }
+    .d4 { --hue: 330; }
+    .d5 { --hue: 0; }
+    .debug-show-current-step { position: absolute; right: 30px; top: 30px; font-size: 30px; &::before { content: "Step: "; } }
+  </sp-style>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with <code>animation</code> presets</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Elements can now animate in with presets:</p>
+    <sp-step at="1" animation="fade"><div class="d1">Fade in</div></sp-step>
+    <sp-step at="2" animation="up"><div class="d2">Slide up</div></sp-step>
+    <sp-step at="3" animation="scale"><div class="d3">Scale in</div></sp-step>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with <code>after</code> modifier</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Elements can share timing with the previous step:</p>
+    <sp-step at="1"><div class="d1">Step 1 (first)</div></sp-step>
+    <sp-step after><div class="d2">Step 1 (same timing)</div></sp-step>
+    <sp-step at="2"><div class="d3">Step 2</div></sp-step>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with range visibility</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Elements can be visible only in a range of steps:</p>
+    <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
+    <sp-step from="3"><div class="d2">Visible from step 3 onward</div></sp-step>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-clicks</code> wrapper</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Sequential list animation:</p>
+    <sp-clicks class="demo-items">
+      <div>Item 1</div>
+      <div>Item 2</div>
+      <div>Item 3</div>
+    </sp-clicks>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-clicks</code> with options</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>With <code>every="2"</code> and <code>at="1"</code>:</p>
+    <sp-clicks every="2" at="1" class="demo-items">
+      <div>Items 1 (step 1)</div>
+      <div>Items 2 (step 1)</div>
+      <div>Items 3 (step 2)</div>
+      <div>Items 4 (step 2)</div>
+      <div>Items 5/5 (step 3)</div>
+    </sp-clicks>
   </sp-slide>
 
   <sp-slide no-toc>

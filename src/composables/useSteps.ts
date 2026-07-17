@@ -1,10 +1,6 @@
 import { ref, computed, type Ref } from 'vue'
 import type { SlideData } from '../types'
 
-function parseSpec(spec: string | null): number {
-  return spec ? parseInt(spec, 10) : 1
-}
-
 function countAnimSpecParts(spec: string, htmlForQuery?: string): number {
   if (!spec.trim()) return 0
   const parts = spec.split('|').map(s => s.trim())
@@ -35,73 +31,53 @@ function computeAnimVisStepChange(spec: string): number {
   return total
 }
 
-function computeMaxVisStep(html: string): number {
-  const tmp = document.createElement('div')
-  tmp.innerHTML = html
-
-  let visStep = 0
-  let maxVis = 0
-
-  function walk(parent: Element) {
-    const children = Array.from(parent.children)
-    for (const el of children) {
-      const tag = el.tagName.toLowerCase()
-
-      if (tag === 'sp-pause') {
-        visStep += 1
-        if (visStep > maxVis) maxVis = visStep
-        continue
-      }
-
-      if (tag === 'sp-step' || tag === 'sp-style') continue
-
-      if (tag === 'sp-anim') {
-        const spec = el.getAttribute('spec') || ''
-        visStep += computeAnimVisStepChange(spec)
-        if (visStep > maxVis) maxVis = visStep
-        continue
-      }
-
-      walk(el)
-    }
-  }
-
-  walk(tmp)
-  return maxVis
-}
-
 export function buildSteps(slide: SlideData | null) {
   if (!slide) return 0
   const html = slide.html
   const tmp = document.createElement('div')
   tmp.innerHTML = html
 
+  let maxStep = 0
+
+  // Count sp-pause elements
   const pauses = tmp.querySelectorAll('sp-pause').length
-  const steps = tmp.querySelectorAll('sp-step')
-  let maxAt = 0
-  steps.forEach((s) => {
-    const at = parseSpec(s.getAttribute('at'))
-    if (at > maxAt) maxAt = at
+  maxStep = Math.max(maxStep, pauses)
+
+  // Count sp-step elements
+  tmp.querySelectorAll('sp-step').forEach((s) => {
+    const at = parseInt(s.getAttribute('at') || '0', 10)
+    maxStep = Math.max(maxStep, at)
   })
 
-  let animSteps = 0
-  const anims = tmp.querySelectorAll('sp-anim')
-  anims.forEach(a => {
+  // Count sp-anim spec parts
+  tmp.querySelectorAll('sp-anim').forEach(a => {
     const spec = a.getAttribute('spec') || ''
-    animSteps += countAnimSpecParts(spec, html)
+    maxStep += countAnimSpecParts(spec, html)
   })
 
-  const maxVisStep = computeMaxVisStep(html)
-
-  let maxAlt = 0
-  const alts = tmp.querySelectorAll('sp-alternatives')
-  alts.forEach(a => {
+  // Count sp-alternatives
+  tmp.querySelectorAll('sp-alternatives').forEach(a => {
     const at = parseInt(a.getAttribute('at') || '0', 10)
-    const needed = at + a.children.length
-    if (needed > maxAlt) maxAlt = needed
+    const children = a.children.length
+    maxStep = Math.max(maxStep, at + children)
   })
 
-  return Math.max(pauses + animSteps + 1, maxAt + 1, maxVisStep + 1, maxAlt)
+  // Count sp-clicks wrapper
+  tmp.querySelectorAll('sp-clicks').forEach(c => {
+    const at = parseInt(c.getAttribute('at') || '0', 10)
+    const every = parseInt(c.getAttribute('every') || '1', 10)
+    const children = c.children.length
+    const stepsNeeded = at + Math.ceil(children / every)
+    maxStep = Math.max(maxStep, stepsNeeded)
+  })
+
+  // Count sp-track elements (for sp-meanwhile)
+  tmp.querySelectorAll('[sp-track]').forEach(track => {
+    const trackSteps = buildSteps({ html: track.innerHTML } as SlideData)
+    maxStep = Math.max(maxStep, trackSteps)
+  })
+
+  return maxStep + 1
 }
 
 function stripAnimHtml(html: string): string {
@@ -137,8 +113,13 @@ function stripAnimHtml(html: string): string {
 
       if (tag === 'sp-style') continue
 
-      if (visStep > 0) {
-        el.setAttribute('data-sp-from', String(visStep))
+      // Wrap elements after pause in sp-step for unified visibility
+      if (visStep > 0 && tag !== 'sp-step') {
+        const step = document.createElement('sp-step')
+        step.setAttribute('at', String(visStep))
+        step.appendChild(el.cloneNode(true))
+        toRemove.push(el)
+        parent.insertBefore(step, el)
       }
 
       walk(el)
@@ -153,13 +134,127 @@ function stripAnimHtml(html: string): string {
   return tmp.innerHTML
 }
 
+function processAfterModifier(tmp: Element) {
+  let lastAt = 0
+  const walk = (parent: Element) => {
+    const children = Array.from(parent.children)
+    for (const el of children) {
+      const tag = el.tagName.toLowerCase()
+      
+      if (tag === 'sp-step') {
+        const after = el.getAttribute('after')
+        if (after !== null) {
+          // Replace "after" with the last known at value
+          el.setAttribute('at', String(lastAt))
+          el.removeAttribute('after')
+        } else {
+          const at = parseInt(el.getAttribute('at') || '0', 10)
+          lastAt = at
+        }
+      }
+      
+      walk(el)
+    }
+  }
+  walk(tmp)
+}
+
+function processClicksWrapper(tmp: Element) {
+  tmp.querySelectorAll('sp-clicks').forEach(clicks => {
+    const at = parseInt(clicks.getAttribute('at') || '0', 10)
+    const every = parseInt(clicks.getAttribute('every') || '1', 10)
+    const animation = clicks.getAttribute('animation') || ''
+    const tag = clicks.getAttribute('tag') || 'div'
+    const children = Array.from(clicks.children)
+    
+    const handledAttrs = new Set(['at', 'every', 'animation', 'tag'])
+    const wrapper = document.createElement(tag)
+    wrapper.setAttribute('sp-clicks-wrapper', '')
+    
+    // Forward all non-handled attributes
+    for (const attr of Array.from(clicks.attributes)) {
+      if (!handledAttrs.has(attr.name)) {
+        wrapper.setAttribute(attr.name, attr.value)
+      }
+    }
+    
+    children.forEach((child, i) => {
+      const step = document.createElement('sp-step')
+      step.setAttribute('at', String(at + Math.floor(i / every)))
+      if (animation) step.setAttribute('animation', animation)
+      step.appendChild(child.cloneNode(true))
+      wrapper.appendChild(step)
+    })
+    
+    clicks.replaceWith(wrapper)
+  })
+}
+
+function processMeanwhile(tmp: Element) {
+  // Find all sp-meanwhile elements and convert to parallel tracks
+  const meanwhileEls = tmp.querySelectorAll('sp-meanwhile')
+  if (meanwhileEls.length === 0) return
+  
+  // Group content by tracks
+  // Content before first meanwhile = track 1
+  // Content after first meanwhile = track 2
+  // etc.
+  
+  const tracks: Element[][] = [[]]
+  let currentTrack = 0
+  
+  const walk = (parent: Element) => {
+    const children = Array.from(parent.children)
+    for (const el of children) {
+      const tag = el.tagName.toLowerCase()
+      
+      if (tag === 'sp-meanwhile') {
+        currentTrack++
+        tracks.push([])
+        continue
+      }
+      
+      tracks[currentTrack].push(el)
+    }
+  }
+  
+  walk(tmp)
+  
+  // Clear parent and add tracks
+  while (tmp.firstChild) {
+    tmp.removeChild(tmp.firstChild)
+  }
+  
+  tracks.forEach((trackElements, index) => {
+    if (trackElements.length === 0) return
+    
+    const trackDiv = document.createElement('div')
+    trackDiv.setAttribute('sp-track', String(index + 1))
+    
+    trackElements.forEach(el => {
+      trackDiv.appendChild(el.cloneNode(true))
+    })
+    
+    tmp.appendChild(trackDiv)
+  })
+}
+
 export function processHtml(html: string, stepIndex: number): string {
   const tmp = document.createElement('div')
   tmp.innerHTML = html
 
+  // Process sp-clicks wrapper
+  processClicksWrapper(tmp)
+  
+  // Process "after" modifier in sp-step
+  processAfterModifier(tmp)
+  
+  // Process sp-meanwhile for parallel tracks
+  processMeanwhile(tmp)
+
   // Anim mode: full DOM, no pause splitting
   if (tmp.querySelector('sp-anim')) {
-    return stripAnimHtml(html)
+    return stripAnimHtml(tmp.innerHTML)
   }
 
   // Legacy pause splitting
