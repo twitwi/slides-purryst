@@ -74,7 +74,9 @@ export function buildSteps(slide: SlideData | null) {
   tmp.querySelectorAll('sp-alternatives').forEach(a => {
     const at = parseInt(a.getAttribute('at') || '0', 10)
     const children = a.children.length
-    maxStep = Math.max(maxStep, at + children)
+    if (children > 0) {
+      maxStep = Math.max(maxStep, at + children - 1)
+    }
   })
 
   // Count sp-clicks wrapper
