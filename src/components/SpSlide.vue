@@ -8,6 +8,7 @@
 import { computed, defineComponent, provide, shallowRef, watch } from 'vue'
 import type { Component } from 'vue'
 import type { SlideData } from '../types'
+import SpStepManager from './SpStepManager.vue'
 
 const props = defineProps<{
   slide: SlideData | null
@@ -32,9 +33,10 @@ watch(() => [props.html, props.fixedStep], ([html, fixedStep]) => {
     return
   }
   const fixed = fixedStep === undefined ? '' : ` data-fixed-step="${fixedStep}"`
+  const merged = { 'sp-step-manager': SpStepManager, ...props.components }
   comp.value = defineComponent({
-    template: `<div${fixed}>${html}</div>`,
-    components: props.components,
+    template: `<div${fixed}>${html}<sp-step-manager /></div>`,
+    components: merged,
   })
 }, { immediate: true })
 </script>

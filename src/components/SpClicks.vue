@@ -3,13 +3,13 @@
     <component
       v-for="(child, index) in children"
       :key="index"
-      :is="wrapChild(child, index)"
+      :is="child"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots, type VNode, h, defineComponent } from 'vue'
+import { computed, onMounted, nextTick, useSlots, type VNode } from 'vue'
 
 const props = withDefaults(defineProps<{
   at?: number | string
@@ -31,20 +31,19 @@ const children = computed(() => {
 const baseAt = computed(() => parseInt(String(props.at), 10))
 const every = computed(() => parseInt(String(props.every), 10))
 
-function wrapChild(child: VNode, index: number) {
-  const stepAt = baseAt.value + Math.floor(index / every.value)
-  return h(
-    defineComponent({
-      render() {
-        const stepProps: Record<string, any> = {
-          at: stepAt,
-        }
-        if (props.animation) {
-          stepProps.animation = props.animation
-        }
-        return h('sp-step', stepProps, [child])
-      }
+onMounted(() => {
+  nextTick(() => {
+    const nodes = slots.default?.() ?? []
+    const els = nodes
+      .filter((v: VNode) => v.type !== Comment)
+      .map((v: VNode) => v.el)
+      .filter((el: any) => el && el.nodeType === 1) as HTMLElement[]
+
+    els.forEach((el, i) => {
+      const stepAt = baseAt.value + Math.floor(i / every.value)
+      el.setAttribute('data-sp-step', String(stepAt))
+      if (props.animation) el.setAttribute('data-sp-step-animation', props.animation)
     })
-  )
-}
+  })
+})
 </script>

@@ -1,12 +1,10 @@
 <template>
-  <div ref="rootEl" :class="rootClass">
-    <slot />
-  </div>
+  <slot />
 </template>
 
 <script setup lang="ts">
-import { inject, computed, ref, onMounted } from 'vue'
-import type { Ref } from 'vue'
+import { inject, onMounted, nextTick, type Ref, type VNode } from 'vue'
+import { useSlots } from 'vue'
 
 const props = withDefaults(defineProps<{
   at?: number | string
@@ -16,43 +14,23 @@ const props = withDefaults(defineProps<{
   animation?: string
 }>(), { at: 0 })
 
-const globalStepIndex = inject<Ref<number>>('stepIndex', { value: 0 } as any)
+const slots = useSlots() as { default?: (...args: any[]) => VNode[] }
 
-const rootEl = ref<HTMLElement | null>(null)
-
-function getTargetStep(): number {
-  const dfs = rootEl.value?.closest('[data-fixed-step]')?.getAttribute('data-fixed-step')
-  if (dfs !== null && dfs !== undefined) return parseInt(dfs)
-  return globalStepIndex.value
-}
-
-const currentAt = computed(() => {
-  return typeof props.at === 'string' ? parseInt(props.at, 10) : props.at
+onMounted(() => {
+  nextTick(() => {
+    const nodes = slots.default?.() ?? []
+    for (const node of nodes) {
+      if (typeof node === 'object' && node.el && node.el.nodeType === 1) {
+        const el = node.el as HTMLElement
+        const atVal = typeof props.at === 'string' ? parseInt(props.at, 10) : props.at
+        if (atVal) el.setAttribute('data-sp-step', String(atVal))
+        if (props.from !== undefined) el.setAttribute('data-sp-step-from', String(props.from))
+        if (props.to !== undefined) el.setAttribute('data-sp-step-to', String(props.to))
+        if (props.type === 'only') el.setAttribute('data-sp-step-only', '')
+        if (props.animation) el.setAttribute('data-sp-step-animation', props.animation)
+        break
+      }
+    }
+  })
 })
-
-const visible = computed(() => {
-  const step = getTargetStep()
-  
-  // Handle range (from/to)
-  if (props.from !== undefined) {
-    const from = typeof props.from === 'string' ? parseInt(props.from, 10) : props.from
-    const to = props.to !== undefined 
-      ? (typeof props.to === 'string' ? parseInt(props.to, 10) : props.to)
-      : Infinity
-    return step >= from && step < to
-  }
-  
-  // Handle type="only" - visible only at exact step
-  if (props.type === 'only') return step === currentAt.value
-  
-  // Default: visible from step onward
-  return step >= currentAt.value
-})
-
-const rootClass = computed(() => ({
-  'sp-anim-shown': visible.value,
-  'sp-anim-hidden': !visible.value,
-  'sp-anim-only': props.type === 'only',
-  [`sp-anim-preset-${props.animation}`]: props.animation,
-}))
 </script>

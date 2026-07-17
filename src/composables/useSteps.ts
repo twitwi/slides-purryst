@@ -129,24 +129,15 @@ function stripAnimHtml(html: string): string {
         continue
       }
 
-      if (tag === 'sp-step') {
-        walk(el)
-        continue
-      }
-
       if (tag === 'sp-anim') {
         continue
       }
 
       if (tag === 'sp-style') continue
 
-      // Wrap elements after jump in sp-step for unified visibility
-      if (visStep > 0 && tag !== 'sp-step') {
-        const step = document.createElement('sp-step')
-        step.setAttribute('at', String(visStep))
-        step.appendChild(el.cloneNode(true))
-        toRemove.push(el)
-        parent.insertBefore(step, el)
+      // Stamp data-sp-step on elements after a jump
+      if (visStep > 0 && !el.hasAttribute('data-sp-step')) {
+        el.setAttribute('data-sp-step', String(visStep))
       }
 
       walk(el)
@@ -213,14 +204,44 @@ function processClicksWrapper(tmp: Element) {
     }
     
     children.forEach((child, i) => {
-      const step = document.createElement('sp-step')
-      step.setAttribute('at', String(at + Math.floor(i / every)))
-      if (animation) step.setAttribute('animation', animation)
-      step.appendChild(child.cloneNode(true))
-      wrapper.appendChild(step)
+      child.setAttribute('data-sp-step', String(at + Math.floor(i / every)))
+      if (animation) child.setAttribute('data-sp-step-animation', animation)
+      wrapper.appendChild(child.cloneNode(true))
     })
     
     clicks.replaceWith(wrapper)
+  })
+}
+
+function processSpStepElements(tmp: Element) {
+  tmp.querySelectorAll('sp-step').forEach(step => {
+    const at = step.getAttribute('at')
+    const from = step.getAttribute('from')
+    const to = step.getAttribute('to')
+    const type = step.getAttribute('type')
+    const animation = step.getAttribute('animation')
+
+    const childEls = Array.from(step.children)
+    if (childEls.length > 0) {
+      childEls.forEach(el => {
+        if (at !== null) el.setAttribute('data-sp-step', at)
+        if (from !== null) el.setAttribute('data-sp-step-from', from)
+        if (to !== null) el.setAttribute('data-sp-step-to', to)
+        if (type === 'only') el.setAttribute('data-sp-step-only', '')
+        if (animation) el.setAttribute('data-sp-step-animation', animation)
+      })
+      step.replaceWith(...Array.from(step.childNodes))
+    } else {
+      // Text-only sp-step: wrap in span
+      const span = document.createElement('span')
+      if (at !== null) span.setAttribute('data-sp-step', at)
+      if (from !== null) span.setAttribute('data-sp-step-from', from)
+      if (to !== null) span.setAttribute('data-sp-step-to', to)
+      if (type === 'only') span.setAttribute('data-sp-step-only', '')
+      if (animation) span.setAttribute('data-sp-step-animation', animation)
+      span.innerHTML = step.innerHTML
+      step.replaceWith(span)
+    }
   })
 }
 
@@ -231,11 +252,14 @@ export function processHtml(html: string, stepIndex: number): string {
   // Convert sp-pause and sp-meanwhile to sp-jump
   processAliases(tmp)
 
-  // Process sp-clicks wrapper
+  // Process sp-clicks wrapper (stamps data-sp-step on children)
   processClicksWrapper(tmp)
   
-  // Process "after" modifier in sp-step
+  // Process "after" modifier in sp-step (must run before convertSpStepElements)
   processAfterModifier(tmp)
+
+  // Convert <sp-step> elements to data-sp-step attributes on children
+  processSpStepElements(tmp)
 
   return stripAnimHtml(tmp.innerHTML)
 }

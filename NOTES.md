@@ -12,6 +12,7 @@
 - [ ] make a second theme for the demo, one is the current one, the other is using the same variables etc but slides have pure white background (for light mode) and titles are more colored. Theme could be set by putting a class on the body.
 - [ ] consider allowing style directly in template (no sp-style) so the editor is better handling it
 - [ ] refactor rename the next() nextSlide() (actually this last one is nextStep...)
+- [ ] sp-clicks with no wrapper, also as a directive (in addition)
 
 ## TOREVIEW
 
