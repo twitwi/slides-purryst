@@ -22,7 +22,7 @@
               :key="'next-' + (currentIndex + 1)"
               :slide="nextSlideData"
               :html="nextHtml"
-              :fixedSteps="computeSlideSteps(nextSlideData) - 1"
+              :fixedStep="computeSlideSteps(nextSlideData) - 1"
               :components="components"
             />
           </div>

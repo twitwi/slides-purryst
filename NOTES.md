@@ -5,9 +5,7 @@
 
 ## TODO Now
 
-- [ ] sp-style should be scoped (if in slide) by adding a unique class and wrapping the sp-style content .slide.unique-.... { ...content... }
 - [ ] sp-anim should accept at="" (abs or rel), with a default to the current visgroup (based on sp-jumps), accept a boolean (default to false) to tell that each anim step should also do a sp-jump (it is equivalent to the user counting anim steps and adding a relative sp-jump), it should also optionally accept a jump="" that must be relative (error alert if not) to tune the count... or the jump="" can be replace by the user by a sp-jump anyway
-- [ ] presenter view should not animate next slide!
 - [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun

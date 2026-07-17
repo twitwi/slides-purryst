@@ -158,7 +158,6 @@ function stripAnimHtml(html: string): string {
   }
 
   walk(tmp)
-  console.log("STEPS", tmp.innerHTML)
   return tmp.innerHTML
 }
 
@@ -238,25 +237,7 @@ export function processHtml(html: string, stepIndex: number): string {
   // Process "after" modifier in sp-step
   processAfterModifier(tmp)
 
-  // Anim mode: full DOM, no pause splitting
-  //if (tmp.querySelector('sp-anim')) {
-    return stripAnimHtml(tmp.innerHTML)
-  //}
-
-  /*
-  // Legacy pause splitting (now uses sp-jump)
-  const jumps = tmp.querySelectorAll('sp-jump')
-  if (jumps.length > 0) {
-    // Convert sp-jump to comments for splitting
-    jumps.forEach((el) => {
-      el.replaceWith(document.createComment('sp-jump'))
-    })
-    const parts = tmp.innerHTML.split(/<!--\s*sp-jump\s*-->/)
-    return parts.slice(0, stepIndex + 1).join('')
-  }
-
-  return tmp.innerHTML
-  */
+  return stripAnimHtml(tmp.innerHTML)
 }
 
 export function useSteps() {

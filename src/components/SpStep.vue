@@ -1,11 +1,11 @@
 <template>
-  <div :class="rootClass">
+  <div ref="rootEl" :class="rootClass">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject, computed } from 'vue'
+import { inject, computed, ref, onMounted } from 'vue'
 import type { Ref } from 'vue'
 
 const props = withDefaults(defineProps<{
@@ -16,14 +16,22 @@ const props = withDefaults(defineProps<{
   animation?: string
 }>(), { at: 0 })
 
-const stepIndex = inject<Ref<number>>('stepIndex', { value: 0 } as any)
+const globalStepIndex = inject<Ref<number>>('stepIndex', { value: 0 } as any)
+
+const rootEl = ref<HTMLElement | null>(null)
+
+function getTargetStep(): number {
+  const dfs = rootEl.value?.closest('[data-fixed-step]')?.getAttribute('data-fixed-step')
+  if (dfs !== null && dfs !== undefined) return parseInt(dfs)
+  return globalStepIndex.value
+}
 
 const currentAt = computed(() => {
   return typeof props.at === 'string' ? parseInt(props.at, 10) : props.at
 })
 
 const visible = computed(() => {
-  const step = stepIndex.value
+  const step = getTargetStep()
   
   // Handle range (from/to)
   if (props.from !== undefined) {
