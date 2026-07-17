@@ -7,6 +7,7 @@ import SpAnim from './components/SpAnim.vue'
 import SpDrag from './components/SpDrag.vue'
 import SpInclude from './components/SpInclude.vue'
 import SpSvg from './components/SpSvg.vue'
+import SpStep from './components/SpStep.vue'
 import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
@@ -23,6 +24,7 @@ const builtins: Record<string, Component> = {
   'sp-img': SpImg,
   'sp-include': SpInclude,
   'sp-svg': SpSvg,
+  'sp-step': SpStep,
   'sp-style': SpStyle,
   'sp-toc': SpToc,
 }

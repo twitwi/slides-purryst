@@ -1,6 +1,6 @@
 <template>
   <template v-for="(child, i) in children" :key="i">
-    <component :is="child" v-if="i === activeIndex" />
+    <component :is="child" :class="i === activeIndex ? 'sp-anim-shown' : 'sp-anim-hidden sp-hidden-is-empty'" />
   </template>
 </template>
 

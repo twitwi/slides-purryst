@@ -124,7 +124,8 @@ function stripAnimHtml(html: string): string {
       }
 
       if (tag === 'sp-step') {
-        toRemove.push(el)
+        // Keep sp-step — SpStep.vue handles visibility via CSS classes
+        walk(el)
         continue
       }
 
@@ -155,23 +156,6 @@ function stripAnimHtml(html: string): string {
 export function processHtml(html: string, stepIndex: number): string {
   const tmp = document.createElement('div')
   tmp.innerHTML = html
-
-  // Legacy: handle sp-step visibility
-  tmp.querySelectorAll('sp-step').forEach((el) => {
-    const at = parseSpec(el.getAttribute('at'))
-    const type = el.getAttribute('type')
-    let visible = false
-    if (type === 'only') {
-      visible = stepIndex === at
-    } else {
-      visible = stepIndex >= at
-    }
-    if (!visible) {
-      el.remove()
-    } else {
-      el.replaceWith(...el.childNodes)
-    }
-  })
 
   // Anim mode: full DOM, no pause splitting
   if (tmp.querySelector('sp-anim')) {

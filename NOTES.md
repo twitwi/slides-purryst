@@ -6,11 +6,14 @@
 ## TODO Now
 
 - [ ] presenter view should not animate next slide!
-- [ ] cache custom components source too so we can create a self-contained bundle
+- [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
-- [ ] can sp-alternative and sp-step be using some similar things as @jump (vis groups)? maybe need to make them show/hide instead of refreshing their visibility at every step?
+- [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun
+
 
 ## TOREVIEW
+
+- [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
 
 ## TODO
 
