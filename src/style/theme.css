@@ -160,3 +160,37 @@
   --sp-code-block: lch(8 4 var(--sp-theme-hue));
   --sp-code-text:  lch(88 4 var(--sp-theme-hue));
 }
+
+/* Theme Variants */
+
+/* ── Clean theme: pure white slides, vivid headings ── */
+:root.theme-clean {
+  --sp-bg:            #fff;
+  --sp-surface:       #fff;
+  --sp-shadow-sm: 0 1px 2px  lch(12 5 var(--sp-theme-hue) / 0.2);
+  --sp-shadow:    0 4px 12px lch(12 5 var(--sp-theme-hue) / 0.3);
+  --sp-shadow-lg: 0 8px 32px lch(12 5 var(--sp-theme-hue) / 0.4);
+}
+
+:root.theme-clean .sp-slide h1 { color: var(--sp-accent); }
+:root.theme-clean .sp-slide h2 { color: var(--sp-accent-2); }
+:root.theme-clean .sp-slide h3 { color: var(--sp-accent-text); }
+
+/* ── Clean theme dark mode: black bg, vivid headings ── */
+@media (prefers-color-scheme: dark) {
+  :root.theme-clean:not([data-dark-mode="light"]) {
+    --sp-bg:            #000;
+    --sp-surface:       #000;
+    --sp-shadow-sm: 0 1px 2px  lch(96 5 var(--sp-theme-hue) / 0.2);
+    --sp-shadow:    0 4px 12px lch(96 5 var(--sp-theme-hue) / 0.3);
+    --sp-shadow-lg: 0 8px 32px lch(96 5 var(--sp-theme-hue) / 0.4);
+  }
+}
+
+:root.theme-clean[data-dark-mode="dark"] {
+    --sp-bg:            #000;
+    --sp-surface:       #000;
+    --sp-shadow-sm: 0 1px 2px  lch(96 5 var(--sp-theme-hue) / 0.2);
+    --sp-shadow:    0 4px 12px lch(96 5 var(--sp-theme-hue) / 0.3);
+    --sp-shadow-lg: 0 8px 32px lch(96 5 var(--sp-theme-hue) / 0.4);
+}

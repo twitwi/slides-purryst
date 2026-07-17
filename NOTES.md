@@ -9,11 +9,12 @@
 - [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun
-
+- [ ] make a second theme for the demo, one is the current one, the other is using the same variables etc but slides have pure white background (for light mode) and titles are more colored. Theme could be set by putting a class on the body.
 
 ## TOREVIEW
 
 - [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
+- [ ] ^ NB: there are two use of the bundle, one for exported pres, and then can use a compiled component, and another where we just drop the bundle and a simple html file and then we may need to load SFC
 
 ## TODO
 
@@ -32,6 +33,9 @@
 - [ ] think about modularity/extensibility (plugins, custom components, etc.)
 - [ ] (typst) (hard) img/svg find a way in typst to make the paths clickable (to go to source) and at the same time properly relative (so need to pass a path... but loose source line etc)
 - [ ] extensible slide transitions, handling also the case of non-css animations, typically consider a registry of name->animationhandler, that defines the behavior/attrs of Transition
+- [ ] (slidev discord) blackout should not depend on dark/light mode
+- [ ] (slidev discord) delay for anims
+- [ ] (slidev discord) allow use of v-motion
 
 ## Feature ideas
 
