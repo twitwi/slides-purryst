@@ -1,5 +1,5 @@
 <template>
-  <img v-if="resolvedSrc" :src="resolvedSrc" :alt="alt" :class="$attrs.class" :style="$attrs.style" />
+  <img v-if="resolvedSrc" :src="resolvedSrc" :alt="alt" :class="$attrs.class as string" :style="$attrs.style as any" />
   <span v-else class="sp-img-loading">…</span>
 </template>
 
