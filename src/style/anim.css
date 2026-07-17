@@ -10,18 +10,23 @@ sp-clicks { display: contents; }
 /* type="only" - no space reservation when hidden */
 .sp-anim-only.sp-anim-hidden { display: none; }
 
-/* Animation presets */
-.sp-anim-hidden.sp-anim-preset-fade { opacity: 0.5; }
-.sp-anim-hidden.sp-anim-preset-up { transform: translateY(20px); }
-.sp-anim-shown.sp-anim-preset-up { transform: translateY(0); }
-.sp-anim-hidden.sp-anim-preset-down { transform: translateY(-20px); }
-.sp-anim-shown.sp-anim-preset-down { transform: translateY(0); }
-.sp-anim-hidden.sp-anim-preset-left { transform: translateX(20px); }
-.sp-anim-shown.sp-anim-preset-left { transform: translateX(0); }
-.sp-anim-hidden.sp-anim-preset-right { transform: translateX(-20px); }
-.sp-anim-shown.sp-anim-preset-right { transform: translateX(0); }
-.sp-anim-hidden.sp-anim-preset-scale { transform: scale(0.9); }
-.sp-anim-shown.sp-anim-preset-scale { transform: scale(1); }
+/* Fade preset - subtler opacity */
+.sp-anim-hidden.sp-anim-preset-fade { opacity: 0.25; }
+
+/* Transform presets - hidden state has transform + opacity 0 */
+.sp-anim-hidden.sp-anim-preset-up { transform: translateY(20px); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-hidden.sp-anim-preset-down { transform: translateY(-20px); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-hidden.sp-anim-preset-left { transform: translateX(20px); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-hidden.sp-anim-preset-right { transform: translateX(-20px); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-hidden.sp-anim-preset-scale { transform: scale(0.9); transition: opacity 300ms ease, transform 300ms ease; }
+
+/* Transform presets - shown state resets transform, transitions both */
+.sp-anim-shown.sp-anim-preset-up { transform: translateY(0); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-shown.sp-anim-preset-down { transform: translateY(0); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-shown.sp-anim-preset-left { transform: translateX(0); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-shown.sp-anim-preset-right { transform: translateX(0); transition: opacity 300ms ease, transform 300ms ease; }
+.sp-anim-shown.sp-anim-preset-scale { transform: scale(1); transition: opacity 300ms ease, transform 300ms ease; }
+
 .sp-anim-hidden.sp-anim-preset-none { transition: none; }
 
 /* Track containers for sp-meanwhile */

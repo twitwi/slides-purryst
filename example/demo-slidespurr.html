@@ -338,6 +338,7 @@ createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-step</code> with range visibility</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    ... check it animates <sp-alternatives><span></span><span>step 1</span><span>step 2</span><span>done</span></sp-alternatives>
     <p>Elements can be visible only in a range of steps:</p>
     <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
     <sp-step from="3"><div class="d2">Visible from step 3 onward</div></sp-step>
