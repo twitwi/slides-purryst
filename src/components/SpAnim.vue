@@ -45,18 +45,15 @@ function parsePartActions(part: string): AnimAction[] {
         const sel = a.slice(comma + 1).replace(/\)\s*$/, '').trim()
         actions.push({ type: 'removeClass', className: cls, selector: sel })
       }
-    } else if (a.startsWith('@+class ')) { // backward-compat
+    } else if (a.startsWith('@+class ')) {
       const m = a.match(/^@\+class\s+(\S+)\s+(.+)$/)
       if (m) actions.push({ type: 'addClass', className: m[1], selector: m[2] })
-    } else if (a.startsWith('@-class ')) { // backward-compat
+    } else if (a.startsWith('@-class ')) {
       const m = a.match(/^@-class\s+(\S+)\s+(.+)$/)
       if (m) actions.push({ type: 'removeClass', className: m[1], selector: m[2] })
     } else if (a.startsWith('-')) {
       actions.push({ type: 'hide', selector: a.slice(1) })
-    } else if (a.startsWith('@jump(')) {
-      // handled by processHtml; no runtime action
     } else if (a.startsWith('@children(')) {
-      alert("SHOULD NOT?")
       const m = a.match(/^@children\((.+)\)$/)
       if (m) {
         expandChildren(m[1], actions)
@@ -88,8 +85,6 @@ function getAllSelectors(parts: string[]): string[] {
         if (m) result.push(m[1])
       } else if (a.startsWith('-')) {
         result.push(a.slice(1))
-      } else if (a.startsWith('@jump(')) {
-        // noop
       } else if (a.startsWith('@children(')) {
         const m = a.match(/^@children\((.+)\)$/)
         if (m) result.push(m[1] + ' > *')

@@ -368,6 +368,67 @@ createSlidesPurryst({
     </sp-clicks>
   </sp-slide>
 
+
+
+
+
+  <sp-slide>
+    <h2>Animate like Touying</h2>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-pause</code> — structural step separator</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Each <code>sp-pause</code> creates a step boundary:</p>
+    <div class="d1">First — always visible</div>
+    <sp-pause />
+    <div class="d2">Second — after 1st pause</div>
+    <sp-pause />
+    <div class="d3">Third — after 2nd pause</div>
+    <sp-pause />
+    <div class="d4">Fourth — after 3rd pause</div>
+    <p>(<code>sp-pause</code> is an alias for <code>sp-jump at="+1"</code>)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-meanwhile</code> — parallel tracks</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Content before and after <code>sp-meanwhile</code> advances in parallel:</p>
+    <sp-pause />
+    <div class="d1" style="float: left">Left: step 1</div>
+    <sp-pause />
+    <div class="d2" style="float: left; clear: left;">Left: step 2</div>
+    <sp-meanwhile />
+    <sp-pause />
+    <div class="d3" style="float: right">Right: step 1</div>
+    <sp-pause />
+    <div class="d4" style="float: right; clear: right;">Right: step 2</div>
+    <sp-pause />
+    <div class="d5" style="float: right; clear: right;">Right: step 3</div>
+    <p>(<code>sp-meanwhile</code> is an alias for <code>sp-jump at="0"</code>)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-jump</code> — grouped visibility</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>sp-jump at="+N"</code> skips N steps — useful for grouping:</p>
+    <sp-jump at="+1" /> <!-- sp-pause -->
+    <div class="d1">Group A — (+1) visible after 1st pause</div>
+    <sp-jump at="+1" /> <!-- sp-pause -->
+    <div class="d2">Group B — (+1) visible after 2nd pause</div>
+    <sp-jump at="+1" /> <!-- sp-pause -->
+    <div class="d3">Group C — (+1) visible after 3rd pause</div>
+    <sp-jump at="-2" />
+    <div class="d1">Group A — (-2) also here (relative negative jump)</div>
+    <sp-jump at="+1" /> <!-- sp-pause -->
+    <div class="d2">Group B — (+1) also here (after previous)</div>
+    <sp-jump at="1" />
+    <div class="d1">Group A — (1) also here (absolute jump)</div>
+    <sp-style>
+      .d1,.d2,.d3 { font-size: 0.75em; }
+    </sp-style>
+  </sp-slide>
+
   <sp-slide no-toc>
     <h2>Here comes the TOC again</h2>
     (expect scrolling given the number of items)
