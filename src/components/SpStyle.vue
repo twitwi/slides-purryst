@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, useSlots, type VNode } from 'vue'
+import { inject, ref, onMounted, onUnmounted, useSlots, type VNode, type Ref } from 'vue'
 
 const props = withDefaults(defineProps<{
   css?: string
@@ -7,6 +7,7 @@ const props = withDefaults(defineProps<{
   css: '',
 })
 
+const slideNum = inject<Ref<number | undefined>>('slideNum', undefined as any)
 const slots = useSlots() as { default?: (...args: any[]) => VNode[] }
 const styleEl = ref<HTMLStyleElement | null>(null)
 
@@ -21,11 +22,17 @@ function getCss(): string {
   }).join('')
 }
 
+function scopeCss(css: string): string {
+  const n = slideNum?.value
+  if (n === undefined) return css
+  return `.sp-slide-${n} { ${css} }`
+}
+
 onMounted(() => {
-  const css = getCss()
-  if (!css) return
+  const raw = getCss()
+  if (!raw) return
   const el = document.createElement('style')
-  el.textContent = css
+  el.textContent = scopeCss(raw)
   document.head.appendChild(el)
   styleEl.value = el
 })
