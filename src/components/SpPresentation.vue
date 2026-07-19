@@ -1,5 +1,7 @@
 <template>
   <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
+    <span style="display: none" :data-source-file-push="dataSourceFile"></span>
+    <div v-if="props.raw?.before" v-html="props.raw.before" style="display: contents" class="sp-raw-before"></div>
     <!-- === MAIN (non-presenter) LAYOUT === -->
     <template v-if="!presenter">
       <div v-if="loading" class="sp-loading">
@@ -192,6 +194,7 @@
       @close="closeGoPrompt"
       @select="goToResult"
     />
+    <div v-if="props.raw?.after" v-html="props.raw.after" style="display: contents" class="sp-raw-after"></div>
   </div>
 </template>
 
@@ -224,6 +227,7 @@ const props = withDefaults(defineProps<{
   author?: string
   components?: Record<string, any>
   seed?: number
+  raw?: Record<'before'|'after', string>
 }>(), {
   transition: 'none',
   transitionDuration: 200,
@@ -276,6 +280,7 @@ provide('goTo', goTo)
 
 const direction = ref(1)
 const shouldSwap = ref(false)
+const dataSourceFile = computed(() => window.location.pathname)
 
 watch(currentIndex, (n, o) => {
   if (n !== o) {

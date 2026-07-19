@@ -8,7 +8,7 @@
 
 #let pause() = context {
   if target() == "html" {
-    html.elem("sp-anim", attrs: (spec: "@jump(1)"))
+    html.elem("sp-jump", attrs: (at: "+1"))
   } else {
     [pause()]
   }

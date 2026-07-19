@@ -6,12 +6,6 @@ import { watch, readFileSync, writeFileSync, existsSync } from 'fs'
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
-  const useTypst = process.env.USETYPST === "true"
-  const dir = 'example'
-  const base = `demo-slides${useTypst ? 'purryst' : 'purr'}`
-
-  const htmlFile = resolve(__dirname, `${dir}/${base}.html`)
-  const typstFile = resolve(__dirname, `${dir}/${base}.typ`)
 
   return {
     server: {
@@ -63,10 +57,14 @@ export default defineConfig(({ mode }) => {
             req.on('end', () => {
               try {
                 const data = JSON.parse(body)
+                const filePath = resolve(__dirname, './' + data.file)
+                const useTypst = filePath.endsWith('.typ')
+
+                console.log(filePath)
 
                 // === Typst mode: edit .typ source via dragId ===
-                if (data.dragId != null && existsSync(typstFile)) {
-                  const content = readFileSync(typstFile, 'utf-8')
+                if (data.dragId != null && useTypst && existsSync(filePath)) {
+                  const content = readFileSync(filePath, 'utf-8')
                   const newMatch = data.newAttrs?.match(/at="([^"]+)"/)
                   if (!newMatch) {
                     res.writeHead(400, { 'Content-Type': 'application/json' })
@@ -105,7 +103,7 @@ export default defineConfig(({ mode }) => {
                     return
                   }
 
-                  writeFileSync(typstFile, lines.join('\n'), 'utf-8')
+                  writeFileSync(filePath, lines.join('\n'), 'utf-8')
                   console.log(`[sp-edit] Updated drag #${dragId}: ${typstNew}`)
                   res.writeHead(200, { 'Content-Type': 'application/json' })
                   res.end(JSON.stringify({ ok: true }))
@@ -113,10 +111,6 @@ export default defineConfig(({ mode }) => {
                 }
 
                 // === HTML mode: edit HTML file via oldAttrs + slide ===
-                const filePath = data.file
-                  ? resolve(__dirname, data.file)
-                  : htmlFile
-
                 const content = readFileSync(filePath, 'utf-8')
 
                 const oldAt = data.oldAttrs?.trim()
@@ -269,7 +263,7 @@ export default defineConfig(({ mode }) => {
 
           let timer: ReturnType<typeof setTimeout> | null = null
           //console.log("WATCHING "+htmlFile)
-          watch(htmlFile, () => {
+          watch('example/', () => {
             //console.log("CHANGED "+htmlFile)
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {

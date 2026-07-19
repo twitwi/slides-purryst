@@ -147,6 +147,33 @@ function saveToSource() {
 
   const hasAt = !!props.at
   const dragId = el.value?.getAttribute('data-drag-id')
+  const sourceStack = [] as string[]
+  
+  function buildSourceStack(e: HTMLElement) {
+    function process(e: Element) {
+        const push = e.getAttribute('data-source-file-push')
+        if (push) {
+          sourceStack.push(push)
+        }
+        if (e.hasAttribute('data-source-file-pop')) {
+          sourceStack.pop()
+        }
+    }
+    const ofInterest = '[data-source-file-push],[data-source-file-pop]'
+    if (e.parentElement === null) return
+    buildSourceStack(e.parentElement)
+    let s = e.parentElement?.children[0]!
+    while (s !== e && s !== null) {
+      if (s.matches(ofInterest)) {
+        process(s)
+      }
+      s.querySelectorAll(ofInterest).forEach(process)
+      s = s?.nextElementSibling!
+    }
+  }
+  if (el.value) buildSourceStack(el.value)
+  const file = sourceStack.slice(-1)[0]
+  console.log(sourceStack, file)
 
   fetch('/__sp_edit', {
     method: 'POST',
@@ -154,6 +181,7 @@ function saveToSource() {
     body: JSON.stringify({
       oldAttrs: hasAt ? oldAttrs : '__sp_insert__',
       newAttrs,
+      file,
       slide: slideIndex.value,
       dragId,
     }),

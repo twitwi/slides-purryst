@@ -48,6 +48,19 @@ function serializeChildren(el: Element): string {
   return html
 }
 
+export function parseRawInto(root: ParentNode, res: Record<'before'|'after', string>) {
+  root.querySelectorAll('sp-before').forEach(e => {
+    const html = serializeChildren(e).trim()
+    if (!html) return
+    res.before = (res.before ?? '') + html
+  })
+  root.querySelectorAll('sp-after').forEach(e => {
+    const html = serializeChildren(e).trim()
+    if (!html) return
+    res.after = (res.after ?? '') + html
+  })
+}
+
 export function parseElementToSlides(root: ParentNode): SlideData[] {
   const els = root.querySelectorAll('sp-slide')
   const slides: SlideData[] = []

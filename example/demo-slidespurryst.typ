@@ -150,7 +150,7 @@
 ]
 
 #slide[
-  == Code Highlighting
+  == Code Highlighting (by typst)
 
   Use Typst raw blocks for code snippets.
 
@@ -179,19 +179,19 @@
 ]
 
 #slide[
-  == Animations: \@jump
+  == Animations: pause etc
 
   Always visible.
 
-  #anim("@jump(1)")
+  #pause
 
   Appears on click 1.
 
-  #anim("@jump(1)")
+  #pause
 
   Appears on click 2.
 
-  #anim("@jump(1)")
+  #pause
 
   Appears on click 3.
 ]

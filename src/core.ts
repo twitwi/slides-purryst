@@ -12,7 +12,7 @@ import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
 import type { SPSlidesOptions, SlideData } from './types'
-import { parseElementToSlides } from './composables/useSlides'
+import { parseElementToSlides, parseRawInto } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore } from './composables/includeCache'
 import { setDefaultClicksAt } from './composables/useSteps'
 import { exportStandalone } from './export'
@@ -39,18 +39,20 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, clicksAt } = options
 
+  const template = document.getElementById('sp-content') as HTMLTemplateElement | null
+  const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
+  const raw = {} as Record<'before'|'after',string>
+
   if (clicksAt !== undefined) {
     setDefaultClicksAt(clicksAt)
   }
 
   if (!slides) {
-  const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
-  if (cacheTemplate?.content) {
-    const json = cacheTemplate.content.textContent?.trim()
-    if (json) loadCache(json)
-  }
+    if (cacheTemplate?.content) {
+      const json = cacheTemplate.content.textContent?.trim()
+      if (json) loadCache(json)
+    }
 
-  const template = document.getElementById('sp-content') as HTMLTemplateElement | null
     if (template?.content) {
       slides = parseElementToSlides(template.content)
       if (transition) {
@@ -61,6 +63,10 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
         })
       }
     }
+  }
+
+  if (template?.content) {
+    parseRawInto(template.content, raw)
   }
 
   if (!designWidth || !designHeight || !author || !seed) {
@@ -105,7 +111,6 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   if (cacheIgnore) setCacheIgnore(cacheIgnore)
 
-  const template = document.getElementById('sp-content') as HTMLTemplateElement | null
   if (template?.content) {
     injectGlobalStyles(template.content)
     template.content.querySelectorAll('sp-include').forEach(el => {
@@ -147,6 +152,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     designHeight,
     author,
     seed,
+    raw,
     el: '#app',
   })
 
@@ -158,6 +164,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     designHeight,
     author,
     seed,
+    raw,
     components: merged,
     presenter: isPresenter,
   })

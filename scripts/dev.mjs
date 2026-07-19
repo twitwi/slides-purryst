@@ -64,8 +64,18 @@ if (useTypst) {
 
   // Ensure initial output exists before watching
   console.log('Initial typst compile...')
+  const typstArgs = [
+    'watch', '--no-serve',
+    '--root', root,
+    '--input', 'slides-purryst-path=../src/index.ts',
+    //'--input', 'slides-purryst-css-path=../dist/slides-purryst.css',
+    '--input', 'slides-purryst-module=true',
+    '--input', 'slides-purryst-filepath=' + demoTypst,
+    '--format', 'html', '--features', 'html',
+    demoTypst, tmp1,
+  ]
   try {
-    execSync(`typst compile --root "${root}" --input "slides-purryst-path=../src/index.ts" --input "slides-purryst-module=true" --format html --features html "${demoTypst}" "${tmp1}"`, { cwd: root, stdio: 'inherit', timeout: 60000 })
+    execSync(`typst compile ${typstArgs.slice(2).join(' ')}`, { cwd: root, stdio: 'inherit', timeout: 60000 })
     const raw = readFileSync(tmp1, 'utf-8')
     const formatted = formatHtml(raw)
     writeFileSync(output, formatted, 'utf-8')
@@ -74,15 +84,6 @@ if (useTypst) {
     console.error('Initial typst compile failed, will retry via watch:', e.message)
   }
 
-  const typstArgs = [
-    'watch', '--no-serve',
-    '--root', root,
-    '--input', 'slides-purryst-path=../src/index.ts',
-    //'--input', 'slides-purryst-css-path=../dist/slides-purryst.css',
-    '--input', 'slides-purryst-module=true',
-    '--format', 'html', '--features', 'html',
-    demoTypst, tmp1,
-  ]
 
   const typst = spawn('typst', typstArgs, { stdio: 'inherit', cwd: root })
   processes.push(typst)

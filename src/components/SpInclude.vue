@@ -70,8 +70,10 @@ onMounted(load)
 </script>
 
 <template>
+  <span style="display: none" :data-source-file-push="src"></span>
   <div v-if="error" class="sp-include-error">{{ error }}</div>
   <div v-else v-html="raw" class="sp-include"></div>
+  <span style="display: none" data-source-file-pop=""></span>
 </template>
 
 <style scoped>
