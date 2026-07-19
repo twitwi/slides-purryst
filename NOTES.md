@@ -1,7 +1,7 @@
 
 ## TODO Easy
 
-- [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward
+- [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 
 ## TODO Now
 
@@ -19,13 +19,13 @@
 - [ ] check effect of pause... see       // Wrap elements after pause in sp-step for unified visibility
 - [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
 - [ ] ^ NB: there are two use of the bundle, one for exported pres, and then can use a compiled component, and another where we just drop the bundle and a simple html file and then we may need to load SFC
+- [ ] <sp-pause/> might need (e.g. following) content to be put in a span, not pure text node. This is a limitation of css, but could we detect it (in devmode?) and notify the user?
 
 ## TODO
 
 - [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
 - [ ] check visgroups not working in presenter (but they might go away with the new anim system)
 - [ ] consider history management (think about when to push)
-- [ ] consider removing prettier dependency then
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
 - [ ] should probably better structure so that countAnimSpecParts is more generic
 - [ ] (typst) integrate show raw.line into the typst theme

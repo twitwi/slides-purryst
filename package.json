@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
-    "prettier": "^3.9.5",
     "typescript": "^5.7.3",
     "vite": "^6.3.4",
     "vite-plugin-css-injected-by-js": "^5.0.1",
