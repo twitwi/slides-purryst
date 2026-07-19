@@ -9,7 +9,6 @@
 - [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun
-- [ ] make a second theme for the demo, one is the current one, the other is using the same variables etc but slides have pure white background (for light mode) and titles are more colored. Theme could be set by putting a class on the body.
 - [ ] consider allowing style directly in template (no sp-style) so the editor is better handling it
 - [ ] refactor rename the next() nextSlide() (actually this last one is nextStep...)
 - [ ] sp-clicks with no wrapper, also as a directive (in addition)
@@ -23,10 +22,8 @@
 
 ## TODO
 
-- [ ] dev script etc should be more generic, incl. draggable
-- [ ] overview, show end state for slides, not init state
 - [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
-- [ ] check visgroups not working in presenter (but they might go away with the new anim system)
+- [ ] check visgroups not working in presenter/overview (they animate, not respecting the fixedStep)
 - [ ] consider history management (think about when to push)
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
 - [ ] should probably better structure so that countAnimSpecParts is more generic
@@ -43,6 +40,7 @@
 - [ ] (slidev discord) delay for anims
 - [ ] (slidev discord) allow use of v-motion
 - [ ] (slidev discord) allow to play directly the first @anim (at=0?)
+- [ ] maybe 'z' should go to end of current slide if not yet there (insted of next)
 
 ## Feature ideas
 
