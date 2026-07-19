@@ -21,8 +21,9 @@
     "./dist/slides-purryst.css"
   ],
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "dev:typst": "node scripts/dev.mjs --typst",
+    "dev": "node scripts/dev.mjs example/demo-slidespurr.html",
+    "dev:typst": "node scripts/dev.mjs example/demo-slidespurryst.typ",
+    "dev:bundle": "pnpm build:bundle && node scripts/dev.mjs example/demo-purrbundle.html",
     "do-serve-open": "vite --port 3334 --clearScreen false --open  ",
     "SLOW-do-prettier-inplace": "prettier --ignore-path ignorregitignore --print-width 160 --write  ",
     "clean": "rm $(git ls-files -o -i -X .gitignore example/ )",

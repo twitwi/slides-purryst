@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>SlidesPurr Demo</title>
+<title>SlidesPurr Bundle Demo</title>
 </head>
 <body>
 
 <template id="sp-content">
 
   <sp-slide>
-    <h1>SlidesPurr(yst)</h1>
+    <h1>SlidesPurr(yst) with bundle</h1>
     <p>Where Typst meets Vue in purr-fect harmony.</p>
     <p style="color:#64748b;font-size:0.9em">Arrow keys or Space to navigate</p>
-    <p>NB: this demo file is not using typst</p>
-  </sp-slide>  
+    <p>NB: this demo file is not using typst, and directly with a bundle</p>
+  </sp-slide>
 
   <sp-slide no-toc>
     <h2>Here is TOC</h2>
@@ -202,6 +202,7 @@ createSlidesPurryst({
     <h2>Generic Slide Animations (steps)</h2>
   </sp-slide>
 
+  <!--
   <sp-slide>
     <h3><code>sp-anim</code> — @jump (vis groups)</h3>
     <p>Always visible</p>
@@ -212,6 +213,7 @@ createSlidesPurryst({
     <sp-anim spec="@jump(1)" />
     <p>Appears on click 3</p>
   </sp-slide>
+  -->
 
   <sp-slide>
     <h3><code>sp-anim</code> — selectors (actions)</h3>
@@ -235,6 +237,8 @@ createSlidesPurryst({
     </ul>
   </sp-slide>
 
+  <!--
+  -->
   <sp-slide>
     <h3><code>sp-anim</code> — Combined (visgroups + @children)</h3>
     <p>Always visible</p>
@@ -493,20 +497,15 @@ createSlidesPurryst({
 
 <div id="sp-presentation" data-design-width="1920" data-design-height="1080" data-author="SlidesPurryst"></div>
 
+<!-- alternatives so this example is somewhate moveable -->
+<script src="../dist/slides-purryst.bundle.js"></script>
+<script src="./dist/slides-purryst.bundle.js"></script>
+<script src="./slides-purryst.bundle.js"></script>
 <script type="module">
-import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
-createSlidesPurryst({
+SlidesPurryst.createSlidesPurryst({
   components: { 'my-counter': Counter },
-  seed: 12345678+45,
-  cacheIgnore: ['huge-.*\\.svg$'],  // don't inline huge SVGs in the output bundle
-})
-</script>
-<script>
-// To test theme variants
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return
-  if (e.key === 't') document.documentElement.classList.toggle('theme-clean')
+  seed: 12345678+90,
 })
 </script>
 </body>

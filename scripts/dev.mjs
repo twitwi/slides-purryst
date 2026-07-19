@@ -1,6 +1,6 @@
 import { spawn, execSync } from 'child_process'
 import { watchFile, readFileSync, writeFileSync } from 'fs'
-import { resolve, dirname } from 'path'
+import { resolve, dirname, basename } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -25,7 +25,7 @@ function formatHtml(html) {
 
     const isClosing = /^<\//.test(trimmed)
     const isSelfClosing = /^<[^>]*\/>/.test(trimmed)
-    const isOpenBlock = /^<(?!\/)(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|sp-anim|sp-pause|sp-toc|sp-include|sp-svg)([\s>])/i.test(trimmed) || isSelfClosing
+    const isOpenBlock = /^<(?!\/)(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|sp-anim|sp-pause|sp-alternatives|sp-toc|sp-include|sp-svg)([\s>])/i.test(trimmed) || isSelfClosing
 
     if (isClosing) depth = Math.max(0, depth - 1)
     const indent = '  '.repeat(depth)
@@ -43,9 +43,14 @@ function formatHtml(html) {
   return result.trim() + '\n'
 }
 
-const useTypst = process.argv.includes('--typst') || process.argv.includes('typst')
-const dir = 'example'
-const base = `demo-slides${useTypst ? 'purryst' : 'purr'}`
+const source = process.argv[2]
+if (!source) {
+  console.log('Please provide a html or typ file path.')
+  process.exit()
+}
+const dir = dirname(source)
+const useTypst = source.endsWith('.typ')
+const base = basename(source, useTypst ? '.typ' : '.html')
 const demoFile = `${dir}/${base}.html`
 const demoTypst = `${dir}/${base}.typ`
 const tmp = (i) => `${dir}/,,${base}-${i}.html`

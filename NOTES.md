@@ -23,6 +23,8 @@
 
 ## TODO
 
+- [ ] dev script etc should be more generic, incl. draggable
+- [ ] overview, show end state for slides, not init state
 - [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
 - [ ] check visgroups not working in presenter (but they might go away with the new anim system)
 - [ ] consider history management (think about when to push)
@@ -50,3 +52,4 @@
 ## Design
 
 - should bibliography exist in no-typst?
+-
