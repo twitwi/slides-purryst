@@ -195,9 +195,6 @@ createSlidesPurryst({
 
 
 
-
-
-
   <sp-slide>
     <h2>Generic Slide Animations (steps)</h2>
   </sp-slide>
@@ -205,11 +202,11 @@ createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-anim</code> — @jump (vis groups)</h3>
     <p>Always visible</p>
-    <sp-anim spec="@jump(1)" />
+    <sp-jump at="+1" />
     <p>Appears on click 1</p>
     <sp-pause />
     <p>Appears on click 2</p>
-    <sp-anim spec="@jump(1)" />
+    <sp-jump at="+1" />
     <p>Appears on click 3</p>
   </sp-slide>
 
@@ -235,6 +232,8 @@ createSlidesPurryst({
     </ul>
   </sp-slide>
 
+  <!--
+  -->
   <sp-slide>
     <h3><code>sp-anim</code> — Combined (visgroups + @children)</h3>
     <p>Always visible</p>
@@ -285,11 +284,11 @@ createSlidesPurryst({
       #catTongue { fill: red; }
       .glow { filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 40px #ffb300); transition: filter .3s; }
       .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
-      .dim { opacity: 0.3; transition: opacity 0.3s; }
       #cat { filter: none !important; }
+      .dim { opacity: 0.3; transition: opacity 0.3s; }
     </sp-style>
   </sp-slide>
-  <sp-style>
+  <sp-style> <!-- for global styles, both style and sp-style work -->
       @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
   </sp-style>
 
@@ -473,7 +472,7 @@ createSlidesPurryst({
   </sp-slide>
 
   <!-- global style -->
-  <sp-style>
+  <style>
     svg #cat:not(:hover) { filter: blur(5px); }
     svg #cat:hover {
       #catfill {
@@ -487,7 +486,7 @@ createSlidesPurryst({
         filter: blur(10px);
       }
     }
-  </sp-style>
+  </style>
 
 </template>
 

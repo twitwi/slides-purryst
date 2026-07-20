@@ -9,7 +9,6 @@
 - [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun
-- [ ] consider allowing style directly in template (no sp-style) so the editor is better handling it
 - [ ] refactor rename the next() nextSlide() (actually this last one is nextStep...)
 - [ ] sp-clicks with no wrapper, also as a directive (in addition)
 
@@ -19,8 +18,13 @@
 - [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
 - [ ] ^ NB: there are two use of the bundle, one for exported pres, and then can use a compiled component, and another where we just drop the bundle and a simple html file and then we may need to load SFC
 - [ ] <sp-pause/> might need (e.g. following) content to be put in a span, not pure text node. This is a limitation of css, but could we detect it (in devmode?) and notify the user?
+- [ ] consider allowing style directly in template (no sp-style) so the editor is better handling it -> done for template>style... further thing can go with sp-slide -> slide, etc.
 
 ## TODO
+
+- [ ] (theme) try/document global font size change
+- [ ] (anim) play/pause video
+- [ ] (anim) along path, viewbox etc
 
 - [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
 - [ ] check visgroups not working in presenter/overview (they animate, not respecting the fixedStep)
@@ -50,4 +54,5 @@
 ## Design
 
 - should bibliography exist in no-typst?
--
+
+
