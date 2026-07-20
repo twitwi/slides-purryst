@@ -5,7 +5,6 @@
 
 ## TODO Now
 
-- [ ] maybe 'z' should go to end of current slide if not yet there (insted of next)
 - [ ] sp-anim should accept at="" (abs or rel), with a default to the current visgroup (based on sp-jumps), accept a boolean (default to false) to tell that each anim step should also do a sp-jump (it is equivalent to the user counting anim steps and adding a relative sp-jump), it should also optionally accept a jump="" that must be relative (error alert if not) to tune the count... or the jump="" can be replace by the user by a sp-jump anyway
 - [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
@@ -27,7 +26,6 @@
 - [ ] (anim) along path, viewbox etc
 
 - [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
-- [ ] check visgroups not working in presenter/overview (they animate, not respecting the fixedStep)
 - [ ] consider history management (think about when to push)
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
 - [ ] should probably better structure so that countAnimSpecParts is more generic

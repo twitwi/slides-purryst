@@ -109,7 +109,7 @@
                     <path d="M4 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                   </svg>
                 </button>
-                <button class="sp-nav-more-browse-btn" title="End of next slide (Z)" @click="goToEndOfNext()">
+                <button class="sp-nav-more-browse-btn" title="End of next slide (Z)" @click="goToNextEnd()">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M6 13l5-5-5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     <path d="M12 13V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -660,7 +660,7 @@ useNavigation({
   onBlackoutExit: exitBlackout,
   onDevPaneToggle: () => { config.proMode ? toggleDevPane() : toggleDarkMode() },
   onGoPrevBegin: goToPrevBegin,
-  onGoNextEnd: goToEndOfNext,
+  onGoNextEnd: goToNextEnd,
 })
 
 onMounted(() => {
@@ -724,10 +724,15 @@ function goToPrevBegin() {
   }
 }
 
-function goToEndOfNext() {
-  if (currentIndex.value < total.value - 1) {
-    targetStepIndex = Math.max(0, computeSlideSteps(slides.value[currentIndex.value + 1]) - 1)
-    goTo(currentIndex.value + 1)
+function goToNextEnd() {
+  const stayOnSlide = stepIndex.value < totalSteps.value - 1 
+  if (stayOnSlide) {
+    stepIndex.value = computeSlideSteps(slides.value[currentIndex.value]) - 1
+  } else {
+    if (currentIndex.value < total.value - 1) {
+      targetStepIndex = Math.max(0, computeSlideSteps(slides.value[currentIndex.value + 1]) - 1)
+      goTo(currentIndex.value + 1)
+    }
   }
 }
 
