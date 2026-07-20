@@ -43,7 +43,7 @@
   height: 100%;
   padding: var(--sp-8) var(--sp-12) var(--sp-12);
   overflow: hidden;
-  font-size: 4.5em;
+  font-size: 3.75em;
 }
 
 .sp-slide-footer {
