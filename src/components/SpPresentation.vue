@@ -61,13 +61,13 @@
               <path d="M4.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" stroke-width="1.2" fill="none"/>
             </svg>
           </button>
-          <button class="sp-nav-btn" :disabled="isFirst && isFirstStep" aria-label="Previous" @click="prevSlide">
+          <button class="sp-nav-btn" :disabled="isFirst && isFirstStep" aria-label="Previous" @click="prev">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
           <span class="sp-nav-counter" @click="onGoPrompt">{{ currentIndex + 1 }} / {{ effectiveTotal }}</span>
-          <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="nextSlide">
+          <button class="sp-nav-btn" :disabled="isLast && isLastStep" aria-label="Next" @click="next">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -245,8 +245,8 @@ const {
   current,
   total,
   goTo,
-  next,
-  prev,
+  nextSlide,
+  prevSlide,
   setSlides
 } = useSlides(props.slides)
 
@@ -375,19 +375,19 @@ const activeHtml = computed(() => {
   return processHtml(slide.html, stepIndex.value)
 })
 
-function nextSlide() {
+function next() {
   if (!isLastStep.value) {
     nextStep()
   } else if (currentIndex.value < total.value - 1) {
-    next()
+    nextSlide()
   }
 }
 
-function prevSlide() {
+function prev() {
   if (!isFirstStep.value) {
     prevStep()
   } else if (currentIndex.value > 0) {
-    prev()
+    prevSlide()
   }
 }
 

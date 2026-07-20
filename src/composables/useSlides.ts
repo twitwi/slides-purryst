@@ -105,13 +105,13 @@ export function useSlides(initial?: SlideData[]) {
     }
   }
 
-  function next() {
+  function nextSlide() {
     if (currentIndex.value < slides.value.length - 1) {
       currentIndex.value++
     }
   }
 
-  function prev() {
+  function prevSlide() {
     if (currentIndex.value > 0) {
       currentIndex.value--
     }
@@ -121,5 +121,5 @@ export function useSlides(initial?: SlideData[]) {
     slides.value = s
   }
 
-  return { slides, currentIndex, current, total, goTo, next, prev, setSlides }
+  return { slides, currentIndex, current, total, goTo, nextSlide, prevSlide, setSlides }
 }
