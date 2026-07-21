@@ -5,40 +5,48 @@
 
 ## TODO Now
 
-- [ ] sp-anim should accept at="" (abs or rel), with a default to the current visgroup (based on sp-jumps), accept a boolean (default to false) to tell that each anim step should also do a sp-jump (it is equivalent to the user counting anim steps and adding a relative sp-jump), it should also optionally accept a jump="" that must be relative (error alert if not) to tune the count... or the jump="" can be replace by the user by a sp-jump anyway
-- [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
+- [ ] sp-anim should accept at="" (abs or rel), with a default to the current visgroup (based on sp-jumps), accept a boolean (default to false) to tell that each anim step should also do a sp-jump (it is equivalent to the user counting anim steps and adding a relative sp-jump), make an example illustrating these features
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun
-- [ ] refactor rename the next() nextSlide() (actually this last one is nextStep...)
 - [ ] sp-clicks with no wrapper, also as a directive (in addition)
 
 ## TOREVIEW
 
-- [ ] check effect of pause... see       // Wrap elements after pause in sp-step for unified visibility
+- [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
 - [ ] ^ NB: there are two use of the bundle, one for exported pres, and then can use a compiled component, and another where we just drop the bundle and a simple html file and then we may need to load SFC
 - [ ] <sp-pause/> might need (e.g. following) content to be put in a span, not pure text node. This is a limitation of css, but could we detect it (in devmode?) and notify the user?
-- [ ] consider allowing style directly in template (no sp-style) so the editor is better handling it -> done for template>style... further thing can go with sp-slide -> slide, etc.
+
+# TODO extensibility
+
+- think about modularity/extensibility (plugins, custom components, etc.)
+- ideally have a way to have a sequence of extensibility (so we can have plugins + customization on top)
+- (anim) make it more extensible, library of processors (for now just for parts, but still recursive, for @delay), should probably better structure so that countAnimSpecParts is more generic
+
 
 ## TODO
 
+- [ ] (anim) is at=2 intuitive or offset by one? (at=0 intuitively means play right away, at=2 should mean after 2 steps)
+- [ ] (anim) should allow to delay, @delay(100ms) .stuff, before the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
 - [ ] (anim) play/pause video
 - [ ] (anim) along path, viewbox etc
+- [ ] (edit) allow adding a drag, setting its background (e.g. a whiteout-ing box) and setting its id (for sp-anim purpose), need to do it html and typst (vite updater)
+- [ ] (edit) allow to have a library of custom chunks that can be added, typically <template id="sp-chunklets"><sp-chunk name="greybox"><sp-drag at="$x|$y|$w|$h" style="background: grey;">...., where it can be unparametrized, click based (if x or y found), box based if w or h found)
+- [ ] (edit) allow pasting image, by default added as a drag?
+- [ ] (edit) allow changing image path?
 
-- [ ] anim should allow to delay the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
+- [ ] overview could insert separators when breaking a section (go from h3 to h2, have .sp-overview-leave-h3) to allow css styling (break flow of overview)
 - [ ] consider history management (think about when to push)
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
-- [ ] should probably better structure so that countAnimSpecParts is more generic
 - [ ] (typst) integrate show raw.line into the typst theme
 - [ ] (typst) show rule to map block onto a div, with explicit attributes (of block) transformed in style in div
 - [ ] (typst) drag will not work with multifile input or even loop probably, or function that creates a drag, etc
-- [ ] (js) drag will also not work if including a file
+- [ ] (js) drag will also not work if including a file (already done most of the work but need to add a test and sp-include support)
 - [ ] explore if we can rationalize that escaping stuff:     <h3>Explicit <code>&amp;lt;sp-step at="..."></code></h3>
 - [ ] consider gsap or an alternative (anime.js?) for svg animations or text animations or transitions
-- [ ] think about modularity/extensibility (plugins, custom components, etc.)
 - [ ] (typst) (hard) img/svg find a way in typst to make the paths clickable (to go to source) and at the same time properly relative (so need to pass a path... but loose source line etc)
 - [ ] extensible slide transitions, handling also the case of non-css animations, typically consider a registry of name->animationhandler, that defines the behavior/attrs of Transition
-- [ ] (slidev discord) blackout should not depend on dark/light mode
+- [ ] (slidev discord) blackout should not depend on dark/light mode -> currently black, but allow a white version (maybe a small button in the corner, so it allows to draw when on a whiteboard)
 - [ ] (slidev discord) delay for anims
 - [ ] (slidev discord) allow use of v-motion
 - [ ] (slidev discord) allow to play directly the first @anim (at=0?)

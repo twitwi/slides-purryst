@@ -14,7 +14,14 @@ interface AnimAction {
   className?: string
 }
 
-const props = defineProps<{ spec: string }>()
+const props = withDefaults(defineProps<{
+  spec: string
+  at?: string
+  noJump?: boolean | string
+}>(), {
+  at: '+0',
+  noJump: false,
+})
 const globalStepIndex = inject<Ref<number>>('stepIndex')!
 
 const animEl = ref<HTMLElement | null>(null)
@@ -100,6 +107,27 @@ const rawParts = computed(() => {
   return (props.spec || '').split('|')
 })
 
+function getAtOffset(): number {
+  const at = props.at || '+0'
+  if (at.startsWith('+') || at.startsWith('-')) {
+    return parseInt(at, 10)
+  }
+  return parseInt(at, 10)
+}
+
+/*
+function isRelativeAt(): boolean {
+  const at = props.at || '+0'
+  return at.startsWith('+') || at.startsWith('-')
+}
+
+function hasJump(): boolean {
+  const v = props.noJump
+  if (typeof v === 'boolean') return !v
+  return v !== 'true' && v !== ''
+}
+*/
+
 const stepActions = computed<AnimAction[][]>(() => {
   if (!props.spec) return []
   const result: AnimAction[][] = []
@@ -150,7 +178,8 @@ function getContainer(): Element {
 let previousStep = -1
 
 function applyStep(step: number) {
-  const actions = stepActions.value[step - 1]
+  const atOffset = getAtOffset()
+  const actions = stepActions.value[step - atOffset - 1]
   if (!actions) return
   const container = getContainer()
   for (const a of actions) {
@@ -181,7 +210,8 @@ function reverseAction(el: HTMLElement, action: AnimAction) {
 }
 
 function reverseStep(step: number) {
-  const actions = stepActions.value[step - 1]
+  const atOffset = getAtOffset()
+  const actions = stepActions.value[step - atOffset - 1]
   if (!actions) return
   const container = getContainer()
   for (const a of actions) {

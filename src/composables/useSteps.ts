@@ -40,7 +40,7 @@ function makeJump(at: string): Element {
   return el
 }
 
-export function buildSteps(slide: SlideData | null) {
+export function buildSteps(slide: SlideData | null): number {
   if (!slide) return 0
   const html = slide.html
   const tmp = document.createElement('div')
@@ -76,10 +76,20 @@ export function buildSteps(slide: SlideData | null) {
     }
   })
 
-  // Count sp-anim spec parts (excluding @jump which is removed)
+  // Count sp-anim spec parts
   tmp.querySelectorAll('sp-anim').forEach(a => {
     const spec = a.getAttribute('spec') || ''
-    maxStep += countAnimSpecParts(spec, html)
+    const count = countAnimSpecParts(spec, html)
+    const atStr = a.getAttribute('at') || '+0'
+    const isRelative = atStr.startsWith('+') || atStr.startsWith('-')
+    const atVal = parseInt(atStr, 10)
+    const base = isRelative ? visStep : 0
+    const noJump = a.getAttribute('no-jump')
+    const doJump = noJump === null || noJump === 'false'
+    if (doJump) {
+      visStep += count
+    }
+    maxStep = Math.max(maxStep, base + atVal + count)
   })
 
   // Count sp-alternatives
@@ -130,6 +140,11 @@ function stripAnimHtml(html: string): string {
       }
 
       if (tag === 'sp-anim') {
+        const noJump = el.getAttribute('no-jump')
+        const doJump = noJump === null || noJump === 'false'
+        if (doJump) {
+          visStep += countAnimSpecParts(el.getAttribute('spec') || '')
+        }
         continue
       }
 

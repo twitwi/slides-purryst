@@ -200,7 +200,7 @@ createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — @jump (vis groups)</h3>
+    <h3><code>sp-pause</code>/<code>sp-jump</code> — visibility groups (vis groups)</h3>
     <p>Always visible</p>
     <sp-jump at="+1" />
     <p>Appears on click 1</p>
@@ -213,23 +213,25 @@ createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-anim</code> — selectors (actions)</h3>
     <p>Always visible</p>
-    <sp-anim spec="li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)" />
     <ul>
       <li>First</li>
       <li>Second</li>
       <li>Third</li>
     </ul>
+    <p>(rule of thumb: place anim after the elements)</p>
+    <sp-anim spec="li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)" />
   </sp-slide>
 
   <sp-slide>
     <h3><code>sp-anim</code> — @children</h3>
-    <sp-anim spec="@children(ul)" />
     <ul>
       <li>First item</li>
       <li>Second item</li>
       <li>Third item</li>
       <li>Fourth item</li>
     </ul>
+    <p>(rule of thumb: place anim after the elements)</p>
+    <sp-anim spec="@children(ul)" />
   </sp-slide>
 
   <!--
@@ -240,28 +242,36 @@ createSlidesPurryst({
     <sp-pause />
     <p>After pause</p>
     <sp-pause />
-    <sp-anim spec="@children(ul)" />
     <ul>
       <li>First item</li>
       <li>Second item</li>
       <li>Third item</li>
       <li>Fourth item</li>
     </ul>
-    <sp-jump at="-1" />
+    <sp-anim spec="@children(ul)" />
+    <sp-meanwhile />
     <p>After pause</p>
   </sp-slide>
 
   <sp-slide>
     <h3><code>sp-anim</code> — Combined (selectors then children)</h3>
     <p>Always visible heading</p>
-    <sp-anim spec=".step1 | .step2 | @children(ul)" />
-    <div class="step1" style="padding:.3em .6em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div>
-    <div class="step2" style="padding:.3em .6em;background:#dcfce7;color:#166534;border-radius:6px">Step 2</div>
+    <div class="step1" style="padding:.3em .6em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1 (S1)</div>
+    <div class="step2" style="padding:.3em .6em;background:#dcfce7;color:#166534;border-radius:6px">Step 2 (S2)</div>
     <ul>
-      <li>Child A</li>
-      <li>Child B</li>
-      <li>Child C</li>
+      <li>Child A (S3)</li>
+      <li>Child B (S4)</li>
     </ul>
+    <ol>
+      <li>Child C (S5)</li>
+      <li>Child D (S6)</li>
+      <li>Child E (S7)</li>
+    </ol>
+    <sp-anim spec=".step1 | .step2 | @children(ul)" />
+    <sp-anim spec="@children(ol)" />
+    <sp-style>
+      ul, ol { li {display: inline; border: 5px solid black; margin: 0.25em; } }
+    </sp-style>
   </sp-slide>
 
   <sp-slide>
@@ -441,6 +451,54 @@ createSlidesPurryst({
     <sp-style>
       .d1,.d2,.d3 { font-size: 0.75em; }
     </sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h2>sp-anim: <code>at</code> and <code>no-jump</code></h2>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> with <code>at</code> offset</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>at="N"</code> offsets the starting step:</p>
+    <p>(please step several times)
+      <sp-alternatives><span>3</span><span>2</span><span>1</span><span>go</span><span>go</span><span>go</span></sp-alternatives>
+    </p>
+    <div class="d1 a">Action 1 (starts at step 3)</div>
+    <div class="d2 b">Action 2 (starts at step 4)</div>
+    <div class="d3 c">Action 3 (starts at step 5)</div>
+    <sp-anim spec=".a | .b | .c" at="2" />
+    <div>(after)</div>
+    <sp-style>
+      .a,.b,.c { font-size: 0.8em; }
+    </sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — default vis-group jump</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>By default, each anim part advances the vis group:
+      <sp-alternatives><span>3</span><span>2</span><span>1</span><span>go</span><span>go</span><span>go</span></sp-alternatives>
+    </p>
+    <div class="d1 a">Part A (step 1)</div>
+    <div class="d2 b">Part B (step 2)</div>
+    <div class="d3 c">Part C (step 3)</div>
+    <sp-anim spec=".a | .b | .c" at="2" />
+    <div>(after)</div>
+    <sp-jump at="0"></sp-jump>
+    <p style="color:var(--sp-text-3);font-size:0.8em">Each click advances both the anim AND the vis group</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> with <code>no-jump</code></h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Use <code>no-jump</code> to disable the vis-group advance:</p>
+    <div class="d1 a">Part A (step 1)</div>
+    <div class="d2 b">Part B (step 2)</div>
+    <div class="d3 c">Part C (step 3)</div>
+    <sp-anim spec=".a | .b | .c" no-jump />
+    <div>(after)</div>
+    <p style="color:var(--sp-text-3);font-size:0.8em">With no-jump: anim steps only, vis group unchanged</p>
   </sp-slide>
 
   <sp-slide no-toc>
