@@ -15,45 +15,27 @@ export function useNavigation(actions: Navigation & { onPresenterToggle?: () => 
       case 'ArrowRight':
       case ' ':
         e.preventDefault()
-        if (actions.stepIndex.value < actions.totalSteps.value - 1) {
-          actions.nextStep()
-        } else if (actions.currentIndex.value < actions.total.value - 1) {
-          actions.goTo(actions.currentIndex.value + 1)
-        }
+        actions.next()
         break
       case 'ArrowLeft':
         e.preventDefault()
-        if (actions.stepIndex.value > 0) {
-          actions.prevStep()
-        } else if (actions.currentIndex.value > 0) {
-          actions.goTo(actions.currentIndex.value - 1)
-        }
+        actions.prev()
         break
       case 'ArrowUp':
         e.preventDefault()
-        if (actions.stepIndex.value > 0) {
-          actions.stepIndex.value = 0
-        } else if (actions.currentIndex.value > 0) {
-          actions.onGoPrevBegin?.()
-        }
+        actions.goToPrevBegin()
         break
       case 'ArrowDown':
         e.preventDefault()
-        if (actions.currentIndex.value < actions.total.value - 1) {
-          actions.goTo(actions.currentIndex.value + 1)
-        }
+        actions.goToNextBegin()
         break
       case 'a':
         e.preventDefault()
-        if (actions.currentIndex.value > 0) {
-          actions.goTo(actions.currentIndex.value - 1)
-        }
+        actions.goToPrevEnd()
         break
       case 'z':
         e.preventDefault()
-        if (actions.currentIndex.value < actions.total.value - 1) {
-          actions.onGoNextEnd?.()
-        }
+        actions.goToNextEnd()
         break
       case 'Home':
         e.preventDefault()

@@ -103,7 +103,7 @@
                 <span class="sp-nav-more-icon sp-nav-more-icon-blackout" :class="{ active: blackout }">●</span> Blackout
               </button>
               <div class="sp-nav-more-item sp-nav-more-browse">
-                <button class="sp-nav-more-browse-btn" title="End of previous slide (A)" @click="goToEndOfPrev()">
+                <button class="sp-nav-more-browse-btn" title="End of previous slide (A)" @click="goToPrevEnd()">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     <path d="M4 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -554,7 +554,7 @@ watch([currentIndex, stepIndex], () => {
 }, { flush: 'post' })
 
 
-
+/*
 watch(() => [stepIndex.value, currentIndex.value], () => {
   nextTick(() => {
     // Visibility now handled by SpStep.vue and SpAnim.vue
@@ -566,6 +566,7 @@ watch(contentVersion, () => {
     // Visibility now handled by SpStep.vue and SpAnim.vue
   })
 })
+*/
 
 watch([currentIndex, stepIndex], () => {
   if (!props.presenter) {
@@ -640,9 +641,13 @@ function exitBlackout() {
 }
 
 useNavigation({
-  next: nextSlide,
-  prev: prevSlide,
-  goTo: goTo,
+  next,
+  prev,
+  goTo,
+  goToPrevBegin,
+  goToNextBegin,
+  goToPrevEnd,
+  goToNextEnd,
   currentIndex,
   current,
   total,
@@ -659,8 +664,6 @@ useNavigation({
   onBlackoutToggle: toggleBlackout,
   onBlackoutExit: exitBlackout,
   onDevPaneToggle: () => { config.proMode ? toggleDevPane() : toggleDarkMode() },
-  onGoPrevBegin: goToPrevBegin,
-  onGoNextEnd: goToNextEnd,
 })
 
 onMounted(() => {
@@ -710,17 +713,28 @@ onUnmounted(() => {
   window.removeEventListener('hashchange', onHashChange)
 })
 
-function goToEndOfPrev() {
-  if (currentIndex.value > 0) {
+function goToPrevBegin() {
+  if (stepIndex.value > 0) { // stay
+    stepIndex.value = 0
+  } else if (currentIndex.value > 0) {
+    targetStepIndex = 0
     goTo(currentIndex.value - 1)
-    nextTick(() => { stepIndex.value = Math.max(0, totalSteps.value - 1) })
   }
 }
 
-function goToPrevBegin() {
+function goToPrevEnd() {
   if (currentIndex.value > 0) {
-    targetStepIndex = 0
+    // setting to last step is handled by direction.value
+    //targetStepIndex = computeSlideSteps(slides.value[currentIndex.value - 1]) - 1
     goTo(currentIndex.value - 1)
+    //nextTick(() => { stepIndex.value = Math.max(0, totalSteps.value - 1) })
+  }
+}
+
+function goToNextBegin() {
+  if (currentIndex.value < total.value - 1) {
+    targetStepIndex = 0
+    goTo(currentIndex.value + 1)
   }
 }
 

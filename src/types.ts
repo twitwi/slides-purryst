@@ -15,6 +15,10 @@ export interface Navigation {
   next: () => void
   prev: () => void
   goTo: (i: number) => void
+  goToPrevBegin: () => void
+  goToNextBegin: () => void
+  goToPrevEnd: () => void
+  goToNextEnd: () => void
   currentIndex: { value: number }
   current: { value: SlideData | null }
   total: { value: number }
