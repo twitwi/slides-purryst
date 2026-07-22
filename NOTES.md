@@ -26,10 +26,10 @@
 
 ## TODO
 
+- [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
 - [ ] (anim) can sp-clicks be converted to @children (if wrapper...) (or even sp-pauses if not but then beware of e.g. a span in ul... so might still benefit from the data-sp-step approach) as a preprocessing like sp-pause? and could it rather be a directive?
 - [ ] (perf) do Map based caching of processHtml() (careful, might want a global state... or not in purr... handle it in purryst if any advanced thing... but maybe e.g. a js bibliography would need to be global and not per slide...)
 - [ ] (anim) is at=2 intuitive or offset by one? (at=0 intuitively means play right away, at=2 should mean after 2 steps)
-- [ ] (anim) @play/pause video
 - [ ] (anim) along path, viewbox etc
 - [ ] (edit) allow adding a drag, setting its background (e.g. a whiteout-ing box) and setting its id (for sp-anim purpose), need to do it html and typst (vite updater)
 - [ ] (edit) allow to have a library of custom chunks that can be added, typically <template id="sp-chunklets"><sp-chunk name="greybox"><sp-drag at="$x|$y|$w|$h" style="background: grey;">...., where it can be unparametrized, click based (if x or y found), box based if w or h found)

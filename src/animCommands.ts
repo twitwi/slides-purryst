@@ -139,6 +139,44 @@ const builtinActionTypes: Record<string, ActionTypeHandler> = {
       }
     },
   },
+  play: {
+    apply(container, action: ActionWithSelector) {
+      for (const el of container.querySelectorAll<HTMLVideoElement>(action.selector)) {
+        if (action.rewind) {
+          el.currentTime = 0
+        }
+        el.play().catch(() => {})
+      }
+    },
+    reverse(container, action: ActionWithSelector) {
+      for (const el of container.querySelectorAll<HTMLVideoElement>(action.selector)) {
+        el.pause()
+      }
+    },
+    init(container, action: ActionWithSelector) {
+      for (const el of container.querySelectorAll<HTMLVideoElement>(action.selector)) {
+        el.pause()
+        el.currentTime = 0
+      }
+    },
+  },
+  pause: {
+    apply(container, action: ActionWithSelector) {
+      for (const el of container.querySelectorAll<HTMLVideoElement>(action.selector)) {
+        el.pause()
+      }
+    },
+    reverse(container, action: ActionWithSelector) {
+      for (const el of container.querySelectorAll<HTMLVideoElement>(action.selector)) {
+        el.play().catch(() => {})
+      }
+    },
+    init(container, action: ActionWithSelector) {
+      for (const el of container.querySelectorAll<HTMLVideoElement>(action.selector)) {
+        el.pause()
+      }
+    },
+  },
 }
 
 // --- Built-in commands ---
@@ -210,6 +248,24 @@ const builtinCommands: Record<string, AnimCommandHandler> = {
       const cls = parts[0] ?? ''
       const sel = parts.slice(1).join(' ')
       return [{ type: 'removeClass', className: cls, selector: sel }]
+    },
+  },
+  play: {
+    countSteps: () => 1,
+    parse(argsStr) {
+      const args = parseArgs(argsStr)
+      console.log('play args', args)
+      const sel = args[0] || 'video'
+      const rewind = args.slice(1).includes('rewind')
+      return [{ type: 'play', selector: sel, rewind }]
+    },
+  },
+  pause: {
+    countSteps: () => 1,
+    parse(argsStr) {
+      const args = parseArgs(argsStr)
+      const sel = args[0] || 'video'
+      return [{ type: 'pause', selector: sel }]
     },
   },
 }
