@@ -46,7 +46,6 @@
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
-import { buildSteps as computeSlideSteps } from '../composables/useSteps'
 
 const props = defineProps<{
   slides: SlideData[]

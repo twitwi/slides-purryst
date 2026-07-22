@@ -6,7 +6,7 @@ export { spApi } from './sp-api'
 
 export { useScale } from './composables/useScale'
 export { useElementScale } from './composables/useElementScale'
-export { useSteps, buildSteps, processHtml } from './composables/useSteps'
+export { useSteps, processSlideHtml } from './composables/useSteps'
 export { useNavigation } from './composables/useNavigation'
 export { useSlides, parseElementToSlides } from './composables/useSlides'
 export { usePresenter } from './composables/usePresenter'

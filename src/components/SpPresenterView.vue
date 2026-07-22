@@ -22,7 +22,7 @@
               :key="'next-' + (currentIndex + 1)"
               :slide="nextSlideData"
               :html="nextHtml"
-              :fixedStep="computeSlideSteps(nextSlideData) - 1"
+              :fixedStep="nextSlideSteps - 1"
               :components="components"
             />
           </div>
@@ -61,7 +61,7 @@ import { inject } from 'vue'
 import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
 import { useElementScale } from '../composables/useElementScale'
-import { buildSteps as computeSlideSteps, processHtml } from '../composables/useSteps'
+import { processSlideHtml } from '../composables/useSteps'
 import type { SpStorageConfig } from '../composables/useStorage'
 
 const props = defineProps<{
@@ -77,7 +77,6 @@ const props = defineProps<{
   designHeight: number
   config: SpStorageConfig
   slides: SlideData[]
-  computeSlideSteps: (slide: SlideData | null) => number
 }>()
 
 const stepIndex = inject<import('vue').Ref<number>>('stepIndex')!
@@ -148,8 +147,12 @@ const nextSlideData = computed(() => {
 
 const nextHtml = computed(() => {
   if (!nextSlideData.value) return ''
-  const steps = computeSlideSteps(nextSlideData.value)
-  return processHtml(nextSlideData.value.html, Math.max(0, steps - 1))
+  return processSlideHtml(nextSlideData.value.html).html
+})
+
+const nextSlideSteps = computed(() => {
+  if (!nextSlideData.value) return 0
+  return processSlideHtml(nextSlideData.value.html).steps
 })
 
 const CLOCK_KEY = 'sp-presentation-clock'

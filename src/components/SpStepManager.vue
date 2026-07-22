@@ -46,8 +46,9 @@ function computeVisible(el: Element, step: number): boolean {
 function applyStep(step: number) {
   const container = getContainer()
   if (!container) return
-  const els = container.querySelectorAll('[data-sp-step], [data-sp-step-from]')
+  const els = container.querySelectorAll('[data-sp-step], [data-sp-step-from], [data-sp-step-to], [data-sp-step-only]')
   els.forEach(el => {
+    if (el.closest('[data-sp-animated]') !== null) return
     const visible = computeVisible(el, step)
     el.classList.toggle('sp-anim-shown', visible)
     el.classList.toggle('sp-anim-hidden', !visible)

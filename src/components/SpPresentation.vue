@@ -19,7 +19,7 @@
               :key="currentIndex - 1"
               :slide="preloadPrevSlideData"
               :html="preloadPrevHtml"
-              :fixedStep="computeSlideSteps(preloadPrevSlideData) - 1"
+              :fixedStep="preloadPrevSteps - 1"
               :components="props.components"
             />
             <SpSlide
@@ -163,7 +163,6 @@
         :designHeight="props.designHeight"
         :config="config"
         :slides="slides"
-        :computeSlideSteps="computeSlideSteps"
       />
     </template>
 
@@ -202,7 +201,7 @@
 import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick } from 'vue'
 import type { SlideData } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
-import { useSteps, buildSteps as computeSlideSteps } from '../composables/useSteps'
+import { useSteps, processSlideHtml } from '../composables/useSteps'
 
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
@@ -257,8 +256,6 @@ const {
   isLastStep,
   nextStep,
   prevStep,
-  buildSteps,
-  processHtml
 } = useSteps()
 
 let skipStepReset = false
@@ -372,7 +369,7 @@ const effectiveTotal = computed(() => effectiveLast.value + 1)
 const activeHtml = computed(() => {
   const slide = current.value
   if (!slide) return ''
-  return processHtml(slide.html, stepIndex.value)
+  return processSlideHtml(slide.html).html
 })
 
 function next() {
@@ -399,8 +396,12 @@ const preloadPrevSlideData = computed(() => {
 
 const preloadPrevHtml = computed(() => {
   if (!preloadPrevSlideData.value) return ''
-  const steps = computeSlideSteps(preloadPrevSlideData.value)
-  return processHtml(preloadPrevSlideData.value.html, Math.max(0, steps - 1))
+  return processSlideHtml(preloadPrevSlideData.value.html).html
+})
+
+const preloadPrevSteps = computed(() => {
+  if (!preloadPrevSlideData.value) return 0
+  return processSlideHtml(preloadPrevSlideData.value.html).steps
 })
 
 const preloadNextSlideData = computed(() => {
@@ -410,7 +411,7 @@ const preloadNextSlideData = computed(() => {
 
 const preloadNextHtml = computed(() => {
   if (!preloadNextSlideData.value) return ''
-  return processHtml(preloadNextSlideData.value.html, 0)
+  return processSlideHtml(preloadNextSlideData.value.html).html
 })
 
 
@@ -492,10 +493,7 @@ const overviewSlideStyle = computed(() => ({
 }))
 
 const overviewHtmls = computed(() => {
-  return slides.value.map(s => {
-    const steps = computeSlideSteps(s)
-    return processHtml(s.html, Math.max(0, steps - 1))
-  })
+  return slides.value.map(s => processSlideHtml(s.html).html)
 })
 
 const slideHeadingLevels = computed(() => {
@@ -530,7 +528,7 @@ function goToResult(idx: number) {
 }
 
 watch(current, (slide, old) => {
-  buildSteps(slide)
+  totalSteps.value = processSlideHtml(slide.html).steps
   if (old?.num !== slide?.num) {
     if (targetStepIndex !== null) {
       stepIndex.value = Math.min(Math.max(targetStepIndex, 0), Math.max(0, totalSteps.value - 1))
@@ -668,7 +666,7 @@ useNavigation({
 
 onMounted(() => {
   if (current.value) {
-    buildSteps(current.value)
+    totalSteps.value = processSlideHtml(current.value.html).steps
   }
   // Visibility now handled by SpStep.vue and SpAnim.vue
   if (!props.presenter) {
@@ -741,10 +739,10 @@ function goToNextBegin() {
 function goToNextEnd() {
   const stayOnSlide = stepIndex.value < totalSteps.value - 1 
   if (stayOnSlide) {
-    stepIndex.value = computeSlideSteps(slides.value[currentIndex.value]) - 1
+    stepIndex.value = processSlideHtml(slides.value[currentIndex.value].html).steps - 1
   } else {
     if (currentIndex.value < total.value - 1) {
-      targetStepIndex = Math.max(0, computeSlideSteps(slides.value[currentIndex.value + 1]) - 1)
+      targetStepIndex = Math.max(0, processSlideHtml(slides.value[currentIndex.value + 1].html).steps - 1)
       goTo(currentIndex.value + 1)
     }
   }
@@ -771,7 +769,7 @@ function updateSlides(templateHtml: string) {
   skipStepReset = true
   setSlides(newSlides)
   currentIndex.value = idx
-  buildSteps(current.value)
+  totalSteps.value = processSlideHtml(current.value.html).steps
   if (idx === oldIdx) {
     stepIndex.value = Math.min(oldStep, totalSteps.value - 1)
   } else {

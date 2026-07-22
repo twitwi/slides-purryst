@@ -110,6 +110,7 @@ const rawParts = computed(() => {
 function getAtOffset(): number {
   const at = props.at || '+0'
   if (at.startsWith('+') || at.startsWith('-')) {
+    throw new Error("Relative at offset not supported in SpAnim, absolute at should be produced by useSteps")
     return parseInt(at, 10)
   }
   return parseInt(at, 10)
@@ -149,17 +150,21 @@ const stepActions = computed<AnimAction[][]>(() => {
 function applyAction(el: HTMLElement, action: AnimAction) {
   switch (action.type) {
     case 'show':
+      el.setAttribute('data-sp-animated', 'true')
       el.classList.add('sp-anim-shown')
       el.classList.remove('sp-anim-hidden')
       break
     case 'hide':
+      el.setAttribute('data-sp-animated', 'true')
       el.classList.add('sp-anim-hidden')
       el.classList.remove('sp-anim-shown')
       break
     case 'addClass':
+      el.setAttribute('data-sp-animated', 'true')
       if (action.className) el.classList.add(action.className)
       break
     case 'removeClass':
+      el.setAttribute('data-sp-animated', 'true')
       if (action.className) el.classList.remove(action.className)
       break
   }
@@ -248,7 +253,8 @@ function refresh() {
   for (const sel of allSelectors) {
     const targets = container.querySelectorAll<HTMLElement>(sel)
     for (const el of targets) {
-      //if (el.hasAttribute('data-sp-from')) continue
+      //if (el.hasAttribute('data-sp-from')) continuee
+      el.setAttribute('data-sp-animated', 'true')
       el.classList.add('sp-anim-hidden')
       el.classList.remove('sp-anim-shown')
     }

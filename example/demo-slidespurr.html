@@ -175,6 +175,7 @@ createSlidesPurryst({
     <p>Always visible.</p>
     <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
     <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
+    <p>Always visible.</p>
   </sp-slide>
 
   <sp-slide>
@@ -207,7 +208,7 @@ createSlidesPurryst({
     <sp-pause />
     <p>Appears on click 2</p>
     <sp-jump at="+1" />
-    <p>Appears on click 3</p>
+    <p>Appears on click 3.</p>
   </sp-slide>
 
   <sp-slide>
@@ -238,10 +239,11 @@ createSlidesPurryst({
   -->
   <sp-slide>
     <h3><code>sp-anim</code> — Combined (visgroups + @children)</h3>
-    <p>Always visible</p>
+    <p>Always visible <span class="more">… after pause via anim</span></p>
     <sp-pause />
     <p>After pause</p>
-    <sp-pause />
+    <sp-anim spec=".more" />
+    <p>After second pause/anim</p>
     <ul>
       <li>First item</li>
       <li>Second item</li>
@@ -352,6 +354,7 @@ createSlidesPurryst({
     <h3><code>sp-step</code> with range visibility</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     ... check it animates <sp-alternatives><span></span><span>step 1</span><span>step 2</span><span>done</span></sp-alternatives>
+    <sp-meanwhile />
     <p>Elements can be visible only in a range of steps:</p>
     <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
     <sp-step from="3"><div class="d2">Visible from step 3 onward</div></sp-step>
@@ -464,6 +467,7 @@ createSlidesPurryst({
     <p>(please step several times)
       <sp-alternatives><span>3</span><span>2</span><span>1</span><span>go</span><span>go</span><span>go</span></sp-alternatives>
     </p>
+    <sp-meanwhile />
     <div class="d1 a">Action 1 (starts at step 3)</div>
     <div class="d2 b">Action 2 (starts at step 4)</div>
     <div class="d3 c">Action 3 (starts at step 5)</div>
@@ -480,12 +484,13 @@ createSlidesPurryst({
     <p>By default, each anim part advances the vis group:
       <sp-alternatives><span>3</span><span>2</span><span>1</span><span>go</span><span>go</span><span>go</span></sp-alternatives>
     </p>
+    <sp-meanwhile />
     <div class="d1 a">Part A (step 1)</div>
     <div class="d2 b">Part B (step 2)</div>
     <div class="d3 c">Part C (step 3)</div>
     <sp-anim spec=".a | .b | .c" at="2" />
     <div>(after)</div>
-    <sp-jump at="0"></sp-jump>
+    <sp-meanwhile />
     <p style="color:var(--sp-text-3);font-size:0.8em">Each click advances both the anim AND the vis group</p>
   </sp-slide>
 
@@ -497,7 +502,7 @@ createSlidesPurryst({
     <div class="d2 b">Part B (step 2)</div>
     <div class="d3 c">Part C (step 3)</div>
     <sp-anim spec=".a | .b | .c" no-jump />
-    <div>(after)</div>
+    <div>(always visible due to no-jump)</div>
     <p style="color:var(--sp-text-3);font-size:0.8em">With no-jump: anim steps only, vis group unchanged</p>
   </sp-slide>
 

@@ -22,10 +22,12 @@
 - think about modularity/extensibility (plugins, custom components, etc.)
 - ideally have a way to have a sequence of extensibility (so we can have plugins + customization on top)
 - (anim) make it more extensible, library of processors (for now just for parts, but still recursive, for @delay), should probably better structure so that countAnimSpecParts is more generic
-
+- [ ] parse, any interest of using hast / unified / _rehype_ https://unifiedjs.com/explore/topic/rehype/, so we can have plugins on it (maybe free math? shiki? citation?)
 
 ## TODO
 
+- [ ] (anim) can sp-clicks be converted to @children (if wrapper...) (or even sp-pauses if not but then beware of e.g. a span in ul... so might still benefit from the data-sp-step approach) as a preprocessing like sp-pause? and could it rather be a directive?
+- [ ] (perf) do Map based caching of processHtml() (careful, might want a global state... or not in purr... handle it in purryst if any advanced thing... but maybe e.g. a js bibliography would need to be global and not per slide...)
 - [ ] (anim) is at=2 intuitive or offset by one? (at=0 intuitively means play right away, at=2 should mean after 2 steps)
 - [ ] (anim) should allow to delay, @delay(100ms) .stuff, before the start of animation, so that we can have sequences created (play two anims with ^, one with delay)
 - [ ] (anim) play/pause video
@@ -34,6 +36,7 @@
 - [ ] (edit) allow to have a library of custom chunks that can be added, typically <template id="sp-chunklets"><sp-chunk name="greybox"><sp-drag at="$x|$y|$w|$h" style="background: grey;">...., where it can be unparametrized, click based (if x or y found), box based if w or h found)
 - [ ] (edit) allow pasting image, by default added as a drag?
 - [ ] (edit) allow changing image path?
+- [ ] (edit) can we have a button to "view source" in vs code or something (using some vscode standard extension or api?)
 
 - [ ] overview could insert separators when breaking a section (go from h3 to h2, have .sp-overview-leave-h3) to allow css styling (break flow of overview)
 - [ ] consider history management (think about when to push)

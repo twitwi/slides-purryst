@@ -19,7 +19,7 @@
             <SpSlide
               :slide="slide"
               :html="overviewHtmls[i]"
-              :fixedStep="computeSlideSteps(slide) - 1"
+              :fixedStep="processSlideHtml(slide.html).steps - 1"
               :components="components"
             />
           </div>
@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
-import { buildSteps as computeSlideSteps } from '../composables/useSteps'
+import { processSlideHtml } from '../composables/useSteps'
 
 defineProps<{
   slides: SlideData[]
