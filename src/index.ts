@@ -26,4 +26,7 @@ export { default as SpSvg } from './components/SpSvg.vue'
 export { default as SpStyle } from './components/SpStyle.vue'
 export { default as SpToc } from './components/SpToc.vue'
 
+export { useKeymap, createDefaultKeymap, bind, definePlugin } from './keymap'
+export type { Keymap, KeymapSetupFn, KeyContext, SlidesPlugin, PluginAPI, BindOptions } from './keymap'
+
 export * from './transformers/svg'

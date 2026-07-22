@@ -19,6 +19,7 @@
 
 # TODO extensibility
 
+- take the case of keyboard shortcuts, I want it to be extensible, so typically a map from keymap desc to action (code), also I want it to be very extensible, i.e., defaults, potentially modified by a sequence of plugins I would include/import, potentially modified by the user/presentation conf. Can you draft a generic approach (api+logic) for that? (modified = additions, removal, etc)
 - think about modularity/extensibility (plugins, custom components, etc.)
 - ideally have a way to have a sequence of extensibility (so we can have plugins + customization on top)
 - (anim) make it more extensible, library of processors (for now just for parts, but still recursive, for @delay), should probably better structure so that countAnimSpecParts is more generic

@@ -1,0 +1,7 @@
+export { KeymapManager } from './manager'
+export { useKeymap } from './useKeymap'
+export { createDefaultKeymap } from './defaults'
+export type { NavigationActions } from './defaults'
+export { bind } from './bind'
+export { registry, definePlugin } from './plugin'
+export type { Keymap, KeymapSetupFn, KeyContext, SlidesPlugin, PluginAPI, BindOptions } from './types'

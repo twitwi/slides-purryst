@@ -215,6 +215,8 @@ import SpGoPrompt from './SpGoPrompt.vue'
 import { spApi } from '../sp-api'
 import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
+import { registry } from '../keymap/plugin'
+import type { PluginAPI } from '../keymap/types'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -227,6 +229,7 @@ const props = withDefaults(defineProps<{
   components?: Record<string, any>
   seed?: number
   raw?: Record<'before'|'after', string>
+  activate?: (api: PluginAPI) => void
 }>(), {
   transition: 'none',
   transitionDuration: 200,
@@ -638,7 +641,14 @@ function exitBlackout() {
   }
 }
 
-useNavigation({
+const extraSetups = [...registry._keymapSetups]
+if (props.activate) {
+  const setups: typeof extraSetups = []
+  props.activate({ addKeymapSetup: (fn) => setups.push(fn) })
+  extraSetups.push(...setups)
+}
+
+const { rebuildKeymap } = useNavigation({
   next,
   prev,
   goTo,
@@ -662,6 +672,16 @@ useNavigation({
   onBlackoutToggle: toggleBlackout,
   onBlackoutExit: exitBlackout,
   onDevPaneToggle: () => { config.proMode ? toggleDevPane() : toggleDarkMode() },
+}, {
+  getContext: () => ({
+    overview: showOverview.value,
+    presenter: presenterActive.value,
+    blackout: blackout.value,
+    devPane: showDevPane.value,
+    dragging: spApi.dragging,
+    goPrompt: showGoPrompt.value,
+  }),
+  extraSetups,
 })
 
 onMounted(() => {

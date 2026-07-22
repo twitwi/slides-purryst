@@ -12,6 +12,8 @@ import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
 import type { SPSlidesOptions, SlideData } from './types'
+import type { SlidesPlugin } from './keymap/types'
+import { registry } from './keymap/plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore } from './composables/includeCache'
 import { setDefaultClicksAt } from './composables/useSteps'
@@ -37,7 +39,7 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 }
 
 export function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, clicksAt } = options
+  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, clicksAt, plugins, activate } = options
 
   const template = document.getElementById('sp-content') as HTMLTemplateElement | null
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
@@ -156,6 +158,10 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     el: '#app',
   })
 
+  for (const plugin of plugins ?? []) {
+    registry.register(plugin)
+  }
+
   const app = createApp(SpPresentation, {
     slides,
     transition,
@@ -167,13 +173,21 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     raw,
     components: merged,
     presenter: isPresenter,
+    activate,
   })
   app.config.globalProperties.$sp = spApi
   app.provide('sp-api', spApi)
+  app.provide('sp-registry', registry)
   if (typeof globalThis !== 'undefined') {
     ;(globalThis as any).__sp__ = spApi
   }
   const vm = app.mount(target) as any
+
+  ;(app as any).use = (plugin: SlidesPlugin) => {
+    registry.register(plugin)
+    vm.rebuildKeymap?.()
+    return app
+  }
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
     const es = new EventSource('/__sp_events')

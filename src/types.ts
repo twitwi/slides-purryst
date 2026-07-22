@@ -1,4 +1,5 @@
 import type { Component } from 'vue'
+import type { SlidesPlugin, PluginAPI } from './keymap/types'
 
 export interface SlideData {
   html: string
@@ -43,6 +44,8 @@ export interface SPSlidesOptions {
   seed?: number
   cacheIgnore?: string[]
   clicksAt?: number
+  plugins?: SlidesPlugin[]
+  activate?: (api: PluginAPI) => void
 }
 
 export type Transformer = (root: Element) => void
