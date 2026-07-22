@@ -5,9 +5,8 @@
 
 ## TODO Now
 
-- [ ] sp-anim should accept at="" (abs or rel), with a default to the current visgroup (based on sp-jumps), accept a boolean (default to false) to tell that each anim step should also do a sp-jump (it is equivalent to the user counting anim steps and adding a relative sp-jump), make an example illustrating these features
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
-- [ ] on live update, previous slide does not get reanimated to the last step, also shiki not rerun
+- [ ] todo fix: on live update, previous slide does not get reanimated to the last step, also shiki not rerun
 - [ ] sp-clicks with no wrapper, also as a directive (in addition)
 
 ## TOREVIEW
@@ -16,6 +15,7 @@
 - [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
 - [ ] ^ NB: there are two use of the bundle, one for exported pres, and then can use a compiled component, and another where we just drop the bundle and a simple html file and then we may need to load SFC
 - [ ] <sp-pause/> might need (e.g. following) content to be put in a span, not pure text node. This is a limitation of css, but could we detect it (in devmode?) and notify the user?
+- [ ] generate a palette of 20 creative themes, named gen1-01 to gen1-20 (for an ambiguous gen meaning generated / genai / generic / generation1), most of which should have a primary and secondary color that is configurable
 
 # TODO extensibility
 

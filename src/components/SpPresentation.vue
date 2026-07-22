@@ -772,10 +772,11 @@ function updateSlides(templateHtml: string) {
   totalSteps.value = processSlideHtml(current.value.html).steps
   if (idx === oldIdx) {
     stepIndex.value = Math.min(oldStep, totalSteps.value - 1)
+    skipStepReset = false
   } else {
     stepIndex.value = 0
   }
-  //parseHash()
+  highlightAllSlides().then(() => { contentVersion.value++ })
 }
 
 defineExpose({ updateSlides })

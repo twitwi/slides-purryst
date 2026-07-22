@@ -7,6 +7,7 @@ import { inject, watch, onMounted, ref, nextTick, type Ref } from 'vue'
 
 const rootEl = ref<HTMLElement | null>(null)
 const globalStepIndex = inject<Ref<number>>('stepIndex', { value: 0 } as any)
+const contentVersion = inject<Ref<number>>('contentVersion', { value: 0 } as any)
 
 function getContainer(): HTMLElement {
   return rootEl.value?.closest('.sp-slide') as HTMLElement || rootEl.value?.parentElement as HTMLElement
@@ -67,5 +68,9 @@ onMounted(() => {
 
 watch(globalStepIndex, () => {
   applyStep(getTargetStep())
+})
+
+watch(contentVersion, () => {
+  nextTick(() => applyStep(getTargetStep()))
 })
 </script>
