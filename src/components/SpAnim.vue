@@ -31,7 +31,7 @@ function getTargetStep() {
 }
 
 function parseActionStr(a: string): AnimAction[] {
-  const m = a.match(/^@(\w+)\((.+)\)$/)
+  const m = a.match(/^@(\w+)\((.*)\)$/)
   if (m) {
     const cmd = getAnimCommand(m[1])
     if (cmd) return cmd.parse(m[2])
