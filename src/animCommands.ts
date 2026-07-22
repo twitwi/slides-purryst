@@ -4,9 +4,16 @@ import { spApi } from './sp-api'
 
 export interface AnimAction {
   type: string
+  delayedBy?: number
+  [key: string]: any
+}
+
+interface ActionWithSelector extends AnimAction {
   selector: string
-  className?: string
-  data?: Record<string, any>
+}
+
+export interface AnimActionWithClass extends ActionWithSelector {
+  className: string
 }
 
 export interface AnimCommandHandler {
@@ -51,19 +58,19 @@ export function parseArgs(str: string): string[] {
 
 const builtinActionTypes: Record<string, ActionTypeHandler> = {
   show: {
-    apply(container, action) {
+    apply(container, action: ActionWithSelector) {
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.add('sp-anim-shown')
         el.classList.remove('sp-anim-hidden')
       }
     },
-    reverse(container, action) {
+    reverse(container, action: ActionWithSelector) {
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.add('sp-anim-hidden')
         el.classList.remove('sp-anim-shown')
       }
     },
-    init(container, action) {
+    init(container, action: ActionWithSelector) {
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.setAttribute('data-sp-animated', 'true')
         el.classList.add('sp-anim-hidden')
@@ -72,19 +79,19 @@ const builtinActionTypes: Record<string, ActionTypeHandler> = {
     },
   },
   hide: {
-    apply(container, action) {
+    apply(container, action: ActionWithSelector) {
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.add('sp-anim-hidden')
         el.classList.remove('sp-anim-shown')
       }
     },
-    reverse(container, action) {
+    reverse(container, action: ActionWithSelector) {
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.add('sp-anim-shown')
         el.classList.remove('sp-anim-hidden')
       }
     },
-    init(container, action) {
+    init(container, action: ActionWithSelector) {
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.setAttribute('data-sp-animated', 'true')
         el.classList.add('sp-anim-shown')
@@ -93,19 +100,19 @@ const builtinActionTypes: Record<string, ActionTypeHandler> = {
     },
   },
   addClass: {
-    apply(container, action) {
-      if (!action.className) return
+    apply(container, action: AnimActionWithClass) {
+      if (!action.className) "return"
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.add(action.className)
       }
     },
-    reverse(container, action) {
+    reverse(container, action: AnimActionWithClass) {
       if (!action.className) return
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.remove(action.className)
       }
     },
-    init(container, action) {
+    init(container, action: AnimActionWithClass) {
       if (!action.className) return
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.setAttribute('data-sp-animated', 'true')
@@ -113,19 +120,19 @@ const builtinActionTypes: Record<string, ActionTypeHandler> = {
     },
   },
   removeClass: {
-    apply(container, action) {
+    apply(container, action: AnimActionWithClass) {
       if (!action.className) return
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.remove(action.className)
       }
     },
-    reverse(container, action) {
+    reverse(container, action: AnimActionWithClass) {
       if (!action.className) return
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.classList.add(action.className)
       }
     },
-    init(container, action) {
+    init(container, action: AnimActionWithClass) {
       if (!action.className) return
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.setAttribute('data-sp-animated', 'true')

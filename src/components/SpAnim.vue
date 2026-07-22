@@ -31,10 +31,22 @@ function getTargetStep() {
 }
 
 function parseActionStr(a: string): AnimAction[] {
-  const m = a.match(/^@(\w+)\((.*)\)$/)
+  // time delay prefix, e.g. 100ms .stuff, 0.5s @show(#id)
+  const mDelay = a.match(/^(\d+(?:\.\d+)?)(ms|s)\s+(.+)$/)
+  if (mDelay) {
+    const delay = parseFloat(mDelay[1]) * (mDelay[2] === 's' ? 1000 : 1)
+    const rest = mDelay[3]
+    const actions = parseActionStr(rest)
+    for (const act of actions) {
+      act.delayedBy = delay
+    }
+    return actions
+  }
+  // @stuff, @stuff(args)
+  const m = a.match(/^@(\w+)(?:\((.*)\))?$/)
   if (m) {
     const cmd = getAnimCommand(m[1])
-    if (cmd) return cmd.parse(m[2])
+    if (cmd) return cmd.parse(m[2] ?? '')
   }
   if (a.startsWith('-')) {
     return [{ type: 'hide', selector: a.slice(1) }]
@@ -71,7 +83,7 @@ const stepActions = computed<AnimAction[][]>(() => {
     const m = trimmed.match(/^@(\w+)\((.+)\)$/)
     if (m) {
       const cmd = getAnimCommand(m[1])
-      if (cmd?.expand) {
+      if (cmd?.expand) { // typically @children(...), actually disallow with ^ then
         const expanded = cmd.expand(m[2], getContainer())
         for (const stepActions of expanded) {
           result.push(stepActions)
@@ -104,7 +116,14 @@ function applyStep(step: number) {
   for (const a of actions) {
     const handler = spApi._animActionTypes[a.type]
     if (handler) {
-      handler.apply(container, a)
+      //console.log("Applying action", a, "at step", step, "in container", container, "with delayedBy", a.delayedBy)
+      if (a.delayedBy) {
+        setTimeout(() => {
+          handler.apply(container, a)
+        }, a.delayedBy)
+      } else {
+        handler.apply(container, a)
+      }
     }
   }
 }
