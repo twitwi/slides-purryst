@@ -29,4 +29,7 @@ export { default as SpToc } from './components/SpToc.vue'
 export { useKeymap, createDefaultKeymap, bind, definePlugin } from './keymap'
 export type { Keymap, KeymapSetupFn, KeyContext, SlidesPlugin, PluginAPI, BindOptions } from './keymap'
 
+export { parseArgs, registerAnimCommand, registerAnimActionType, listAnimCommands, listAnimActionTypes } from './animCommands'
+export type { AnimAction, AnimCommandHandler, ActionTypeHandler } from './animCommands'
+
 export * from './transformers/svg'

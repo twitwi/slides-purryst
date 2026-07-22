@@ -5,14 +5,11 @@
 <script setup lang="ts">
 import { inject, ref, watch, onMounted, computed } from 'vue'
 import type { Ref } from 'vue'
+import { getAnimCommand } from '../animCommands'
+import type { AnimAction } from '../animCommands'
+import { spApi } from '../sp-api'
 
 const contentVersion = inject<Ref<number>>('contentVersion', ref(0))
-
-interface AnimAction {
-  type: 'show' | 'hide' | 'addClass' | 'removeClass'
-  selector: string
-  className?: string
-}
 
 const props = withDefaults(defineProps<{
   spec: string
@@ -33,74 +30,25 @@ function getTargetStep() {
   return parseInt(dfs)
 }
 
+function parseActionStr(a: string): AnimAction[] {
+  const m = a.match(/^@(\w+)\((.+)\)$/)
+  if (m) {
+    const cmd = getAnimCommand(m[1])
+    if (cmd) return cmd.parse(m[2])
+  }
+  if (a.startsWith('-')) {
+    return [{ type: 'hide', selector: a.slice(1) }]
+  }
+  return [{ type: 'show', selector: a }]
+}
 
 function parsePartActions(part: string): AnimAction[] {
   const actions: AnimAction[] = []
   const actionStrs = part.split('^').map(s => s.trim())
   for (const a of actionStrs) {
-    if (a.startsWith('@add(')) {
-      const comma = a.indexOf(',')
-      if (comma !== -1) {
-        const cls = a.slice(5, comma).trim()
-        const sel = a.slice(comma + 1).replace(/\)\s*$/, '').trim()
-        actions.push({ type: 'addClass', className: cls, selector: sel })
-      }
-    } else if (a.startsWith('@remove(')) {
-      const comma = a.indexOf(',')
-      if (comma !== -1) {
-        const cls = a.slice(8, comma).trim()
-        const sel = a.slice(comma + 1).replace(/\)\s*$/, '').trim()
-        actions.push({ type: 'removeClass', className: cls, selector: sel })
-      }
-    } else if (a.startsWith('@+class ')) {
-      const m = a.match(/^@\+class\s+(\S+)\s+(.+)$/)
-      if (m) actions.push({ type: 'addClass', className: m[1], selector: m[2] })
-    } else if (a.startsWith('@-class ')) {
-      const m = a.match(/^@-class\s+(\S+)\s+(.+)$/)
-      if (m) actions.push({ type: 'removeClass', className: m[1], selector: m[2] })
-    } else if (a.startsWith('-')) {
-      actions.push({ type: 'hide', selector: a.slice(1) })
-    } else if (a.startsWith('@children(')) {
-      const m = a.match(/^@children\((.+)\)$/)
-      if (m) {
-        expandChildren(m[1], actions)
-      }
-    } else {
-      actions.push({ type: 'show', selector: a })
-    }
+    actions.push(...parseActionStr(a))
   }
   return actions
-}
-
-function expandChildren(selector: string, dest: AnimAction[]) {
-  const parent = getContainer().querySelector(selector)
-  if (parent) {
-    for (let i = 0; i < parent.children.length; i++) {
-      dest.push({ type: 'show', selector: `${selector} > :nth-child(${i + 1})` })
-    }
-  }
-}
-
-function getAllSelectors(parts: string[]): string[] {
-  const result: string[] = []
-  for (const part of parts) {
-    const trimmed = part.trim()
-    const actionStrs = trimmed.split('^').map(s => s.trim())
-    for (const a of actionStrs) {
-      if (a.startsWith('@+class ') || a.startsWith('@-class ')) {
-        const m = a.match(/^(?:@[+-]class\s+\S+\s+)(.+)$/)
-        if (m) result.push(m[1])
-      } else if (a.startsWith('-')) {
-        result.push(a.slice(1))
-      } else if (a.startsWith('@children(')) {
-        const m = a.match(/^@children\((.+)\)$/)
-        if (m) result.push(m[1] + ' > *')
-      } else if (!a.startsWith('@')) {
-        result.push(a)
-      }
-    }
-  }
-  return result
 }
 
 const rawParts = computed(() => {
@@ -111,64 +59,30 @@ function getAtOffset(): number {
   const at = props.at || '+0'
   if (at.startsWith('+') || at.startsWith('-')) {
     throw new Error("Relative at offset not supported in SpAnim, absolute at should be produced by useSteps")
-    return parseInt(at, 10)
   }
   return parseInt(at, 10)
 }
-
-/*
-function isRelativeAt(): boolean {
-  const at = props.at || '+0'
-  return at.startsWith('+') || at.startsWith('-')
-}
-
-function hasJump(): boolean {
-  const v = props.noJump
-  if (typeof v === 'boolean') return !v
-  return v !== 'true' && v !== ''
-}
-*/
 
 const stepActions = computed<AnimAction[][]>(() => {
   if (!props.spec) return []
   const result: AnimAction[][] = []
   for (const part of rawParts.value) {
     const trimmed = part.trim()
-    if (trimmed.startsWith('@children(')) {
-      const actions: AnimAction[] = []
-      expandChildren(trimmed.match(/^@children\((.+)\)$/)![1], actions)
-      for (const a of actions) {
-        result.push([a])
+    const m = trimmed.match(/^@(\w+)\((.+)\)$/)
+    if (m) {
+      const cmd = getAnimCommand(m[1])
+      if (cmd?.expand) {
+        const expanded = cmd.expand(m[2], getContainer())
+        for (const stepActions of expanded) {
+          result.push(stepActions)
+        }
+        continue
       }
-    } else {
-      result.push(parsePartActions(trimmed))
     }
+    result.push(parsePartActions(trimmed))
   }
   return result
 })
-
-function applyAction(el: HTMLElement, action: AnimAction) {
-  switch (action.type) {
-    case 'show':
-      el.setAttribute('data-sp-animated', 'true')
-      el.classList.add('sp-anim-shown')
-      el.classList.remove('sp-anim-hidden')
-      break
-    case 'hide':
-      el.setAttribute('data-sp-animated', 'true')
-      el.classList.add('sp-anim-hidden')
-      el.classList.remove('sp-anim-shown')
-      break
-    case 'addClass':
-      el.setAttribute('data-sp-animated', 'true')
-      if (action.className) el.classList.add(action.className)
-      break
-    case 'removeClass':
-      el.setAttribute('data-sp-animated', 'true')
-      if (action.className) el.classList.remove(action.className)
-      break
-  }
-}
 
 function getContainer(): Element {
   let el = animEl.value
@@ -188,29 +102,10 @@ function applyStep(step: number) {
   if (!actions) return
   const container = getContainer()
   for (const a of actions) {
-    const targets = container.querySelectorAll<HTMLElement>(a.selector)
-    for (const el of targets) {
-      applyAction(el, a)
+    const handler = spApi._animActionTypes[a.type]
+    if (handler) {
+      handler.apply(container, a)
     }
-  }
-}
-
-function reverseAction(el: HTMLElement, action: AnimAction) {
-  switch (action.type) {
-    case 'show':
-      el.classList.add('sp-anim-hidden')
-      el.classList.remove('sp-anim-shown')
-      break
-    case 'hide':
-      el.classList.add('sp-anim-shown')
-      el.classList.remove('sp-anim-hidden')
-      break
-    case 'addClass':
-      if (action.className) el.classList.remove(action.className)
-      break
-    case 'removeClass':
-      if (action.className) el.classList.add(action.className)
-      break
   }
 }
 
@@ -220,9 +115,9 @@ function reverseStep(step: number) {
   if (!actions) return
   const container = getContainer()
   for (const a of actions) {
-    const targets = container.querySelectorAll<HTMLElement>(a.selector)
-    for (const el of targets) {
-      reverseAction(el, a)
+    const handler = spApi._animActionTypes[a.type]
+    if (handler) {
+      handler.reverse(container, a)
     }
   }
 }
@@ -235,8 +130,6 @@ watch(globalStepIndex, (curr) => {
       applyStep(s)
     }
   } else {
-    // Reverse steps (curr, previousStep] in reverse order, then re-apply 1..curr
-    // Reapply is necessary: if I hide twice then undoing the second hide will show the element again, which is not what should be.
     for (let s = previousStep; s > curr; s--) {
       reverseStep(s)
     }
@@ -249,14 +142,10 @@ watch(globalStepIndex, (curr) => {
 
 function refresh() {
   const container = getContainer()
-  const allSelectors = getAllSelectors(rawParts.value)
-  for (const sel of allSelectors) {
-    const targets = container.querySelectorAll<HTMLElement>(sel)
-    for (const el of targets) {
-      //if (el.hasAttribute('data-sp-from')) continuee
-      el.setAttribute('data-sp-animated', 'true')
-      el.classList.add('sp-anim-hidden')
-      el.classList.remove('sp-anim-shown')
+  for (const actions of stepActions.value) {
+    for (const action of actions) {
+      const handler = spApi._animActionTypes[action.type]
+      handler?.init?.(container, action)
     }
   }
   const curr = getTargetStep()

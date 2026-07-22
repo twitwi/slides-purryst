@@ -1,4 +1,5 @@
 import { reactive } from 'vue'
+import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
 
 export const spApi = reactive({
   navLocked: false,
@@ -17,6 +18,8 @@ export const spApi = reactive({
   export: () => {},
   dragging: false,
   config: {} as Record<string, unknown>,
+  _animCommands: {} as Record<string, AnimCommandHandler>,
+  _animActionTypes: {} as Record<string, ActionTypeHandler>,
 })
 
 export const exportInitOptions: Record<string, unknown> = {}

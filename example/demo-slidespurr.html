@@ -103,24 +103,47 @@
   </sp-slide>
 
   <sp-slide>
-    <h3>Draggable Elements</h3>
-    <sp-pause />
-    <sp-drag at="287|249|700|246|15">
-      <div style="color: black;background:#dbeafe;padding:1em;border-radius:8px;border:2px solid #3b82f6">Draggable box</div>
+    <h3 class="eg-draggables">Draggable Elements</h3>
+    <p><code>&amp;lt;sp-drag>stuff&amp;lt;/sp-drag></code> creates a <span style="opacity: 0.2;">draggable box</span></p>
+    <p>In dev mode:</p>
+    <ul>
+      <li>select with double click</li>
+      <li>move and resize</li>
+      <li>validate by deselecting</li>
+      <li>⇒ the changes are saved to the source</li>
+      <li>…… as a <code>at="..."</code> attribute</li>
+    </ul>
+    <sp-drag at="1199|106|641.887633341839|283.0415048145767|0.9" at="0|0|155|98|0">
+      <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
     <sp-pause />
-    <sp-drag at="1204|306|830.4111990326578|411.4949085496764|-39">
-      <div style="color: black;background:#dcfce7;padding:1em;border-radius:8px;border:2px solid #22c55e">Another box</div>
+    <sp-drag>stuff</sp-drag>
+    <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
+      <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
   </sp-slide>
+  <sp-style>
+    .eg-natural { display: inline-block; }
+    .eg-fill { position: absolute; inset: 0; }
+    .eg-center { display: flex; align-items: center; justify-content: center; }
+    .eg-textcenter { text-align: center; }
+    :has(> .eg-draggables) .sp-drag-content > * {
+      font-size: 0.75em;
+      color: black;
+      background: lch(90 40 var(--eg-hue));
+      padding: 1em;
+      border-radius: 8px;
+      border: 2px solid lch(40 40 var(--eg-hue));
+    }
+  </sp-style>
 
   <sp-slide>
-    <h3>Drag 2</h3>
-    <sp-drag at="287|249|700|246|15">
-      <div style="color: red;background:#dbeafe;padding:1em;border-radius:8px;border:2px solid #3b82f6">Draggable box</div>
+    <h3 class="eg-draggables">Drag 2</h3>
+    <sp-drag at="1199|106|641.887633341839|283.0415048145767|0.9" at="0|0|155|98|0">
+      <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
-    <sp-drag at="1204|306|830.4111990326578|411.4949085496764|-39">
-      <div style="color: red;background:#dcfce7;padding:1em;border-radius:8px;border:2px solid #22c55e">Another box</div>
+    <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
+      <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
   </sp-slide>
 
@@ -153,7 +176,7 @@
 
   <sp-slide>
     <h3>Code Highlighting with Shiki</h3>
-    <p>Use <code>sp-code</code> to add code snippets with syntax highlighting</p>
+    <p>Use <code>sp-code</code> to add code snippets with syntax highlighting (NB: might become a plugin)</p>
     <pre><code class="language-typescript">
 import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
@@ -239,20 +262,20 @@ createSlidesPurryst({
   -->
   <sp-slide>
     <h3><code>sp-anim</code> — Combined (visgroups + @children)</h3>
-    <p>Always visible <span class="more">… after pause via anim</span></p>
+    <p>Always visible <span class="more">… after pause 2 (via anim)</span></p>
     <sp-pause />
-    <p>After pause</p>
+    <p>After pause 1</p>
     <sp-anim spec=".more" />
-    <p>After second pause/anim</p>
+    <p>After pause 2 (via anim)</p>
     <ul>
       <li>First item</li>
       <li>Second item</li>
       <li>Third item</li>
-      <li>Fourth item</li>
+      <li>Fourth item.</li>
     </ul>
     <sp-anim spec="@children(ul)" />
     <sp-meanwhile />
-    <p>After pause</p>
+    <p>Always visible</p>
   </sp-slide>
 
   <sp-slide>
@@ -267,7 +290,7 @@ createSlidesPurryst({
     <ol>
       <li>Child C (S5)</li>
       <li>Child D (S6)</li>
-      <li>Child E (S7)</li>
+      <li>Child E (S7).</li>
     </ol>
     <sp-anim spec=".step1 | .step2 | @children(ul)" />
     <sp-anim spec="@children(ol)" />
@@ -287,11 +310,11 @@ createSlidesPurryst({
         <ol>
           <li><code>@add(glow, #catfill)</code> — cat fill glows</li>
           <li><code>@remove(glow, #catfill) ^ @add(pulse, #catTongue)</code> — fill glow off, tongue pulses</li>
-          <li><code>@add(dim, #cat)</code> — whole cat dims</li>
+          <li><code>@add(dim, #cat) ^ @crazy(#cat)</code> — whole cat dims, cat goes crazy (plugin)</li>
         </ol>
       </div>
     </div>
-    <sp-anim spec="@add(glow, #catfill) | @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)" />
+    <sp-anim spec="@add(glow, #catfill) | @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat) ^ @crazy(#cat)" />
     <sp-style>
       #catTongue { fill: red; }
       .glow { filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 40px #ffb300); transition: filter .3s; }
@@ -303,6 +326,10 @@ createSlidesPurryst({
   <sp-style> <!-- for global styles, both style and sp-style work -->
       @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
   </sp-style>
+  <style>
+    .eg-crazy { animation: crazy 0.5s ease-in-out 5; transform-origin: 50% 50%; }
+    @keyframes crazy { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+  </style>
 
   <sp-slide>
     <h2>New Animation Features</h2>
@@ -581,13 +608,21 @@ createSlidesPurryst({
   components: { 'my-counter': Counter },
   seed: 12345678+45,
   cacheIgnore: ['huge-.*\\.svg$'],  // don't inline huge SVGs in the output bundle
-})
-</script>
-<script>
-// To test theme variants
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return
-  if (e.key === 't') document.documentElement.classList.toggle('theme-clean')
+  // plugin-like extensions can be added via the activate hook
+  activate: ({ addKeymapSetup, addAnimCommand }) => {
+    // keymap updates
+    addKeymapSetup((km) => {
+      km['t'] = () => { document.documentElement.classList.toggle('theme-clean') }
+    })
+    // anim extension
+    addAnimCommand('crazy', {
+      countSteps: () => 1,
+      parse(argsStr) {
+        const sel = argsStr.trim()
+        return [{ type: 'addClass', className: 'eg-crazy', selector: sel }]
+      },
+    })
+  }
 })
 </script>
 </body>

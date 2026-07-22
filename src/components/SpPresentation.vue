@@ -217,6 +217,7 @@ import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
 import { registry } from '../keymap/plugin'
 import type { PluginAPI } from '../keymap/types'
+import { registerAnimCommand, registerAnimActionType } from '../animCommands'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -642,9 +643,14 @@ function exitBlackout() {
 }
 
 const extraSetups = [...registry._keymapSetups]
+registry.applyAnimRegistrations()
 if (props.activate) {
   const setups: typeof extraSetups = []
-  props.activate({ addKeymapSetup: (fn) => setups.push(fn) })
+  props.activate({
+    addKeymapSetup: (fn) => setups.push(fn),
+    addAnimCommand: (name, handler) => registerAnimCommand(name, handler),
+    addAnimActionType: (type, handler) => registerAnimActionType(type, handler),
+  })
   extraSetups.push(...setups)
 }
 

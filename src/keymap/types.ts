@@ -1,3 +1,5 @@
+import type { AnimCommandHandler, ActionTypeHandler } from '../animCommands'
+
 export type KeyHandler = (event: KeyboardEvent) => void
 
 export interface Keymap {
@@ -22,6 +24,8 @@ export interface SlidesPlugin {
 
 export interface PluginAPI {
   addKeymapSetup: (fn: KeymapSetupFn) => void
+  addAnimCommand: (name: string, handler: AnimCommandHandler) => void
+  addAnimActionType: (type: string, handler: ActionTypeHandler) => void
 }
 
 export interface BindOptions {

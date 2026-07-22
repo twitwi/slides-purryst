@@ -19,14 +19,15 @@
 
 # TODO extensibility
 
-- take the case of keyboard shortcuts, I want it to be extensible, so typically a map from keymap desc to action (code), also I want it to be very extensible, i.e., defaults, potentially modified by a sequence of plugins I would include/import, potentially modified by the user/presentation conf. Can you draft a generic approach (api+logic) for that? (modified = additions, removal, etc)
 - think about modularity/extensibility (plugins, custom components, etc.)
 - ideally have a way to have a sequence of extensibility (so we can have plugins + customization on top)
-- (anim) make it more extensible, library of processors (for now just for parts, but still recursive, for @delay), should probably better structure so that countAnimSpecParts is more generic
 - [ ] parse, any interest of using hast / unified / _rehype_ https://unifiedjs.com/explore/topic/rehype/, so we can have plugins on it (maybe free math? shiki? citation?)
+- [ ] allow injectStyle in plugins (e.g. for the @crazy(#cat) example)
 
 ## TODO
 
+- [ ] sp-slide class="..." should be propagated
+- [ ] (anim) allow to have a delay, maybe it is syntactically unambiguous to detect if it starts with a digit (so no .3s but rather 0.3s or 3000ms) and thus have e.g. ".ga | .bu ^ 0.3s .zo | 100ms .meu"
 - [ ] (anim) can sp-clicks be converted to @children (if wrapper...) (or even sp-pauses if not but then beware of e.g. a span in ul... so might still benefit from the data-sp-step approach) as a preprocessing like sp-pause? and could it rather be a directive?
 - [ ] (perf) do Map based caching of processHtml() (careful, might want a global state... or not in purr... handle it in purryst if any advanced thing... but maybe e.g. a js bibliography would need to be global and not per slide...)
 - [ ] (anim) is at=2 intuitive or offset by one? (at=0 intuitively means play right away, at=2 should mean after 2 steps)
@@ -39,6 +40,10 @@
 - [ ] (edit) allow changing image path?
 - [ ] (edit) can we have a button to "view source" in vs code or something (using some vscode standard extension or api?)
 
+
+- [ ] consider a fully async init process (createSlidespurryst) because currently plugins can't do async stuff.
+- [ ] consider unocss stuff, can it be with a small footprint?
+- [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)
 - [ ] overview could insert separators when breaking a section (go from h3 to h2, have .sp-overview-leave-h3) to allow css styling (break flow of overview)
 - [ ] consider history management (think about when to push)
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...

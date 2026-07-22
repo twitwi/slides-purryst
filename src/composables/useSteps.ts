@@ -1,4 +1,5 @@
 import { ref, computed, type Ref } from 'vue'
+import { getAnimCommand } from '../animCommands'
 
 let defaultClicksAt = 1
 
@@ -11,12 +12,14 @@ function countAnimSpecParts(spec: string, htmlForQuery?: HTMLElement): number {
   const parts = spec.split('|').map(s => s.trim())
   let count = 0
   for (const part of parts) {
-    const childMatch = part.match(/^@children\((.+)\)$/)
-    if (childMatch && htmlForQuery) {
-      //const tmp = document.createElement('div')
-      //tmp.innerHTML = htmlForQuery
-      const parent = htmlForQuery.querySelector(childMatch[1])
-      count += parent ? Math.max(1, parent.children.length) : 1
+    const m = part.match(/^@(\w+)\((.+)\)$/)
+    if (m) {
+      const cmd = getAnimCommand(m[1])
+      if (cmd) {
+        count += cmd.countSteps(m[2], htmlForQuery)
+      } else {
+        count += 1
+      }
     } else {
       count += 1
     }
