@@ -102,8 +102,8 @@
     </sp-drag>
   </sp-slide>
 
-  <sp-slide>
-    <h3 class="eg-draggables">Draggable Elements</h3>
+  <sp-slide class="eg-draggables">
+    <h3>Draggable Elements</h3>
     <p><code>&amp;lt;sp-drag>stuff&amp;lt;/sp-drag></code> creates a <span style="opacity: 0.2;">draggable box</span></p>
     <p>In dev mode:</p>
     <ul>
@@ -127,7 +127,7 @@
     .eg-fill { position: absolute; inset: 0; }
     .eg-center { display: flex; align-items: center; justify-content: center; }
     .eg-textcenter { text-align: center; }
-    :has(> .eg-draggables) .sp-drag-content > * {
+    .eg-draggables .sp-drag-content > * {
       font-size: 0.75em;
       color: black;
       background: lch(90 40 var(--eg-hue));
@@ -137,8 +137,8 @@
     }
   </sp-style>
 
-  <sp-slide>
-    <h3 class="eg-draggables">Drag 2</h3>
+  <sp-slide class="eg-draggables">
+    <h3>Drag 2</h3>
     <sp-drag at="1199|106|641.887633341839|283.0415048145767|0.9" at="0|0|155|98|0">
       <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>

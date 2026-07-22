@@ -20,6 +20,7 @@ const props = defineProps<{
 const slideClass = computed(() => {
   const cls = ['sp-slide']
   if (props.slide) cls.push(`sp-slide-${props.slide.num}`)
+  if (props.slide?.class) cls.push(props.slide.class)
   return cls
 })
 
