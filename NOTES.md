@@ -22,7 +22,6 @@
 - think about modularity/extensibility (plugins, custom components, etc.)
 - ideally have a way to have a sequence of extensibility (so we can have plugins + customization on top)
 - [ ] parse, any interest of using hast / unified / _rehype_ https://unifiedjs.com/explore/topic/rehype/, so we can have plugins on it (maybe free math? shiki? citation?)
-- [ ] allow injectStyle in plugins (e.g. for the @crazy(#cat) example)
 
 ## TODO
 

@@ -247,8 +247,8 @@ import SpGoPrompt from './SpGoPrompt.vue'
 import { spApi } from '../sp-api'
 import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
-import { registry } from '../keymap/plugin'
-import type { PluginAPI } from '../keymap/types'
+import { registry, injectStyle } from '../plugin'
+import type { PluginAPI } from '../types'
 import { registerAnimCommand, registerAnimActionType } from '../animCommands'
 import { chunkPlacementMode, substituteParams, getSlideScale } from '../composables/useChunklets'
 
@@ -683,6 +683,8 @@ if (props.activate) {
     addKeymapSetup: (fn) => setups.push(fn),
     addAnimCommand: (name, handler) => registerAnimCommand(name, handler),
     addAnimActionType: (type, handler) => registerAnimActionType(type, handler),
+    injectStyle,
+    addChunklet: (def) => spApi.chunkletDefs.push(def),
   })
   extraSetups.push(...setups)
 }

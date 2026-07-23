@@ -612,12 +612,6 @@ createSlidesPurryst({
       --sp-theme-secondary-hue: 195;
       */
     }
-    .eg-patch {
-      background: var(--sp-bg);
-      &:hover {
-        outline: 10px solid gray;
-      }
-    }
   </style>
 
 </template>
@@ -626,12 +620,6 @@ createSlidesPurryst({
   <sp-chunk name="greybox" params="x,y,w,h">
     <sp-drag at="$x|$y|$w|$h|0">
       <div class="eg-fill" style="background: rgba(128,128,128,0.6); border: 1px solid grey;">
-      </div>
-    </sp-drag>
-  </sp-chunk>
-  <sp-chunk name="patch" params="x,y,w,h">
-    <sp-drag at="$x|$y|$w|$h|0">
-      <div class="eg-fill eg-patch">
       </div>
     </sp-drag>
   </sp-chunk>
@@ -657,7 +645,7 @@ createSlidesPurryst({
   seed: 12345678+45,
   cacheIgnore: ['huge-.*\\.svg$'],  // don't inline huge SVGs in the output bundle
   // plugin-like extensions can be added via the activate hook
-  activate: ({ addKeymapSetup, addAnimCommand, addAnimActionType }) => {
+  activate: ({ addKeymapSetup, addAnimCommand, addAnimActionType, injectStyle, addChunklet }) => {
     // keymap updates
     addKeymapSetup((km) => {
       km['t'] = () => { document.documentElement.classList.toggle('theme-clean') }
@@ -714,6 +702,25 @@ createSlidesPurryst({
         }
       },
     })
+    // in plugins: custom style
+    injectStyle(`
+      .eg-patch {
+        background: var(--sp-bg);
+        &:hover {
+          outline: 10px solid gray;
+        }
+      }
+    `)
+    // in plugins: chunklets
+    addChunklet({
+      name: 'patch',
+      params: 'x,y,w,h',
+      html: `
+      <sp-drag at="$x|$y|$w|$h|0">
+        <div class="eg-fill eg-patch">
+        </div>
+      </sp-drag>
+    `})
   }
 })
 </script>

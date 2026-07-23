@@ -1,5 +1,19 @@
 import type { Component } from 'vue'
-import type { SlidesPlugin, PluginAPI } from './keymap/types'
+import type { KeymapSetupFn } from './keymap/types'
+import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
+
+export interface SlidesPlugin {
+  name: string
+  activate: (api: PluginAPI) => void | (() => void)
+}
+
+export interface PluginAPI {
+  addKeymapSetup: (fn: KeymapSetupFn) => void
+  addAnimCommand: (name: string, handler: AnimCommandHandler) => void
+  addAnimActionType: (type: string, handler: ActionTypeHandler) => void
+  injectStyle: (css: string) => void
+  addChunklet: (def: ChunkDef) => void
+}
 
 export interface SlideData {
   html: string

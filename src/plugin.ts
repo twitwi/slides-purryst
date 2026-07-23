@@ -1,6 +1,15 @@
-import type { SlidesPlugin, PluginAPI, KeymapSetupFn } from './types'
-import { registerAnimCommand, registerAnimActionType } from '../animCommands'
-import type { AnimCommandHandler, ActionTypeHandler } from '../animCommands'
+import type { SlidesPlugin, PluginAPI } from './types'
+import type { KeymapSetupFn } from './keymap/types'
+import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
+import { registerAnimCommand, registerAnimActionType } from './animCommands'
+import { spApi } from './sp-api'
+import type { ChunkDef } from './types'
+
+export function injectStyle(css: string) {
+  const el = document.createElement('style')
+  el.textContent = css
+  document.head.appendChild(el)
+}
 
 export const registry = {
   _plugins: [] as SlidesPlugin[],
@@ -15,6 +24,8 @@ export const registry = {
       addKeymapSetup: (fn) => this._keymapSetups.push(fn),
       addAnimCommand: (name, handler) => this._animCommands.push({ name, handler }),
       addAnimActionType: (type, handler) => this._animActionTypes.push({ type, handler }),
+      injectStyle,
+      addChunklet: (def: ChunkDef) => spApi.chunkletDefs.push(def),
     }
     const teardown = plugin.activate(api)
     if (teardown) {

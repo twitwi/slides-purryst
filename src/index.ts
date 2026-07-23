@@ -1,4 +1,4 @@
-export type { SPSlidesOptions, SlideData, ChunkDef, Navigation, PresenterState, Transformer } from './types'
+export type { SPSlidesOptions, SlideData, ChunkDef, Navigation, PresenterState, Transformer, SlidesPlugin, PluginAPI } from './types'
 
 export { createSlidesPurryst } from './core'
 export { exportStandalone } from './export'
@@ -28,8 +28,10 @@ export { default as SpSvg } from './components/SpSvg.vue'
 export { default as SpStyle } from './components/SpStyle.vue'
 export { default as SpToc } from './components/SpToc.vue'
 
-export { useKeymap, createDefaultKeymap, bind, definePlugin } from './keymap'
-export type { Keymap, KeymapSetupFn, KeyContext, SlidesPlugin, PluginAPI, BindOptions } from './keymap'
+export { useKeymap, createDefaultKeymap, bind } from './keymap'
+export type { Keymap, KeymapSetupFn, KeyContext, BindOptions } from './keymap'
+
+export { registry, definePlugin, injectStyle } from './plugin'
 
 export { parseArgs, registerAnimCommand, registerAnimActionType, listAnimCommands, listAnimActionTypes } from './animCommands'
 export type { AnimAction, AnimCommandHandler, ActionTypeHandler } from './animCommands'
