@@ -545,8 +545,8 @@ const slideHeadingLevels = computed(() => {
 
 function goToOverviewSlide(i: number) {
   showOverview.value = false
+  targetStepIndex = 0
   goTo(i)
-  stepIndex.value = 0
 }
 
 const showGoPrompt = ref(false)
