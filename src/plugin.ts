@@ -20,12 +20,14 @@ export const registry = {
 
   register(plugin: SlidesPlugin) {
     this._plugins.push(plugin)
+    const noop = () => {}
+    const d = plugin.disable ?? []
     const api: PluginAPI = {
-      addKeymapSetup: (fn) => this._keymapSetups.push(fn),
-      addAnimCommand: (name, handler) => this._animCommands.push({ name, handler }),
-      addAnimActionType: (type, handler) => this._animActionTypes.push({ type, handler }),
-      injectStyle,
-      addChunklet: (def: ChunkDef) => spApi.chunkletDefs.push(def),
+      addKeymapSetup:    d.includes('keymap')  ? noop : (fn: KeymapSetupFn) => this._keymapSetups.push(fn),
+      addAnimCommand:    d.includes('anim')    ? noop : (name: string, handler: AnimCommandHandler) => this._animCommands.push({ name, handler }),
+      addAnimActionType: d.includes('anim')    ? noop : (type: string, handler: ActionTypeHandler) => this._animActionTypes.push({ type, handler }),
+      injectStyle:       d.includes('style')   ? noop : injectStyle,
+      addChunklet:       d.includes('chunklet') ? noop : (def: ChunkDef) => spApi.chunkletDefs.push(def),
     }
     const teardown = plugin.activate(api)
     if (teardown) {

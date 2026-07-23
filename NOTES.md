@@ -22,6 +22,8 @@
 - think about modularity/extensibility (plugins, custom components, etc.)
 - ideally have a way to have a sequence of extensibility (so we can have plugins + customization on top)
 - [ ] parse, any interest of using hast / unified / _rehype_ https://unifiedjs.com/explore/topic/rehype/, so we can have plugins on it (maybe free math? shiki? citation?)
+- can I have a generic way of allowing to control plugin order (when it has an impact) and to allow to also easily "disable" some plugins facets (idea: the plugin would receive noop functions for the add... that we want to disable)
+- I want to allow extension of the "parsing", i.e. for now, now once I have the html parsed I do stuff like rewriting sp-pause etc, can this be extensible? would it make sense to use rehype (and thus be able to exploit existing rehype plugins (e.g. math (later)))?
 
 ## TODO
 

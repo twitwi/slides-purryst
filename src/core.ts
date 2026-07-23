@@ -163,7 +163,12 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     el: '#app',
   })
 
-  for (const plugin of plugins ?? []) {
+  const allPlugins: SlidesPlugin[] = [...(plugins ?? [])]
+  if (activate) {
+    allPlugins.unshift({ name: '__user__', order: 100, activate })
+  }
+  const sorted = allPlugins.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  for (const plugin of sorted) {
     registry.register(plugin)
   }
 
@@ -178,7 +183,6 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     raw,
     components: merged,
     presenter: isPresenter,
-    activate,
   })
   app.config.globalProperties.$sp = spApi
   app.provide('sp-api', spApi)

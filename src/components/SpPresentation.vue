@@ -247,9 +247,7 @@ import SpGoPrompt from './SpGoPrompt.vue'
 import { spApi } from '../sp-api'
 import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
-import { registry, injectStyle } from '../plugin'
-import type { PluginAPI } from '../types'
-import { registerAnimCommand, registerAnimActionType } from '../animCommands'
+import { registry } from '../plugin'
 import { chunkPlacementMode, substituteParams, getSlideScale } from '../composables/useChunklets'
 
 const props = withDefaults(defineProps<{
@@ -263,7 +261,6 @@ const props = withDefaults(defineProps<{
   components?: Record<string, any>
   seed?: number
   raw?: Record<'before'|'after', string>
-  activate?: (api: PluginAPI) => void
 }>(), {
   transition: 'none',
   transitionDuration: 200,
@@ -677,17 +674,6 @@ function exitBlackout() {
 
 const extraSetups = [...registry._keymapSetups]
 registry.applyAnimRegistrations()
-if (props.activate) {
-  const setups: typeof extraSetups = []
-  props.activate({
-    addKeymapSetup: (fn) => setups.push(fn),
-    addAnimCommand: (name, handler) => registerAnimCommand(name, handler),
-    addAnimActionType: (type, handler) => registerAnimActionType(type, handler),
-    injectStyle,
-    addChunklet: (def) => spApi.chunkletDefs.push(def),
-  })
-  extraSetups.push(...setups)
-}
 
 const { rebuildKeymap } = useNavigation({
   next,

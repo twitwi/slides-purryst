@@ -1,4 +1,4 @@
-export type { SPSlidesOptions, SlideData, ChunkDef, Navigation, PresenterState, Transformer, SlidesPlugin, PluginAPI } from './types'
+export type { SPSlidesOptions, SlideData, ChunkDef, Navigation, PresenterState, Transformer, SlidesPlugin, PluginAPI, FacetName } from './types'
 
 export { createSlidesPurryst } from './core'
 export { exportStandalone } from './export'

@@ -2,8 +2,12 @@ import type { Component } from 'vue'
 import type { KeymapSetupFn } from './keymap/types'
 import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
 
+export type FacetName = 'anim' | 'keymap' | 'style' | 'chunklet' | (string & {})
+
 export interface SlidesPlugin {
   name: string
+  order?: number
+  disable?: FacetName[]
   activate: (api: PluginAPI) => void | (() => void)
 }
 

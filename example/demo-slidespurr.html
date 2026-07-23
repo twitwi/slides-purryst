@@ -346,6 +346,7 @@ createSlidesPurryst({
     </div>
     <sp-anim spec="@play(#myvideo) | @pause(video) | @play ^ 2s @pause | @play(,rewind) | @pause" />
     <p>Pass a selector, defaulting to <code>video</code>, can also add <code>rewind</code> to restart the video from the beginning on backward.</p>
+    <div style="font-size: .5em; position: absolute; right:0; bottom:50px; "><code>https://www.pexels.com/video/35332556/</code></div>
   </sp-slide>
 
   <sp-slide>
@@ -640,12 +641,26 @@ createSlidesPurryst({
 <script type="module">
 import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
+
+let testAlert = () => {}
+//testAlert = alert // uncomment and play with order to check
+const fakePlugin = () => ({ // could typically be from an import
+  activate() {
+    testAlert("Activating plugin")
+  }
+})
+const p = fakePlugin()
+// override order (>= 100 means after custom activate() below)
+p.order = 100
+
 createSlidesPurryst({
   components: { 'my-counter': Counter },
   seed: 12345678+45,
   cacheIgnore: ['huge-.*\\.svg$'],  // don't inline huge SVGs in the output bundle
+  plugins: [p],
   // plugin-like extensions can be added via the activate hook
   activate: ({ addKeymapSetup, addAnimCommand, addAnimActionType, injectStyle, addChunklet }) => {
+    testAlert("Activating user code")
     // keymap updates
     addKeymapSetup((km) => {
       km['t'] = () => { document.documentElement.classList.toggle('theme-clean') }
