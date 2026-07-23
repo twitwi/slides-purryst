@@ -145,7 +145,20 @@ export default defineConfig(({ mode }) => {
                     return
                   }
 
-                  const updated = content.slice(0, closeIdx) + '\n' + data.html + '\n' + content.slice(closeIdx)
+                  const newlineBefore = content.lastIndexOf('\n', closeIdx)
+                  const leading = content.slice(newlineBefore + 1, closeIdx)
+                  const baseIndent = leading.length - leading.trimStart().length
+
+                  const chunkLines = data.html.split('\n')
+                  const firstReal = chunkLines.find((l: string) => l.trim().length > 0)
+                  const chunkIndent = firstReal ? firstReal.length - firstReal.trimStart().length : 0
+                  const allChunkLineOk = chunkLines.every((l: string) => l.slice(0, chunkIndent).trim().length === 0)
+                  const dedented = allChunkLineOk ? chunkLines.map((l: string) => l.slice(chunkIndent)) : chunkLines
+                  const reindented = dedented.map((l: string) => l.length > 0 ? ' '.repeat(baseIndent + 2) + l : '')
+                  const indentedHtml = reindented.join('\n')
+                  console.log(firstReal, chunkIndent, allChunkLineOk, baseIndent)
+
+                  const updated = content.slice(0, closeIdx) + '\n' + indentedHtml + '\n' + ' '.repeat(baseIndent) + content.slice(closeIdx)
                   writeFileSync(filePath, updated, 'utf-8')
                   console.log(`[sp-edit] Inserted chunk into slide #${slideIndex}`)
                   res.writeHead(200, { 'Content-Type': 'application/json' })

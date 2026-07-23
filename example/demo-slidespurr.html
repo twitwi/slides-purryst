@@ -333,6 +333,8 @@ createSlidesPurryst({
 
   <sp-slide>
     <h3><code>sp-anim</code> — @play / @pause video</h3>
+    <video src="https://www.pexels.com/fr-fr/download/video/35332556/" width="400" id="myvideo" style="float:right"></video>
+    <p>The following will happen on clicks (skip to step 2 without waiting for the video to play too much)</p>
     <div>
       <sp-step at="1" animation="fade"><code>@play(#myvideo)</code></sp-step>
       <sp-step at="2" animation="fade"><code>| @pause(#myvideo)</code></sp-step>
@@ -342,7 +344,6 @@ createSlidesPurryst({
       <sp-step at="4" animation="fade"><code>@play(,rewind)</code></sp-step>
       <sp-step at="5" animation="fade"><code>| @pause</code></sp-step>
     </div>
-    <video src="https://www.pexels.com/fr-fr/download/video/35332556/" width="400" id="myvideo"></video>
     <sp-anim spec="@play(#myvideo) | @pause(video) | @play ^ 2s @pause | @play(,rewind) | @pause" />
     <p>Pass a selector, defaulting to <code>video</code>, can also add <code>rewind</code> to restart the video from the beginning on backward.</p>
   </sp-slide>

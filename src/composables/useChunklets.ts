@@ -7,7 +7,7 @@ export function parseChunklets(root: ParentNode): ChunkDef[] {
     if (!name) return
     const paramsStr = el.getAttribute('params') || ''
     const params = paramsStr.split(',').map(s => s.trim()).filter(Boolean)
-    const html = el.innerHTML.trim()
+    const html = el.innerHTML.replace(/^\s*\n/m, '').replace(/\n\s*$/m, '')
     if (!html) return
     chunks.push({ name, params, html })
   })
