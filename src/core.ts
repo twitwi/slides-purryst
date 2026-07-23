@@ -17,6 +17,7 @@ import { registry } from './keymap/plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore } from './composables/includeCache'
 import { setDefaultClicksAt } from './composables/useSteps'
+import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
 
@@ -69,6 +70,11 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   if (template?.content) {
     parseRawInto(template.content, raw)
+  }
+
+  const chunkletsTemplate = document.getElementById('sp-chunklets') as HTMLTemplateElement | null
+  if (chunkletsTemplate?.content) {
+    spApi.chunkletDefs = parseChunklets(chunkletsTemplate.content)
   }
 
   if (!designWidth || !designHeight || !author || !seed) {

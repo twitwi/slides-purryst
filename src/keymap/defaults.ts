@@ -26,6 +26,7 @@ export interface NavigationActions {
   onBlackoutToggle?: () => void
   onBlackoutExit?: () => void
   onDevPaneToggle?: () => void
+  onChunkBarToggle?: () => void
 }
 
 export function createDefaultKeymap(a: NavigationActions): KeymapSetupFn {
@@ -60,5 +61,6 @@ export function createDefaultKeymap(a: NavigationActions): KeymapSetupFn {
     km['g'] = () => a.onGoPrompt?.()
     km['b'] = () => a.onBlackoutToggle?.()
     km['d'] = () => a.onDevPaneToggle?.()
+    km['c'] = () => a.onChunkBarToggle?.()
   }
 }

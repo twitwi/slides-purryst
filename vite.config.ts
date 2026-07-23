@@ -110,6 +110,49 @@ export default defineConfig(({ mode }) => {
                   return
                 }
 
+                // === Chunklet insertion ===
+                if (data.action === 'insert-chunk' && existsSync(filePath)) {
+                  const content = readFileSync(filePath, 'utf-8')
+                  const slideIndex = typeof data.slide === 'number' ? data.slide : -1
+                  if (slideIndex < 0) {
+                    res.writeHead(400)
+                    res.end(JSON.stringify({ error: 'slide index required' }))
+                    return
+                  }
+
+                  const slideRegex = /<sp-slide[\s>]/g
+                  let slideCount = 0
+                  let slideMatch
+                  let slideStart = 0
+                  while ((slideMatch = slideRegex.exec(content)) !== null) {
+                    if (slideCount === slideIndex) {
+                      slideStart = slideMatch.index
+                      break
+                    }
+                    slideCount++
+                  }
+                  if (slideCount !== slideIndex) {
+                    res.writeHead(404)
+                    res.end(JSON.stringify({ error: `Slide index ${slideIndex} not found` }))
+                    return
+                  }
+
+                  const closeTag = '</sp-slide>'
+                  const closeIdx = content.indexOf(closeTag, slideStart)
+                  if (closeIdx === -1) {
+                    res.writeHead(404)
+                    res.end(JSON.stringify({ error: 'Could not find closing sp-slide tag' }))
+                    return
+                  }
+
+                  const updated = content.slice(0, closeIdx) + '\n' + data.html + '\n' + content.slice(closeIdx)
+                  writeFileSync(filePath, updated, 'utf-8')
+                  console.log(`[sp-edit] Inserted chunk into slide #${slideIndex}`)
+                  res.writeHead(200, { 'Content-Type': 'application/json' })
+                  res.end(JSON.stringify({ ok: true }))
+                  return
+                }
+
                 // === HTML mode: edit HTML file via oldAttrs + slide ===
                 const content = readFileSync(filePath, 'utf-8')
 

@@ -276,7 +276,7 @@ createSlidesPurryst({
     <sp-anim spec="@children(ul)" />
     <sp-meanwhile />
     <p>Always visible</p>
-  </sp-slide>
+</sp-slide>
 
   <sp-slide>
     <h3><code>sp-anim</code> — Combined (selectors then children)</h3>
@@ -611,8 +611,39 @@ createSlidesPurryst({
       --sp-theme-secondary-hue: 195;
       */
     }
+    .eg-patch {
+      background: var(--sp-bg);
+      &:hover {
+        outline: 10px solid gray;
+      }
+    }
   </style>
 
+</template>
+
+<template id="sp-chunklets">
+  <sp-chunk name="greybox" params="x,y,w,h">
+    <sp-drag at="$x|$y|$w|$h|0">
+      <div class="eg-fill" style="background: rgba(128,128,128,0.6); border: 1px solid grey;">
+      </div>
+    </sp-drag>
+  </sp-chunk>
+  <sp-chunk name="patch" params="x,y,w,h">
+    <sp-drag at="$x|$y|$w|$h|0">
+      <div class="eg-fill eg-patch">
+      </div>
+    </sp-drag>
+  </sp-chunk>
+  <sp-chunk name="note" params="x,y">
+    <sp-drag at="$x|$y|auto|auto|0">
+      <div style="background: var(--sp-accent-soft); padding: 0.5em 1em; border-radius: 4px; font-size: 0.85em;">
+        Note
+      </div>
+    </sp-drag>
+  </sp-chunk>
+  <sp-chunk name="separator">
+    <hr style="margin: 1em 0; opacity: 0.3;">
+  </sp-chunk>
 </template>
 
 <div id="sp-presentation" data-design-width="1920" data-design-height="1080" data-author="SlidesPurryst"></div>

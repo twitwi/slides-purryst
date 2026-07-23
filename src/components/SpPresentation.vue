@@ -50,6 +50,22 @@
             </slot>
           </div>
 
+          <div v-if="spApi.chunkletMode" class="sp-chunklet-overlay"
+               :class="{ 'sp-chunklet-drag': placementMode === 'drag' }"
+               @pointerdown="onChunkletPointerDown"
+               @pointermove="onChunkletPointerMove"
+               @pointerup="onChunkletPointerUp">
+            <div class="sp-chunklet-hint">
+              {{ placementMode === 'drag'
+                ? 'Click + drag to draw ' + spApi.selectedChunklet?.name
+                : placementMode === 'click'
+                  ? 'Click to place ' + spApi.selectedChunklet?.name
+                  : 'Click to insert ' + spApi.selectedChunklet?.name }}
+              <span class="sp-chunklet-hint-esc">ESC to cancel</span>
+            </div>
+            <div v-if="dragging" class="sp-chunklet-preview" :style="previewStyle"></div>
+          </div>
+
         </div>
       </div>
 
@@ -98,6 +114,9 @@
               <button class="sp-nav-more-item" @click="showOverview = !showOverview; showMoreMenu = false">
                 <span class="sp-nav-more-icon">⊞</span> Overview
               </button>
+              <button class="sp-nav-more-item" :class="{ active: spApi.showChunkBar }" @click="toggleChunkBar(); showMoreMenu = false">
+                <span class="sp-nav-more-icon">▤</span> Chunks
+              </button>
               <div class="sp-nav-more-divider"></div>
               <button class="sp-nav-more-item" @click="toggleBlackout()">
                 <span class="sp-nav-more-icon sp-nav-more-icon-blackout" :class="{ active: blackout }">●</span> Blackout
@@ -137,6 +156,19 @@
           </template>
         </div>
       </nav>
+
+      <div v-if="spApi.showChunkBar && spApi.chunkletDefs.length" class="sp-chunk-bar">
+        <button
+          v-for="chunk in spApi.chunkletDefs"
+          :key="chunk.name"
+          class="sp-chunk-bar-btn"
+          :class="{ active: spApi.selectedChunklet === chunk }"
+          @click="selectChunk(chunk)"
+        >
+          {{ chunk.name }}
+          <span class="sp-chunk-bar-badge">{{ chunkPlacementMode(chunk) }}</span>
+        </button>
+      </div>
 
       <div class="sp-progress">
         <div class="sp-progress-bar" :style="{ width: progressPercent + '%' }" />
@@ -199,7 +231,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick } from 'vue'
-import type { SlideData } from '../types'
+import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, processSlideHtml } from '../composables/useSteps'
 
@@ -218,6 +250,7 @@ import { highlightCode } from '../composables/useCodeHighlight'
 import { registry } from '../keymap/plugin'
 import type { PluginAPI } from '../keymap/types'
 import { registerAnimCommand, registerAnimActionType } from '../animCommands'
+import { chunkPlacementMode, substituteParams, getSlideScale } from '../composables/useChunklets'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
@@ -678,6 +711,7 @@ const { rebuildKeymap } = useNavigation({
   onBlackoutToggle: toggleBlackout,
   onBlackoutExit: exitBlackout,
   onDevPaneToggle: () => { config.proMode ? toggleDevPane() : toggleDarkMode() },
+  onChunkBarToggle: toggleChunkBar,
 }, {
   getContext: () => ({
     overview: showOverview.value,
@@ -735,6 +769,7 @@ async function highlightAllSlides() {
 onUnmounted(() => {
   document.removeEventListener('click', onDocumentClick, true)
   window.removeEventListener('hashchange', onHashChange)
+  window.removeEventListener('keydown', onChunkletKeydown)
 })
 
 function goToPrevBegin() {
@@ -782,6 +817,127 @@ function onDocumentClick(e: MouseEvent) {
   if (showMoreMenu.value && moreMenuEl.value && !moreMenuEl.value.contains(e.target as Node)) {
     showMoreMenu.value = false
   }
+}
+
+// --- Chunklet placement ---
+
+const placementMode = computed(() => {
+  const chunk = spApi.selectedChunklet
+  if (!chunk) return 'click'
+  return chunkPlacementMode(chunk)
+})
+
+function slideCoords(e: PointerEvent): { x: number; y: number } {
+  const el = e.currentTarget as HTMLElement | null
+  if (!el) return { x: 0, y: 0 }
+  const rect = el.getBoundingClientRect()
+  const scale = getSlideScale()
+  return {
+    x: Math.round((e.clientX - rect.left) / scale),
+    y: Math.round((e.clientY - rect.top) / scale),
+  }
+}
+
+function insertChunk(chunk: typeof spApi.selectedChunklet, params: Record<string, number | string>) {
+  if (!chunk) return
+  const html = substituteParams(chunk.html, params)
+  const idx = currentIndex.value
+  const oldHtml = slides.value[idx].html
+  slides.value = slides.value.map((s, i) =>
+    i === idx ? { ...s, html: oldHtml + '\n' + html } : s
+  )
+  totalSteps.value = processSlideHtml(current.value.html).steps
+  contentVersion.value++
+  spApi.chunkletMode = false
+  spApi.selectedChunklet = null
+  saveChunkletToSource(html, idx)
+}
+
+function selectChunk(chunk: ChunkDef) {
+  if (spApi.selectedChunklet === chunk && spApi.chunkletMode) {
+    cancelChunkletPlacement()
+    return
+  }
+  spApi.selectedChunklet = chunk
+  spApi.chunkletMode = true
+}
+
+function toggleChunkBar() {
+  spApi.showChunkBar = !spApi.showChunkBar
+}
+
+function saveChunkletToSource(html: string, slide: number) {
+  const file = window.location.pathname
+  fetch('/__sp_edit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'insert-chunk', html, slide, file }),
+  }).catch(() => {})
+}
+
+const dragStart = ref({ x: 0, y: 0 })
+const dragCurrent = ref({ x: 0, y: 0 })
+const dragging = ref(false)
+
+const previewStyle = computed(() => {
+  const x = Math.min(dragStart.value.x, dragCurrent.value.x)
+  const y = Math.min(dragStart.value.y, dragCurrent.value.y)
+  const w = Math.abs(dragCurrent.value.x - dragStart.value.x)
+  const h = Math.abs(dragCurrent.value.y - dragStart.value.y)
+  return { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' }
+})
+
+function onChunkletPointerDown(e: PointerEvent) {
+  e.preventDefault()
+  dragStart.value = slideCoords(e)
+  dragCurrent.value = { ...dragStart.value }
+  dragging.value = true
+}
+
+function onChunkletPointerMove(e: PointerEvent) {
+  if (!dragging.value) return
+  dragCurrent.value = slideCoords(e)
+}
+
+function onChunkletPointerUp(e: PointerEvent) {
+  if (!dragging.value) return
+  dragging.value = false
+  const chunk = spApi.selectedChunklet
+  if (!chunk) return
+  const mode = chunkPlacementMode(chunk)
+  const start = dragStart.value
+  const end = dragCurrent.value
+  const dx = Math.abs(end.x - start.x)
+  const dy = Math.abs(end.y - start.y)
+  const isClick = dx < 5 && dy < 5
+
+  if (mode === 'drag' && !isClick) {
+    const x = Math.min(start.x, end.x)
+    const y = Math.min(start.y, end.y)
+    const w = Math.abs(end.x - start.x)
+    const h = Math.abs(end.y - start.y)
+    insertChunk(chunk, { x, y, w, h })
+  } else {
+    insertChunk(chunk, { x: start.x, y: start.y })
+  }
+}
+
+function cancelChunkletPlacement() {
+  spApi.chunkletMode = false
+  spApi.selectedChunklet = null
+  dragging.value = false
+}
+
+watch(() => spApi.chunkletMode, (on) => {
+  if (on) {
+    window.addEventListener('keydown', onChunkletKeydown)
+  } else {
+    window.removeEventListener('keydown', onChunkletKeydown)
+  }
+})
+
+function onChunkletKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') cancelChunkletPlacement()
 }
 
 function updateSlides(templateHtml: string) {

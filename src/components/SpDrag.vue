@@ -541,7 +541,7 @@ function handleOutsideClick(e: MouseEvent) {
 
 .sp-drag-rotate-handle {
   position: absolute;
-  top: -22px;
+  top: -37px;
   left: calc(50% - 8px);
   width: 20px;
   height: 20px;

@@ -13,6 +13,7 @@ export type NavigationActions = Navigation & {
   onBlackoutToggle?: () => void
   onBlackoutExit?: () => void
   onDevPaneToggle?: () => void
+  onChunkBarToggle?: () => void
 }
 
 export function useNavigation(

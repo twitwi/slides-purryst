@@ -1,4 +1,4 @@
-export type { SPSlidesOptions, SlideData, Navigation, PresenterState, Transformer } from './types'
+export type { SPSlidesOptions, SlideData, ChunkDef, Navigation, PresenterState, Transformer } from './types'
 
 export { createSlidesPurryst } from './core'
 export { exportStandalone } from './export'
@@ -14,6 +14,8 @@ export { useStorage, resetConfig } from './composables/useStorage'
 export type { SpStorageConfig } from './composables/useStorage'
 export { useSlideTree } from './composables/useSlideTree'
 export type { TocItem } from './composables/useSlideTree'
+export { parseChunklets, substituteParams, chunkPlacementMode } from './composables/useChunklets'
+export type { PlacementMode } from './composables/useChunklets'
 
 export { default as SpPresentation } from './components/SpPresentation.vue'
 export { default as SpSlide } from './components/SpSlide.vue'

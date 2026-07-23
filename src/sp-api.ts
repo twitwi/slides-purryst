@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
+import type { ChunkDef } from './types'
 
 export const spApi = reactive({
   navLocked: false,
@@ -20,6 +21,10 @@ export const spApi = reactive({
   config: {} as Record<string, unknown>,
   _animCommands: {} as Record<string, AnimCommandHandler>,
   _animActionTypes: {} as Record<string, ActionTypeHandler>,
+  showChunkBar: false,
+  chunkletDefs: [] as ChunkDef[],
+  chunkletMode: false,
+  selectedChunklet: null as ChunkDef | null,
 })
 
 export const exportInitOptions: Record<string, unknown> = {}

@@ -49,6 +49,12 @@ export interface SPSlidesOptions {
   activate?: (api: PluginAPI) => void
 }
 
+export interface ChunkDef {
+  name: string
+  params: string[]
+  html: string
+}
+
 export type Transformer = (root: Element) => void
 
 export interface PresenterState {
