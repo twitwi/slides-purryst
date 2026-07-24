@@ -254,7 +254,6 @@ const builtinCommands: Record<string, AnimCommandHandler> = {
     countSteps: () => 1,
     parse(argsStr) {
       const args = parseArgs(argsStr)
-      console.log('play args', args)
       const sel = args[0] || 'video'
       const rewind = args.slice(1).includes('rewind')
       return [{ type: 'play', selector: sel, rewind }]

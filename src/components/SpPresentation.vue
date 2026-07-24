@@ -234,7 +234,7 @@ import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onU
 import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, processSlideHtml, fixVoidElementsHtml, annotateEditableWithIndex } from '../composables/useSteps'
-
+import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes'
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
@@ -831,7 +831,8 @@ function insertChunk(chunk: typeof spApi.selectedChunklet, params: Record<string
   if (!chunk) return
   const html = substituteParams(chunk.html, params)
   const idx = currentIndex.value
-  const oldHtml = slides.value[idx].html
+  const slide = slides.value[idx]
+  const oldHtml = slide.html
   slides.value = slides.value.map((s, i) =>
     i === idx ? { ...s, html: oldHtml + '\n' + html } : s
   )
@@ -839,7 +840,7 @@ function insertChunk(chunk: typeof spApi.selectedChunklet, params: Record<string
   contentVersion.value++
   spApi.chunkletMode = false
   spApi.selectedChunklet = null
-  saveChunkletToSource(html, idx)
+  saveChunkletToSource(html, slide.editableIndex)
 }
 
 function selectChunk(chunk: ChunkDef) {
@@ -855,13 +856,14 @@ function toggleChunkBar() {
   spApi.showChunkBar = !spApi.showChunkBar
 }
 
-function saveChunkletToSource(html: string, slide: number) {
-  ///////////// TODO ALSO RESOLVE THE STACK FILE ETC
-  const file = window.location.pathname
+function saveChunkletToSource(html: string, editableIndex: number) {
+  const slideEl = transitionWrapEl.value?.querySelector('.sp-slide-current') as HTMLElement | null
+  const targetEl = transitionWrapEl.value?.querySelector('.sp-slide-current [data-source-file-push] + *') ?? slideEl as HTMLElement | null
+  const file = (slideEl ? getSourceFileFromDOMLocation(targetEl as HTMLElement) : null)
   fetch('/__sp_edit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action: 'insert-chunk', html, slide, file }),
+    body: JSON.stringify({ action: 'insert-chunk', html, file, editableIndex }),
   }).catch(() => {})
 }
 

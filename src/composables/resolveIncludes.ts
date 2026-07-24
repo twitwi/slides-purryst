@@ -63,14 +63,14 @@ export async function resolveTopIncludes(
     const pushPath = `<span style="display:none" data-source-file-push="${src}"></span>`
     const popPath = `<span style="display:none" data-source-file-pop></span>`
     // add pushPath just after every <sp-slide> and popPath just before every </sp-slide> in the content
-    const contentWithPushPop = content.replace(/<sp-slide[\s>]/g, match => match + pushPath)
+    const contentWithPushPop = content.replace(/<sp-slide[^>]*>/g, match => match + pushPath)
       .replace(/<\/sp-slide>/g, match => popPath + match)
     result = result.replace(re, contentWithPushPop)
   }
   return result
 }
 
-export function getSourcePointFromDOMLocation(e: HTMLElement | null): string | null {
+export function getSourceFileFromDOMLocation(e: HTMLElement | null): string | null {
   if (!e) return null
 
   const sourceStack = [] as string[]

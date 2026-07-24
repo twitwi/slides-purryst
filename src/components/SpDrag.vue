@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
 import { spApi } from '../sp-api'
-import { getSourcePointFromDOMLocation } from '../composables/resolveIncludes';
+import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes';
 
 const slideIndex = inject('slideIndex', ref(0))
 
@@ -151,10 +151,8 @@ function saveToSource() {
 
   const hasAt = !!props.at
   const dragId = el.value?.getAttribute('data-drag-id')
-  const file = getSourcePointFromDOMLocation(el.value)
+  const file = getSourceFileFromDOMLocation(el.value)
   
-  console.log(file, props.editableIndex)
-
   fetch('/__sp_edit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -5,6 +5,9 @@
 </template>
 
 <script setup lang="ts">
+//
+// This component renders a slide, it is NOT handling the sp-slide from the source sp-content
+//
 import { computed, defineComponent, provide, shallowRef, watch } from 'vue'
 import type { Component } from 'vue'
 import type { SlideData } from '../types'

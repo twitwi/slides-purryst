@@ -77,6 +77,7 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
 
     slides.push({
       html,
+      editableIndex: parseInt(el.getAttribute(':editable-index') || '0', 10),
       num: parseInt(el.getAttribute('num') || '0', 10) || i + 1,
       steps: parseInt(el.getAttribute('steps') || '0', 10),
       transition: el.getAttribute('transition') || '',

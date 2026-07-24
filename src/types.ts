@@ -22,6 +22,7 @@ export interface PluginAPI {
 
 export interface SlideData {
   html: string
+  editableIndex: number
   num: number
   steps: number
   transition: string

@@ -114,27 +114,26 @@ export default defineConfig(({ mode }) => {
                 // === Chunklet insertion ===
                 if (data.action === 'insert-chunk' && existsSync(filePath)) {
                   const content = readFileSync(filePath, 'utf-8')
-                  const slideIndex = typeof data.slide === 'number' ? data.slide : -1
-                  if (slideIndex < 0) {
-                    res.writeHead(400)
-                    res.end(JSON.stringify({ error: 'slide index required' }))
-                    return
-                  }
 
-                  const slideRegex = /<sp-slide[\s>]/g
-                  let slideCount = 0
-                  let slideMatch
+                  const EDITABLE_RE = /<(sp-drag|sp-slide)(\s[^>]*)?(\/?)>/gi
+                  let editCount = 0
+                  let editMatch
                   let slideStart = 0
-                  while ((slideMatch = slideRegex.exec(content)) !== null) {
-                    if (slideCount === slideIndex) {
-                      slideStart = slideMatch.index
+                  while ((editMatch = EDITABLE_RE.exec(content)) !== null) {
+                    if (editCount === editableIndex) {
+                      if (editMatch[1] !== 'sp-slide') {
+                        res.writeHead(400)
+                        res.end(JSON.stringify({ error: `Editable index ${editableIndex} is not a slide` }))
+                        return
+                      }
+                      slideStart = editMatch.index
                       break
                     }
-                    slideCount++
+                    editCount++
                   }
-                  if (slideCount !== slideIndex) {
+                  if (!editMatch) {
                     res.writeHead(404)
-                    res.end(JSON.stringify({ error: `Slide index ${slideIndex} not found` }))
+                    res.end(JSON.stringify({ error: `Editable index ${editableIndex} not found` }))
                     return
                   }
 
@@ -161,7 +160,7 @@ export default defineConfig(({ mode }) => {
 
                   const updated = content.slice(0, closeIdx) + '\n' + indentedHtml + '\n' + ' '.repeat(baseIndent) + content.slice(closeIdx)
                   writeFileSync(filePath, updated, 'utf-8')
-                  console.log(`[sp-edit] Inserted chunk into slide #${slideIndex}`)
+                  console.log(`[sp-edit] Inserted chunk into editable position #${editableIndex}`)
                   res.writeHead(200, { 'Content-Type': 'application/json' })
                   res.end(JSON.stringify({ ok: true }))
                   return
@@ -174,15 +173,27 @@ export default defineConfig(({ mode }) => {
                 const newAt = data.newAttrs?.trim()
                 const isInsert = oldAt === '__sp_insert__'
 
-                // find the editableIndex+1 th sp-drag element in the file
+                // find the editableIndex-th editable element (sp-drag|sp-slide) in the file
+                const TAG_RE = /<(sp-drag|sp-slide)(\s[^>]*)?(\/?)>/gi
+                let editMatch
+                let editCount = 0
                 let blockStart = -1
-                for (let i = 0; i <= editableIndex; i++) {
-                  blockStart = content.indexOf('<sp-drag', blockStart + 1)
-                  if (blockStart === -1) {
-                    res.writeHead(404)
-                    res.end(JSON.stringify({ error: `Could not find sp-drag element for editable index ${editableIndex}` }))
-                    return
+                while ((editMatch = TAG_RE.exec(content)) !== null) {
+                  if (editCount === editableIndex) {
+                    if (editMatch[1] !== 'sp-drag') {
+                      res.writeHead(400)
+                      res.end(JSON.stringify({ error: `Editable index ${editableIndex} is not a drag element` }))
+                      return
+                    }
+                    blockStart = editMatch.index
+                    break
                   }
+                  editCount++
+                }
+                if (blockStart === -1) {
+                  res.writeHead(404)
+                  res.end(JSON.stringify({ error: `Could not find editable element for index ${editableIndex}` }))
+                  return
                 }
                 const blockEnd = content.indexOf('</sp-drag>', blockStart)
                 if (blockEnd === -1) {

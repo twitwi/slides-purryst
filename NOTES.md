@@ -5,9 +5,7 @@
 
 ## TODO Now for v0 (no export, no typst)
 
-- [ ] z-index for chunklet bar? cannot click if slide is in front due to aspect ratio
 - [ ] should watch included fragments to refresh hrm
-- [ ] fix chunklet insertion for new __sp_edit convention
 
 ## TODO v1 (typst simplest syntax)
 

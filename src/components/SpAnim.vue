@@ -116,7 +116,6 @@ function applyStep(step: number) {
   for (const a of actions) {
     const handler = spApi._animActionTypes[a.type]
     if (handler) {
-      //console.log("Applying action", a, "at step", step, "in container", container, "with delayedBy", a.delayedBy)
       if (a.delayedBy) {
         setTimeout(() => {
           handler.apply(container, a)
