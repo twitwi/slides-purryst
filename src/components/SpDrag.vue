@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
 import { spApi } from '../sp-api'
-import { getSourcePointFromDOMLocation } from '@/composables/resolveIncludes';
+import { getSourcePointFromDOMLocation } from '../composables/resolveIncludes';
 
 const slideIndex = inject('slideIndex', ref(0))
 
