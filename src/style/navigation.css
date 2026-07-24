@@ -225,6 +225,8 @@
   background: var(--sp-surface);
   align-items: center;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .sp-chunk-bar-btn {
