@@ -3,11 +3,27 @@
 
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 
-## TODO Now
+## TODO Now for v0 (no export, no typst)
 
-- [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
-- [ ] todo fix: on live update, previous slide does not get reanimated to the last step, also shiki not rerun
-- [ ] sp-clicks with no wrapper, also as a directive (in addition)
+- [ ] todo fix: (might be fixed already) on live update, previous slide does not get reanimated to the last step, also shiki not rerun
+- [ ] z-index for chunklet bar? cannot click if slide is in front due to aspect ratio
+- [ ] should watch included fragments to refresh hrm
+
+## TODO v1 (typst simplest syntax)
+
+- [ ] typst v1 with a descent syntax (might consider later the implicit separator approach or a shortcut for commands )
+- [ ] typst math
+- [ ] typst cetz
+
+## TODO v2
+
+- [ ] should cache also be in a script text and not in a template? probably
+- [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
+
+## TODO typst syntax
+
+- [ ] ponder wether hacking a more compact than #anim('......') would be of any use
+- [ ] same for #slide[...] #slide[...] vs ... SOMESEP --- or maybe ... #slide ...
 
 ## TOREVIEW
 
@@ -20,16 +36,18 @@
 
 ## TODO
 
+- [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
+- [ ] sp-clicks with no wrapper, also as a directive (in addition)
 - [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
 - [ ] (anim) can sp-clicks be converted to @children (if wrapper...) (or even sp-pauses if not but then beware of e.g. a span in ul... so might still benefit from the data-sp-step approach) as a preprocessing like sp-pause? and could it rather be a directive?
 - [ ] (perf) do Map based caching of processHtml() (careful, might want a global state... or not in purr... handle it in purryst if any advanced thing... but maybe e.g. a js bibliography would need to be global and not per slide...)
 - [ ] (anim) is at=2 intuitive or offset by one? (at=0 intuitively means play right away, at=2 should mean after 2 steps)
 - [ ] (anim) along path, viewbox etc
-- [ ] (edit) allow adding a drag, setting its background (e.g. a whiteout-ing box) and setting its id (for sp-anim purpose), need to do it html and typst (vite updater)
-- [ ] (edit) allow to have a library of custom chunks that can be added, typically <template id="sp-chunklets"><sp-chunk name="greybox"><sp-drag at="$x|$y|$w|$h" style="background: grey;">...., where it can be unparametrized, click based (if x or y found), box based if w or h found)
+- [ ] (edit) allow adding a drag, setting its background (e.g. a whiteout-ing box) and setting its id (for sp-anim purpose), need to do it html and typst (vite updater) -> maybe it is a custom component that allow this interactivity on itself, need to export/factor edit/replace functionality
 - [ ] (edit) allow pasting image, by default added as a drag?
 - [ ] (edit) allow changing image path?
 - [ ] (edit) can we have a button to "view source" in vs code or something (using some vscode standard extension or api?)
+- [ ] (edit) allow chunklets to use a prompt:path in params that can then be used for $path, prompts may be filled from clipboard? to allow an image chunklet, that could be made draggable by default because insert at the end is not so useful.
 
 
 - [ ] consider a sp-script to avoid closing </script> in the "template"... but do we want script...? when do they get run etc? maybe rather need a very generic anim that accepts code directly?

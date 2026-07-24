@@ -8,7 +8,7 @@ export interface SlidesPlugin {
   name: string
   order?: number
   disable?: FacetName[]
-  activate: (api: PluginAPI) => void | (() => void)
+  activate: (api: PluginAPI) => void | Promise<void> | (() => void)
 }
 
 export interface PluginAPI {

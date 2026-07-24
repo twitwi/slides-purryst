@@ -57,7 +57,7 @@ ${slidesHtml}
 ${cacheTemplate}
 <script src="./slides-purryst.bundle.js"></script>
 <script>
-SlidesPurryst.createSlidesPurryst(${optsJson}).mount()
+(async () => { await SlidesPurryst.createSlidesPurryst(${optsJson}) })()
 </script>
 </body>
 </html>`

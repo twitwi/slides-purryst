@@ -233,7 +233,7 @@
 import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick } from 'vue'
 import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
-import { useSteps, processSlideHtml, fixVoidElementsHtml } from '../composables/useSteps'
+import { useSteps, processSlideHtml, fixVoidElementsHtml, annotateEditableWithIndex } from '../composables/useSteps'
 
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
@@ -308,6 +308,7 @@ provide('slideIndex', currentIndex)
 provide('contentVersion', contentVersion)
 provide('slides', slides)
 provide('goTo', goTo)
+provide('sp-components', props.components)
 
 const direction = ref(1)
 const shouldSwap = ref(false)
@@ -855,6 +856,7 @@ function toggleChunkBar() {
 }
 
 function saveChunkletToSource(html: string, slide: number) {
+  ///////////// TODO ALSO RESOLVE THE STACK FILE ETC
   const file = window.location.pathname
   fetch('/__sp_edit', {
     method: 'POST',
@@ -929,7 +931,7 @@ function onChunkletKeydown(e: KeyboardEvent) {
 }
 
 function updateSlides(templateHtml: string) {
-  const fixedHtml = fixVoidElementsHtml(templateHtml)
+  const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(templateHtml))
   const tmp = document.createElement('div')
   tmp.innerHTML = fixedHtml
   const newSlides = parseElementToSlides(tmp)

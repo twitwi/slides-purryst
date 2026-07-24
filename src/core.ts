@@ -15,7 +15,8 @@ import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore } from './composables/includeCache'
-import { setDefaultClicksAt, fixVoidElementsHtml } from './composables/useSteps'
+import { setDefaultClicksAt, fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
+import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
@@ -38,7 +39,7 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
     : (el ?? null)
 }
 
-export function createSlidesPurryst(options: SPSlidesOptions = {}) {
+export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, clicksAt, plugins, activate } = options
 
   const scriptEl = document.getElementById('sp-content') as HTMLScriptElement | null
@@ -48,7 +49,8 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   let contentRoot: Element | null = null
   if (scriptEl) {
     const rawHtml = scriptEl.textContent || ''
-    const fixedHtml = fixVoidElementsHtml(rawHtml)
+    const resolvedHtml = await resolveTopIncludes(rawHtml)
+    const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
     contentRoot = document.createElement('div')
     contentRoot.innerHTML = fixedHtml
   }
@@ -128,9 +130,10 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   if (contentRoot) {
     injectGlobalStyles(contentRoot)
+    const preloadPromises: Promise<void>[] = []
     contentRoot.querySelectorAll('sp-include').forEach(el => {
       const src = el.getAttribute('src')
-      if (src) preloadInclude(src)
+      if (src) preloadPromises.push(preloadInclude(src))
     })
     const imgSrcs = new Set<string>()
     contentRoot.querySelectorAll<HTMLImageElement>('img[src]').forEach(el => {
@@ -143,11 +146,12 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     })
     imgSrcs.forEach(src => {
       if (src.match(/\.svg(\?|#|$)/i)) {
-        preloadInclude(src)
+        preloadPromises.push(preloadInclude(src))
       } else {
-        preloadBinary(src)
+        preloadPromises.push(preloadBinary(src))
       }
     })
+    await Promise.all(preloadPromises)
   }
 
   const merged = { ...builtins, ...components }
@@ -177,7 +181,7 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   }
   const sorted = allPlugins.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
   for (const plugin of sorted) {
-    registry.register(plugin)
+    await registry.register(plugin)
   }
 
   const app = createApp(SpPresentation, {
@@ -200,8 +204,8 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   }
   const vm = app.mount(target) as any
 
-  ;(app as any).use = (plugin: SlidesPlugin) => {
-    registry.register(plugin)
+  ;(app as any).use = async (plugin: SlidesPlugin) => {
+    await registry.register(plugin)
     vm.rebuildKeymap?.()
     return app
   }
@@ -216,9 +220,12 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
           const m = html.match(/<script\s+type="text\/html"\s+id="sp-content">([\s\S]*?)<\/script>/)
           if (m && m[1] !== lastTemplateHtml) {
             lastTemplateHtml = m[1]
-            const fixedHtml = fixVoidElementsHtml(m[1])
-            vm.updateSlides?.(fixedHtml)
-            reapplyGlobalStyles(fixedHtml)
+            ;(async () => {
+              const resolvedHtml = await resolveTopIncludes(m[1])
+              const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
+              vm.updateSlides?.(fixedHtml)
+              reapplyGlobalStyles(fixedHtml)
+            })().catch(() => {})
           }
         })
         .catch(() => {})

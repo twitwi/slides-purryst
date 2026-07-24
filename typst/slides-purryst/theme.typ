@@ -47,11 +47,11 @@
           "data-author": author,
         ))
         #if useModule [
-          #let scriptSrc = "import { createSlidesPurryst } from \"" + jsPath + "\"\ncreateSlidesPurryst()"
+          #let scriptSrc = "import { createSlidesPurryst } from \"" + jsPath + "\"\nawait createSlidesPurryst()"
           #html.elem("script", attrs: (type: "module"))[#text(scriptSrc)]
         ] else [
           #html.elem("script", attrs: (src: jsPath))[]
-          #html.elem("script")[SlidesPurryst.createSlidesPurryst()]
+          #html.elem("script")[(async () => { await SlidesPurryst.createSlidesPurryst() })()]
         ]
       ]
     ]

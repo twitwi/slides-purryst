@@ -39,10 +39,24 @@ function parseJumpAt(at: string | null): { relative: boolean; value: number } {
 
 const VOID_TAGS = 'sp-anim|sp-jump|sp-pause|sp-meanwhile|sp-toc|sp-include|sp-svg'
 
-const VOID_SELF_CLOSING_RE = new RegExp(`<(${VOID_TAGS})(\\s[^>]*)?\\/>`, 'gi')
+const VOID_SELF_CLOSING_RE = new RegExp(`<(${VOID_TAGS})(\\s[^>]*)?/>`, 'gi')
+
+const EDITABLE_RE = new RegExp(`<(sp-drag)(\\s[^>]*)?(/?)>`, 'gi')
 
 export function fixVoidElementsHtml(html: string): string {
   return html.replace(VOID_SELF_CLOSING_RE, '<$1$2></$1>')
+}
+
+export function annotateEditableWithIndex(html: string): string {
+  let index = 0
+  return html.replace(EDITABLE_RE, (match, tag, attrs, maybeSlash) => {
+    const annotated = `<${tag} :editable-index="${index}"${maybeSlash || ''}${attrs || ''}>`
+    index++
+    if ((attrs??'').includes(':editable-index=')) {
+      return match
+    }
+    return annotated
+  })
 }
 
 function processAliases(tmp: Element) {

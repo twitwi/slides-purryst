@@ -18,7 +18,7 @@ export const registry = {
   _domTransforms: [] as Transformer[],
   _teardowns: new Map<string, (() => void)[]>(),
 
-  register(plugin: SlidesPlugin) {
+  async register(plugin: SlidesPlugin) {
     this._plugins.push(plugin)
     const noop = () => {}
     const d = plugin.disable ?? []
@@ -30,7 +30,8 @@ export const registry = {
       addChunklet:       d.includes('chunklet')   ? noop : (def: ChunkDef) => spApi.chunkletDefs.push(def),
       addDomTransform:   d.includes('domTransform') ? noop : (fn: Transformer) => this._domTransforms.push(fn),
     }
-    const teardown = plugin.activate(api)
+    const result = plugin.activate(api)
+    const teardown = result instanceof Promise ? await result : result
     if (teardown) {
       const t = this._teardowns.get(plugin.name) ?? []
       t.push(teardown)

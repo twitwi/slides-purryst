@@ -162,6 +162,25 @@
       <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
   </sp-slide>
+
+  <sp-slide>
+    <h3>Include slide fragments</h3>
+    <p>Before include</p>
+    <sp-include src="./demo-fragment.html" />
+    <p>After include</p>
+    <sp-drag at="630|666|864.3488360415503|181.24843314556188|33.1">
+      <div class="eg-fill eg-center" style="background: var(--sp-gray-50);">
+        Draggable in slide 
+      </div>
+    </sp-drag>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Include the same fragment</h3>
+    <sp-include src="./demo-fragment.html" />
+  </sp-slide>
+
+  <sp-include src="./demo-subpart.html" />
   
   <sp-slide>
     <h3>Presenter View and Slide Notes</h3>
@@ -180,11 +199,11 @@
     <pre><code class="language-typescript">
 import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
-createSlidesPurryst({
+await createSlidesPurryst({
   components: { 'my-counter': Counter },
 })
     </code></pre>
-  </sp-slide>
+    </sp-slide>
 
 
 
@@ -450,7 +469,7 @@ createSlidesPurryst({
     <div class="d4">Fourth — after 3rd pause</div>
     <p>(<code>sp-pause</code> is an alias for <code>sp-jump at="+1"</code>)</p>
   </sp-slide>
-
+  
   <sp-slide>
     <h3><code>sp-meanwhile</code> — parallel tracks</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
@@ -653,7 +672,7 @@ const p = fakePlugin()
 // override order (>= 100 means after custom activate() below)
 p.order = 100
 
-createSlidesPurryst({
+await createSlidesPurryst({
   components: { 'my-counter': Counter },
   seed: 12345678+45,
   cacheIgnore: ['huge-.*\\.svg$'],  // don't inline huge SVGs in the output bundle

@@ -58,6 +58,7 @@ export default defineConfig(({ mode }) => {
               try {
                 const data = JSON.parse(body)
                 const filePath = resolve(__dirname, './' + data.file)
+                const editableIndex = data.editableIndex
                 const useTypst = filePath.endsWith('.typ')
 
                 console.log(filePath)
@@ -172,33 +173,25 @@ export default defineConfig(({ mode }) => {
                 const oldAt = data.oldAttrs?.trim()
                 const newAt = data.newAttrs?.trim()
                 const isInsert = oldAt === '__sp_insert__'
-                const slideIndex = typeof data.slide === 'number' ? data.slide : -1
 
-                let slideStart = 0
-                let sliceEnd = content.length
-                if (slideIndex >= 0) {
-                  const slideRegex = /<sp-slide[\s>]/g
-                  let slideCount = 0
-                  let slideMatch
-                  while ((slideMatch = slideRegex.exec(content)) !== null) {
-                    if (slideCount === slideIndex) {
-                      slideStart = slideMatch.index
-                      break
-                    }
-                    slideCount++
-                  }
-                  if (slideCount !== slideIndex) {
+                // find the editableIndex+1 th sp-drag element in the file
+                let blockStart = -1
+                for (let i = 0; i <= editableIndex; i++) {
+                  blockStart = content.indexOf('<sp-drag', blockStart + 1)
+                  if (blockStart === -1) {
                     res.writeHead(404)
-                    res.end(JSON.stringify({ error: `Slide index ${slideIndex} not found` }))
+                    res.end(JSON.stringify({ error: `Could not find sp-drag element for editable index ${editableIndex}` }))
                     return
                   }
-                  const nextSlideRegex = /<sp-slide[\s>]/g
-                  nextSlideRegex.lastIndex = slideStart + 1
-                  const nextMatch = nextSlideRegex.exec(content)
-                  sliceEnd = nextMatch ? nextMatch.index : content.length
+                }
+                const blockEnd = content.indexOf('</sp-drag>', blockStart)
+                if (blockEnd === -1) {
+                  res.writeHead(404)
+                  res.end(JSON.stringify({ error: `Could not find closing sp-drag tag for editable index ${editableIndex}` }))
+                  return
                 }
 
-                const slice = content.slice(slideStart, sliceEnd)
+                const slice = content.slice(blockStart, blockEnd)
 
                 if (isInsert) {
                   const newMatch = newAt?.match(/at="([^"]*)"/)
@@ -218,13 +211,9 @@ export default defineConfig(({ mode }) => {
                   const attrs = insertMatch[1]
                   const closer = insertMatch[2]
                   let updated: string
-                  if (slideIndex >= 0) {
-                    const before = content.slice(slideStart, sliceEnd)
-                    const after = before.replace(insertRegex, `<sp-drag${attrs} at="${newVal}"${closer}`)
-                    updated = content.slice(0, slideStart) + after + content.slice(sliceEnd)
-                  } else {
-                    updated = content.replace(insertRegex, `<sp-drag$1 at="${newVal}"$2`)
-                  }
+                  const before = content.slice(blockStart, blockEnd)
+                  const after = before.replace(insertRegex, `<sp-drag${attrs} at="${newVal}"${closer}`)
+                  updated = content.slice(0, blockStart) + after + content.slice(blockEnd)
                   if (updated === content) {
                     res.writeHead(404)
                     res.end(JSON.stringify({ error: 'Insertion produced no change' }))
@@ -248,15 +237,11 @@ export default defineConfig(({ mode }) => {
                 const tagRegex = new RegExp(`(<sp-drag\\s[^>]*?at=")${oldVal}(")`)
 
                 let match: RegExpExecArray | null = null
-                if (slideIndex >= 0) {
-                  tagRegex.lastIndex = 0
-                  const sliceMatch = tagRegex.exec(slice)
-                  if (sliceMatch) {
-                    match = sliceMatch
-                    match.index = slideStart + sliceMatch.index
-                  }
-                } else {
-                  match = tagRegex.exec(content)
+                tagRegex.lastIndex = 0
+                const sliceMatch = tagRegex.exec(slice)
+                if (sliceMatch) {
+                  match = sliceMatch
+                  match.index = blockStart + sliceMatch.index
                 }
 
                 if (!match) {
@@ -277,13 +262,9 @@ export default defineConfig(({ mode }) => {
                 const after = `${match[1]}${newVal}${match[2]}`
 
                 let updated: string
-                if (slideIndex >= 0) {
-                  updated = content.slice(0, slideStart) +
-                    content.slice(slideStart, sliceEnd).replace(before, after) +
-                    content.slice(sliceEnd)
-                } else {
-                  updated = content.replace(before, after)
-                }
+                updated = content.slice(0, blockStart) +
+                  content.slice(blockStart, blockEnd).replace(before, after) +
+                  content.slice(blockEnd)
 
                 if (updated === content) {
                   res.writeHead(404)

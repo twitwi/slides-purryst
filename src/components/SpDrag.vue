@@ -7,6 +7,7 @@
     @dblclick="toggleEdit"
     @mousedown="startDrag"
     @touchstart="onTouchStart"
+    :data-debug="editableIndex"
   >
     <div class="sp-drag-content" :class="{ 'sp-drag-content-blocked': editing }">
       <slot />
@@ -32,6 +33,7 @@
 <script setup lang="ts">
 import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
 import { spApi } from '../sp-api'
+import { getSourcePointFromDOMLocation } from '@/composables/resolveIncludes';
 
 const slideIndex = inject('slideIndex', ref(0))
 
@@ -42,6 +44,7 @@ const props = withDefaults(defineProps<{
   w?: number | string
   h?: number | string
   rotate?: number | string
+  editableIndex?: number
 }>(), {
   at: '',
   x: 0,
@@ -49,6 +52,7 @@ const props = withDefaults(defineProps<{
   w: 'auto',
   h: 'auto',
   rotate: 0,
+  editableIndex: -1,
 })
 
 const parsedAt = computed(() => {
@@ -147,33 +151,9 @@ function saveToSource() {
 
   const hasAt = !!props.at
   const dragId = el.value?.getAttribute('data-drag-id')
-  const sourceStack = [] as string[]
+  const file = getSourcePointFromDOMLocation(el.value)
   
-  function buildSourceStack(e: HTMLElement) {
-    function process(e: Element) {
-        const push = e.getAttribute('data-source-file-push')
-        if (push) {
-          sourceStack.push(push)
-        }
-        if (e.hasAttribute('data-source-file-pop')) {
-          sourceStack.pop()
-        }
-    }
-    const ofInterest = '[data-source-file-push],[data-source-file-pop]'
-    if (e.parentElement === null) return
-    buildSourceStack(e.parentElement)
-    let s = e.parentElement?.children[0]!
-    while (s !== e && s !== null) {
-      if (s.matches(ofInterest)) {
-        process(s)
-      }
-      s.querySelectorAll(ofInterest).forEach(process)
-      s = s?.nextElementSibling!
-    }
-  }
-  if (el.value) buildSourceStack(el.value)
-  const file = sourceStack.slice(-1)[0]
-  console.log(sourceStack, file)
+  console.log(file, props.editableIndex)
 
   fetch('/__sp_edit', {
     method: 'POST',
@@ -182,6 +162,7 @@ function saveToSource() {
       oldAttrs: hasAt ? oldAttrs : '__sp_insert__',
       newAttrs,
       file,
+      editableIndex: props.editableIndex,
       slide: slideIndex.value,
       dragId,
     }),

@@ -48,7 +48,7 @@ Create `index.html`:
 </script>
 <script type="module">
 import { createSlidesPurryst } from 'sp'
-createSlidesPurryst()
+await createSlidesPurryst()
 </script>
 </body>
 </html>
@@ -108,7 +108,7 @@ Create `index.html`:
 <script type="module">
 import { createSlidesPurryst } from 'slides-purryst'
 import 'slides-purryst/style.css'
-createSlidesPurryst()
+await createSlidesPurryst()
 </script>
 </body>
 </html>
@@ -147,7 +147,7 @@ Download and extract `slides-purryst.zip`, then create `index.html`:
 <script type="module" src="slides-purryst.es.js"></script>
 <script type="module">
 import { createSlidesPurryst } from './slides-purryst.es.js'
-createSlidesPurryst()
+await createSlidesPurryst()
 </script>
 </body>
 </html>

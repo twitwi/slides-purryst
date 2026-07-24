@@ -157,7 +157,7 @@
     <pre><code class="language-typescript">
 import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
-createSlidesPurryst({
+await createSlidesPurryst({
   components: { 'my-counter': Counter },
 })
     </code></pre>
@@ -498,7 +498,7 @@ createSlidesPurryst({
 <script src="./slides-purryst.bundle.js"></script>
 <script type="module">
 import Counter from './Counter.vue'
-SlidesPurryst.createSlidesPurryst({
+await SlidesPurryst.createSlidesPurryst({
   components: { 'my-counter': Counter },
   seed: 12345678+90,
 })
