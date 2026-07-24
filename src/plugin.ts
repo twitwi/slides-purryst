@@ -1,9 +1,8 @@
-import type { SlidesPlugin, PluginAPI } from './types'
+import type { SlidesPlugin, PluginAPI, Transformer, ChunkDef } from './types'
 import type { KeymapSetupFn } from './keymap/types'
 import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
 import { registerAnimCommand, registerAnimActionType } from './animCommands'
 import { spApi } from './sp-api'
-import type { ChunkDef } from './types'
 
 export function injectStyle(css: string) {
   const el = document.createElement('style')
@@ -16,6 +15,7 @@ export const registry = {
   _keymapSetups: [] as KeymapSetupFn[],
   _animCommands: [] as { name: string; handler: AnimCommandHandler }[],
   _animActionTypes: [] as { type: string; handler: ActionTypeHandler }[],
+  _domTransforms: [] as Transformer[],
   _teardowns: new Map<string, (() => void)[]>(),
 
   register(plugin: SlidesPlugin) {
@@ -23,11 +23,12 @@ export const registry = {
     const noop = () => {}
     const d = plugin.disable ?? []
     const api: PluginAPI = {
-      addKeymapSetup:    d.includes('keymap')  ? noop : (fn: KeymapSetupFn) => this._keymapSetups.push(fn),
-      addAnimCommand:    d.includes('anim')    ? noop : (name: string, handler: AnimCommandHandler) => this._animCommands.push({ name, handler }),
-      addAnimActionType: d.includes('anim')    ? noop : (type: string, handler: ActionTypeHandler) => this._animActionTypes.push({ type, handler }),
-      injectStyle:       d.includes('style')   ? noop : injectStyle,
-      addChunklet:       d.includes('chunklet') ? noop : (def: ChunkDef) => spApi.chunkletDefs.push(def),
+      addKeymapSetup:    d.includes('keymap')     ? noop : (fn: KeymapSetupFn) => this._keymapSetups.push(fn),
+      addAnimCommand:    d.includes('anim')       ? noop : (name: string, handler: AnimCommandHandler) => this._animCommands.push({ name, handler }),
+      addAnimActionType: d.includes('anim')       ? noop : (type: string, handler: ActionTypeHandler) => this._animActionTypes.push({ type, handler }),
+      injectStyle:       d.includes('style')      ? noop : injectStyle,
+      addChunklet:       d.includes('chunklet')   ? noop : (def: ChunkDef) => spApi.chunkletDefs.push(def),
+      addDomTransform:   d.includes('domTransform') ? noop : (fn: Transformer) => this._domTransforms.push(fn),
     }
     const teardown = plugin.activate(api)
     if (teardown) {

@@ -17,7 +17,7 @@ export interface AnimActionWithClass extends ActionWithSelector {
 }
 
 export interface AnimCommandHandler {
-  countSteps(args: string, htmlEl?: HTMLElement): number
+  countSteps(args: string, htmlEl?: Element): number
   parse(args: string): AnimAction[]
   expand?(args: string, container: Element): AnimAction[][]
   init?(args: string, container: Element): void

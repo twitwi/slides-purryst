@@ -233,7 +233,7 @@
 import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick } from 'vue'
 import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
-import { useSteps, processSlideHtml } from '../composables/useSteps'
+import { useSteps, processSlideHtml, fixVoidElementsHtml } from '../composables/useSteps'
 
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
@@ -929,8 +929,9 @@ function onChunkletKeydown(e: KeyboardEvent) {
 }
 
 function updateSlides(templateHtml: string) {
+  const fixedHtml = fixVoidElementsHtml(templateHtml)
   const tmp = document.createElement('div')
-  tmp.innerHTML = templateHtml
+  tmp.innerHTML = fixedHtml
   const newSlides = parseElementToSlides(tmp)
   if (newSlides.length === 0) return
   const oldIdx = currentIndex.value

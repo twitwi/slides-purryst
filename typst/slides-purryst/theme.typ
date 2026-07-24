@@ -34,7 +34,7 @@
         ]
       ]
       #html.elem("body")[
-        #html.elem("template", attrs: (id: "sp-content"))[
+        #html.elem("script", attrs: (type: "text/html", id: "sp-content"))[
           #html.elem("sp-before")[
             #html.elem("span", attrs: (style: "display: block", "data-source-file-push": "/" + sys.inputs.at("slides-purryst-filepath", default: "")))
           ]

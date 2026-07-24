@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<template id="sp-content">
+<script type="text/html" id="sp-content">
 
   <sp-slide>
     <h1>SlidesPurr(yst)</h1>
@@ -454,7 +454,7 @@ createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-meanwhile</code> — parallel tracks</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Content before and after <code>sp-meanwhile</code> advances in parallel:</p>
+    <p>Content before and after <code>sp-meanwhile</code> advances in "parallel":</p>
     <sp-pause />
     <div class="d1" style="float: left">Left: step 1</div>
     <sp-pause />
@@ -615,7 +615,7 @@ createSlidesPurryst({
     }
   </style>
 
-</template>
+</script>
 
 <template id="sp-chunklets">
   <sp-chunk name="greybox" params="x,y,w,h">

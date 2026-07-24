@@ -15,7 +15,7 @@ import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore } from './composables/includeCache'
-import { setDefaultClicksAt } from './composables/useSteps'
+import { setDefaultClicksAt, fixVoidElementsHtml } from './composables/useSteps'
 import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
@@ -41,9 +41,17 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 export function createSlidesPurryst(options: SPSlidesOptions = {}) {
   let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, clicksAt, plugins, activate } = options
 
-  const template = document.getElementById('sp-content') as HTMLTemplateElement | null
+  const scriptEl = document.getElementById('sp-content') as HTMLScriptElement | null
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
   const raw = {} as Record<'before'|'after',string>
+
+  let contentRoot: Element | null = null
+  if (scriptEl) {
+    const rawHtml = scriptEl.textContent || ''
+    const fixedHtml = fixVoidElementsHtml(rawHtml)
+    contentRoot = document.createElement('div')
+    contentRoot.innerHTML = fixedHtml
+  }
 
   if (clicksAt !== undefined) {
     setDefaultClicksAt(clicksAt)
@@ -55,8 +63,8 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
       if (json) loadCache(json)
     }
 
-    if (template?.content) {
-      slides = parseElementToSlides(template.content)
+    if (contentRoot) {
+      slides = parseElementToSlides(contentRoot)
       if (transition) {
         slides.forEach(sl => {
           if (sl.transition === '') {
@@ -67,8 +75,8 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
     }
   }
 
-  if (template?.content) {
-    parseRawInto(template.content, raw)
+  if (contentRoot) {
+    parseRawInto(contentRoot, raw)
   }
 
   const chunkletsTemplate = document.getElementById('sp-chunklets') as HTMLTemplateElement | null
@@ -118,18 +126,18 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   if (cacheIgnore) setCacheIgnore(cacheIgnore)
 
-  if (template?.content) {
-    injectGlobalStyles(template.content)
-    template.content.querySelectorAll('sp-include').forEach(el => {
+  if (contentRoot) {
+    injectGlobalStyles(contentRoot)
+    contentRoot.querySelectorAll('sp-include').forEach(el => {
       const src = el.getAttribute('src')
       if (src) preloadInclude(src)
     })
     const imgSrcs = new Set<string>()
-    template.content.querySelectorAll<HTMLImageElement>('img[src]').forEach(el => {
+    contentRoot.querySelectorAll<HTMLImageElement>('img[src]').forEach(el => {
       const src = el.getAttribute('src')
       if (src && !src.startsWith('data:') && !src.startsWith('blob:')) imgSrcs.add(src)
     })
-    template.content.querySelectorAll<HTMLElement>('sp-img[src]').forEach(el => {
+    contentRoot.querySelectorAll<HTMLElement>('sp-img[src]').forEach(el => {
       const src = el.getAttribute('src')
       if (src && !src.startsWith('data:') && !src.startsWith('blob:')) imgSrcs.add(src)
     })
@@ -205,11 +213,12 @@ export function createSlidesPurryst(options: SPSlidesOptions = {}) {
       fetch(window.location.href + '?_=' + Date.now())
       .then(r => r.text())
       .then(html => {
-          const m = html.match(/<template id="sp-content"([\s\S]*?)<\/template>/)
+          const m = html.match(/<script\s+type="text\/html"\s+id="sp-content">([\s\S]*?)<\/script>/)
           if (m && m[1] !== lastTemplateHtml) {
             lastTemplateHtml = m[1]
-            vm.updateSlides?.(m[1])
-            reapplyGlobalStyles(m[1])
+            const fixedHtml = fixVoidElementsHtml(m[1])
+            vm.updateSlides?.(fixedHtml)
+            reapplyGlobalStyles(fixedHtml)
           }
         })
         .catch(() => {})

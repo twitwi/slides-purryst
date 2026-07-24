@@ -1,5 +1,6 @@
 import { ref, computed, type Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
+import { registry } from '../plugin'
 
 let defaultClicksAt = 1
 
@@ -7,7 +8,7 @@ export function setDefaultClicksAt(value: number) {
   defaultClicksAt = value
 }
 
-function countAnimSpecParts(spec: string, htmlForQuery?: HTMLElement): number {
+function countAnimSpecParts(spec: string, htmlForQuery?: Element): number {
   if (!spec.trim()) return 0
   const parts = spec.split('|').map(s => s.trim())
   let count = 0
@@ -36,123 +37,24 @@ function parseJumpAt(at: string | null): { relative: boolean; value: number } {
   return { relative: false, value: parseInt(at, 10) }
 }
 
-function makeJump(at: string): Element {
-  const el = document.createElement('sp-jump')
-  el.setAttribute('at', at)
-  return el
-}
+const VOID_TAGS = 'sp-anim|sp-jump|sp-pause|sp-meanwhile|sp-toc|sp-include|sp-svg'
 
-function stripAnimHtml(html: string): { html: string; steps: number } {
-  const tmp = document.createElement('div')
-  tmp.innerHTML = html
+const VOID_SELF_CLOSING_RE = new RegExp(`<(${VOID_TAGS})(\\s[^>]*)?\\/>`, 'gi')
 
-  let visStep = 0
-  let maxStep = 0
-
-  function contributeMaxStep(step: number) {
-    if (step > maxStep) {
-      maxStep = step
-    }
-  }
-
-  // sp-step already processed so read the dom for them
-  tmp.querySelectorAll('[data-sp-step]').forEach(el => {
-    const step = parseInt(el.getAttribute('data-sp-step') || '0', 10)
-    contributeMaxStep(step)
-  })
-  tmp.querySelectorAll('[data-sp-step-from]').forEach(el => {
-    const step = parseInt(el.getAttribute('data-sp-step-from') || '0', 10)
-    contributeMaxStep(step)
-  })
-  tmp.querySelectorAll('[data-sp-step-to]').forEach(el => {
-    const step = parseInt(el.getAttribute('data-sp-step-to') || '0', 10)
-    contributeMaxStep(step)
-  })
-
-  function walk(parent: Element) {
-    const children = Array.from(parent.children)
-    const toRemove: Element[] = []
-
-    for (const el of children) {
-      const tag = el.tagName.toLowerCase()
-      let noTag = false
-      let noRecursion = false
-
-      if (tag === 'sp-style') continue
-
-      if (tag === 'sp-jump') {
-        const { relative, value } = parseJumpAt(el.getAttribute('at'))
-        if (relative) {
-          visStep += value
-        } else {
-          visStep = value
-        }
-        toRemove.push(el)
-        contributeMaxStep(visStep)
-        continue
-      }
-
-      if (tag === 'sp-anim') {
-        const doJump = [null, 'false'].includes(el.getAttribute('no-jump'))
-        const at = el.getAttribute('at') ?? '+0'
-        let virtualVisStep = visStep
-        const { relative, value } = parseJumpAt(at)
-        if (relative) {
-          virtualVisStep += value
-        } else {
-          virtualVisStep = value
-        }
-        el.setAttribute('at', String(virtualVisStep)) // make at absolute for the anim component
-        virtualVisStep += countAnimSpecParts(el.getAttribute('spec') || '', tmp)
-        if (doJump) {
-          visStep = virtualVisStep
-          contributeMaxStep(visStep)
-        } else {
-          contributeMaxStep(virtualVisStep)
-        }
-      }
-
-      if (tag === 'sp-alternatives') {
-        const at = el.getAttribute('at') ?? "+0"
-        if (at !== null) {
-          const { relative, value } = parseJumpAt(at)
-          if (relative) {
-            visStep += value
-          } else {
-            visStep = value
-          }
-        }
-        visStep += el.childElementCount
-        contributeMaxStep(visStep - 1)
-        noTag = true
-        noRecursion = true // so children are not tagged either
-      }
-
-      // Stamp data-sp-step on elements after a jump
-      if (!noTag && visStep > 0 && !el.hasAttribute('data-sp-step')) {
-        el.setAttribute('data-sp-step', String(visStep))
-      }
-
-      if (!noRecursion) {
-        walk(el)
-      }
-    }
-
-    for (const el of toRemove) {
-      el.remove()
-    }
-  }
-
-  walk(tmp)
-  return { html: tmp.innerHTML, steps: maxStep + 1 }
+export function fixVoidElementsHtml(html: string): string {
+  return html.replace(VOID_SELF_CLOSING_RE, '<$1$2></$1>')
 }
 
 function processAliases(tmp: Element) {
   tmp.querySelectorAll('sp-pause').forEach(el => {
-    el.replaceWith(makeJump('+1'))
+    const jump = document.createElement('sp-jump')
+    jump.setAttribute('at', '+1')
+    el.replaceWith(jump)
   })
   tmp.querySelectorAll('sp-meanwhile').forEach(el => {
-    el.replaceWith(makeJump('0'))
+    const jump = document.createElement('sp-jump')
+    jump.setAttribute('at', '0')
+    el.replaceWith(jump)
   })
 }
 
@@ -162,7 +64,7 @@ function processAfterModifier(tmp: Element) {
     const children = Array.from(parent.children)
     for (const el of children) {
       const tag = el.tagName.toLowerCase()
-      
+
       if (tag === 'sp-step') {
         const after = el.getAttribute('after')
         if (after !== null) {
@@ -173,7 +75,7 @@ function processAfterModifier(tmp: Element) {
           lastAt = at
         }
       }
-      
+
       walk(el)
     }
   }
@@ -187,23 +89,23 @@ function processClicksWrapper(tmp: Element) {
     const animation = clicks.getAttribute('animation') || ''
     const tag = clicks.getAttribute('tag') || 'div'
     const children = Array.from(clicks.children)
-    
+
     const handledAttrs = new Set(['at', 'every', 'animation', 'tag'])
     const wrapper = document.createElement(tag)
     wrapper.setAttribute('sp-clicks-wrapper', '')
-    
+
     for (const attr of Array.from(clicks.attributes)) {
       if (!handledAttrs.has(attr.name)) {
         wrapper.setAttribute(attr.name, attr.value)
       }
     }
-    
+
     children.forEach((child, i) => {
       child.setAttribute('data-sp-step', String(at + Math.floor(i / every)))
       if (animation) child.setAttribute('data-sp-step-animation', animation)
       wrapper.appendChild(child.cloneNode(true))
     })
-    
+
     clicks.replaceWith(wrapper)
   })
 }
@@ -227,7 +129,6 @@ function processSpStepElements(tmp: Element) {
       })
       step.replaceWith(...Array.from(step.childNodes))
     } else {
-      // Text-only sp-step: wrap in span
       const span = document.createElement('span')
       if (at !== null) span.setAttribute('data-sp-step', at)
       if (from !== null) span.setAttribute('data-sp-step-from', from)
@@ -240,23 +141,107 @@ function processSpStepElements(tmp: Element) {
   })
 }
 
+function processJumpsAndAnims(root: Element): number {
+  let visStep = 0
+  let maxStep = 0
+
+  root.querySelectorAll('[data-sp-step]').forEach(el => {
+    const step = parseInt(el.getAttribute('data-sp-step') || '0', 10)
+    if (step > maxStep) maxStep = step
+  })
+  root.querySelectorAll('[data-sp-step-from]').forEach(el => {
+    const step = parseInt(el.getAttribute('data-sp-step-from') || '0', 10)
+    if (step > maxStep) maxStep = step
+  })
+  root.querySelectorAll('[data-sp-step-to]').forEach(el => {
+    const step = parseInt(el.getAttribute('data-sp-step-to') || '0', 10)
+    if (step > maxStep) maxStep = step
+  })
+
+  function contributeMaxStep(step: number) {
+    if (step > maxStep) maxStep = step
+  }
+
+  function walk(parent: Element) {
+    const children = Array.from(parent.children)
+    const toRemove: Element[] = []
+
+    for (const el of children) {
+      const tag = el.tagName.toLowerCase()
+      let noTag = false
+      let noRecursion = false
+
+      if (tag === 'sp-style') continue
+
+      if (tag === 'sp-jump') {
+        const { relative, value } = parseJumpAt(el.getAttribute('at'))
+        if (relative) visStep += value
+        else visStep = value
+        toRemove.push(el)
+        contributeMaxStep(visStep)
+        continue
+      }
+
+      if (tag === 'sp-anim') {
+        const doJump = [null, 'false'].includes(el.getAttribute('no-jump'))
+        const at = el.getAttribute('at') ?? '+0'
+        let virtualVisStep = visStep
+        const { relative, value } = parseJumpAt(at)
+        if (relative) virtualVisStep += value
+        else virtualVisStep = value
+        el.setAttribute('at', String(virtualVisStep))
+        virtualVisStep += countAnimSpecParts(el.getAttribute('spec') || '', root)
+        if (doJump) {
+          visStep = virtualVisStep
+          contributeMaxStep(visStep)
+        } else {
+          contributeMaxStep(virtualVisStep)
+        }
+      }
+
+      if (tag === 'sp-alternatives') {
+        const at = el.getAttribute('at') ?? '+0'
+        const { relative, value } = parseJumpAt(at)
+        if (relative) visStep += value
+        else visStep = value
+        visStep += el.childElementCount
+        contributeMaxStep(visStep - 1)
+        noTag = true
+        noRecursion = true
+      }
+
+      if (!noTag && visStep > 0 && !el.hasAttribute('data-sp-step')) {
+        el.setAttribute('data-sp-step', String(visStep))
+      }
+
+      if (!noRecursion) walk(el)
+    }
+
+    for (const el of toRemove) el.remove()
+  }
+
+  walk(root)
+  return maxStep + 1
+}
+
+function applyPluginTransforms(root: Element) {
+  for (const fn of registry._domTransforms) {
+    fn(root)
+  }
+}
+
 export function processSlideHtml(html: string): { html: string; steps: number } {
   const tmp = document.createElement('div')
   tmp.innerHTML = html
 
-  // Convert sp-pause and sp-meanwhile to sp-jump
   processAliases(tmp)
-
-  // Process sp-clicks wrapper (stamps data-sp-step on children)
   processClicksWrapper(tmp)
-  
-  // Process "after" modifier in sp-step (must run before convertSpStepElements)
   processAfterModifier(tmp)
-
-  // Convert <sp-step> elements to data-sp-step attributes on children
   processSpStepElements(tmp)
+  const steps = processJumpsAndAnims(tmp)
+  applyPluginTransforms(tmp)
 
-  return stripAnimHtml(tmp.innerHTML)
+  return { html: tmp.innerHTML, steps }
 }
 
 export function useSteps() {

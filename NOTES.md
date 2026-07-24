@@ -17,13 +17,6 @@
 - [ ] <sp-pause/> might need (e.g. following) content to be put in a span, not pure text node. This is a limitation of css, but could we detect it (in devmode?) and notify the user?
 - [ ] generate a palette of 20 creative themes, named gen1-01 to gen1-20 (for an ambiguous gen meaning generated / genai / generic / generation1), most of which should have a primary and secondary color that is configurable
 
-# TODO extensibility
-
-- think about modularity/extensibility (plugins, custom components, etc.)
-- ideally have a way to have a sequence of extensibility (so we can have plugins + customization on top)
-- [ ] parse, any interest of using hast / unified / _rehype_ https://unifiedjs.com/explore/topic/rehype/, so we can have plugins on it (maybe free math? shiki? citation?)
-- can I have a generic way of allowing to control plugin order (when it has an impact) and to allow to also easily "disable" some plugins facets (idea: the plugin would receive noop functions for the add... that we want to disable)
-- I want to allow extension of the "parsing", i.e. for now, now once I have the html parsed I do stuff like rewriting sp-pause etc, can this be extensible? would it make sense to use rehype (and thus be able to exploit existing rehype plugins (e.g. math (later)))?
 
 ## TODO
 
@@ -39,6 +32,7 @@
 - [ ] (edit) can we have a button to "view source" in vs code or something (using some vscode standard extension or api?)
 
 
+- [ ] consider a sp-script to avoid closing </script> in the "template"... but do we want script...? when do they get run etc? maybe rather need a very generic anim that accepts code directly?
 - [ ] consider a fully async init process (createSlidespurryst) because currently plugins can't do async stuff.
 - [ ] consider unocss stuff, can it be with a small footprint?
 - [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)

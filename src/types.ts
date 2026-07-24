@@ -17,6 +17,7 @@ export interface PluginAPI {
   addAnimActionType: (type: string, handler: ActionTypeHandler) => void
   injectStyle: (css: string) => void
   addChunklet: (def: ChunkDef) => void
+  addDomTransform: (fn: Transformer) => void
 }
 
 export interface SlideData {

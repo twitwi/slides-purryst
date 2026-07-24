@@ -1,6 +1,8 @@
 import { ref, computed } from 'vue'
 import type { SlideData } from '../types'
 
+const VOID_HTML_TAGS = new Set('area base br col embed hr img input link meta param> source track wbr'.split(' '))
+
 function serializeNode(node: Node): string {
   if (node.nodeType === Node.TEXT_NODE) {
     return node.textContent || ''
@@ -14,18 +16,15 @@ function serializeNode(node: Node): string {
   const el = node as Element
   const tag = el.tagName.toLowerCase()
 
-  const voidTags = ['sp-anim', 'sp-jump', 'sp-pause', 'sp-meanwhile', 'sp-toc', 'sp-include', 'sp-svg']
-
   if (tag === 'sp-notes') return ''
 
-  if (voidTags.includes(tag)) {
+  if (VOID_HTML_TAGS.has(tag)) {
     let s = `<${tag}`
     for (let j = 0; j < el.attributes.length; j++) {
       const a = el.attributes[j]
       s += ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`
     }
-    s += `></${tag}>`
-    s += serializeChildren(el)
+    s += ' >'
     return s
   }
 

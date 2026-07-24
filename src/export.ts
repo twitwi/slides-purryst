@@ -1,11 +1,13 @@
 import { serializeCache } from './composables/includeCache'
 import { exportInitOptions } from './sp-api'
+import { fixVoidElementsHtml } from './composables/useSteps'
 
 export async function exportStandalone(): Promise<void> {
-  const contentEl = document.getElementById('sp-content') as HTMLTemplateElement | null
+  const contentEl = document.getElementById('sp-content') as HTMLScriptElement | null
   if (!contentEl) throw new Error('Export failed: #sp-content not found')
 
-  let slidesHtml = contentEl.innerHTML.trim()
+  let slidesHtml = contentEl.textContent?.trim() || ''
+  slidesHtml = fixVoidElementsHtml(slidesHtml)
 
   const tmp = document.createElement('div')
   tmp.innerHTML = slidesHtml
@@ -49,9 +51,9 @@ ${styles.length ? `<style>\n${styles.join('\n')}\n</style>` : ''}
 </head>
 <body>
 <div id="app"></div>
-<template id="sp-content">
+<script type="text/html" id="sp-content">
 ${slidesHtml}
-</template>
+</script>
 ${cacheTemplate}
 <script src="./slides-purryst.bundle.js"></script>
 <script>

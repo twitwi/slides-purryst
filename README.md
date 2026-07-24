@@ -36,7 +36,7 @@ Create `index.html`:
     }
 }
 </script>
-<template id="sp-content">
+<script type="text/html" id="sp-content">
     
   <sp-slide>
     <h1>Hello, SlidesPurryst!</h1>
@@ -45,7 +45,7 @@ Create `index.html`:
     <h2>Slide two</h2>
   </sp-slide>
   
-</template>
+</script>
 <script type="module">
 import { createSlidesPurryst } from 'sp'
 createSlidesPurryst()
@@ -97,14 +97,14 @@ Create `index.html`:
 <title>My Slides</title>
 </head>
 <body>
-<template id="sp-content">
+<script type="text/html" id="sp-content">
   <sp-slide>
     <h1>Hello, SlidesPurryst!</h1>
   </sp-slide>
   <sp-slide transition="fade">
     <h2>Slide two</h2>
   </sp-slide>
-</template>
+</script>
 <script type="module">
 import { createSlidesPurryst } from 'slides-purryst'
 import 'slides-purryst/style.css'
@@ -136,14 +136,14 @@ Download and extract `slides-purryst.zip`, then create `index.html`:
 <link rel="stylesheet" href="slides-purryst.css">
 </head>
 <body>
-<template id="sp-content">
+<script type="text/html" id="sp-content">
   <sp-slide>
     <h1>Hello, SlidesPurryst!</h1>
   </sp-slide>
   <sp-slide transition="fade">
     <h2>Slide two</h2>
   </sp-slide>
-</template>
+</script>
 <script type="module" src="slides-purryst.es.js"></script>
 <script type="module">
 import { createSlidesPurryst } from './slides-purryst.es.js'
