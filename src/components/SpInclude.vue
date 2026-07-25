@@ -24,13 +24,16 @@ const props = withDefaults(defineProps<{
   path?: string
   transformers?: Transformer[]
   noFixVoid?: boolean
+  noComponent?: boolean
 }>(), {
   path: '',
   transformers: () => [],
   noFixVoid: false,
+  noComponent: false,
 })
 
 const error = ref('')
+const htmlContent = ref('')
 const comp = shallowRef<Component | null>(null)
 const reloadTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
@@ -93,7 +96,8 @@ watch(srcRef, async (val) => {
       reloadTimer.value = null
     }
     error.value = ''
-    buildComponent(processContent(val))
+    htmlContent.value = processContent(val)
+    if (!props.noComponent) buildComponent(htmlContent.value)
     notifyContentLoaded()
   } else if (val === undefined) {
     if (reloadTimer.value) return
@@ -117,6 +121,7 @@ watch(srcRef, async (val) => {
 <template>
   <span style="display: none" :data-source-file-push="src"></span>
   <div v-if="error" class="sp-include-error">{{ error }}</div>
+  <div v-else-if="props.noComponent" class="sp-include" v-html="htmlContent"></div>
   <component :is="comp" v-else />
   <span style="display: none" data-source-file-pop=""></span>
 </template>
