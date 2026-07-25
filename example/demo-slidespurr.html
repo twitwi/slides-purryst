@@ -22,9 +22,14 @@
     <sp-toc end="2"/>
   </sp-slide>  
 
+
+
+
+
+
   <sp-slide>
     <h2>Slide Transitions</h2>
-    <p>Do not overuse...</p>
+    <div class="eg-center">Do not overuse...</div>
   </sp-slide>  
 
   <sp-slide>
@@ -32,7 +37,7 @@
     <p>Per-slide transitions via <code>transition</code> attribute.</p>
     <ul>
       <li><code>none</code> — default</li>
-      <li><code>fade</code> — opacity fading</li>
+      <li><code>fade</code> — opacity fading (next slide)</li>
       <li><code>slide-up</code> — vertical slide</li>
       <li><code>zoom</code> — scale in/out</li>
     </ul>
@@ -42,16 +47,19 @@
   <sp-slide transition="fade">
     <h3>This one is "fade"</h3>
     <img src="./slides-purryst-banner.svg" />
+    <p>next is "slide-up"</p>
   </sp-slide>
 
   <sp-slide transition="slide-up">
     <h3>This one is "slide-up"</h3>
     <img src="./slides-purryst-banner.svg" style="transform: scale(-1,1)" />
+    <p>next is "zoom" (with 600ms, i.e. longer animation)</p>
   </sp-slide>
 
   <sp-slide transition="zoom" transition-duration="600" >
     <h3>This one is "zoom" (with 600ms)</h3>
     <img src="./slides-purryst-banner.svg" />
+    <p>next is "fade" (with 100ms)</p>
   </sp-slide>
 
   <sp-slide transition="fade" transition-duration="100" >
@@ -59,21 +67,48 @@
     <img src="./slides-purryst-banner.svg" style="transform: scale(-1,1)"/>
   </sp-slide>
 
+
+
+
+
+
   <sp-slide>
-    <h3>Keyboard Navigation</h3>
+    <h2>Navigation, basic features and shortcuts</h2>
+  </sp-slide>  
+
+  <sp-slide>
+    <h3>Keyboard Navigation + touch <sp-step at="1">(please try)</sp-step></h3>
     <ul>
-      <li><kbd>→</kbd> / <kbd>Spc</kbd>: advance the presentation</li>
+      <li><kbd>→</kbd> / <kbd>Spc</kbd> / swipe: advance the presentation</li>
       <li><kbd>←</kbd>: backward</li>
       <li><kbd>↓</kbd> (next) / <kbd>↑</kbd> (previous) slide (skip steps) </li>
       <li><kbd>A</kbd> / <kbd>Z</kbd> to browse: previous/next slide's end</li>
       <li><kbd>G</kbd>: Open goto popup (number, header content)</li>
       <li><kbd>O</kbd>: Toggle overview</li>
-      <li><kbd>F</kbd>: Toggle fullscreen</li>
     </ul>
-    <sp-style>
-      kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-alt); padding: 0 .2em; margin: 0 0.2em;  }
-    </sp-style>
   </sp-slide>
+
+  <sp-slide>
+    <h3>More shortcuts</h3>
+    <ul>
+      <li><kbd>F</kbd>: Toggle fullscreen</li>
+      <li><kbd>B</kbd>: Trigger blackout</li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Presenter View and Slide Notes</h3>
+    <p>Use <code>sp-notes</code> to add notes to a slide</p>
+    <p>Use key <code>p</code> (or the <a @click="$sp.toggleNavLock()" title="click to toggle the toolbar">toolbar</a> at the bottom) to toggle presenter view</p>
+    <sp-notes>
+      <h4>Notes for this slide</h4>
+      <p>These notes are only visible in presenter view.</p>
+      <p>You can add any HTML content here, including images, lists, etc.</p>
+    </sp-notes>
+  </sp-slide>
+
+
+
 
 
 
@@ -87,7 +122,7 @@
     <sp-toc start="3" context />
     <sp-drag at="1202|62|524.5879060720367|961.4244706670144|0">
       <div style="font-size: 25px; border: 5px solid gray; background: var(--sp-surface); padding: 10px; position: absolute; inset: 0; overflow: scroll;">
-        Full TOC
+        Or a full TOC
         <sp-toc />
       </div>
     </sp-drag>
@@ -105,24 +140,28 @@
   <sp-slide class="eg-draggables">
     <h3>Draggable Elements</h3>
     <p><code>&amp;lt;sp-drag>stuff&amp;lt;/sp-drag></code> creates a <span style="opacity: 0.2;">draggable box</span></p>
+    <sp-drag at="961|366|587.7729750515967|327.7726886880253|0">
+      <div style="font-size: 0.65em;">HTML and CSS layout are nice and clean but sometimes manual placement is simpler</div>
+    </sp-drag>
     <p>In dev mode:</p>
     <ul>
-      <li>select with double click</li>
+      <li>select with <b>double click</b></li>
       <li>move and resize</li>
       <li>validate by deselecting</li>
       <li>⇒ the changes are saved to the source</li>
       <li>…… as a <code>at="..."</code> attribute</li>
     </ul>
-    <sp-drag at="1199|106|641.887633341839|283.0415048145767|0.9" at="0|0|155|98|0">
+    <sp-drag at="1199|106|641.887633341839|283.0415048145767|00">
       <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
     <sp-pause />
-    <sp-drag>stuff</sp-drag>
+    <sp-drag style="background: rgb(255 255 0 / 0.5);" title="like in the example, at is added on first move">stuff</sp-drag>
     <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
       <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
   </sp-slide>
   <sp-style>
+    kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-alt); padding: 0 .2em; margin: 0 0.2em;  }
     .eg-natural { display: inline-block; }
     .eg-fill { position: absolute; inset: 0; }
     .eg-center { display: flex; align-items: center; justify-content: center; }
@@ -138,13 +177,24 @@
   </sp-style>
 
   <sp-slide class="eg-draggables">
-    <h3>Drag 2</h3>
-    <sp-drag at="1199|106|641.887633341839|283.0415048145767|0.9" at="0|0|155|98|0">
+   <h3 title="Exact same locations, should not blink, also should move the right one.">Draggable 2 (test)</h3>
+    <sp-drag at="1199|106|641.887633341839|283.0415048145767|0.9">
       <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
     <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
       <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
+  </sp-slide>
+
+  <sp-slide class="eg-draggables">
+    <h3>Chunklets</h3>
+    <p>In dev mode, <sp-include src="./demo-sp.html"/> allows you to interactively insert content "chunklet".</p>
+    <ul>
+      <li>use <kbd>C</kbd> to toggle the chunklet bar</li>
+      <li>click a chunklet (top left) to start inserting it</li>
+      <li>click or draw a rectangle to decide where to insert it</li>
+      <li>⇒ the chunklet is inserted in the file</li>
+    </ul>
   </sp-slide>
 
   <sp-slide>
@@ -161,6 +211,28 @@
       Draggable cat
       <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Code Highlighting with Shiki</h3>
+    <p>Use <code>sp-code</code> to add code snippets with syntax highlighting (NB: might become a plugin)</p>
+    <pre><code class="language-typescript">
+import { createSlidesPurryst } from '../src/index.ts'
+import Counter from './Counter.vue'
+await createSlidesPurryst({
+  components: { 'my-counter': Counter },
+})
+    </code></pre>
+  </sp-slide>
+
+
+
+
+
+
+  <sp-slide>
+    <h2>Including parts, slides and fragments</h2>
+    <p><code>sp-include</code> allows you to include other slides, parts (set of slides), or fragments (within a slide) into your presentation.</p>
   </sp-slide>
 
   <sp-slide>
@@ -182,28 +254,11 @@
 
   <sp-include src="./demo-subpart.html" />
   
-  <sp-slide>
-    <h3>Presenter View and Slide Notes</h3>
-    <p>Use <code>sp-notes</code> to add notes to a slide</p>
-    <p>Use key <code>p</code> (or the <a @click="$sp.toggleNavLock()" title="click to toggle the toolbar">toolbar</a> at the bottom) to toggle presenter view</p>
-    <sp-notes>
-      <h4>Notes for this slide</h4>
-      <p>These notes are only visible in presenter view.</p>
-      <p>You can add any HTML content here, including images, lists, etc.</p>
-    </sp-notes>
-  </sp-slide>
 
-  <sp-slide>
-    <h3>Code Highlighting with Shiki</h3>
-    <p>Use <code>sp-code</code> to add code snippets with syntax highlighting (NB: might become a plugin)</p>
-    <pre><code class="language-typescript">
-import { createSlidesPurryst } from '../src/index.ts'
-import Counter from './Counter.vue'
-await createSlidesPurryst({
-  components: { 'my-counter': Counter },
-})
-    </code></pre>
-    </sp-slide>
+
+
+
+
 
 
 
@@ -408,8 +463,8 @@ await createSlidesPurryst({
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Elements can share timing with the previous step:</p>
     <sp-step at="1"><div class="d1">Step 1 (first)</div></sp-step>
-    <sp-step after><div class="d2">Step 1 (same timing)</div></sp-step>
-    <sp-step at="2"><div class="d3">Step 2</div></sp-step>
+    <sp-step after><div class="d1">Step 1 (same timing)</div></sp-step>
+    <sp-step at="2"><div class="d2">Step 2</div></sp-step>
   </sp-slide>
 
   <sp-slide>
@@ -419,7 +474,7 @@ await createSlidesPurryst({
     <sp-meanwhile />
     <p>Elements can be visible only in a range of steps:</p>
     <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
-    <sp-step from="3"><div class="d2">Visible from step 3 onward</div></sp-step>
+    <sp-step from="3"><div class="d3">Visible from step 3 onward</div></sp-step>
   </sp-slide>
 
   <sp-slide>
@@ -437,12 +492,12 @@ await createSlidesPurryst({
     <h3><code>sp-steps</code> with options</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>With <code>every="2"</code> and <code>at="1"</code>:</p>
-    <sp-steps every="2" at="1" class="demo-items">
-      <div>Items 1 (step 1)</div>
-      <div>Items 2 (step 1)</div>
-      <div>Items 3 (step 2)</div>
-      <div>Items 4 (step 2)</div>
-      <div>Items 5/5 (step 3)</div>
+    <sp-steps every="2" at="1">
+      <div class="d1">Items 1 (step 1)</div>
+      <div class="d1">Items 2 (step 1)</div>
+      <div class="d2">Items 3 (step 2)</div>
+      <div class="d2">Items 4 (step 2)</div>
+      <div class="d3">Items 5 (step 3).</div>
     </sp-steps>
   </sp-slide>
 
@@ -478,11 +533,11 @@ await createSlidesPurryst({
     <div class="d2" style="float: left; clear: left;">Left: step 2</div>
     <sp-meanwhile />
     <sp-pause />
-    <div class="d3" style="float: right">Right: step 1</div>
+    <div class="d1" style="float: right">Right: step 1</div>
     <sp-pause />
-    <div class="d4" style="float: right; clear: right;">Right: step 2</div>
+    <div class="d2" style="float: right; clear: right;">Right: step 2</div>
     <sp-pause />
-    <div class="d5" style="float: right; clear: right;">Right: step 3</div>
+    <div class="d3" style="float: right; clear: right;">Right: step 3</div>
     <p>(<code>sp-meanwhile</code> is an alias for <code>sp-jump at="0"</code>)</p>
     <sp-meanwhile />
     <div style="border: 10px solid gray; border-radius: .5em; padding: 0.5em; margin-top: 150px; width: 50%;">

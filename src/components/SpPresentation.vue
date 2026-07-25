@@ -309,6 +309,8 @@ provide('contentVersion', contentVersion)
 provide('slides', slides)
 provide('goTo', goTo)
 provide('sp-components', props.components)
+const rawSlideHtmls = ref<string[]>([])
+provide('rawSlideHtmls', rawSlideHtmls)
 
 const direction = ref(1)
 const shouldSwap = ref(false)
@@ -746,6 +748,7 @@ function setupIconIfNone(seed: number) {
 }
 
 async function highlightAllSlides() {
+  rawSlideHtmls.value = slides.value.map(s => s.html)
   for (let i = 0; i < slides.value.length; i++) {
     const s = slides.value[i]
     const highlighted = await highlightCode(s.html)

@@ -27,6 +27,7 @@ export { default as SpInclude } from './components/SpInclude.vue'
 export { default as SpSvg } from './components/SpSvg.vue'
 export { default as SpStyle } from './components/SpStyle.vue'
 export { default as SpToc } from './components/SpToc.vue'
+export { default as SpSlideSource } from './components/SpSlideSource.vue'
 
 export { useKeymap, createDefaultKeymap, bind } from './keymap'
 export type { Keymap, KeymapSetupFn, KeyContext, BindOptions } from './keymap'

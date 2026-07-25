@@ -12,6 +12,7 @@ import SpStep from './SpStep.vue'
 import SpStyle from './SpStyle.vue'
 import SpToc from './SpToc.vue'
 import SpSvg from './SpSvg.vue'
+import SpSlideSource from './SpSlideSource.vue'
 
 const contentVersion = inject<Ref<number>>('contentVersion')!
 const customComponents = inject<Record<string, Component>>('sp-components', {} as Record<string, Component>)
@@ -71,6 +72,7 @@ function buildComponent(html: string) {
       'sp-style': SpStyle,
       'sp-toc': SpToc,
       'sp-svg': SpSvg,
+      'sp-slide-source': SpSlideSource,
       ...customComponents,
     },
   })

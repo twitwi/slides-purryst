@@ -37,7 +37,7 @@ function parseJumpAt(at: string | null): { relative: boolean; value: number } {
   return { relative: false, value: parseInt(at, 10) }
 }
 
-const VOID_TAGS = 'sp-anim|sp-jump|sp-pause|sp-meanwhile|sp-toc|sp-include|sp-svg'
+const VOID_TAGS = 'sp-anim|sp-jump|sp-pause|sp-meanwhile|sp-toc|sp-include|sp-svg|sp-slide-source'
 
 const VOID_SELF_CLOSING_RE = new RegExp(`<(${VOID_TAGS})(\\s[^>]*)?/>`, 'gi')
 

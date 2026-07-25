@@ -11,6 +11,7 @@ import SpStep from './components/SpStep.vue'
 import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
+import SpSlideSource from './components/SpSlideSource.vue'
 import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
@@ -31,6 +32,7 @@ const builtins: Record<string, Component> = {
   'sp-step': SpStep,
   'sp-style': SpStyle,
   'sp-toc': SpToc,
+  'sp-slide-source': SpSlideSource,
 }
 
 function resolveEl(el?: string | HTMLElement): HTMLElement | null {

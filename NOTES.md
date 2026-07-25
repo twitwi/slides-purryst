@@ -1,6 +1,10 @@
 
-## TODO Now for v0 (0.1.20260725) (no export, no typst)
+## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
+- [ ] fix chunklets broken again
+- [ ] fix top level include in top level include
+- [ ] test fragment include in fragment include
+- [ ] fix sp-steps then sp-steps (without at should be sequential)
 - [ ] should watch included fragments to refresh hrm
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 - [ ] proper demo (rework the current one, sync to purrbundle too)
