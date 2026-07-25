@@ -9,6 +9,7 @@
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 - [ ] proper demo (rework the current one, sync to purrbundle too)
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
+- [ ] live update seems to create memory "leak" somewhat, investigate and/or put a trigger that full reloads if too many updates (count updates from start and reload every (?))
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
@@ -18,11 +19,12 @@
 - [ ] typst codeblock
 - [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
 
-## TODO v2 (2.0.0) (export)
+## TODO v2 (2.0.0) (export and polish)
 
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
 - [ ] pdf export
+- [ ] add a toc in the overview somewhat
 
 ## TODO typst syntax
 

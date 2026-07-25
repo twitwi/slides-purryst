@@ -11,6 +11,7 @@
         </div>
 
         <section class="sp-dev-section">
+          <h3>Live Updates ({{ liveUpdatesCount }})</h3>
           <h3>Cache ({{ cacheEntries.length }} entries)</h3>
           <div v-if="cacheEntries.length === 0" class="sp-dev-empty">No cached entries</div>
           <table v-else class="sp-dev-table">
@@ -70,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { getCacheEntries, clearCache, removeCacheEntry } from '../composables/includeCache'
 import { resetConfig, useStorage } from '../composables/useStorage'
@@ -104,6 +105,8 @@ const configKnownTypes: Record<string, ConfigField> = {
 const configKeys = computed(() => {
   return Object.keys(config).filter(k => k !== 'proMode' || config.proMode).map(k => configKnownTypes[k] ?? { key: k, type: 'string' })
 })
+
+const liveUpdatesCount = inject('liveUpdatesCount', ref(0))
 
 const titleClicks = ref(0)
 let titleClickTimer: ReturnType<typeof setTimeout> | null = null

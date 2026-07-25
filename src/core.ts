@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, ref } from 'vue'
 import type { Component } from 'vue'
 import SpPresentation from './components/SpPresentation.vue'
 import { spApi, exportInitOptions } from './sp-api'
@@ -201,6 +201,9 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   app.config.globalProperties.$sp = spApi
   app.provide('sp-api', spApi)
   app.provide('sp-registry', registry)
+  const liveUpdatesCount = ref(0)
+  app.provide('liveUpdatesCount', liveUpdatesCount)
+
   if (typeof globalThis !== 'undefined') {
     ;(globalThis as any).__sp__ = spApi
   }
@@ -208,13 +211,14 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   ;(app as any).use = async (plugin: SlidesPlugin) => {
     await registry.register(plugin)
-    vm.rebuildKeymap?.()
+    vm.rebuildKeymap()
     return app
   }
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
     const es = new EventSource('/__sp_events')
     es.addEventListener('update', (event: MessageEvent) => {
+      liveUpdatesCount.value++
       const filename = (event.data ?? '').trim()
       if (filename) invalidateByFilename(filename)
       else invalidateTextCache()
