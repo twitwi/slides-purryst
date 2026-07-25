@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, ref, watch, inject, nextTick, defineComponent, defineAsyncComponent } from 'vue'
+import { shallowRef, ref, watch, inject, nextTick, defineComponent, defineAsyncComponent, onUnmounted } from 'vue'
 import type { Ref, Component } from 'vue'
 import type { Transformer } from '../types'
 import { getCachedInclude, preloadInclude } from '../composables/includeCache'
@@ -31,6 +31,11 @@ const props = withDefaults(defineProps<{
 
 const error = ref('')
 const comp = shallowRef<Component | null>(null)
+const reloadTimer = ref<ReturnType<typeof setTimeout> | null>(null)
+
+onUnmounted(() => {
+  if (reloadTimer.value) clearTimeout(reloadTimer.value)
+})
 
 function processContent(text: string): string {
   if (!props.noFixVoid) text = fixVoidElementsHtml(text)
@@ -81,15 +86,27 @@ const srcRef = getCachedInclude(props.src)
 
 watch(srcRef, async (val) => {
   if (val) {
+    if (reloadTimer.value) {
+      clearTimeout(reloadTimer.value)
+      reloadTimer.value = null
+    }
     error.value = ''
     buildComponent(processContent(val))
     notifyContentLoaded()
   } else if (val === undefined) {
-    comp.value = null
+    if (reloadTimer.value) return
+    reloadTimer.value = setTimeout(() => {
+      comp.value = null
+      reloadTimer.value = null
+    }, 500)
     try {
       await preloadInclude(props.src)
     } catch (err: any) {
       error.value = `${err.message} (src: ${props.src})`
+      if (reloadTimer.value) {
+        clearTimeout(reloadTimer.value)
+        reloadTimer.value = null
+      }
     }
   }
 }, { immediate: true })

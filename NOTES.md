@@ -36,6 +36,7 @@
 
 ## TODO
 
+- [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] sp-clicks with no wrapper, also as a directive (in addition)
 - [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
