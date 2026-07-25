@@ -160,6 +160,21 @@ export function invalidateTextCache(): void {
   pending.clear()
 }
 
+export function invalidateByFilename(filename: string): void {
+  const base = window.location.href
+  const changedUrl = new URL(filename, base).href
+  for (const [key, ref] of cache) {
+    try {
+      if (new URL(key, base).href === changedUrl) {
+        ref.value = undefined
+        metaCache.delete(key)
+        pending.delete(key)
+        return
+      }
+    } catch { /* skip unparseable keys */ }
+  }
+}
+
 export function clearCache(): void {
   for (const r of cache.values()) r.value = undefined
   for (const r of binaryCache.values()) r.value = undefined

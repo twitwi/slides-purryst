@@ -1,11 +1,12 @@
 
-## TODO Now for v0 (no export, no typst)
+## TODO Now for v0 (0.1.20260725) (no export, no typst)
 
 - [ ] should watch included fragments to refresh hrm
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 - [ ] proper demo (rework the current one, sync to purrbundle too)
+- [ ] add a png/jpg include to test and illustrate cache even if not v0 target
 
-## TODO v1 (typst simplest syntax)
+## TODO v1 (1.0.0) (typst simplest syntax)
 
 - [ ] typst v1 with a descent syntax (might consider later the implicit separator approach or a shortcut for commands )
 - [ ] typst math
@@ -13,7 +14,7 @@
 - [ ] typst codeblock
 - [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
 
-## TODO v2 (export)
+## TODO v2 (2.0.0) (export)
 
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(

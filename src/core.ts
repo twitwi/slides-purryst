@@ -14,7 +14,7 @@ import SpImg from './components/SpImg.vue'
 import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
-import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateTextCache } from './composables/includeCache'
+import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache } from './composables/includeCache'
 import { setDefaultClicksAt, fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
 import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunklets } from './composables/useChunklets'
@@ -212,14 +212,16 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
     const es = new EventSource('/__sp_events')
-    es.addEventListener('update', () => {
+    es.addEventListener('update', (event: MessageEvent) => {
+      const filename = (event.data ?? '').trim()
+      if (filename) invalidateByFilename(filename)
+      else invalidateTextCache()
       fetch(window.location.href + '?_=' + Date.now())
       .then(r => r.text())
       .then(html => {
           const m = html.match(/<script\s+type="text\/html"\s+id="sp-content">([\s\S]*?)<\/script>/)
           if (m) {
             ;(async () => {
-              invalidateTextCache()
               const resolvedHtml = await resolveTopIncludes(m[1])
               const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
               vm.updateSlides?.(fixedHtml)

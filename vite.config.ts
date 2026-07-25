@@ -311,13 +311,12 @@ export default defineConfig(({ mode }) => {
 
           let timer: ReturnType<typeof setTimeout> | null = null
           //console.log("WATCHING "+htmlFile)
-          watch('example/', () => {
-            //console.log("CHANGED "+htmlFile)
+          watch('example/', (...o) => {
+            console.log("CHANGED ", ...o)
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
-              //console.log("NOTIFY CLIENTS", clients.length)
               clients.forEach((client) => {
-                client.write('event: update\ndata: \n\n')
+                client.write(`event: update\ndata: ${o[1] ?? ''}\n\n`)
               })
             }, 100)
           })
