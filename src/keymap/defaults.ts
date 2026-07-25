@@ -31,7 +31,7 @@ export interface NavigationActions {
 
 export function createDefaultKeymap(a: NavigationActions): KeymapSetupFn {
   return (km: Keymap) => {
-    km['ArrowRight'] = km[' '] = () => a.next()
+    km['ArrowRight'] = km['Space'] = () => a.next()
     km['ArrowLeft'] = () => a.prev()
     km['ArrowUp'] = () => a.goToPrevBegin()
     km['ArrowDown'] = () => a.goToNextBegin()
