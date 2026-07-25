@@ -1,5 +1,5 @@
 <template>
-  <div sp-clicks-wrapper>
+  <div>
     <component
       v-for="(child, index) in children"
       :key="index"

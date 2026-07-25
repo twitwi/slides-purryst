@@ -1,7 +1,7 @@
 sp-pause { display: none; } /* deprecated? */
 sp-anim { display: none; }
 sp-jump { display: none; }
-sp-clicks { display: contents; }
+sp-steps { display: contents; }
 .sp-anim-ghost { display: none; }
 
 .sp-anim-hidden { opacity: 0; pointer-events: none; transition: opacity 300ms ease; }

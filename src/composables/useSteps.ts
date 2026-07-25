@@ -2,10 +2,10 @@ import { ref, computed, type Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
 import { registry } from '../plugin'
 
-let defaultClicksAt = 1
+let defaultStepsAt = 1
 
-export function setDefaultClicksAt(value: number) {
-  defaultClicksAt = value
+export function setDefaultStepsAt(value: number) {
+  defaultStepsAt = value
 }
 
 function countAnimSpecParts(spec: string, htmlForQuery?: Element): number {
@@ -96,19 +96,18 @@ function processAfterModifier(tmp: Element) {
   walk(tmp)
 }
 
-function processClicksWrapper(tmp: Element) {
-  tmp.querySelectorAll('sp-clicks').forEach(clicks => {
-    const at = parseInt(clicks.getAttribute('at') || String(defaultClicksAt), 10)
-    const every = parseInt(clicks.getAttribute('every') || '1', 10)
-    const animation = clicks.getAttribute('animation') || ''
-    const tag = clicks.getAttribute('tag') || 'div'
-    const children = Array.from(clicks.children)
+function processStepsWrapper(tmp: Element) {
+  tmp.querySelectorAll('sp-steps').forEach(steps => {
+    const at = parseInt(steps.getAttribute('at') || String(defaultStepsAt), 10)
+    const every = parseInt(steps.getAttribute('every') || '1', 10)
+    const animation = steps.getAttribute('animation') || ''
+    const tag = steps.getAttribute('tag') || 'div'
+    const children = Array.from(steps.children)
 
     const handledAttrs = new Set(['at', 'every', 'animation', 'tag'])
     const wrapper = document.createElement(tag)
-    wrapper.setAttribute('sp-clicks-wrapper', '')
 
-    for (const attr of Array.from(clicks.attributes)) {
+    for (const attr of Array.from(steps.attributes)) {
       if (!handledAttrs.has(attr.name)) {
         wrapper.setAttribute(attr.name, attr.value)
       }
@@ -120,7 +119,7 @@ function processClicksWrapper(tmp: Element) {
       wrapper.appendChild(child.cloneNode(true))
     })
 
-    clicks.replaceWith(wrapper)
+    steps.replaceWith(wrapper)
   })
 }
 
@@ -249,7 +248,7 @@ export function processSlideHtml(html: string): { html: string; steps: number } 
   tmp.innerHTML = html
 
   processAliases(tmp)
-  processClicksWrapper(tmp)
+  processStepsWrapper(tmp)
   processAfterModifier(tmp)
   processSpStepElements(tmp)
   const steps = processJumpsAndAnims(tmp)

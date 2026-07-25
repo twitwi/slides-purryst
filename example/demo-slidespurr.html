@@ -351,7 +351,7 @@ await createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-anim</code> — @play / @pause video</h3>
     <video src="https://www.pexels.com/fr-fr/download/video/35332556/" width="400" id="myvideo" style="float:right"></video>
-    <p>The following will happen on clicks (skip to step 2 without waiting for the video to play too much)</p>
+    <p>The following will happen on steps (skip to step 2 without waiting for the video to play too much)</p>
     <div>
       <sp-step at="1" animation="fade"><code>@play(#myvideo)</code></sp-step>
       <sp-step at="2" animation="fade"><code>| @pause(#myvideo)</code></sp-step>
@@ -423,27 +423,27 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-clicks</code> wrapper</h3>
+    <h3><code>sp-steps</code> wrapper</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Sequential list animation (first item on first click):</p>
-    <sp-clicks class="demo-items">
+    <sp-steps class="demo-items">
       <div>Item 1</div>
       <div>Item 2</div>
       <div>Item 3</div>
-    </sp-clicks>
+    </sp-steps>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-clicks</code> with options</h3>
+    <h3><code>sp-steps</code> with options</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>With <code>every="2"</code> and <code>at="1"</code>:</p>
-    <sp-clicks every="2" at="1" class="demo-items">
+    <sp-steps every="2" at="1" class="demo-items">
       <div>Items 1 (step 1)</div>
       <div>Items 2 (step 1)</div>
       <div>Items 3 (step 2)</div>
       <div>Items 4 (step 2)</div>
       <div>Items 5/5 (step 3)</div>
-    </sp-clicks>
+    </sp-steps>
   </sp-slide>
 
 

@@ -15,7 +15,7 @@ import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache } from './composables/includeCache'
-import { setDefaultClicksAt, fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
+import { setDefaultStepsAt, fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
 import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
@@ -40,7 +40,7 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 }
 
 export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, clicksAt, plugins, activate } = options
+  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, stepsAt, plugins, activate } = options
 
   const scriptEl = document.getElementById('sp-content') as HTMLScriptElement | null
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
@@ -55,8 +55,8 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     contentRoot.innerHTML = fixedHtml
   }
 
-  if (clicksAt !== undefined) {
-    setDefaultClicksAt(clicksAt)
+  if (stepsAt !== undefined) {
+    setDefaultStepsAt(stepsAt)
   }
 
   if (!slides) {
