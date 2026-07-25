@@ -1,22 +1,23 @@
 
-## TODO Easy
-
-- [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
-
 ## TODO Now for v0 (no export, no typst)
 
 - [ ] should watch included fragments to refresh hrm
+- [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
+- [ ] proper demo (rework the current one, sync to purrbundle too)
 
 ## TODO v1 (typst simplest syntax)
 
 - [ ] typst v1 with a descent syntax (might consider later the implicit separator approach or a shortcut for commands )
 - [ ] typst math
 - [ ] typst cetz
+- [ ] typst codeblock
+- [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
 
-## TODO v2
+## TODO v2 (export)
 
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
+- [ ] pdf export
 
 ## TODO typst syntax
 

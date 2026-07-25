@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, ref, onMounted, inject, nextTick, defineComponent, defineAsyncComponent } from 'vue'
+import { shallowRef, ref, watch, inject, nextTick, defineComponent, defineAsyncComponent } from 'vue'
 import type { Ref, Component } from 'vue'
 import type { Transformer } from '../types'
 import { getCachedInclude, preloadInclude } from '../composables/includeCache'
@@ -77,34 +77,22 @@ function notifyContentLoaded() {
   })
 }
 
-async function load() {
-  error.value = ''
-  comp.value = null
+const srcRef = getCachedInclude(props.src)
 
-  const cached = getCachedInclude(props.src)
-  if (cached !== undefined) {
-    if (cached) {
-      buildComponent(processContent(cached))
-      notifyContentLoaded()
+watch(srcRef, async (val) => {
+  if (val) {
+    error.value = ''
+    buildComponent(processContent(val))
+    notifyContentLoaded()
+  } else if (val === undefined) {
+    comp.value = null
+    try {
+      await preloadInclude(props.src)
+    } catch (err: any) {
+      error.value = `${err.message} (src: ${props.src})`
     }
-    return
   }
-
-  try {
-    await preloadInclude(props.src)
-    const text = getCachedInclude(props.src)
-    if (text) {
-      buildComponent(processContent(text))
-      notifyContentLoaded()
-    } else {
-      throw new Error('Failed to load')
-    }
-  } catch (err: any) {
-    error.value = `${err.message} (src: ${props.src})`
-  }
-}
-
-onMounted(load)
+}, { immediate: true })
 </script>
 
 <template>

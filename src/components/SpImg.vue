@@ -22,23 +22,21 @@ async function resolve() {
   if (src.startsWith('data:') || src.startsWith('blob:')) { resolvedSrc.value = src; return }
 
   if (src.match(/\.svg(\?|#|$)/i)) {
-    const cached = getCachedInclude(src)
-    if (cached) { resolvedSrc.value = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cached)}`; return }
+    const ref = getCachedInclude(src)
+    if (ref.value) { resolvedSrc.value = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(ref.value)}`; return }
     try {
       await preloadInclude(src)
-      const text = getCachedInclude(src)
-      if (text) { resolvedSrc.value = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(text)}`; return }
+      if (ref.value) { resolvedSrc.value = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(ref.value)}`; return }
     } catch {}
     resolvedSrc.value = src
     return
   }
 
-  const cached = getCachedBinary(src)
-  if (cached) { resolvedSrc.value = cached; return }
+  const ref = getCachedBinary(src)
+  if (ref.value) { resolvedSrc.value = ref.value; return }
   try {
     await preloadBinary(src)
-    const dataUrl = getCachedBinary(src)
-    if (dataUrl) { resolvedSrc.value = dataUrl; return }
+    if (ref.value) { resolvedSrc.value = ref.value; return }
   } catch {}
   resolvedSrc.value = src
 }

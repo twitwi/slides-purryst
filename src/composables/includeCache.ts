@@ -1,5 +1,7 @@
-const cache = new Map<string, string>()
-const binaryCache = new Map<string, string>()
+import { ref, type Ref } from 'vue'
+
+const cache = new Map<string, Ref<string | undefined>>()
+const binaryCache = new Map<string, Ref<string | undefined>>()
 const pending = new Map<string, Promise<void>>()
 const pendingBinary = new Map<string, Promise<void>>()
 let ignorePatterns: RegExp[] = []
@@ -22,31 +24,42 @@ function setMeta(src: string, text?: string): void {
   metaCache.set(src, { size: text ? text.length : 0, timestamp: Date.now() })
 }
 
-export function getCachedInclude(src: string): string | undefined {
-  return cache.get(src)
+export function getCachedInclude(src: string): Ref<string | undefined> {
+  let r = cache.get(src)
+  if (!r) {
+    r = ref(undefined)
+    cache.set(src, r)
+  }
+  return r
 }
 
-export function getCachedBinary(src: string): string | undefined {
-  return binaryCache.get(src)
+export function getCachedBinary(src: string): Ref<string | undefined> {
+  let r = binaryCache.get(src)
+  if (!r) {
+    r = ref(undefined)
+    binaryCache.set(src, r)
+  }
+  return r
 }
 
 export function preloadInclude(src: string): Promise<void> {
   if (shouldIgnore(src)) return Promise.resolve()
-  if (cache.has(src)) return Promise.resolve()
+  const r = getCachedInclude(src)
+  if (r.value !== undefined) return Promise.resolve()
   if (pending.has(src)) return pending.get(src)!
 
   const promise = fetch(src)
-    .then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`)
-      return r.text()
+    .then(r2 => {
+      if (!r2.ok) throw new Error(`HTTP ${r2.status}`)
+      return r2.text()
     })
     .then(text => {
-      cache.set(src, text)
+      r.value = text
       setMeta(src, text)
       pending.delete(src)
     })
     .catch(() => {
-      cache.set(src, '')
+      r.value = ''
       setMeta(src)
       pending.delete(src)
     })
@@ -57,13 +70,14 @@ export function preloadInclude(src: string): Promise<void> {
 
 export function preloadBinary(src: string): Promise<void> {
   if (shouldIgnore(src)) return Promise.resolve()
-  if (binaryCache.has(src)) return Promise.resolve()
+  const r = getCachedBinary(src)
+  if (r.value !== undefined) return Promise.resolve()
   if (pendingBinary.has(src)) return pendingBinary.get(src)!
 
   const promise = fetch(src)
-    .then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`)
-      return r.blob()
+    .then(r2 => {
+      if (!r2.ok) throw new Error(`HTTP ${r2.status}`)
+      return r2.blob()
     })
     .then(blob => new Promise<string>((resolve, reject) => {
       const reader = new FileReader()
@@ -72,12 +86,12 @@ export function preloadBinary(src: string): Promise<void> {
       reader.readAsDataURL(blob)
     }))
     .then(dataUrl => {
-      binaryCache.set(src, dataUrl)
+      r.value = dataUrl
       setMeta(src, dataUrl)
       pendingBinary.delete(src)
     })
     .catch(() => {
-      binaryCache.set(src, '')
+      r.value = ''
       setMeta(src)
       pendingBinary.delete(src)
     })
@@ -87,10 +101,15 @@ export function preloadBinary(src: string): Promise<void> {
 }
 
 export function serializeCache(): string {
-  return JSON.stringify({
-    text: Object.fromEntries(cache),
-    binary: Object.fromEntries(binaryCache),
-  })
+  const text: Record<string, string> = {}
+  for (const [k, r] of cache) {
+    if (r.value !== undefined) text[k] = r.value
+  }
+  const binary: Record<string, string> = {}
+  for (const [k, r] of binaryCache) {
+    if (r.value !== undefined) binary[k] = r.value
+  }
+  return JSON.stringify({ text, binary })
 }
 
 export function loadCache(json: string): void {
@@ -98,18 +117,18 @@ export function loadCache(json: string): void {
   const now = Date.now()
   if (data.text) {
     for (const [k, v] of Object.entries(data.text)) {
-      cache.set(k, v as string)
+      getCachedInclude(k).value = v as string
       metaCache.set(k, { size: (v as string).length, timestamp: now })
     }
   } else {
     for (const [k, v] of Object.entries(data)) {
-      cache.set(k, v as string)
+      getCachedInclude(k).value = v as string
       metaCache.set(k, { size: (v as string).length, timestamp: now })
     }
   }
   if (data.binary) {
     for (const [k, v] of Object.entries(data.binary)) {
-      binaryCache.set(k, v as string)
+      getCachedBinary(k).value = v as string
       metaCache.set(k, { size: (v as string).length, timestamp: now })
     }
   }
@@ -135,14 +154,26 @@ export function getCacheEntries(): CacheEntry[] {
   return entries.sort((a, b) => b.timestamp - a.timestamp)
 }
 
+export function invalidateTextCache(): void {
+  for (const r of cache.values()) r.value = undefined
+  for (const [k] of cache) metaCache.delete(k)
+  pending.clear()
+}
+
 export function clearCache(): void {
+  for (const r of cache.values()) r.value = undefined
+  for (const r of binaryCache.values()) r.value = undefined
   cache.clear()
   binaryCache.clear()
   metaCache.clear()
+  pending.clear()
+  pendingBinary.clear()
 }
 
 export function removeCacheEntry(path: string): void {
-  cache.delete(path)
-  binaryCache.delete(path)
+  const r = cache.get(path)
+  if (r) r.value = undefined
+  const b = binaryCache.get(path)
+  if (b) b.value = undefined
   metaCache.delete(path)
 }

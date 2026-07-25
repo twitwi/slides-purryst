@@ -2,12 +2,14 @@ import { getCachedInclude } from './includeCache'
 import { annotateEditableWithIndex, fixVoidElementsHtml } from './useSteps'
 
 async function fetchCached(src: string): Promise<string> {
-  const cached = getCachedInclude(src)
-  if (cached !== undefined) return cached
+  const ref = getCachedInclude(src)
+  if (ref.value !== undefined) return ref.value
   try {
     const res = await fetch(src)
     if (!res.ok) return ''
-    return await res.text()
+    const text = await res.text()
+    ref.value = text
+    return text
   } catch {
     return ''
   }
