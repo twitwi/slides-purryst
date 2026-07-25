@@ -24,7 +24,14 @@ export async function resolveTopIncludes(
   visited: Set<string> = new Set(),
   path: string = window.location.pathname
 ): Promise<string> {
-  const SP_INCLUDE_RE = /<sp-include\s[^>]*?src="([^"]*)"[^>]*?\/>/g
+  const SP_INCLUDE_RE = /<sp-include\s[^>]*?src="([^"]*)"[^>]*?(\/>|><\/sp-include>)/g
+
+  const pushPath = `<span style="display:none" data-source-file-push="${path}"></span>`
+  const popPath = `<span style="display:none" data-source-file-pop></span>`
+  // add pushPath just after every <sp-slide> and popPath just before every </sp-slide> in the content
+  html = html
+    .replace(/<sp-slide[^>]*>/g, match => match + pushPath)
+    .replace(/<\/sp-slide>/g, match => popPath + match)
 
   const candidates: { src: string; index: number }[] = []
   let match: RegExpExecArray | null
@@ -61,13 +68,8 @@ export async function resolveTopIncludes(
   let result = html
   for (const { src, content } of results) {
     if (!content) continue
-    const re = new RegExp(`<sp-include[^>]*?src="${escapeRegex(src)}"[^>]*?\\/>`, 'g')
-    const pushPath = `<span style="display:none" data-source-file-push="${src}"></span>`
-    const popPath = `<span style="display:none" data-source-file-pop></span>`
-    // add pushPath just after every <sp-slide> and popPath just before every </sp-slide> in the content
-    const contentWithPushPop = content.replace(/<sp-slide[^>]*>/g, match => match + pushPath)
-      .replace(/<\/sp-slide>/g, match => popPath + match)
-    result = result.replace(re, contentWithPushPop)
+    const re = new RegExp(`<sp-include[^>]*?src="${escapeRegex(src)}"[^>]*?(\\/?>|><\\/sp-include>)`, 'g')
+    result = result.replace(re, content)
   }
   return result
 }

@@ -3,15 +3,11 @@
 
 - [ ] sp-step "to" should be exclusive or inclusive? (currently exclusive, but maybe inclusive is more intuitive), so from->to (inclusive) and from->until (exclusive)
 - [ ] sp-step should have a from= to?= or a only=   (no at, so no confusion with other at, as sp-step is detached from the rest sp-steps, children, anim etc)
-- [ ] fix chunklets broken again
-- [ ] fix top level include in top level include
-- [ ] test fragment include in fragment include
 - [ ] fix sp-steps then sp-steps (without at should be sequential)
-- [ ] should watch included fragments to refresh hrm
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 - [ ] proper demo (rework the current one, sync to purrbundle too)
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
-- [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or put a trigger that full hard reloads if too many updates (count updates from start and reload every (?))
+- [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or workaround with a trigger that full hard reloads if too many updates (count updates from start and reload every (?))
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
