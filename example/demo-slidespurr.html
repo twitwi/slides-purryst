@@ -25,11 +25,12 @@
 
 
 
-
+  <!-- slide transitions -->
 
   <sp-slide>
     <h2>Slide Transitions</h2>
     <div class="eg-center">Do not overuse...</div>
+    <p>Transitions don't necessarily improve the presentation, they are possible but should be used sparingly, only when they add value to the content.</p>
   </sp-slide>  
 
   <sp-slide>
@@ -72,6 +73,8 @@
 
 
 
+  <!-- basic navigation -->
+
   <sp-slide>
     <h2>Navigation, basic features and shortcuts</h2>
   </sp-slide>  
@@ -111,6 +114,7 @@
 
 
 
+  <!-- some features -->
 
   <sp-slide>
     <h2>Some interesting features</h2>
@@ -229,6 +233,7 @@ await createSlidesPurryst({
 
 
 
+  <!-- sp-include -->
 
   <sp-slide>
     <h2>Including parts, slides and fragments</h2>
@@ -258,22 +263,157 @@ await createSlidesPurryst({
 
 
 
-
-
-
+  <!-- Animation, overview -->
 
   <sp-slide>
-    <h2>Simple Slide Steps</h2>
+    <h2>Animations: 1. Overview</h2>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Animations: principles</h3>
+    <ul>
+      <li>"animations" is what happens when we step (with left/right/space/swipe)
+        <sp-steps tag="span"><span> like</span><span> that!</span></sp-steps>
+      </li>
+      <sp-jump at="3" />
+      <li>we call each step a <b>step</b>!</li>
+      <li><sp-include src="./demo-sp.html" /> unifies several approaches to animations</li>
+      <li>inspiration is taken from past frameworks and current frameworks like slidev(TODO link) and touying(TODO link) </li>
+      <li>the core system tries to follow the ancestor of <sp-include src="./demo-sp.html" />, slidev ultracharger(TODO link)</li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Animations: multiple ways</h3>
+    <p>Depending on use cases and preferences, the best approach may vary:</p>
+    <ul>
+      <li>sometimes, we just want to have bullet points appear one by one</li>
+      <li>sometimes, we want to say which block appears when</li>
+      <li>sometimes, we want to animate (show, hide, style, move) elements in a custom sequence</li>
+    </ul>
+    <sp-pause />
+    <p>The next sections show how to use these approaches in practice, knowing they can be combined in a presentation and within a slide.</p>
+  </sp-slide>
+
+
+
+
+  <sp-style>
+    .demo-items>*, .d1, .d2, .d3, .d4, .d5 {
+      padding: 0.25em 1em;
+      border-radius: 6px;
+      margin: 0.25em 0;
+      --hue: 220;
+      background: lch(90 40 var(--hue));
+      color: lch(20 20 var(--hue));
+    }
+    .demo-items {
+      >:nth-child(1) { --hue: 220; }
+      >:nth-child(2) { --hue: 120; }
+      >:nth-child(3) { --hue: 60; }
+      >:nth-child(4) { --hue: 330; }
+      >:nth-child(5) { --hue: 0; }
+    }
+    .d1 { --hue: 220; }
+    .d2 { --hue: 120; }
+    .d3 { --hue: 60; }
+    .d4 { --hue: 330; }
+    .d5 { --hue: 0; }
+    .debug-show-current-step { position: absolute; right: 30px; top: 30px; font-size: 30px; &::before { content: "Step: "; } }
+  </sp-style>
+
+
+
+
+
+
+  <!-- Animation, slidev, step, steps, alternatives -->
+
+  <sp-slide>
+    <h2>Animations: 2. Animate like in Slidev</h2>
+    <p>
+      If you know Slidev, you should recognise some concepts of this section.
+      We call <b>steps</b> what Slidev calls "clicks".
+    </p>
   </sp-slide>
 
   <sp-slide>
     <h3>Explicit sp-step</h3>
     <p><code>sp-step</code> declares when its content appears</p>
     <p>Always visible.</p>
-    <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
-    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
-    <p>Always visible.</p>
+    <sp-step at="1"><span class="d1">Step 1</span></sp-step>
+    <sp-step at="2"><span class="d2">Step 2</span></sp-step>
+    <sp-step at="3"><span class="d3">Step 3</span></sp-step>
+    <p style="margin-top: 1em;">Always visible.</p>
+    <sp-step at="3"><div class="d3">Step 3 too.</div></sp-step>
+    <p>NB: sp-step only handle its content, independently of other concepts (presented after)</p>
   </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with <code>animation</code> presets</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Elements can now animate in with presets:</p>
+    <sp-step at="1" animation="fade"><div class="d1">Fade in</div></sp-step>
+    <sp-step at="2" animation="up"><div class="d2">Slide up</div></sp-step>
+    <sp-step at="3" animation="left"><div class="d3">Slide left</div></sp-step>
+    <sp-step at="4" animation="scale"><div class="d4">Scale in</div></sp-step>
+    <p>NB: sp-step only handle its content, independently of other concepts (presented after)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with <code>after</code> modifier</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Elements can share timing with the previous step:</p>
+    <sp-step at="1"><div class="d1">Step 1 (first)</div></sp-step>
+    <sp-step after><div class="d1">Step 1 (same timing)</div></sp-step>
+    <sp-step at="2"><div class="d2">Step 2</div></sp-step>
+    <p>This avoid repeating the same timing for multiple elements.</p>
+    <p>NB: sp-step only handle its content, independently of other concepts (presented after)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with range visibility</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    ... check it animates <sp-alternatives><span></span><span>step 1</span><span>step 2</span><span>done</span></sp-alternatives>
+    <sp-meanwhile />
+    <p>Elements can be visible only in a range of steps:</p>
+    <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
+    <sp-step from="3"><div class="d3">Visible from step 3 onward</div></sp-step>
+  </sp-slide>
+
+
+
+
+
+
+  <sp-slide>
+    <h3><code>sp-steps</code> — children one by one</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Like <code>v-click</code> on every child: just wrap in <code>sp-steps</code>:</p>
+    <sp-steps class="demo-items">
+      <div>Item 1 (step 1)</div>
+      <div>Item 2 (step 2)</div>
+      <div>Item 3 (step 3)</div>
+    </sp-steps>
+    <p>Enter animation via <code>animation="fade"</code>:</p>
+    <sp-steps animation="fade" class="demo-items">
+      <div>Fades in (step 1)</div>
+      <div>Fades in (step 2)</div>
+      <div>Fades in (step 3)</div>
+    </sp-steps>
+  
+    <sp-drag at="348|251|938|657|0">
+      <div class="eg-fill" style="background: rgba(128,128,128,0.6); border: 1px solid grey;">
+      </div>
+    </sp-drag>
+  </sp-slide>
+
+
+
+
+
+
+
 
   <sp-slide>
     <h3>Swap content − <code>sp-alternatives</code></h3>
@@ -290,6 +430,56 @@ await createSlidesPurryst({
       <span style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">5</span>
     </sp-alternatives>
   </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-alternatives</code> — swapping content</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Shows one child at a time — like Slidev's <code>v-if</code> on click index:</p>
+    <sp-alternatives>
+      <div class="d1">Alternative A (step 0)</div>
+      <div class="d2">Alternative B (step 1)</div>
+      <div class="d3">Alternative C (step 2)</div>
+    </sp-alternatives>
+    <p>With <code>cycle</code> — keeps rotating:</p>
+    <sp-alternatives cycle>
+      <span class="d4">🌑</span>
+      <span class="d5">🌕</span>
+    </sp-alternatives>
+  </sp-slide>
+
+
+
+
+
+
+
+
+  <!-- ################### -->
+  <!-- ################### -->
+  <!-- ################### -->
+  <!-- ################### -->
+  <!-- ################### -->
+
+
+  <sp-slide>
+    <h3>Swap content − <code>sp-alternatives</code></h3>
+    <p>it shows children one by one (or cycles if <code>cycle</code>)</p>
+    <sp-alternatives cycle>
+      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
+      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2</p>
+      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3</p>
+    </sp-alternatives>
+    <p>It can start delayed (with e.g. <code>at="2"</code>)</p>
+    <sp-alternatives at="2">
+      <span style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">3</span>
+      <span style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">4</span>
+      <span style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">5</span>
+    </sp-alternatives>
+  </sp-slide>
+
+
+
+
 
   <sp-slide>
     <h2>Generic Slide Animations (steps)</h2>
@@ -425,57 +615,7 @@ await createSlidesPurryst({
     <h2>New Animation Features</h2>
   </sp-slide>
 
-  <sp-style>
-    .demo-items>*, .d1, .d2, .d3, .d4, .d5 {
-      padding: 0.25em 1em;
-      border-radius: 6px;
-      margin: 0.25em 0;
-      --hue: 220;
-      background: lch(90 40 var(--hue));
-      color: lch(20 20 var(--hue));
-    }
-    .demo-items {
-      >:nth-child(1) { --hue: 220; }
-      >:nth-child(2) { --hue: 120; }
-      >:nth-child(3) { --hue: 60; }
-      >:nth-child(4) { --hue: 330; }
-      >:nth-child(5) { --hue: 0; }
-    }
-    .d1 { --hue: 220; }
-    .d2 { --hue: 120; }
-    .d3 { --hue: 60; }
-    .d4 { --hue: 330; }
-    .d5 { --hue: 0; }
-    .debug-show-current-step { position: absolute; right: 30px; top: 30px; font-size: 30px; &::before { content: "Step: "; } }
-  </sp-style>
 
-  <sp-slide>
-    <h3><code>sp-step</code> with <code>animation</code> presets</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Elements can now animate in with presets:</p>
-    <sp-step at="1" animation="fade"><div class="d1">Fade in</div></sp-step>
-    <sp-step at="2" animation="up"><div class="d2">Slide up</div></sp-step>
-    <sp-step at="3" animation="scale"><div class="d3">Scale in</div></sp-step>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-step</code> with <code>after</code> modifier</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Elements can share timing with the previous step:</p>
-    <sp-step at="1"><div class="d1">Step 1 (first)</div></sp-step>
-    <sp-step after><div class="d1">Step 1 (same timing)</div></sp-step>
-    <sp-step at="2"><div class="d2">Step 2</div></sp-step>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-step</code> with range visibility</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    ... check it animates <sp-alternatives><span></span><span>step 1</span><span>step 2</span><span>done</span></sp-alternatives>
-    <sp-meanwhile />
-    <p>Elements can be visible only in a range of steps:</p>
-    <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
-    <sp-step from="3"><div class="d3">Visible from step 3 onward</div></sp-step>
-  </sp-slide>
 
   <sp-slide>
     <h3><code>sp-steps</code> wrapper</h3>
@@ -651,7 +791,7 @@ await createSlidesPurryst({
     <h1>END (for real)</h1>
   </sp-slide>
 
-  <!-- global style -->
+  <!-- global style, you can use style or sp-style but your tools will likely preffer style -->
   <style>
     svg #cat:not(:hover) { filter: blur(5px); }
     svg #cat:hover {
@@ -673,9 +813,9 @@ await createSlidesPurryst({
     :root {
       /* font-size: 19px; */
     }
-    /* scale font, slides only, deafault 3.75em */
+    /* scale font, slides only, default 3.75em */
     .sp-slide {
-      font-size: 4.5em;
+      font-size: 4em;
     }
     /* change theme color(s) */
     /* defaults 25 and 55 */
