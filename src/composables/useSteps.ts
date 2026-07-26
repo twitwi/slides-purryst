@@ -2,12 +2,6 @@ import { ref, computed, type Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
 import { registry } from '../plugin'
 
-let defaultStepsAt = 1
-
-export function setDefaultStepsAt(value: number) {
-  defaultStepsAt = value
-}
-
 function countAnimSpecParts(spec: string, htmlForQuery?: Element): number {
   if (!spec.trim()) return 0
   const parts = spec.split('|').map(s => s.trim())
@@ -94,33 +88,6 @@ function processAlsoModifier(tmp: Element) {
     }
   }
   walk(tmp)
-}
-
-function processStepsWrapper(tmp: Element) {
-  tmp.querySelectorAll('sp-steps').forEach(steps => {
-    const at = parseInt(steps.getAttribute('at') || String(defaultStepsAt), 10)
-    const every = parseInt(steps.getAttribute('every') || '1', 10)
-    const animation = steps.getAttribute('animation') || ''
-    const tag = steps.getAttribute('tag') || 'div'
-    const children = Array.from(steps.children)
-
-    const handledAttrs = new Set(['at', 'every', 'animation', 'tag'])
-    const wrapper = document.createElement(tag)
-
-    for (const attr of Array.from(steps.attributes)) {
-      if (!handledAttrs.has(attr.name)) {
-        wrapper.setAttribute(attr.name, attr.value)
-      }
-    }
-
-    children.forEach((child, i) => {
-      child.setAttribute('data-sp-step', String(at + Math.floor(i / every)))
-      if (animation) child.setAttribute('data-sp-step-animation', animation)
-      wrapper.appendChild(child.cloneNode(true))
-    })
-
-    steps.replaceWith(wrapper)
-  })
 }
 
 function processSpStepElements(tmp: Element) {
@@ -229,6 +196,55 @@ function processJumpsAndAnims(root: Element): number {
         noRecursion = true
       }
 
+      if (tag === 'sp-steps' || (!noTag && el.hasAttribute('sp-steps'))) {
+        const at = el.getAttribute('at') ?? '+1'
+        const doJump = [null, 'false'].includes(el.getAttribute('no-jump'))
+        const every = parseInt(el.getAttribute('every') || '1', 10)
+        const animation = el.getAttribute('animation') || ''
+
+        let startStep = visStep
+        const pr = parseJumpAt(at)
+        if (pr.relative) startStep += pr.value
+        else startStep = pr.value
+
+        const children = Array.from(el.children)
+        const childCount = Math.ceil(children.length / every)
+
+        children.forEach((child, i) => {
+          child.setAttribute('data-sp-step', String(startStep + Math.floor(i / every)))
+          if (animation) child.setAttribute('data-sp-step-animation', animation)
+        })
+
+        const lastStep = startStep + childCount - 1
+        if (doJump) {
+          visStep = lastStep
+          contributeMaxStep(visStep)
+        } else {
+          contributeMaxStep(lastStep)
+        }
+
+        if (tag === 'sp-steps') {
+          const wrapper = document.createElement('div')
+          for (const attr of Array.from(el.attributes)) {
+            if (!['at', 'every', 'animation', 'no-jump'].includes(attr.name)) {
+              wrapper.setAttribute(attr.name, attr.value)
+            }
+          }
+          while (el.firstChild) wrapper.appendChild(el.firstChild)
+          el.replaceWith(wrapper)
+        } else {
+          el.removeAttribute('sp-steps')
+          el.removeAttribute('at')
+          el.removeAttribute('every')
+          el.removeAttribute('animation')
+          el.removeAttribute('no-jump')
+        }
+
+        noTag = true
+        noRecursion = true
+        continue
+      }
+
       if (!noTag && visStep > 0 && !el.hasAttribute('data-sp-step')) {
         el.setAttribute('data-sp-step', String(visStep))
       }
@@ -254,7 +270,6 @@ export function processSlideHtml(html: string): { html: string; steps: number } 
   tmp.innerHTML = html
 
   processAliases(tmp)
-  processStepsWrapper(tmp)
   processAlsoModifier(tmp)
   processSpStepElements(tmp)
   const steps = processJumpsAndAnims(tmp)

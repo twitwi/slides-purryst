@@ -49,7 +49,7 @@
     <h3>This one is "fade"</h3>
     <img src="./slides-purryst-banner.svg" />
     <p>next is "slide-up"</p>
-  </sp-slide>
+  </sp-slide>display: inline
 
   <sp-slide transition="slide-up">
     <h3>This one is "slide-up"</h3>
@@ -178,6 +178,11 @@
       border-radius: 8px;
       border: 2px solid lch(40 40 var(--eg-hue));
     }
+    .eg-inlinechildren {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35em;
+    }
   </sp-style>
 
   <sp-slide class="eg-draggables">
@@ -273,7 +278,7 @@ await createSlidesPurryst({
     <h3>Animations: principles</h3>
     <ul>
       <li>"animations" is what happens when we step (with left/right/space/swipe)
-        <sp-steps tag="span"><span> like</span><span> that!</span></sp-steps>
+        <sp-steps><span> like</span><span> that!</span></sp-steps>
       </li>
       <sp-jump at="3" />
       <li>we call each step a <b>step</b>!</li>
@@ -299,7 +304,7 @@ await createSlidesPurryst({
 
 
   <sp-style>
-    .demo-items>*, .d1, .d2, .d3, .d4, .d5 {
+    .demo-items>*, .d1, .d2, .d3, .d4, .d5, .d6 {
       padding: 0.25em 1em;
       border-radius: 6px;
       margin: 0.25em 0;
@@ -308,17 +313,19 @@ await createSlidesPurryst({
       color: lch(20 20 var(--hue));
     }
     .demo-items {
-      >:nth-child(1) { --hue: 220; }
+      >:nth-child(1) { --hue: 240; }
       >:nth-child(2) { --hue: 120; }
-      >:nth-child(3) { --hue: 60; }
-      >:nth-child(4) { --hue: 330; }
-      >:nth-child(5) { --hue: 0; }
+      >:nth-child(3) { --hue: 0; }
+      >:nth-child(4) { --hue: 180; }
+      >:nth-child(5) { --hue: 60; }
+      >:nth-child(6) { --hue: 300; }
     }
-    .d1 { --hue: 220; }
+    .d1 { --hue: 240; }
     .d2 { --hue: 120; }
-    .d3 { --hue: 60; }
-    .d4 { --hue: 330; }
-    .d5 { --hue: 0; }
+    .d3 { --hue: 0; }
+    .d4 { --hue: 180; }
+    .d5 { --hue: 60; }
+    .d6 { --hue: 300; }
     .debug-show-current-step { position: absolute; right: 30px; top: 30px; font-size: 30px; &::before { content: "Step: "; } }
   </sp-style>
 
@@ -367,7 +374,10 @@ await createSlidesPurryst({
     <p>Elements can share timing with the previous step:</p>
     <sp-step from="1"><div class="d1">Step 1 (first)</div></sp-step>
     <sp-step also><div class="d1">Step 1 (same timing)</div></sp-step>
-    <sp-step from="2"><div class="d2">Step 2</div></sp-step>
+    <div style="display: flex; gap: 1em;">
+      <sp-step from="2"><span class="d2">Step 2</span></sp-step>
+      <sp-step also><span class="d2">... also Step 2</span></sp-step>
+    </div>
     <p>This avoid repeating the same timing for multiple elements.</p>
     <p>NB: sp-step only handle its content, independently of other concepts (presented after)</p>
   </sp-slide>
@@ -391,17 +401,18 @@ await createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-steps</code> — children one by one</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Like <code>v-click</code> on every child: just wrap in <code>sp-steps</code>:</p>
-    <sp-steps class="demo-items">
-      <div>Item 1 (step 1)</div>
-      <div>Item 2 (step 2)</div>
-      <div>Item 3 (step 3)</div>
+    <p>(NB: contrary to <code>sp-step</code>, <code>sp-steps</code> works hand in hand with the other animation approaches)</p>
+    <p>Like wrapping every child with <code>sp-step</code>, sequentially appearing:</p>
+    <sp-steps class="demo-items eg-inlinechildren">
+      <div>Item 1 (S.1)</div>
+      <div>Item 2 (S.2)</div>
+      <div>Item 3 (S.3)</div>
     </sp-steps>
-    <p>Enter animation via <code>animation="fade"</code>:</p>
-    <sp-steps animation="fade" class="demo-items">
-      <div>Fades in (step 1)</div>
-      <div>Fades in (step 2)</div>
-      <div>Fades in (step 3)</div>
+    <p>(after item 3) Enter animation via <code>animation="fade"</code>:</p>
+    <sp-steps animation="fade" class="eg-inlinechildren">
+      <div class="d4">Fades in (S.4)</div>
+      <div class="d5">Fades in (S.5)</div>
+      <div class="d6">Fades in (S.6)</div>
     </sp-steps>
   </sp-slide>
 
@@ -414,33 +425,26 @@ await createSlidesPurryst({
 
   <sp-slide>
     <h3>Swap content − <code>sp-alternatives</code></h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>it shows children one by one (or cycles if <code>cycle</code>)</p>
     <sp-alternatives cycle>
-      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
-      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2</p>
-      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3</p>
+      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1 (step 0, 3, ...)</p>
+      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2 (step 1, 4, ...)</p>
+      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3 (step 2, 5, ...)</p>
     </sp-alternatives>
-    <p>It can start delayed (with e.g. <code>at="2"</code>)</p>
+    <sp-meanwhile />
+    <p>
+      It can start delayed (with e.g. <code>at="2"</code>)
+    </p>
     <sp-alternatives at="2">
-      <span style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">3</span>
-      <span style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">4</span>
-      <span style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">5</span>
+      <span style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alt 1 (step 2)</span>
+      <span style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alt 2 (step 3)</span>
+      <span style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alt 3 (step 4)</span>
     </sp-alternatives>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-alternatives</code> — swapping content</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Shows one child at a time — like Slidev's <code>v-if</code> on click index:</p>
-    <sp-alternatives>
-      <div class="d1">Alternative A (step 0)</div>
-      <div class="d2">Alternative B (step 1)</div>
-      <div class="d3">Alternative C (step 2)</div>
-    </sp-alternatives>
-    <p>With <code>cycle</code> — keeps rotating:</p>
-    <sp-alternatives cycle>
-      <span class="d4">🌑</span>
-      <span class="d5">🌕</span>
+    <hr/>
+    <sp-alternatives at="0" cycle>
+      <span>🌕</span>
+      <span>🌑</span>
     </sp-alternatives>
   </sp-slide>
 

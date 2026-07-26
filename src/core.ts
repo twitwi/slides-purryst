@@ -16,7 +16,7 @@ import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache } from './composables/includeCache'
-import { setDefaultStepsAt, fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
+import { fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
 import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
@@ -42,7 +42,7 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
 }
 
 export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, stepsAt, plugins, activate } = options
+  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, plugins, activate } = options
 
   const scriptEl = document.getElementById('sp-content') as HTMLScriptElement | null
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
@@ -55,10 +55,6 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
     contentRoot = document.createElement('div')
     contentRoot.innerHTML = fixedHtml
-  }
-
-  if (stepsAt !== undefined) {
-    setDefaultStepsAt(stepsAt)
   }
 
   if (!slides) {

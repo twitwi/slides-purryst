@@ -64,7 +64,6 @@ export interface SPSlidesOptions {
   components?: Record<string, Component>
   seed?: number
   cacheIgnore?: string[]
-  stepsAt?: number
   plugins?: SlidesPlugin[]
   activate?: (api: PluginAPI) => void
 }

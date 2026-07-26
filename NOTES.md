@@ -17,10 +17,15 @@
 
 ## TODO v2 (2.0.0) (export and polish)
 
+- [ ] why are subparts etc shown as 0 Bytes in the dev tools?
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
 - [ ] pdf export
 - [ ] add a toc in the overview somewhat
+
+## TODO v3 (3.0.0) (better presenter features)
+
+- [ ] notes with click markers like slidev, maybe not the same syntax, maybe closer to sp-pause
 
 ## TODO typst syntax
 
@@ -29,13 +34,14 @@
 
 ## TOREVIEW
 
+- [ ] wrapping the sp-alternatives at="0" cycle in a div actually changes semantics!!!
 - [ ] should sp-step hide animation="scale"
 - [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
 - [ ] ^ NB: there are two use of the bundle, one for exported pres, and then can use a compiled component, and another where we just drop the bundle and a simple html file and then we may need to load SFC
 - [ ] <sp-pause/> might need (e.g. following) content to be put in a span, not pure text node. This is a limitation of css, but could we detect it (in devmode?) and notify the user?
 - [ ] generate a palette of 20 creative themes, named gen1-01 to gen1-20 (for an ambiguous gen meaning generated / genai / generic / generation1), most of which should have a primary and secondary color that is configurable
-
+- [ ] investigate if we can have a rewrite of steps/anim that is compile-free, more precisely, can we e.g. imagine a vue component that creates/uses sp-steps sp-anim etc (currently most of the work is at compile time), and a kind of step manager (at the slide level?) that monitors the dom to actually define steps (and count etc)
 
 ## TODO
 
