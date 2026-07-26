@@ -1,11 +1,10 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
-- [ ] fix sp-steps then sp-steps (without at should be sequential)
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 - [ ] proper demo (rework the current one, sync to purrbundle too)
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
-- [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or workaround with a trigger that full hard reloads if too many updates (count updates from start and reload every (?))
+- [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or workaround with a trigger that full hard reloads if too many updates (count updates from start and reload every (?))... or maybe it is related to time?
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
