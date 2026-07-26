@@ -80,7 +80,7 @@
   </sp-slide>  
 
   <sp-slide>
-    <h3>Keyboard Navigation + touch <sp-step at="1">(please try)</sp-step></h3>
+    <h3>Keyboard Navigation + touch <sp-step from="1">(please try)</sp-step></h3>
     <ul>
       <li><kbd>→</kbd> / <kbd>Spc</kbd> / swipe: advance the presentation</li>
       <li><kbd>←</kbd>: backward</li>
@@ -333,7 +333,7 @@ await createSlidesPurryst({
     <h2>Animations: 2. Animate like in Slidev</h2>
     <p>
       If you know Slidev, you should recognise some concepts of this section.
-      We call <b>steps</b> what Slidev calls "clicks".
+      Some concepts do not necessarily have the same names, for instance we call <b>steps</b> what Slidev calls "clicks".
     </p>
   </sp-slide>
 
@@ -341,32 +341,33 @@ await createSlidesPurryst({
     <h3>Explicit sp-step</h3>
     <p><code>sp-step</code> declares when its content appears</p>
     <p>Always visible.</p>
-    <sp-step at="1"><span class="d1">Step 1</span></sp-step>
-    <sp-step at="2"><span class="d2">Step 2</span></sp-step>
-    <sp-step at="3"><span class="d3">Step 3</span></sp-step>
+    <sp-step from="1"><span class="d1">Step 1</span></sp-step>
+    <sp-step from="2"><span class="d2">Step 2</span></sp-step>
+    <sp-step from="3"><span class="d3">Step 3</span></sp-step>
     <p style="margin-top: 1em;">Always visible.</p>
-    <sp-step at="3"><div class="d3">Step 3 too.</div></sp-step>
+    <sp-step from="3"><div class="d3">Step 3 too.</div></sp-step>
     <p>NB: sp-step only handle its content, independently of other concepts (presented after)</p>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-step</code> with <code>animation</code> presets</h3>
+    <h3><code>sp-step</code> with <code>animation</code> presets (or <code>hide</code>)</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Elements can now animate in with presets:</p>
-    <sp-step at="1" animation="fade"><div class="d1">Fade in</div></sp-step>
-    <sp-step at="2" animation="up"><div class="d2">Slide up</div></sp-step>
-    <sp-step at="3" animation="left"><div class="d3">Slide left</div></sp-step>
-    <sp-step at="4" animation="scale"><div class="d4">Scale in</div></sp-step>
+    <p>Elements can animate with some presets:</p>
+    <sp-step from="1" animation="fade"><div class="d1">Fade in</div></sp-step>
+    <sp-step from="2" animation="up"><div class="d2">Slide up</div></sp-step>
+    <sp-step from="5" hide><div class="d5">with "hide" attribute, hidden element takes no space</div></sp-step>
+    <sp-step from="3" animation="left"><div class="d3">Slide left</div></sp-step>
+    <sp-step from="4" animation="scale"><div class="d4">Scale in</div></sp-step>
     <p>NB: sp-step only handle its content, independently of other concepts (presented after)</p>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-step</code> with <code>after</code> modifier</h3>
+    <h3><code>sp-step</code> with <code>also</code> modifier</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Elements can share timing with the previous step:</p>
-    <sp-step at="1"><div class="d1">Step 1 (first)</div></sp-step>
-    <sp-step after><div class="d1">Step 1 (same timing)</div></sp-step>
-    <sp-step at="2"><div class="d2">Step 2</div></sp-step>
+    <sp-step from="1"><div class="d1">Step 1 (first)</div></sp-step>
+    <sp-step also><div class="d1">Step 1 (same timing)</div></sp-step>
+    <sp-step from="2"><div class="d2">Step 2</div></sp-step>
     <p>This avoid repeating the same timing for multiple elements.</p>
     <p>NB: sp-step only handle its content, independently of other concepts (presented after)</p>
   </sp-slide>
@@ -374,11 +375,12 @@ await createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-step</code> with range visibility</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    ... check it animates <sp-alternatives><span></span><span>step 1</span><span>step 2</span><span>done</span></sp-alternatives>
     <sp-meanwhile />
     <p>Elements can be visible only in a range of steps:</p>
-    <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
+    <sp-step from="1" to="2"><div class="d1">Visible at steps 1-2</div></sp-step>
     <sp-step from="3"><div class="d3">Visible from step 3 onward</div></sp-step>
+    <sp-step from="0" to="1"><div class="d5">Visible at steps 0-1 (to=1)</div></sp-step>
+    <sp-step from="0" until="2"><div class="d5">Visible at steps 0-1 (until=2)</div></sp-step>
   </sp-slide>
 
 
@@ -593,13 +595,13 @@ await createSlidesPurryst({
     <video src="https://www.pexels.com/fr-fr/download/video/35332556/" width="400" id="myvideo" style="float:right"></video>
     <p>The following will happen on steps (skip to step 2 without waiting for the video to play too much)</p>
     <div>
-      <sp-step at="1" animation="fade"><code>@play(#myvideo)</code></sp-step>
-      <sp-step at="2" animation="fade"><code>| @pause(#myvideo)</code></sp-step>
+      <sp-step from="1" animation="fade"><code>@play(#myvideo)</code></sp-step>
+      <sp-step from="2" animation="fade"><code>| @pause(#myvideo)</code></sp-step>
     </div>
-    <sp-step at="3" animation="fade"><code>@play(#myvideo) ^ 2s @pause(#myvideo)</code></sp-step>
+    <sp-step from="3" animation="fade"><code>@play(#myvideo) ^ 2s @pause(#myvideo)</code></sp-step>
     <div>
-      <sp-step at="4" animation="fade"><code>@play(,rewind)</code></sp-step>
-      <sp-step at="5" animation="fade"><code>| @pause</code></sp-step>
+      <sp-step from="4" animation="fade"><code>@play(,rewind)</code></sp-step>
+      <sp-step from="5" animation="fade"><code>| @pause</code></sp-step>
     </div>
     <sp-anim spec="@play(#myvideo) | @pause(video) | @play ^ 2s @pause | @play(,rewind) | @pause" />
     <p>Pass a selector, defaulting to <code>video</code>, can also add <code>rewind</code> to restart the video from the beginning on backward.</p>

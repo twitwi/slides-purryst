@@ -3,16 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onMounted, nextTick, type Ref, type VNode } from 'vue'
+import { onMounted, nextTick, type VNode } from 'vue'
 import { useSlots } from 'vue'
 
-const props = withDefaults(defineProps<{
-  at?: number | string
+const props = defineProps<{
   from?: number | string
   to?: number | string
-  type?: string
+  until?: number | string
+  only?: number | string
+  hide?: boolean
   animation?: string
-}>(), { at: 0 })
+}>()
 
 const slots = useSlots() as { default?: (...args: any[]) => VNode[] }
 
@@ -22,11 +23,18 @@ onMounted(() => {
     for (const node of nodes) {
       if (typeof node === 'object' && node.el && node.el.nodeType === 1) {
         const el = node.el as HTMLElement
-        const atVal = typeof props.at === 'string' ? parseInt(props.at, 10) : props.at
-        if (atVal) el.setAttribute('data-sp-step', String(atVal))
         if (props.from !== undefined) el.setAttribute('data-sp-step-from', String(props.from))
         if (props.to !== undefined) el.setAttribute('data-sp-step-to', String(props.to))
-        if (props.type === 'only') el.setAttribute('data-sp-step-only', '')
+        if (props.until !== undefined) {
+          const untilVal = typeof props.until === 'string' ? parseInt(props.until, 10) : props.until
+          el.setAttribute('data-sp-step-to', String(untilVal - 1))
+        }
+        if (props.only !== undefined) {
+          const onlyVal = typeof props.only === 'string' ? parseInt(props.only, 10) : props.only
+          el.setAttribute('data-sp-step-from', String(onlyVal))
+          el.setAttribute('data-sp-step-to', String(onlyVal))
+        }
+        if (props.hide) el.setAttribute('data-sp-step-hide', '')
         if (props.animation) el.setAttribute('data-sp-step-animation', props.animation)
         break
       }

@@ -72,21 +72,21 @@ function processAliases(tmp: Element) {
   })
 }
 
-function processAfterModifier(tmp: Element) {
-  let lastAt = 0
+function processAlsoModifier(tmp: Element) {
+  let lastFrom = 0
   const walk = (parent: Element) => {
     const children = Array.from(parent.children)
     for (const el of children) {
       const tag = el.tagName.toLowerCase()
 
       if (tag === 'sp-step') {
-        const after = el.getAttribute('after')
-        if (after !== null) {
-          el.setAttribute('at', String(lastAt))
-          el.removeAttribute('after')
+        const also = el.getAttribute('also')
+        if (also !== null) {
+          el.setAttribute('from', String(lastFrom))
+          el.removeAttribute('also')
         } else {
-          const at = parseInt(el.getAttribute('at') || '0', 10)
-          lastAt = at
+          const from = parseInt(el.getAttribute('from') || '0', 10)
+          lastFrom = from
         }
       }
 
@@ -125,29 +125,35 @@ function processStepsWrapper(tmp: Element) {
 
 function processSpStepElements(tmp: Element) {
   tmp.querySelectorAll('sp-step').forEach(step => {
-    const at = step.getAttribute('at')
     const from = step.getAttribute('from')
     const to = step.getAttribute('to')
-    const type = step.getAttribute('type')
+    const until = step.getAttribute('until')
+    const only = step.getAttribute('only')
+    const hide = step.getAttribute('hide')
     const animation = step.getAttribute('animation')
+
+    function applyAttrs(el: Element) {
+      if (from !== null) el.setAttribute('data-sp-step-from', from)
+      if (to !== null) el.setAttribute('data-sp-step-to', to)
+      if (until !== null) {
+        const untilVal = parseInt(until, 10)
+        if (!isNaN(untilVal)) el.setAttribute('data-sp-step-to', String(untilVal - 1))
+      }
+      if (only !== null) {
+        el.setAttribute('data-sp-step-from', only)
+        el.setAttribute('data-sp-step-to', only)
+      }
+      if (hide !== null) el.setAttribute('data-sp-step-hide', '')
+      if (animation) el.setAttribute('data-sp-step-animation', animation)
+    }
 
     const childEls = Array.from(step.children)
     if (childEls.length > 0) {
-      childEls.forEach(el => {
-        if (at !== null) el.setAttribute('data-sp-step', at)
-        if (from !== null) el.setAttribute('data-sp-step-from', from)
-        if (to !== null) el.setAttribute('data-sp-step-to', to)
-        if (type === 'only') el.setAttribute('data-sp-step-only', '')
-        if (animation) el.setAttribute('data-sp-step-animation', animation)
-      })
+      childEls.forEach(applyAttrs)
       step.replaceWith(...Array.from(step.childNodes))
     } else {
       const span = document.createElement('span')
-      if (at !== null) span.setAttribute('data-sp-step', at)
-      if (from !== null) span.setAttribute('data-sp-step-from', from)
-      if (to !== null) span.setAttribute('data-sp-step-to', to)
-      if (type === 'only') span.setAttribute('data-sp-step-only', '')
-      if (animation) span.setAttribute('data-sp-step-animation', animation)
+      applyAttrs(span)
       span.innerHTML = step.innerHTML
       step.replaceWith(span)
     }
@@ -249,7 +255,7 @@ export function processSlideHtml(html: string): { html: string; steps: number } 
 
   processAliases(tmp)
   processStepsWrapper(tmp)
-  processAfterModifier(tmp)
+  processAlsoModifier(tmp)
   processSpStepElements(tmp)
   const steps = processJumpsAndAnims(tmp)
   applyPluginTransforms(tmp)

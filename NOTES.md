@@ -1,8 +1,6 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
-- [ ] sp-step "to" should be exclusive or inclusive? (currently exclusive, but maybe inclusive is more intuitive), so from->to (inclusive) and from->until (exclusive)
-- [ ] sp-step should have a from= to?= or a only=   (no at, so no confusion with other at, as sp-step is detached from the rest sp-steps, children, anim etc)
 - [ ] fix sp-steps then sp-steps (without at should be sequential)
 - [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
 - [ ] proper demo (rework the current one, sync to purrbundle too)
@@ -11,7 +9,7 @@
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
-- [ ] typst v1 with a descent syntax (might consider later the implicit separator approach or a shortcut for commands )
+- [ ] typst v1 with a decent syntax (might consider later the implicit separator approach or a shortcut for commands )
 - [ ] typst math
 - [ ] typst cetz
 - [ ] typst codeblock
@@ -31,6 +29,7 @@
 
 ## TOREVIEW
 
+- [ ] should sp-step hide animation="scale"
 - [ ] cache custom components source too so we can create a self-contained bundle, see ,,discuss-custom-sfc-standalone.md but add the fact that vue says it is embedded so no more bundle size argument? https://www.npmjs.com/package/@vue/compiler-sfc
 - [ ] Runtime template caching: cache `defineComponent` results keyed by template string (not full SFC). Measure perf gains before implementing. Useful for non-export dev workflow when navigating back to slides.
 - [ ] ^ NB: there are two use of the bundle, one for exported pres, and then can use a compiled component, and another where we just drop the bundle and a simple html file and then we may need to load SFC
@@ -67,7 +66,7 @@
 - [ ] (typst) show rule to map block onto a div, with explicit attributes (of block) transformed in style in div
 - [ ] (typst) drag will not work with multifile input or even loop probably, or function that creates a drag, etc
 - [ ] (js) drag will also not work if including a file (already done most of the work but need to add a test and sp-include support)
-- [ ] explore if we can rationalize that escaping stuff:     <h3>Explicit <code>&amp;lt;sp-step at="..."></code></h3>
+- [ ] explore if we can rationalize that escaping stuff:     <h3>Explicit <code>&amp;lt;sp-step from="..."></code></h3>
 - [ ] consider gsap or an alternative (anime.js?) for svg animations or text animations or transitions
 - [ ] (typst) (hard) img/svg find a way in typst to make the paths clickable (to go to source) and at the same time properly relative (so need to pass a path... but loose source line etc)
 - [ ] extensible slide transitions, handling also the case of non-css animations, typically consider a registry of name->animationhandler, that defines the behavior/attrs of Transition
