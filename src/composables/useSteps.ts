@@ -225,6 +225,7 @@ function processJumpsAndAnims(root: Element): number {
 
         if (tag === 'sp-steps') {
           const wrapper = document.createElement('div')
+          wrapper.classList.add('sp-steps-no-tag')
           for (const attr of Array.from(el.attributes)) {
             if (!['at', 'every', 'animation', 'no-jump'].includes(attr.name)) {
               wrapper.setAttribute(attr.name, attr.value)

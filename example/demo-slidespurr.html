@@ -37,10 +37,10 @@
     <h3>Transitions: options</h3>
     <p>Per-slide transitions via <code>transition</code> attribute.</p>
     <ul>
-      <li><code>none</code> — default</li>
-      <li><code>fade</code> — opacity fading (next slide)</li>
-      <li><code>slide-up</code> — vertical slide</li>
-      <li><code>zoom</code> — scale in/out</li>
+      <li><code>none</code> − default</li>
+      <li><code>fade</code> − opacity fading (next slide)</li>
+      <li><code>slide-up</code> − vertical slide</li>
+      <li><code>zoom</code> − scale in/out</li>
     </ul>
     <p>A "transition" option to createSlidesPurryst, that is used as default.</p>
   </sp-slide>
@@ -225,7 +225,7 @@
 
   <sp-slide>
     <h3>Code Highlighting with Shiki</h3>
-    <p>Use <code>sp-code</code> to add code snippets with syntax highlighting (NB: might become a plugin)</p>
+    <p>Use <code>sp-code</code> to add code snippets with syntax highlighting</p>
     <pre><code class="language-typescript">
 import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
@@ -233,6 +233,8 @@ await createSlidesPurryst({
   components: { 'my-counter': Counter },
 })
     </code></pre>
+    <p class="eg-small">(NB: integration not polished, might be removed and become a plugin)</p>
+    <sp-anim spec=".line:nth-of-type(-n+3)" />
   </sp-slide>
 
 
@@ -279,13 +281,14 @@ await createSlidesPurryst({
     <h3>Animations: principles</h3>
     <ul>
       <li>"animations" is what happens when we step (with left/right/space/swipe)
-        <sp-steps><span> like</span><span> that!</span></sp-steps>
+        <sp-steps><strong> like</strong><em> that!</em></sp-steps>
       </li>
       <sp-jump at="3" />
       <li>we call each step a <b>step</b>!</li>
       <li><sp-include src="./demo-sp.html" /> unifies several approaches to animations</li>
-      <li>inspiration is taken from past frameworks and current frameworks like slidev(TODO link) and touying(TODO link) </li>
-      <li>the core system tries to follow the ancestor of <sp-include src="./demo-sp.html" />, slidev ultracharger(TODO link)</li>
+      <li>inspiration is taken from past frameworks and current frameworks like <a href="https://sli.dev/" target="_blank">Slidev</a>
+        and <a href="https://touying-typ.github.io/" target="_blank">Touying</a></li>
+      <li>the core system tries to follow the ancestor of <sp-include src="./demo-sp.html" />, Slidev <a href="" target="_blank">Ultracharger</a></li>
     </ul>
   </sp-slide>
 
@@ -430,7 +433,7 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-steps</code> — children one by one</h3>
+    <h3><code>sp-steps</code> − children one by one</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p class="eg-small">(NB: <code>sp-steps</code> behavior will intermix with other animation approaches)</p>
     <p>Like wrapping every child with <code>sp-step</code>, sequentially appearing:</p>
@@ -462,7 +465,7 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3>Swap content − <code>sp-alternatives</code></h3>
+    <h3><code>sp-alternatives</code> − Swap content</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>
       it shows children one by one (or cycles if <code>cycle</code>)
@@ -493,7 +496,7 @@ await createSlidesPurryst({
 
 
 
-  <!-- Animation, touying, pause, meanwhile, jump -->
+  <!-- Animation, Touying, pause, meanwhile, jump -->
 
   <sp-slide>
     <h2>Animations: 3. Animate like Touying</h2>
@@ -514,22 +517,22 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-pause</code> — structural step separator</h3>
+    <h3><code>sp-pause</code> − structural step separator</h3>
     <sp-style>h3 ~ div { display: inline-block; }</sp-style>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Each <code>sp-pause</code> is used to mark a visgroup boundary:</p>
-    <div class="d6">First — always visible</div>
+    <div class="d6">First − always visible</div>
     <code class="sp-badge">sp-pause</code> <sp-pause />
-    <div class="d1">Second — after 1st pause</div>
+    <div class="d1">Second − after 1st pause</div>
     <code class="sp-badge">sp-pause</code> <sp-pause />
-    <div class="d2">Third — after 2nd pause</div>
+    <div class="d2">Third − after 2nd pause</div>
     <code class="sp-badge">sp-pause</code> <sp-pause />
-    <div class="d3">Fourth — after 3rd pause</div>
+    <div class="d3">Fourth − after 3rd pause</div>
     <p>(<code>sp-pause</code> is an alias for a relative <code>sp-jump at="+1"</code>)</p>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-meanwhile</code> — parallel tracks</h3>
+    <h3><code>sp-meanwhile</code> − parallel tracks</h3>
     <sp-style>h3 ~ div { display: inline-block; }</sp-style>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Content after <code>sp-meanwhile</code> shows as if there were no pause before.</p>
@@ -550,7 +553,7 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-jump</code> — flexible grouping (visgroups)</h3>
+    <h3><code>sp-jump</code> − flexible grouping (visgroups)</h3>
     <sp-style>h3 ~ div { display: inline-block; }</sp-style>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Can be relative to current step (+ or - prefix):
@@ -600,17 +603,17 @@ await createSlidesPurryst({
   <!-- sp-anim pedagogical section -->
 
   <sp-slide>
-    <h3><code>sp-anim</code> — the <code>spec</code> language</h3>
+    <h3><code>sp-anim</code> − the <code>spec</code> language</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Think of <code>sp-anim</code> as a <b>storyboard</b>: you write a script of what appears at each click.</p>
     <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
       <code style="font-size:0.7em">spec=".d1 | .d2 | .d3"</code>
     </div>
     <ul style="font-size:0.7em">
-      <li><code>|</code> — next <b>frame</b>, i.e. visgroup (one step = one frame)</li>
-      <li><code>^</code> — <b>parallel</b> actions within the same frame</li>
+      <li><code>|</code> − next <b>frame</b>, i.e. visgroup (one step = one frame)</li>
+      <li><code>^</code> − <b>parallel</b> actions within the same frame</li>
       <li>Default action (<code>selector</code>): <b>show</b> matching elements</li>
-      <li><code>@command(args)</code> — built-in actions (addClass, removeClass, children, play, pause, …)</li>
+      <li><code>@command(args)</code> − built-in actions (addClass, removeClass, children, play, pause, …)</li>
     </ul>
     <p>Step through: three boxes appear, one by one:
       <span class="d1 eg-small">S1</span>
@@ -622,7 +625,7 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — sequential reveal (<code>|</code>)</h3>
+    <h3><code>sp-anim</code> − sequential reveal (<code>|</code>)</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Each <code>|</code>-separated part is a CSS selector. On slide entry, <code>sp-anim</code> hides all targeted elements, then reveals one group per click:</p>
     <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
@@ -632,13 +635,13 @@ await createSlidesPurryst({
     <div class="d2 second">S2 second (class=second)</div>
     <div class="d3">S3 third (next sibling of class=second).</div>
     <sp-anim spec=".first | .second | .second + *" />
-    <p style="color:var(--sp-text-3);font-size:0.6em">Any CSS selector works — class, id, tag, <code>:nth-child</code>, <code>:nth-of-type</code>, etc.</p>
+    <p style="color:var(--sp-text-3);font-size:0.6em">Any CSS selector works − class, id, tag, <code>:nth-child</code>, <code>:nth-of-type</code>, etc.</p>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — show, hide, and revisit</h3>
+    <h3><code>sp-anim</code> − show, hide, and revisit</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p><code>sp-anim</code> isn't just for revealing — you can <b>hide</b> elements and even make them reappear. Prefix a selector with <code>-</code> to hide:</p>
+    <p><code>sp-anim</code> isn't just for revealing − you can <b>hide</b> elements and even make them reappear. Prefix a selector with <code>-</code> to hide:</p>
     <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
       <code style="font-size:0.7em">spec=".box | -.box | .box"</code>
     </div>
@@ -648,13 +651,13 @@ await createSlidesPurryst({
     <sp-meanwhile />
     <p style="margin-top:1em;">The <code>spec</code> describes a <b>timeline of actions</b>.</p>
     <ul style="font-size:0.7em">
-      <li><code>selector</code> — reveal (adds <code>sp-anim-shown</code> class)</li>
-      <li><code>-selector</code> — hide (adds <code>sp-anim-hidden</code> class)</li>
+      <li><code>selector</code> − reveal (adds <code>sp-anim-shown</code> class)</li>
+      <li><code>-selector</code> − hide (adds <code>sp-anim-hidden</code> class)</li>
     </ul>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — parallel actions (<code>^</code>)</h3>
+    <h3><code>sp-anim</code> − parallel actions (<code>^</code>)</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p><code>|</code> = "then" (next step).</p>
     <p><code>^</code> = "at the same time" (within one step):</p>
@@ -672,7 +675,7 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — animating any CSS class</h3>
+    <h3><code>sp-anim</code> − @add / @remove, use any CSS class</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Most  of the times, <b>CSS controls the <em>how</em></b> (transitions, look), <b>spec controls the <em>when</em></b>:</p>
     <div style="display:flex;gap:1em;margin:0.3em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
@@ -689,33 +692,37 @@ await createSlidesPurryst({
       .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; }
       .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
     </sp-style>
+    <p class="eg-small">NB: you can create a new <code>@command</code> to avoid repeating a class name that you use a lot.</p>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — delaying animations</h3>
+    <h3><code>sp-anim</code> − delaying animations</h3>
     <p><b>Delayed animation:</b> prefix an action with a duration to delay it, typically useful for staggered effects:</p>
     <div style="display:flex;gap:1em;margin:0.3em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
-      <code style="font-size:0.6em">spec="@add(glow, .timed) | 2s @remove(glow, .timed)"</code>
+      <code style="font-size:0.6em">spec="@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 2s .d2 span | 1s -.d1"</code>
     </div>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Step 2: glow fades after 2 seconds.</p>
-    <div class="d4 timed">Glow fades after 2s</div>
-    <sp-anim spec="@add(glow, .timed) | 2s @remove(glow, .timed)" />
+    <div style="columns: 2">  
+      <div class="d1">Step 1</div>
+      <div class="d2">Step 2 <span>after 2s</span></div>
+    </div>
+    <sp-anim spec="@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 2s .d2 span | 1s -.d1" />
     <ul style="font-size:0.7em">
-      <li><code>@add(class, selector)</code> — add CSS class</li>
-      <li><code>@remove(class, selector)</code> — remove CSS class</li>
-      <li><code>@+class(class selector)</code> / <code>@-class(class selector)</code> — alternative space-separated syntax</li>
       <li>Prefix <code>&lt;duration&gt;</code> (e.g. <code>2s</code>, <code>500ms</code>) to delay the action</li>
       <li><b>CSS transitions:</b> The default fade comes from <code>anim.css</code>. Override <code>.sp-anim-hidden</code> / <code>.sp-anim-shown</code> transitions to change the feel.</li>
     </ul>
     <div class="eg-small">NB: duration can be in milliseconds (e.g. <code>500ms</code>) or seconds (e.g. <code>2s</code>).</div>
-    <div class="eg-small">NB: duration in seconds can start with <code>0.</code> for fractional seconds (e.g. <code>0.5s</code>) but the <code>0</code> is mandatory.</div>
+    <div class="eg-small">NB: duration can be decimal (e.g. <code>0.5s</code>) but the <code>0</code> is then mandatory (no <span$ style="text-decoration: line-through;">.5s</span>).</div>
+    <sp-style>
+      .d1, .d2 { box-sizing: border-box; border: 5px solid transparent; }
+      .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
+    </sp-style>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — revealing children (<code>@children</code>)</h3>
+    <h3><code>sp-anim</code> − revealing children (<code>@children</code>)</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Reveal children of a container one by one — minimal markup, maximum effect:</p>
+    <p>Reveal children of a container one by one − minimal markup, maximum effect:</p>
     <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
       <code style="font-size:0.7em">spec="@children(.demo-list) | @children(ol)"</code>
     </div>
@@ -738,7 +745,7 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — <code>at</code> offset &amp; <code>no-jump</code></h3>
+    <h3><code>sp-anim</code> − <code>at</code> offset &amp; <code>no-jump</code></h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p><code>sp-anim</code> <b>creates visgroups</b>.</p>
     <p>The content after <code>sp-anim</code> appears after the animations.</p>
@@ -764,8 +771,100 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — syntax reference &amp; extensibility</h3>
+    <h3><code>sp-anim</code> − custom @command</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
+    <div style="display:flex;align-items:center;gap:2em">
+      <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
+      <div style="font-size: 70%">
+        <p><strong>Effects per step:</strong></p>
+        <ol>
+          <li><code>@add(glow, #catfill)</code> − cat fill glows</li>
+          <li><code>2s @remove(glow, #catfill) ^ @add(pulse, #catTongue)</code> − fill glow off, tongue pulses</li>
+          <li><code>@add(dim, #cat) ^ @crazy(#cat) ^ @laser()</code> − whole cat dims, cat goes crazy (plugin), laser effect (plugin)</li>
+        </ol>
+      </div>
+    </div>
+    <sp-anim spec="@add(glow, #catfill) | 2s @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat) ^ @crazy(#cat) ^ @laser() | @laser()" />
+    <sp-style>
+      #catTongue { fill: red; }
+      .glow { filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 40px #ffb300); transition: filter .3s; }
+      .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
+      #cat { filter: none !important; }
+      .dim { opacity: 0.3; transition: opacity 0.3s; }
+    </sp-style>
+  </sp-slide>
+  <sp-style> <!-- for global styles, both style and sp-style work -->
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
+  </sp-style>
+  <style>
+    .eg-crazy { animation: crazy 0.5s ease-in-out 5; transform-origin: 50% 50%; }
+    @keyframes crazy { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+  </style>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − @play / @pause video</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <video src="https://www.pexels.com/fr-fr/download/video/35332556/" width="400" id="myvideo" style="float:right"></video>
+    <p>The following will happen on steps (skip to step 2 without waiting for the video to play too much)</p>
+    <div>
+      <sp-step from="1" animation="fade"><code>@play(#myvideo)</code></sp-step>
+      <sp-step from="2" animation="fade"><code>| @pause(#myvideo)</code></sp-step>
+    </div>
+    <sp-step from="3" animation="fade"><code>@play(#myvideo) ^ 2s @pause(#myvideo)</code></sp-step>
+    <div>
+      <sp-step from="4" animation="fade"><code>@play(,rewind)</code></sp-step>
+      <sp-step from="5" animation="fade"><code>| @pause</code></sp-step>
+    </div>
+    <sp-anim spec="@play(#myvideo) | @pause(video) | @play ^ 2s @pause | @play(,rewind) | @pause" />
+    <p>Pass a selector, defaulting to <code>video</code></p>
+    <p>You can also add <code>rewind</code> to restart the video from the beginning before playing.</p>
+    <div style="font-size: .5em; position: absolute; right:0; bottom:50px; "><code>https://www.pexels.com/video/35332556/</code></div>
+  </sp-slide>
+
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − Testing (visgroups + @children)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Always visible <span class="more d2">… after pause 2 (via anim)</span></p>
+    <sp-pause />
+    <p class="d1">After pause 1</p>
+    <sp-anim spec=".more" />
+    <p class="d2">After pause 2 (via anim)</p>
+    <ul>
+      <li class="d3">First item (S3)</li>
+      <li class="d4">Second item (S4)</li>
+      <li class="d5">Third item (S5)</li>
+    </ul>
+    <sp-anim spec="@children(ul)" />
+    <sp-meanwhile />
+    <p>Always visible</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − Testing (selectors then children)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Always visible heading</p>
+    <div class="step1 d1">Step 1 (S1)</div>
+    <div class="step2 d2">Step 2 (S2)</div>
+    <ul>
+      <li>Child A (S3)</li>
+      <li>Child B (S4)</li>
+    </ul>
+    <ol>
+      <li>Child C (S5)</li>
+      <li>Child D (S6)</li>
+      <li>Child E (S7).</li>
+    </ol>
+    <sp-anim spec=".step1 | .step2 | @children(ul)" />
+    <sp-anim spec="@children(ol)" />
+    <sp-style>
+      ul, ol { li {display: inline; border: 5px solid black; margin: 0.25em; } }
+    </sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − syntax reference &amp; extensibility</h3>
     <table>
       <tr><th>Syntax</th><th>Meaning</th></tr>
       <tr><td><code>selector</code></td><td>Show element(s) by CSS selector</td></tr>
@@ -822,186 +921,34 @@ await createSlidesPurryst({
 
 
   <sp-slide>
-    BLANK
-  </sp-slide>
-
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — "selectors" (actions)</h3>
-    <p>Always visible</p>
-    <ul>
-      <li>First</li>
-      <li>Second</li>
-      <li>Third.</li>
-    </ul>
-    <p>(rule of thumb: place anim after the elements)</p>
-    <sp-anim spec="li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)" />
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — @children</h3>
-    <ul>
-      <li>First item</li>
-      <li>Second item</li>
-      <li>Third item</li>
-      <li>Fourth item.</li>
-    </ul>
-    <p>(rule of thumb: place anim after the elements)</p>
-    <sp-anim spec="@children(ul)" />
-  </sp-slide>
-
-  <!--
-  -->
-  <sp-slide>
-    <h3><code>sp-anim</code> — Combined (visgroups + @children)</h3>
-    <p>Always visible <span class="more">… after pause 2 (via anim)</span></p>
-    <sp-pause />
-    <p>After pause 1</p>
-    <sp-anim spec=".more" />
-    <p>After pause 2 (via anim)</p>
-    <ul>
-      <li>First item</li>
-      <li>Second item</li>
-      <li>Third item</li>
-      <li>Fourth item.</li>
-    </ul>
-    <sp-anim spec="@children(ul)" />
-    <sp-meanwhile />
-    <p>Always visible</p>
-</sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — Combined (selectors then children)</h3>
-    <p>Always visible heading</p>
-    <div class="step1" style="padding:.3em .6em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1 (S1)</div>
-    <div class="step2" style="padding:.3em .6em;background:#dcfce7;color:#166534;border-radius:6px">Step 2 (S2)</div>
-    <ul>
-      <li>Child A (S3)</li>
-      <li>Child B (S4)</li>
-    </ul>
-    <ol>
-      <li>Child C (S5)</li>
-      <li>Child D (S6)</li>
-      <li>Child E (S7).</li>
-    </ol>
-    <sp-anim spec=".step1 | .step2 | @children(ul)" />
-    <sp-anim spec="@children(ol)" />
-    <sp-style>
-      ul, ol { li {display: inline; border: 5px solid black; margin: 0.25em; } }
-    </sp-style>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — @add / @remove</h3>
-    <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
-    <div style="display:flex;align-items:center;gap:2em">
-      <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
-      <div style="font-size: 70%">
-        <p><strong>Effects per step:</strong></p>
-        <ol>
-          <li><code>@add(glow, #catfill)</code> — cat fill glows</li>
-          <li><code>2s @remove(glow, #catfill) ^ @add(pulse, #catTongue)</code> — fill glow off, tongue pulses</li>
-          <li><code>@add(dim, #cat) ^ @crazy(#cat) ^ @laser()</code> — whole cat dims, cat goes crazy (plugin), laser effect (plugin)</li>
-        </ol>
-      </div>
-    </div>
-    <sp-anim spec="@add(glow, #catfill) | 2s @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat) ^ @crazy(#cat) ^ @laser() | @laser()" />
-    <sp-style>
-      #catTongue { fill: red; }
-      .glow { filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 40px #ffb300); transition: filter .3s; }
-      .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
-      #cat { filter: none !important; }
-      .dim { opacity: 0.3; transition: opacity 0.3s; }
-    </sp-style>
-  </sp-slide>
-  <sp-style> <!-- for global styles, both style and sp-style work -->
-      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
-  </sp-style>
-  <style>
-    .eg-crazy { animation: crazy 0.5s ease-in-out 5; transform-origin: 50% 50%; }
-    @keyframes crazy { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
-  </style>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — @play / @pause video</h3>
-    <video src="https://www.pexels.com/fr-fr/download/video/35332556/" width="400" id="myvideo" style="float:right"></video>
-    <p>The following will happen on steps (skip to step 2 without waiting for the video to play too much)</p>
-    <div>
-      <sp-step from="1" animation="fade"><code>@play(#myvideo)</code></sp-step>
-      <sp-step from="2" animation="fade"><code>| @pause(#myvideo)</code></sp-step>
-    </div>
-    <sp-step from="3" animation="fade"><code>@play(#myvideo) ^ 2s @pause(#myvideo)</code></sp-step>
-    <div>
-      <sp-step from="4" animation="fade"><code>@play(,rewind)</code></sp-step>
-      <sp-step from="5" animation="fade"><code>| @pause</code></sp-step>
-    </div>
-    <sp-anim spec="@play(#myvideo) | @pause(video) | @play ^ 2s @pause | @play(,rewind) | @pause" />
-    <p>Pass a selector, defaulting to <code>video</code>, can also add <code>rewind</code> to restart the video from the beginning on backward.</p>
-    <div style="font-size: .5em; position: absolute; right:0; bottom:50px; "><code>https://www.pexels.com/video/35332556/</code></div>
-  </sp-slide>
-
-  <sp-slide>
-    <h2>New Animation Features</h2>
-  </sp-slide>
-
-
-
-
-
-
-
-
-  <sp-slide>
-    <h2>sp-anim: <code>at</code> and <code>no-jump</code></h2>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> with <code>at</code> offset</h3>
+    <sp-slide-source class="slide-source" />
+    <h3><code>TODO add slide source</code></h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p><code>at="N"</code> offsets the starting step:</p>
-    <p>(please step several times)
-      <sp-alternatives><span>3</span><span>2</span><span>1</span><span>go</span><span>go</span><span>go</span></sp-alternatives>
+  </sp-slide>
+
+
+
+
+
+  <sp-slide>
+    <h2>Extending with plugins and custom code</h2>
+    <p>
+      The doc is TODO, but you can see an example of a plugin in the demo presentation.
+      Ideally everything should be extensible.
+      The current extension points are:
+      <ul class="eg-small" style="height: 400px; overflow-y: auto;">
+        <li><code>addKeymapSetup</code> − add a function to update the keymap (e.g. add new shortcuts)</li>
+        <li><code>addAnimCommand</code> − add a new <code>@command</code> to the <code>sp-anim</code> spec language</li>
+        <li><code>addAnimActionType</code> − add a new action type to the <code>sp-anim</code> spec language</li>
+        <li><code>injectStyle</code> − inject a CSS style into the presentation</li>
+        <li><code>addChunklet</code> − add a new chunklet definition (see <code>sp-chunk</code>)</li>
+        <li><code>addDomTransform</code> − add a function to transform the DOM after the presentation is built (e.g. for custom processing)</li>
+      </ul>
     </p>
-    <sp-meanwhile />
-    <div class="d1 a">Action 1 (starts at step 3)</div>
-    <div class="d2 b">Action 2 (starts at step 4)</div>
-    <div class="d3 c">Action 3 (starts at step 5)</div>
-    <sp-anim spec=".a | .b | .c" at="2" />
-    <div>(after)</div>
-    <sp-style>
-      .a,.b,.c { font-size: 0.8em; }
-    </sp-style>
   </sp-slide>
 
-  <sp-slide>
-    <h3><code>sp-anim</code> — default visgroup jump</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>By default, each anim part advances the visgroup:
-      <sp-alternatives><span>3</span><span>2</span><span>1</span><span>go</span><span>go</span><span>go</span></sp-alternatives>
-    </p>
-    <sp-meanwhile />
-    <div class="d1 a">Part A (step 1)</div>
-    <div class="d2 b">Part B (step 2)</div>
-    <div class="d3 c">Part C (step 3)</div>
-    <sp-anim spec=".a | .b | .c" at="2" />
-    <div>(after)</div>
-    <sp-meanwhile />
-    <p style="color:var(--sp-text-3);font-size:0.8em">Each click advances both the anim AND the visgroup</p>
-  </sp-slide>
 
-  <sp-slide>
-    <h3><code>sp-anim</code> with <code>no-jump</code></h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Use <code>no-jump</code> to disable the visgroup advance:</p>
-    <div class="d1 a">Part A (step 1)</div>
-    <div class="d2 b">Part B (step 2)</div>
-    <div class="d3 c">Part C (step 3)</div>
-    <sp-anim spec=".a | .b | .c" no-jump />
-    <div>(always visible due to no-jump)</div>
-    <p style="color:var(--sp-text-3);font-size:0.8em">With no-jump: anim steps only, visgroup unchanged</p>
-  </sp-slide>
 
-  </sp-slide>
 
   <sp-slide no-toc>
     <h2>Here comes the TOC again</h2>

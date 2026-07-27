@@ -1,6 +1,7 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
+- [ ] error in spec syntax should not need a big refresh (catch querySelectorAll exception?)
 - [ ] sp-anim at should not be N+1, at=0 right away, at=1 after first step, at=2 after second step, etc
 - [ ] fix @children | @children (both start together) (consider implementing ^ , keeping the max of children count)
 - [ ] proper demo (rework the current one, sync to purrbundle too)
@@ -17,6 +18,7 @@
 
 ## TODO v2 (2.0.0) (export and polish)
 
+- [ ] add slugs/tags to slides (one tag can have multiple slugs) so we can link between slides in a semantic manner, allow jumping to next occurrence of a tag, or previous etc (e.g. can allow a custom end-of-section tag)
 - [ ] why are subparts etc shown as 0 Bytes in the dev tools?
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
