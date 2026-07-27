@@ -181,6 +181,7 @@
     .eg-inlinechildren {
       display: flex;
       flex-wrap: wrap;
+      align-items: baseline;
       gap: .35em;
     }
   </sp-style>
@@ -596,6 +597,222 @@ await createSlidesPurryst({
     </p>
   </sp-slide>
 
+  <!-- sp-anim pedagogical section -->
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — the <code>spec</code> language</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Think of <code>sp-anim</code> as a <b>storyboard</b>: you write a script of what appears at each click.</p>
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.7em">spec=".d1 | .d2 | .d3"</code>
+    </div>
+    <ul style="font-size:0.7em">
+      <li><code>|</code> — next <b>frame</b>, i.e. visgroup (one step = one frame)</li>
+      <li><code>^</code> — <b>parallel</b> actions within the same frame</li>
+      <li>Default action (<code>selector</code>): <b>show</b> matching elements</li>
+      <li><code>@command(args)</code> — built-in actions (addClass, removeClass, children, play, pause, …)</li>
+    </ul>
+    <p>Step through: three boxes appear, one by one:
+      <span class="d1 eg-small">S1</span>
+      <span class="d2 eg-small">S2</span>
+      <span class="d3 eg-small">S3</span>
+    </p>
+    <sp-anim spec=".d1 | .d2 | .d3" />
+    <p class="eg-small">NB: <code>&amp;lt;sp-anim&gt;</code> will also create visgroups, so place it <b>after</b> the elements it controls.</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — sequential reveal (<code>|</code>)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Each <code>|</code>-separated part is a CSS selector. On slide entry, <code>sp-anim</code> hides all targeted elements, then reveals one group per click:</p>
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.7em">spec=".first | .second | .second + *"</code>
+    </div>
+    <div class="d1 first">S1 first (class=first)</div>
+    <div class="d2 second">S2 second (class=second)</div>
+    <div class="d3">S3 third (next sibling of class=second).</div>
+    <sp-anim spec=".first | .second | .second + *" />
+    <p style="color:var(--sp-text-3);font-size:0.6em">Any CSS selector works — class, id, tag, <code>:nth-child</code>, <code>:nth-of-type</code>, etc.</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — show, hide, and revisit</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>sp-anim</code> isn't just for revealing — you can <b>hide</b> elements and even make them reappear. Prefix a selector with <code>-</code> to hide:</p>
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.7em">spec=".box | -.box | .box"</code>
+    </div>
+    <p>Step 1: box appears | Step 2: hides | Step 3: reappears.</p>
+    <div class="d1 box">Cycle me</div>
+    <sp-anim spec=".box | -.box | .box" />
+    <sp-meanwhile />
+    <p style="margin-top:1em;">The <code>spec</code> describes a <b>timeline of actions</b>.</p>
+    <ul style="font-size:0.7em">
+      <li><code>selector</code> — reveal (adds <code>sp-anim-shown</code> class)</li>
+      <li><code>-selector</code> — hide (adds <code>sp-anim-hidden</code> class)</li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — parallel actions (<code>^</code>)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>|</code> = "then" (next step).</p>
+    <p><code>^</code> = "at the same time" (within one step):</p>
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.7em">spec=".a | .b ^ .c"</code>
+    </div>
+    <p>Step 1: A appears | Step 2: B <b>and</b> C appear <b>together</b>.</p>
+    <div class="demo-items eg-inlinechildren">
+      <span class="a">A</span>
+      <span class="b">B</span>
+      <span class="c">C</span>
+    </div>
+    <sp-anim spec=".a | .b ^ .c" />
+    <p style="font-size:0.7em">Any combination works: <code>@add(glow, .x) ^ @add(glow, .y) | -.x ^ -.y ^ @add(glow, .z)</code></p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — animating any CSS class</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Most  of the times, <b>CSS controls the <em>how</em></b> (transitions, look), <b>spec controls the <em>when</em></b>:</p>
+    <div style="display:flex;gap:1em;margin:0.3em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.55em">spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)"</code>
+    </div>
+    <p>Step 1: A glows | Step 2: A dims, B glows | Step 3: C glows.</p>
+    <div class="demo-items eg-inlinechildren">
+      <span class="a">A</span>
+      <span class="b">B</span>
+      <span class="c">C</span>
+    </div>
+    <sp-anim spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)" />
+    <sp-style>
+      .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; }
+      .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
+    </sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — delaying animations</h3>
+    <p><b>Delayed animation:</b> prefix an action with a duration to delay it, typically useful for staggered effects:</p>
+    <div style="display:flex;gap:1em;margin:0.3em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.6em">spec="@add(glow, .timed) | 2s @remove(glow, .timed)"</code>
+    </div>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Step 2: glow fades after 2 seconds.</p>
+    <div class="d4 timed">Glow fades after 2s</div>
+    <sp-anim spec="@add(glow, .timed) | 2s @remove(glow, .timed)" />
+    <ul style="font-size:0.7em">
+      <li><code>@add(class, selector)</code> — add CSS class</li>
+      <li><code>@remove(class, selector)</code> — remove CSS class</li>
+      <li><code>@+class(class selector)</code> / <code>@-class(class selector)</code> — alternative space-separated syntax</li>
+      <li>Prefix <code>&lt;duration&gt;</code> (e.g. <code>2s</code>, <code>500ms</code>) to delay the action</li>
+      <li><b>CSS transitions:</b> The default fade comes from <code>anim.css</code>. Override <code>.sp-anim-hidden</code> / <code>.sp-anim-shown</code> transitions to change the feel.</li>
+    </ul>
+    <div class="eg-small">NB: duration can be in milliseconds (e.g. <code>500ms</code>) or seconds (e.g. <code>2s</code>).</div>
+    <div class="eg-small">NB: duration in seconds can start with <code>0.</code> for fractional seconds (e.g. <code>0.5s</code>) but the <code>0</code> is mandatory.</div>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — revealing children (<code>@children</code>)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Reveal children of a container one by one — minimal markup, maximum effect:</p>
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.7em">spec="@children(.demo-list) | @children(ol)"</code>
+    </div>
+    <ul class="demo-list eg-inlinechildren">
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+      <li>Item 4</li>
+    </ul>
+    <ol class="demo-list eg-inlinechildren">
+      <li>Item</li>
+      <li>Item</li>
+      <li>Item</li>
+      <li>Item</li>
+    </ol>
+    <sp-anim spec="@children(.demo-list) | @children(ol)" />
+    <p>Works on any container (div, ul, ol, table, …). Very similar to the <code>sp-steps</code> directive but in a <code>sp-anim</code> context.</p>
+    <div class="eg-small">NB: some limitation, it cannot be used in parallel (<code>^</code>).</div>
+    <sp-style>li { margin-left: 1em; } ol li { margin-left: 1.78em; }</sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — <code>at</code> offset &amp; <code>no-jump</code></h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>sp-anim</code> <b>creates visgroups</b>.</p>
+    <p>The content after <code>sp-anim</code> appears after the animations.</p>
+    <hr/>
+    <p><b>Offset:</b> <code>at="N"</code> (absolute) or <code>at="±N"</code> (relative) controls when to start the animations.</p>
+    <div class="eg-inlinechildren">
+      <code style="font-size:0.65em">spec=".a | .b | .c" at="2"</code>
+      <span class="a d2">A (S 2)</span>
+      <span class="b d3">B (S 3)</span>
+      <span class="c d4">C (S 4)</span>
+    </div>
+    <sp-anim spec=".a | .b | .c" at="2" />
+    <span>appears with C.</span>
+    <sp-meanwhile /><code class="sp-badge">sp-meanwhile</code><hr style="display: inline-block; width: 50vw;"/>
+    <div class="eg-inlinechildren">
+      <code style="font-size:0.65em">spec=".x | .y | .z" no-jump</code>
+      <span class="x d1">X (S 1)</span>
+      <span class="y d2">Y (S 2)</span>
+      <span class="z d3">Z (S 3)</span>
+    </div>
+    <sp-anim spec=".x | .y | .z" no-jump />
+    <p>This is directly visible because the <code>sp-anim</code> has <code>no-jump</code>.</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> — syntax reference &amp; extensibility</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <table>
+      <tr><th>Syntax</th><th>Meaning</th></tr>
+      <tr><td><code>selector</code></td><td>Show element(s) by CSS selector</td></tr>
+      <tr><td><code>-selector</code></td><td>Hide element(s)</td></tr>
+      <tr class="septop"><td><code>|</code></td><td>Separator between steps</td></tr>
+      <tr><td><code>^</code></td><td>Separator between parallel actions within one step</td></tr>
+      <tr class="septop"><td><code>@add(class, sel)</code></td><td>Add a CSS class to matched elements</td></tr>
+      <tr><td><code>@remove(class, sel)</code></td><td>Remove a CSS class</td></tr>
+      <!--tr><td><code>@+class(class sel)</code></td><td>Alternative: add class (space-separated)</td></tr>
+      <tr><td><code>@-class(class sel)</code></td><td>Alternative: remove class (space-separated)</td></tr-->
+      <tr class="septop"><td><code>@children(sel)</code></td><td>Show children of container one per step</td></tr>
+      <tr><td><code>@play(sel)</code></td><td>Play video element</td></tr>
+      <tr><td><code>@pause(sel)</code></td><td>Pause video</td></tr>
+      <tr><td><code>@command(any, params)</code></td><td>Execute a custom command</td></tr>
+      <tr class="septop"><td><code>«dur» «action»></code></td><td>Do the action after duration (e.g. <code>@add(...) ^ 2s @remove(...)</code>)</td></tr>
+      <tr class="septop"><td><code>at="+N"</code></td><td style="padding:0.2em 0.5em;border-top:1px solid var(--sp-border)">Offset start step by N</td></tr>
+      <tr><td><code>at="N"</code></td><td style="padding:0.2em 0.5em;border-top:1px solid var(--sp-border)">Start animations at step N</td></tr>
+      <tr><td><code>no-jump</code></td><td>Do not advance the global step counter</td></tr>
+    </table>
+    <p class="eg-small">
+      <b>Extensibility:</b> Custom <code>@command</code> can be registered via the plugin API
+      (<code>addAnimCommand</code>), example in the laser/crazy plugin in the demo slide.
+    </p>
+    <sp-style>
+      table {
+        font-size: 0.7em;
+        display: block;
+        border: 2px solid var(--sp-border);
+        max-height: 700px;
+        overflow-y: auto;
+        th {
+          text-align: left;
+          border-bottom: 1px solid var(--sp-border);
+          padding: 0.3em 0.5em;
+        }
+        td {
+          vertical-align: top;
+          padding: 0.2em 0.5em;
+          border: 0 solid var(--sp-border);
+          border-width: 0 2px;
+          tr.septop & {
+            border-top: 2px solid var(--sp-border) !important;
+          }
+        }
+      }
+    </sp-style>
+  </sp-slide>
 
   <!-- ################### -->
   <!-- ################### -->
@@ -676,7 +893,6 @@ await createSlidesPurryst({
 
   <sp-slide>
     <h3><code>sp-anim</code> — @add / @remove</h3>
-    <img src="./lizard.png" />
     <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
     <div style="display:flex;align-items:center;gap:2em">
       <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
@@ -758,9 +974,9 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-anim</code> — default vis-group jump</h3>
+    <h3><code>sp-anim</code> — default visgroup jump</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>By default, each anim part advances the vis group:
+    <p>By default, each anim part advances the visgroup:
       <sp-alternatives><span>3</span><span>2</span><span>1</span><span>go</span><span>go</span><span>go</span></sp-alternatives>
     </p>
     <sp-meanwhile />
@@ -770,19 +986,21 @@ await createSlidesPurryst({
     <sp-anim spec=".a | .b | .c" at="2" />
     <div>(after)</div>
     <sp-meanwhile />
-    <p style="color:var(--sp-text-3);font-size:0.8em">Each click advances both the anim AND the vis group</p>
+    <p style="color:var(--sp-text-3);font-size:0.8em">Each click advances both the anim AND the visgroup</p>
   </sp-slide>
 
   <sp-slide>
     <h3><code>sp-anim</code> with <code>no-jump</code></h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Use <code>no-jump</code> to disable the vis-group advance:</p>
+    <p>Use <code>no-jump</code> to disable the visgroup advance:</p>
     <div class="d1 a">Part A (step 1)</div>
     <div class="d2 b">Part B (step 2)</div>
     <div class="d3 c">Part C (step 3)</div>
     <sp-anim spec=".a | .b | .c" no-jump />
     <div>(always visible due to no-jump)</div>
-    <p style="color:var(--sp-text-3);font-size:0.8em">With no-jump: anim steps only, vis group unchanged</p>
+    <p style="color:var(--sp-text-3);font-size:0.8em">With no-jump: anim steps only, visgroup unchanged</p>
+  </sp-slide>
+
   </sp-slide>
 
   <sp-slide no-toc>

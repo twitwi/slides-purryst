@@ -1,7 +1,8 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
-- [ ] test an anim slide that shows then hides then shows etc, see if it works forward and backward and reload
+- [ ] sp-anim at should not be N+1, at=0 right away, at=1 after first step, at=2 after second step, etc
+- [ ] fix @children | @children (both start together) (consider implementing ^ , keeping the max of children count)
 - [ ] proper demo (rework the current one, sync to purrbundle too)
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
 - [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or workaround with a trigger that full hard reloads if too many updates (count updates from start and reload every (?))... or maybe it is related to time?
@@ -25,6 +26,7 @@
 ## TODO v3 (3.0.0) (better presenter features)
 
 - [ ] notes with click markers like slidev, maybe not the same syntax, maybe closer to sp-pause
+- [ ] insert images from some sites? or generators (sana?)? no, rather have an easy import from clipboard/url
 
 ## TODO typst syntax
 
