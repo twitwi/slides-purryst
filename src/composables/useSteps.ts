@@ -174,7 +174,7 @@ function processJumpsAndAnims(root: Element): number {
         let virtualVisStep = visStep
         const { relative, value } = parseJumpAt(at)
         if (relative) virtualVisStep += value
-        else virtualVisStep = value
+        else virtualVisStep = value - 1
         el.setAttribute('at', String(virtualVisStep))
         virtualVisStep += countAnimSpecParts(el.getAttribute('spec') || '', root)
         if (doJump) {

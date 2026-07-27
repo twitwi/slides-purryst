@@ -665,10 +665,10 @@ await createSlidesPurryst({
       <code style="font-size:0.7em">spec=".a | .b ^ .c"</code>
     </div>
     <p>Step 1: A appears | Step 2: B <b>and</b> C appear <b>together</b>.</p>
-    <div class="demo-items eg-inlinechildren">
-      <span class="a">A</span>
-      <span class="b">B</span>
-      <span class="c">C</span>
+    <div class="eg-inlinechildren">
+      <span class="a d1">A</span>
+      <span class="b d2">B</span>
+      <span class="c d2">C</span>
     </div>
     <sp-anim spec=".a | .b ^ .c" />
     <p style="font-size:0.7em">Any combination works: <code>@add(glow, .x) ^ @add(glow, .y) | -.x ^ -.y ^ @add(glow, .z)</code></p>

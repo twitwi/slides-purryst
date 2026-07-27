@@ -2,7 +2,6 @@
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
 - [ ] error in spec syntax should not need a big refresh (catch querySelectorAll exception?)
-- [ ] sp-anim at should not be N+1, at=0 right away, at=1 after first step, at=2 after second step, etc
 - [ ] fix @children | @children (both start together) (consider implementing ^ , keeping the max of children count)
 - [ ] proper demo (rework the current one, sync to purrbundle too)
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
