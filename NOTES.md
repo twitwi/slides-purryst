@@ -2,7 +2,6 @@
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
 - [ ] error in spec syntax should not need a big refresh (catch querySelectorAll exception?)
-- [ ] fix @children | @children (both start together) (consider implementing ^ , keeping the max of children count)
 - [ ] proper demo (rework the current one, sync to purrbundle too)
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
 - [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or workaround with a trigger that full hard reloads if too many updates (count updates from start and reload every (?))... or maybe it is related to time?
@@ -47,6 +46,7 @@
 
 ## TODO
 
+- [ ] (anim) can we avoid double parsing (for counting steps and for actually running the anim) of the spec? Can we make right away the list(s)
 - [ ] (anim) sp-steps should probably have an option to recurse n levels
 - [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)

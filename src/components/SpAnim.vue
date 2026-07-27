@@ -101,7 +101,7 @@ function getContainer(): Element {
   if (!el) throw "not yet"
   while (!el.classList.contains('sp-slide')) {
     el = el.parentElement
-    if (el === null) throw "should not happen"
+    if (el === null) throw "should not happen: .sp-anim-ghost has no .sp-slide ancestor"
   }
   return el
 }
