@@ -98,6 +98,26 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
   return slides
 }
 
+export function extractRawSlideSources(fullHtml: string): string[] {
+  const sources: string[] = []
+  const closeTag = '</sp-slide>'
+  let idx = 0
+  while (idx < fullHtml.length) {
+    const openStart = fullHtml.indexOf('<sp-slide', idx)
+    if (openStart === -1) break
+    const closeStart = fullHtml.indexOf(closeTag, openStart)
+    if (closeStart === -1) break
+    sources.push(
+      fullHtml
+        .slice(openStart, closeStart + closeTag.length)
+        .trim()
+        .replace(/<span[^>]*data-source-file-(?:push|pop)[^>]*><\/span>/g, '')
+    )
+    idx = closeStart + closeTag.length
+  }
+  return sources
+}
+
 export function useSlides(initial?: SlideData[]) {
   const slides = ref<SlideData[]>(initial ?? [])
   const currentIndex = ref(0)

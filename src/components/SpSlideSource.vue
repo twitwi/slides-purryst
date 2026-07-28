@@ -11,15 +11,14 @@ const props = withDefaults(defineProps<{
   transform: null,
 })
 
-const rawSlideHtmls = inject<Ref<string[]>>('rawSlideHtmls')!
+const rawSlideSources = inject<Ref<string[]>>('rawSlideSources')!
 const slideIndex = inject<Ref<number>>('slideIndex')!
-
 const forSlide = computed(() => props.for !== undefined ? props.for : slideIndex.value)
 const highlightedHtml = ref('')
 let highlightId = 0
 
-watch([forSlide, () => props.transform], async ([idx]) => {
-  const raw = rawSlideHtmls.value[idx]
+watch([forSlide, () => props.transform, rawSlideSources], async ([idx]) => {
+  const raw = rawSlideSources.value[idx]
   if (!raw) { highlightedHtml.value = ''; return }
   const id = ++highlightId
   const transformed = props.transform ? props.transform(raw) : raw
@@ -51,10 +50,11 @@ watch([forSlide, () => props.transform], async ([idx]) => {
 
 <style scoped>
 .sp-slide-source {
+  display: flex;
+  flex-direction: column;
   margin: 1em 0;
   border: 1px solid var(--sp-border, #ddd);
   border-radius: 6px;
-  overflow: hidden;
 }
 .sp-slide-source-header {
   display: flex;
@@ -66,10 +66,15 @@ watch([forSlide, () => props.transform], async ([idx]) => {
   border-bottom: 1px solid var(--sp-border, #ddd);
   color: var(--sp-text-2, #666);
   font-family: var(--sp-font-mono, monospace);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 .sp-slide-source-body {
+  flex: 1;
   overflow: auto;
-  max-height: 60vh;
+  min-height: 0;
 }
 .sp-slide-source-body :deep(pre) {
   margin: 0;

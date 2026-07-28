@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<script type="text/html" id="sp-content">
+ <script type="text/html" id="sp-content">
 
   <sp-slide>
     <h1>SlidesPurr(yst)</h1>
@@ -202,6 +202,7 @@
       <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
   </sp-slide>
+
   <sp-style>
     kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-alt); padding: 0 .2em; margin: 0 0.2em;  }
     .eg-natural { display: inline-block; }
@@ -248,11 +249,11 @@
   <sp-slide>
     <h3>Inline SVG (styleable, animatable)</h3>
     <p>Move your mouse on the cat</p>
-    <sp-svg src="./slides-purryst-banner-sticker.svg" height="400px"></sp-svg>
+    <sp-svg src="./slides-purryst-banner-sticker.svg" height="400px"></sp-svg><!-- - -->
     <sp-style>
       h2 { filter: blur(2px); }
     </sp-style>
-    <p>(use <code>sp-style</code> in a slide or global)</p>
+    <p>(use <code>sp-style</code> in a slide or global)</p><!-- + -->
     <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" height="200"></sp-svg>
 
     <sp-drag at="1279|278|707.2299359907619|287.7049303965147|33.2">
@@ -403,6 +404,15 @@ await createSlidesPurryst({
       font-size: 0.7em;
       color: var(--sp-gray-700);
     }
+    .eg-spec {
+      margin: 0.5em 1em;
+      padding: 0.25em !important;
+      font-family: var(--sp-font-mono);
+      padding: 0.5em;
+      background: var(--sp-surface-alt);
+      border: 5px solid var(--sp-gray-400);
+      border-radius: 10px;
+    }
   </sp-style>
 
 
@@ -434,7 +444,7 @@ await createSlidesPurryst({
 
   <sp-slide>
     <h3><code>sp-step</code> with <code>animation</code> presets (or <code>hide</code>)</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div> <!--HIDE-->
     <p>Elements can animate with some presets:</p>
     <sp-step from="1" animation="fade"><div class="d1">Fade in</div></sp-step>
     <sp-step from="2" animation="up"><div class="d2">Slide up</div></sp-step>
@@ -507,10 +517,7 @@ await createSlidesPurryst({
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>
       it shows children one by one (or cycles if <code>cycle</code>)
-      <sp-alternatives at="0" cycle>
-        <span>🌕</span>
-        <span>🌑</span>
-      </sp-alternatives>
+      <sp-alternatives at="0" cycle> <span>🌕</span> <span>🌑</span> </sp-alternatives>
     </p>
     <sp-alternatives cycle>
       <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1 (step 0, 3, ...)</p>
@@ -666,9 +673,7 @@ await createSlidesPurryst({
     <h3><code>sp-anim</code> − sequential reveal (<code>|</code>)</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Each <code>|</code>-separated part is a CSS selector. On slide entry, <code>sp-anim</code> hides all targeted elements, then reveals one group per step:</p>
-    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
-      <code style="font-size:0.7em">spec=".first | .second | .second + *"</code>
-    </div>
+    <div class="eg-spec">spec=".first | .second | .second + *"</div>
     <div class="d1 first">S1 first (class=first)</div>
     <div class="d2 second">S2 second (class=second)</div>
     <div class="d3">S3 third (next sibling of class=second).</div>
@@ -680,9 +685,7 @@ await createSlidesPurryst({
     <h3><code>sp-anim</code> − show, hide, and revisit</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p><code>sp-anim</code> isn't just for revealing − you can <b>hide</b> elements and even make them reappear. Prefix a selector with <code>-</code> to hide:</p>
-    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
-      <code style="font-size:0.7em">spec=".box | -.box | .box"</code>
-    </div>
+    <div class="eg-spec">spec=".box | -.box | .box"</div>
     <p>Step 1: box appears | Step 2: hides | Step 3: reappears.</p>
     <div class="d1 box">Cycle me</div>
     <sp-anim spec=".box | -.box | .box" />
@@ -699,9 +702,7 @@ await createSlidesPurryst({
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p><code>|</code> = "then" (next step).</p>
     <p><code>^</code> = "at the same time" (within one step):</p>
-    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
-      <code style="font-size:0.7em">spec=".a | .b ^ .c"</code>
-    </div>
+    <div class="eg-spec">spec=".a | .b ^ .c"</div>
     <p>Step 1: A appears | Step 2: B <b>and</b> C appear <b>together</b>.</p>
     <div class="eg-inlinechildren">
       <span class="a d1">A</span>
@@ -709,16 +710,13 @@ await createSlidesPurryst({
       <span class="c d2">C</span>
     </div>
     <sp-anim spec=".a | .b ^ .c" />
-    <p style="font-size:0.7em">Any combination works: <code>@add(glow, .x) ^ @add(glow, .y) | -.x ^ -.y ^ @add(glow, .z)</code></p>
   </sp-slide>
 
   <sp-slide>
     <h3><code>sp-anim</code> − @add / @remove, use any CSS class</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Most  of the times, <b>CSS controls the <em>how</em></b> (transitions, look), <b>spec controls the <em>when</em></b>:</p>
-    <div style="display:flex;gap:1em;margin:0.3em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
-      <code style="font-size:0.55em">spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)"</code>
-    </div>
+    <div class="eg-spec" style="font-size:0.55em">spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)"</div>
     <p>Step 1: A glows | Step 2: A dims, B glows | Step 3: C glows.</p>
     <div class="demo-items eg-inlinechildren">
       <span class="a">A</span>
@@ -727,7 +725,7 @@ await createSlidesPurryst({
     </div>
     <sp-anim spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)" />
     <sp-style>
-      .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; }
+      .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; } <!--HIDE-->
       .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
     </sp-style>
     <p class="eg-small">NB: you can create a new <code>@command</code> to avoid repeating a class name that you use a lot.</p>
@@ -752,7 +750,7 @@ await createSlidesPurryst({
     <div class="eg-small">NB: duration can be in milliseconds (e.g. <code>500ms</code>) or seconds (e.g. <code>2s</code>).</div>
     <div class="eg-small">NB: duration can be decimal (e.g. <code>0.5s</code>) but the <code>0</code> is then mandatory (no <span style="text-decoration: line-through;">.5s</span>).</div>
     <sp-style>
-      .d1, .d2 { box-sizing: border-box; border: 5px solid transparent; }
+      .d1, .d2 { box-sizing: border-box; border: 5px solid transparent; } <!--HIDE-->
       .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
     </sp-style>
   </sp-slide>
@@ -1041,12 +1039,15 @@ await createSlidesPurryst({
   </style>
 
   <sp-after>
-    <div class="global-source-container">
+    <div :class="{ 'global-source-container': true, 'opacity-change': !$sp.config.noOpacityChange }">
       <sp-slide-source :transform="$sp.config.sourceTransform" v-slot:header="{ forSlide }">
         Slide {{ forSlide + 1 }} source
-        <span class="source-hint">[<kbd>S</kbd>]</span>
-        <button class="source-strip-btn" @click="$sp.toggleSourceTransform()">
-          {{ $sp.config.sourceTransform ? 'Show raw' : 'Strip markers' }}
+        <span class="source-hint" title="Toggle source view with key S">[<kbd>S</kbd>]</span>
+        <button :class="{ 'source-strip-btn': true, 'active': $sp.config.sourceTransform !== null }" @click="$sp.toggleSourceTransform()">
+          Strip boilerplate
+        </button>
+        <button :class="{ 'opacity-change-btn': true, 'active': $sp.config.noOpacityChange }" @click="$sp.config.noOpacityChange = !$sp.config.noOpacityChange">
+          Keep opaque
         </button>
         <button class="source-close-btn" @click="$sp.toggleSourceVisibility()">✕</button>
       </sp-slide-source>
@@ -1099,16 +1100,18 @@ await createSlidesPurryst({
   // plugin-like extensions can be added via the activate hook
   activate: ({ spApi, addKeymapSetup, addAnimCommand, addAnimActionType, injectStyle, addChunklet }) => {
     testAlert("Activating user code")
-    spApi.config.sourceTransform = null
-    spApi.toggleSourceTransform = () => {
-      if (spApi.config.sourceTransform) {
-        spApi.config.sourceTransform = null
-      } else {
-        spApi.config.sourceTransform = (html) => html
-          .replace(/^[ \t]*<!-- ?HIDE ?-->.*\n?/gm, '')
-          .replace(/<!-- ?- ?-->[\s\S]*?<!-- ?\+ ?-->/g, '')
+    const cleanupSource = (html) => html
+        .replace(/\n.*<!-- *HIDE *-->.*\n/gm, '\n')
+        .replace(/\n.*debug-show-current-step.*\n/gm, '\n')
+        .replace(/<!-- *- *-->[\s\S]*?<!-- *\+ *-->/g, '')
+      spApi.toggleSourceTransform = () => {
+        spApi.config.sourceTransform = spApi.config.sourceTransform === cleanupSource ? null : cleanupSource
       }
-    }
+      setTimeout(() => {
+        spApi.config.sourceTransform = cleanupSource
+      }, 1)
+    
+    spApi.config.noOpacityChange = false
     spApi.toggleSourceVisibility = () => document.documentElement.classList.toggle('show-source')
     // keymap updates
     addKeymapSetup((km) => {
@@ -1189,6 +1192,7 @@ await createSlidesPurryst({
     // slide source toggle (S key)
     injectStyle(`
       .global-source-container {
+        &.opacity-change:not(:hover) { opacity: 0.5; }
         display: none;
         position: fixed;
         bottom: 80px;
@@ -1213,7 +1217,7 @@ await createSlidesPurryst({
       .global-source-container .sp-slide-source-header {
         border-bottom: 1px solid var(--sp-border);
       }
-      .source-strip-btn, .source-close-btn {
+      .source-strip-btn, .opacity-change-btn, .source-close-btn {
         font-family: var(--sp-font-mono, monospace);
         font-size: 11px;
         padding: 0 6px;
@@ -1225,6 +1229,7 @@ await createSlidesPurryst({
         opacity: 0.5;
         transition: opacity 0.2s;
         line-height: 1.6;
+        &.active { background: var(--sp-accent-soft);}
       }
       .source-strip-btn:hover, .source-close-btn:hover { opacity: 1; }
       .source-hint {

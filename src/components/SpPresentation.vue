@@ -241,7 +241,7 @@
 import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick, shallowRef, defineComponent } from 'vue'
 import type { Component } from 'vue'
 import type { SlideData, ChunkDef } from '../types'
-import { useSlides, parseElementToSlides } from '../composables/useSlides'
+import { useSlides, parseElementToSlides, extractRawSlideSources } from '../composables/useSlides'
 import { useSteps, processSlideHtml, fixVoidElementsHtml, annotateEditableWithIndex } from '../composables/useSteps'
 import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes'
 import { useNavigation } from '../composables/useNavigation'
@@ -262,6 +262,7 @@ import { clearGlobalErrorMessages, globalErrorMessages } from '../composables/gl
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]
+  rawSlideSources?: string[]
   transition?: string
   transitionDuration?: number
   presenter?: boolean
@@ -338,8 +339,8 @@ provide('contentVersion', contentVersion)
 provide('slides', slides)
 provide('goTo', goTo)
 provide('sp-components', props.components)
-const rawSlideHtmls = ref<string[]>([])
-provide('rawSlideHtmls', rawSlideHtmls)
+const rawSlideSources = ref<string[]>(props.rawSlideSources ?? slides.value.map(s => s.html))
+provide('rawSlideSources', rawSlideSources)
 
 const direction = ref(1)
 const shouldSwap = ref(false)
@@ -777,7 +778,6 @@ function setupIconIfNone(seed: number) {
 }
 
 async function highlightAllSlides() {
-  rawSlideHtmls.value = slides.value.map(s => s.html)
   for (let i = 0; i < slides.value.length; i++) {
     const s = slides.value[i]
     const highlighted = await highlightCode(s.html)
@@ -868,6 +868,11 @@ function insertChunk(chunk: typeof spApi.selectedChunklet, params: Record<string
   slides.value = slides.value.map((s, i) =>
     i === idx ? { ...s, html: oldHtml + '\n' + html } : s
   )
+  if (rawSlideSources.value[idx]) {
+    rawSlideSources.value = rawSlideSources.value.map((src, i) =>
+      i === idx ? src + '\n' + html : src
+    )
+  }
   totalSteps.value = processSlideHtml(current.value.html).steps
   contentVersion.value++
   spApi.chunkletMode = false
@@ -965,6 +970,7 @@ function onChunkletKeydown(e: KeyboardEvent) {
 }
 
 function updateSlides(templateHtml: string) {
+  rawSlideSources.value = extractRawSlideSources(templateHtml)
   const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(templateHtml))
   const tmp = document.createElement('div')
   tmp.innerHTML = fixedHtml

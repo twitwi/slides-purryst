@@ -2,6 +2,7 @@
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
 - [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
+- [ ] sources seem already quite processed...
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
 - [ ] proper demo (sync to purrbundle too)
 - [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)
@@ -15,7 +16,7 @@
 - [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
 - [ ] demo-minimal-slidespurryst.typ
 
-## TODO v2 (2.0.0) (export and polish)
+## TODO v2 (2.0.0) (export and polish and plugins?)
 
 - [ ] better theme, including dark with similar contrasts etc
 - [ ] add slugs/tags to slides (one tag can have multiple slugs) so we can link between slides in a semantic manner, allow jumping to next occurrence of a tag, or previous etc (e.g. can allow a custom end-of-section tag)
@@ -24,6 +25,7 @@
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
 - [ ] pdf export
 - [ ] add a toc in the overview somewhat
+- [ ] plugin should be able to contribute to a shared state (like source in demo) or a shared saved (localstorage) state, check that the is properly reactive intially (pb with source in sp-after, has undefined value for transform at first template render, should not need a "set timer")
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 
@@ -65,7 +67,6 @@
 
 
 - [ ] consider a sp-script to avoid closing </script> in the "template"... but do we want script...? when do they get run etc? maybe rather need a very generic anim that accepts code directly?
-- [ ] consider a fully async init process (createSlidespurryst) because currently plugins can't do async stuff.
 - [ ] consider unocss stuff, can it be with a small footprint?
 - [ ] overview could insert separators when breaking a section (go from h3 to h2, have .sp-overview-leave-h3) to allow css styling (break flow of overview)
 - [ ] consider history management (think about when to push)

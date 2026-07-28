@@ -14,7 +14,7 @@ import SpImg from './components/SpImg.vue'
 import SpSlideSource from './components/SpSlideSource.vue'
 import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
-import { parseElementToSlides, parseRawInto } from './composables/useSlides'
+import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache } from './composables/includeCache'
 import { fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
 import { resolveTopIncludes } from './composables/resolveIncludes'
@@ -50,9 +50,11 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   const raw = {} as Record<'before'|'after',string>
 
   let contentRoot: Element | null = null
+  const rawSlideSources: string[] = []
   if (scriptEl) {
     const rawHtml = scriptEl.textContent || ''
     const resolvedHtml = await resolveTopIncludes(rawHtml)
+    rawSlideSources.push(...extractRawSlideSources(resolvedHtml))
     const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
     contentRoot = document.createElement('div')
     contentRoot.innerHTML = fixedHtml
@@ -185,6 +187,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   const app = createApp(SpPresentation, {
     slides,
+    rawSlideSources,
     transition,
     transitionDuration,
     designWidth,
@@ -226,10 +229,9 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
           if (m) {
             ;(async () => {
               const resolvedHtml = await resolveTopIncludes(m[1])
-              const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
               clearGlobalErrorMessages()
-              vm.updateSlides?.(fixedHtml)
-              reapplyGlobalStyles(fixedHtml)
+              vm.updateSlides?.(resolvedHtml)
+              reapplyGlobalStyles(resolvedHtml)
             })().catch(() => {})
           }
         })
