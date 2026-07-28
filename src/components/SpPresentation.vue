@@ -2,6 +2,14 @@
   <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
     <span style="display: none" :data-source-file-push="dataSourceFile"></span>
     <div v-if="props.raw?.before" v-html="props.raw.before" style="display: contents" class="sp-raw-before"></div>
+    <div v-if="globalErrorMessages.length > 0" class="sp-global-error-overlay" @click.self="clearGlobalErrorMessages()">
+      <div class="sp-global-error">
+        <h3>Global Errors</h3>
+        <ul>
+          <li v-for="(msg, idx) in globalErrorMessages" :key="idx">{{ msg }}</li>
+        </ul>
+      </div>
+    </div>
     <!-- === MAIN (non-presenter) LAYOUT === -->
     <template v-if="!presenter">
       <div v-if="loading" class="sp-loading">
@@ -249,6 +257,7 @@ import { exportStandalone } from '../export'
 import { highlightCode } from '../composables/useCodeHighlight'
 import { registry } from '../plugin'
 import { chunkPlacementMode, substituteParams, getSlideScale } from '../composables/useChunklets'
+import { clearGlobalErrorMessages, globalErrorMessages } from '../composables/globalErrorMessages'
 
 const props = withDefaults(defineProps<{
   slides: SlideData[]

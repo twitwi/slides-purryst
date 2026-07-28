@@ -1,8 +1,7 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
-- [ ] error in spec syntax should not need a big refresh (catch querySelectorAll exception?)
-- [ ] proper demo (rework the current one, sync to purrbundle too)
+- [ ] proper demo (sync to purrbundle too)
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
 - [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or workaround with a trigger that full hard reloads if too many updates (count updates from start and reload every (?))... or maybe it is related to time?
 

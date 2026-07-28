@@ -8,6 +8,7 @@ import type { Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
 import type { AnimAction } from '../animCommands'
 import { spApi } from '../sp-api'
+import { addGlobalErrorMessage } from '@/composables/globalErrorMessages'
 
 const contentVersion = inject<Ref<number>>('contentVersion', ref(0))
 
@@ -118,10 +119,20 @@ function applyStep(step: number) {
     if (handler) {
       if (a.delayedBy) {
         setTimeout(() => {
-          handler.apply(container, a)
+          try {
+            handler.apply(container, a)
+          } catch (e) {
+            console.error('(Caught) Error applying anim action:', e)
+            addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
+          }
         }, a.delayedBy)
       } else {
-        handler.apply(container, a)
+        try {
+          handler.apply(container, a)
+        } catch (e) {
+          console.error('(Caught) Error applying anim action:', e)
+          addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
+        }
       }
     }
   }
@@ -162,8 +173,13 @@ function refresh() {
   const container = getContainer()
   for (const actions of stepActions.value) {
     for (const action of actions) {
-      const handler = spApi._animActionTypes[action.type]
-      handler?.init?.(container, action)
+      try {
+        const handler = spApi._animActionTypes[action.type]
+        handler?.init?.(container, action)
+      } catch (e) {
+        console.error('(Caught) Error initializing anim action:', e)
+        addGlobalErrorMessage(`Error initializing anim action: ${e}`)
+      }
     }
   }
   const curr = getTargetStep()

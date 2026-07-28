@@ -1,6 +1,7 @@
 import { ref, computed, type Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
 import { registry } from '../plugin'
+import { addGlobalErrorMessage } from './globalErrorMessages'
 
 function countAnimSpecParts(spec: string, htmlForQuery?: Element): number {
   if (!spec.trim()) return 0
@@ -176,7 +177,12 @@ function processJumpsAndAnims(root: Element): number {
         if (relative) virtualVisStep += value
         else virtualVisStep = value - 1
         el.setAttribute('at', String(virtualVisStep))
-        virtualVisStep += countAnimSpecParts(el.getAttribute('spec') || '', root)
+        try {
+          virtualVisStep += countAnimSpecParts(el.getAttribute('spec') || '', root)
+        } catch (e) {
+          console.error('(Caught) Error counting anim spec parts:', e)
+          addGlobalErrorMessage(`Error counting anim spec parts for <sp-anim> at step ${visStep}: ${e}`)
+        }
         if (doJump) {
           visStep = virtualVisStep
           contributeMaxStep(visStep)

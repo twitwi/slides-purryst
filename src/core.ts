@@ -21,6 +21,7 @@ import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
+import { clearGlobalErrorMessages } from './composables/globalErrorMessages.js'
 
 const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
@@ -226,6 +227,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
             ;(async () => {
               const resolvedHtml = await resolveTopIncludes(m[1])
               const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
+              clearGlobalErrorMessages()
               vm.updateSlides?.(fixedHtml)
               reapplyGlobalStyles(fixedHtml)
             })().catch(() => {})
