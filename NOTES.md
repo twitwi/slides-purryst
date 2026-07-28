@@ -4,6 +4,7 @@
 - [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
 - [ ] proper demo (sync to purrbundle too)
+- [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
@@ -12,6 +13,7 @@
 - [ ] typst cetz
 - [ ] typst codeblock
 - [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
+- [ ] demo-minimal-slidespurryst.typ
 
 ## TODO v2 (2.0.0) (export and polish)
 
@@ -65,7 +67,6 @@
 - [ ] consider a sp-script to avoid closing </script> in the "template"... but do we want script...? when do they get run etc? maybe rather need a very generic anim that accepts code directly?
 - [ ] consider a fully async init process (createSlidespurryst) because currently plugins can't do async stuff.
 - [ ] consider unocss stuff, can it be with a small footprint?
-- [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)
 - [ ] overview could insert separators when breaking a section (go from h3 to h2, have .sp-overview-leave-h3) to allow css styling (break flow of overview)
 - [ ] consider history management (think about when to push)
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...

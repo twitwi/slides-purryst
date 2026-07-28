@@ -13,7 +13,7 @@
 .sp-slide pre code { display: block; padding: 1em 1.2em; background: var(--sp-code-block); color: var(--sp-code-text); border-radius: var(--sp-radius); overflow-x: auto; font-size: 0.75em; line-height: 1.5; }
 .sp-slide blockquote { border-left: 4px solid var(--sp-accent); padding-left: 1em; margin: 1em 0; color: var(--sp-text-2); font-style: italic; }
 .sp-slide a { color: var(--sp-accent); text-decoration: underline; }
-.sp-slide img { max-width: 100%; height: auto; border-radius: var(--sp-radius); margin: 1em 0; }
+.sp-slide img { max-width: 100%; height: auto; border-radius: var(--sp-radius); }
 .sp-slide table { width: 100%; border-collapse: collapse; margin: 1em 0; }
 .sp-slide th,
 .sp-slide td { padding: 0.5em 1em; border: var(--sp-px) solid var(--sp-border); text-align: left; }
