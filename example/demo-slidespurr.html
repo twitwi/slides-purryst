@@ -828,15 +828,15 @@ await createSlidesPurryst({
       .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
       #cat { filter: none !important; }
       .dim { opacity: 0.3; transition: opacity 0.3s; }
+      /* @keyframes cannot be scoped (inside a nesting selector), so they need to be global. */
+      /* we have this in a global tag:
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
+      */
     </sp-style>
   </sp-slide>
-  <sp-style> <!-- for global styles, both style and sp-style work -->
-      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
+  <sp-style is-global>
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
   </sp-style>
-  <style>
-    .eg-crazy { animation: crazy 0.5s ease-in-out 5; transform-origin: 50% 50%; }
-    @keyframes crazy { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
-  </style>
 
   <sp-slide>
     <h3><code>sp-anim</code> − @play / @pause video</h3>
@@ -1126,6 +1126,10 @@ await createSlidesPurryst({
         return [{ type: 'addClass', className: 'eg-crazy', selector: sel }]
       },
     })
+    injectStyle(` /* nicer to have it close to the definition, but it could be a style tag anywhere */
+      .eg-crazy { animation: crazy 0.5s ease-in-out 5; transform-origin: 50% 50%; }
+      @keyframes crazy { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+    `)
     // anim extension, custom type
     addAnimCommand('laser', {
       countSteps: () => 1,
