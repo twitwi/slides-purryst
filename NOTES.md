@@ -1,9 +1,9 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
-- [ ] proper demo (sync to purrbundle too)
+- [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
-- [ ] live update seems to create memory "leak" somewhat, RDD process, investigate and/or workaround with a trigger that full hard reloads if too many updates (count updates from start and reload every (?))... or maybe it is related to time?
+- [ ] proper demo (sync to purrbundle too)
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
@@ -15,6 +15,7 @@
 
 ## TODO v2 (2.0.0) (export and polish)
 
+- [ ] better theme, including dark with similar contrasts etc
 - [ ] add slugs/tags to slides (one tag can have multiple slugs) so we can link between slides in a semantic manner, allow jumping to next occurrence of a tag, or previous etc (e.g. can allow a custom end-of-section tag)
 - [ ] why are subparts etc shown as 0 Bytes in the dev tools?
 - [ ] should cache also be in a script text and not in a template? probably
@@ -22,10 +23,11 @@
 - [ ] pdf export
 - [ ] add a toc in the overview somewhat
 
-## TODO v3 (3.0.0) (better presenter features)
+## TODO v3 (3.0.0) (better presenter and authoring features)
 
 - [ ] notes with click markers like slidev, maybe not the same syntax, maybe closer to sp-pause
 - [ ] insert images from some sites? or generators (sana?)? no, rather have an easy import from clipboard/url
+- [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
 
 ## TODO typst syntax
 
@@ -47,10 +49,8 @@
 
 - [ ] (anim) can we avoid double parsing (for counting steps and for actually running the anim) of the spec? Can we make right away the list(s)
 - [ ] (anim) sp-steps should probably have an option to recurse n levels
-- [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
 - [ ] add a generic way of having query params to set (on initial load) some config options (like proMode, dark/light, theme name, etc)
 - [ ] sp-steps with no wrapper, also as a directive (in addition)
-- [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
 - [ ] (anim) can sp-steps be converted to @children (if wrapper...) (or even sp-pauses if not but then beware of e.g. a span in ul... so might still benefit from the data-sp-step approach) as a preprocessing like sp-pause? and could it rather be a directive?
 - [ ] (perf) do Map based caching of processHtml() (careful, might want a global state... or not in purr... handle it in purryst if any advanced thing... but maybe e.g. a js bibliography would need to be global and not per slide...)
 - [ ] (anim) is at=2 intuitive or offset by one? (at=0 intuitively means play right away, at=2 should mean after 2 steps)

@@ -5,8 +5,10 @@ import { highlightCode } from '../composables/useCodeHighlight'
 
 const props = withDefaults(defineProps<{
   for?: number
+  transform?: ((html: string) => string) | null
 }>(), {
   for: undefined,
+  transform: null,
 })
 
 const rawSlideHtmls = inject<Ref<string[]>>('rawSlideHtmls')!
@@ -16,12 +18,13 @@ const forSlide = computed(() => props.for !== undefined ? props.for : slideIndex
 const highlightedHtml = ref('')
 let highlightId = 0
 
-watch(forSlide, async (idx) => {
+watch([forSlide, () => props.transform], async ([idx]) => {
   const raw = rawSlideHtmls.value[idx]
   if (!raw) { highlightedHtml.value = ''; return }
   const id = ++highlightId
+  const transformed = props.transform ? props.transform(raw) : raw
   const code = `<pre><code class="language-html">${
-    raw
+    transformed
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -37,7 +40,11 @@ watch(forSlide, async (idx) => {
 
 <template>
   <div class="sp-slide-source" v-if="highlightedHtml">
-    <div class="sp-slide-source-header">Slide {{ forSlide + 1 }} source</div>
+    <div class="sp-slide-source-header">
+      <slot name="header" :forSlide="forSlide">
+        Slide {{ forSlide + 1 }} source
+      </slot>
+    </div>
     <div class="sp-slide-source-body" v-html="highlightedHtml"></div>
   </div>
 </template>
@@ -50,6 +57,9 @@ watch(forSlide, async (idx) => {
   overflow: hidden;
 }
 .sp-slide-source-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
   padding: 0.4em 0.8em;
   font-size: 0.8em;
   background: var(--sp-bg-2, #f5f5f5);
@@ -64,7 +74,7 @@ watch(forSlide, async (idx) => {
 .sp-slide-source-body :deep(pre) {
   margin: 0;
   padding: 0.8em;
-  font-size: 0.75em;
+  font-size: 0.95em;
   line-height: 1.5;
   tab-size: 2;
 }

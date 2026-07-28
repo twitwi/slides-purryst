@@ -2,6 +2,8 @@ import { reactive } from 'vue'
 import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
 import type { ChunkDef } from './types'
 
+export type SpApi = typeof spApi
+
 export const spApi = reactive({
   navLocked: false,
   currentIndex: 0,

@@ -1,7 +1,7 @@
 <template>
   <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
     <span style="display: none" :data-source-file-push="dataSourceFile"></span>
-    <div v-if="props.raw?.before" v-html="props.raw.before" style="display: contents" class="sp-raw-before"></div>
+    <component :is="beforeComp" v-if="props.raw?.before" />
     <div v-if="globalErrorMessages.length > 0" class="sp-global-error-overlay" @click.self="clearGlobalErrorMessages()">
       <div class="sp-global-error">
         <h3>Global Errors</h3>
@@ -233,12 +233,13 @@
       @close="closeGoPrompt"
       @select="goToResult"
     />
-    <div v-if="props.raw?.after" v-html="props.raw.after" style="display: contents" class="sp-raw-after"></div>
+    <component :is="afterComp" v-if="props.raw?.after" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick } from 'vue'
+import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick, shallowRef, defineComponent } from 'vue'
+import type { Component } from 'vue'
 import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides } from '../composables/useSlides'
 import { useSteps, processSlideHtml, fixVoidElementsHtml, annotateEditableWithIndex } from '../composables/useSteps'
@@ -304,6 +305,25 @@ const {
 let skipStepReset = false
 let targetStepIndex: number | null = null
 const contentVersion = ref(0)
+
+const beforeComp = shallowRef<Component | null>(null)
+const afterComp = shallowRef<Component | null>(null)
+
+watch(() => props.raw?.before, (html) => {
+  if (!html) { beforeComp.value = null; return }
+  beforeComp.value = defineComponent({
+    template: `<div style="display:contents" class="sp-raw-before">${html}</div>`,
+    components: props.components,
+  })
+}, { immediate: true })
+
+watch(() => props.raw?.after, (html) => {
+  if (!html) { afterComp.value = null; return }
+  afterComp.value = defineComponent({
+    template: `<div style="display:contents" class="sp-raw-after">${html}</div>`,
+    components: props.components,
+  })
+}, { immediate: true })
 
 const { openPresenterWindow, closePresenter, presenterActive, syncState, syncBlackout, send, onMessage, channel } = usePresenter()
 

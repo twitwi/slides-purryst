@@ -23,6 +23,7 @@ export const registry = {
     const noop = () => {}
     const d = plugin.disable ?? []
     const api: PluginAPI = {
+      spApi,
       addKeymapSetup:    d.includes('keymap')     ? noop : (fn: KeymapSetupFn) => this._keymapSetups.push(fn),
       addAnimCommand:    d.includes('anim')       ? noop : (name: string, handler: AnimCommandHandler) => this._animCommands.push({ name, handler }),
       addAnimActionType: d.includes('anim')       ? noop : (type: string, handler: ActionTypeHandler) => this._animActionTypes.push({ type, handler }),

@@ -34,7 +34,12 @@ function serializeNode(node: Node): string {
     s += ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`
   }
   s += '>'
-  s += serializeChildren(el)
+  const children = tag === 'template'
+    ? (el as HTMLTemplateElement).content.childNodes
+    : el.childNodes
+  for (let i = 0; i < children.length; i++) {
+    s += serializeNode(children[i])
+  }
   s += `</${tag}>`
   return s
 }

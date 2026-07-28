@@ -144,7 +144,7 @@
   <sp-slide class="eg-draggables">
     <h3>Draggable Elements</h3>
     <p><code>&amp;lt;sp-drag>stuff&amp;lt;/sp-drag></code> creates a <span style="opacity: 0.2;">draggable box</span></p>
-    <sp-drag at="961|366|587.7729750515967|327.7726886880253|0">
+    <sp-drag at="938|353|587.7729750515967|327.7726886880253|0">
       <div style="font-size: 0.65em;">HTML and CSS layout are nice and clean but sometimes manual placement is simpler</div>
     </sp-drag>
     <p>In dev mode:</p>
@@ -155,7 +155,7 @@
       <li>⇒ the changes are saved to the source</li>
       <li>…… as a <code>at="..."</code> attribute</li>
     </ul>
-    <sp-drag at="1199|106|641.887633341839|283.0415048145767|00">
+    <sp-drag at="1076|107|641.887633341839|283.0415048145767|0">
       <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
     <sp-pause />
@@ -188,7 +188,7 @@
 
   <sp-slide class="eg-draggables">
    <h3 title="Exact same locations, should not blink, also should move the right one.">Draggable 2 (test)</h3>
-    <sp-drag at="1199|106|641.887633341839|283.0415048145767|0.9">
+    <sp-drag at="1076|107|641.887633341839|283.0415048145767|0">
       <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
     <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
@@ -288,7 +288,7 @@ await createSlidesPurryst({
       <li><sp-include src="./demo-sp.html" /> unifies several approaches to animations</li>
       <li>inspiration is taken from past frameworks and current frameworks like <a href="https://sli.dev/" target="_blank">Slidev</a>
         and <a href="https://touying-typ.github.io/" target="_blank">Touying</a></li>
-      <li>the core system tries to follow the ancestor of <sp-include src="./demo-sp.html" />, Slidev <a href="" target="_blank">Ultracharger</a></li>
+      <li>the core system tries to follow the ancestor of <sp-include src="./demo-sp.html" />, Slidev <a href="https://github.com/twitwi/slidev-addon-ultracharger" target="_blank">Ultracharger</a></li>
     </ul>
   </sp-slide>
 
@@ -627,7 +627,7 @@ await createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-anim</code> − sequential reveal (<code>|</code>)</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Each <code>|</code>-separated part is a CSS selector. On slide entry, <code>sp-anim</code> hides all targeted elements, then reveals one group per click:</p>
+    <p>Each <code>|</code>-separated part is a CSS selector. On slide entry, <code>sp-anim</code> hides all targeted elements, then reveals one group per step:</p>
     <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
       <code style="font-size:0.7em">spec=".first | .second | .second + *"</code>
     </div>
@@ -913,18 +913,6 @@ await createSlidesPurryst({
     </sp-style>
   </sp-slide>
 
-  <!-- ################### -->
-  <!-- ################### -->
-  <!-- OLD / TEMPORARY CONTENT BELOW -->
-  <!-- ################### -->
-  <!-- ################### -->
-
-
-  <sp-slide>
-    <sp-slide-source class="slide-source" />
-    <h3><code>TODO add slide source</code></h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-  </sp-slide>
 
 
 
@@ -1014,6 +1002,19 @@ await createSlidesPurryst({
     }
   </style>
 
+  <sp-after>
+    <div class="global-source-container">
+      <sp-slide-source :transform="$sp.config.sourceTransform" v-slot:header="{ forSlide }">
+        Slide {{ forSlide + 1 }} source
+        <span class="source-hint">[<kbd>S</kbd>]</span>
+        <button class="source-strip-btn" @click="$sp.toggleSourceTransform()">
+          {{ $sp.config.sourceTransform ? 'Show raw' : 'Strip markers' }}
+        </button>
+        <button class="source-close-btn" @click="$sp.toggleSourceVisibility()">✕</button>
+      </sp-slide-source>
+    </div>
+  </sp-after>
+
 </script>
 
 <template id="sp-chunklets">
@@ -1055,14 +1056,26 @@ p.order = 100
 await createSlidesPurryst({
   components: { 'my-counter': Counter },
   seed: 12345678+45,
-  cacheIgnore: ['huge-.*\\.svg$'],  // don't inline huge SVGs in the output bundle
+  cacheIgnore: ['huge-.*\\.svg$'],  // e.g. to not inline huge SVGs in the output bundle
   plugins: [p],
   // plugin-like extensions can be added via the activate hook
-  activate: ({ addKeymapSetup, addAnimCommand, addAnimActionType, injectStyle, addChunklet }) => {
+  activate: ({ spApi, addKeymapSetup, addAnimCommand, addAnimActionType, injectStyle, addChunklet }) => {
     testAlert("Activating user code")
+    spApi.config.sourceTransform = null
+    spApi.toggleSourceTransform = () => {
+      if (spApi.config.sourceTransform) {
+        spApi.config.sourceTransform = null
+      } else {
+        spApi.config.sourceTransform = (html) => html
+          .replace(/^[ \t]*<!-- ?HIDE ?-->.*\n?/gm, '')
+          .replace(/<!-- ?- ?-->[\s\S]*?<!-- ?\+ ?-->/g, '')
+      }
+    }
+    spApi.toggleSourceVisibility = () => document.documentElement.classList.toggle('show-source')
     // keymap updates
     addKeymapSetup((km) => {
       km['t'] = () => { document.documentElement.classList.toggle('theme-clean') }
+      km['S'] = () => spApi.toggleSourceVisibility()
     })
     // anim extension, simple shortcut
     addAnimCommand('crazy', {
@@ -1135,6 +1148,77 @@ await createSlidesPurryst({
         </div>
       </sp-drag>
     `})
+    // slide source toggle (S key)
+    injectStyle(`
+      .global-source-container {
+        display: none;
+        position: fixed;
+        bottom: 80px;
+        left: 20px;
+        right: 20px;
+        z-index: 50;
+        max-height: 40vh;
+        overflow: auto;
+        background: var(--sp-bg);
+        border: 1px solid var(--sp-border);
+        border-radius: 6px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+      .show-source .global-source-container {
+        display: block;
+      }
+      .global-source-container .sp-slide-source {
+        margin: 0;
+        border: none;
+        border-radius: 0;
+      }
+      .global-source-container .sp-slide-source-header {
+        border-bottom: 1px solid var(--sp-border);
+      }
+      .source-strip-btn, .source-close-btn {
+        font-family: var(--sp-font-mono, monospace);
+        font-size: 11px;
+        padding: 0 6px;
+        border: 1px solid var(--sp-border);
+        border-radius: 3px;
+        background: var(--sp-bg);
+        color: var(--sp-text);
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+        line-height: 1.6;
+      }
+      .source-strip-btn:hover, .source-close-btn:hover { opacity: 1; }
+      .source-hint {
+        font-size: 11px;
+        opacity: 0.4;
+      }
+      .source-hint kbd { font-size: inherit; }
+      .source-close-btn { margin-left: auto; }
+      .source-toggle-btn {
+        position: fixed;
+        bottom: 50px;
+        right: 20px;
+        z-index: 10000;
+        background: var(--sp-bg-2);
+        border: 1px solid var(--sp-border);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-family: var(--sp-font-mono, monospace);
+        font-size: 13px;
+        cursor: pointer;
+        opacity: 0.35;
+        transition: opacity 0.2s;
+        color: var(--sp-text);
+      }
+      .source-toggle-btn:hover { opacity: 0.8; }
+    `)
+    const btn = document.createElement('button')
+    btn.className = 'source-toggle-btn'
+    btn.textContent = '</>'
+    btn.title = 'Toggle slide source (S)'
+    btn.addEventListener('click', () => spApi.toggleSourceVisibility())
+    document.body.appendChild(btn)
   }
 })
 </script>

@@ -1,6 +1,7 @@
 import type { Component } from 'vue'
 import type { KeymapSetupFn } from './keymap/types'
 import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
+import type { SpApi } from './sp-api'
 
 export type FacetName = 'anim' | 'keymap' | 'style' | 'chunklet' | (string & {})
 
@@ -12,6 +13,7 @@ export interface SlidesPlugin {
 }
 
 export interface PluginAPI {
+  spApi: SpApi
   addKeymapSetup: (fn: KeymapSetupFn) => void
   addAnimCommand: (name: string, handler: AnimCommandHandler) => void
   addAnimActionType: (type: string, handler: ActionTypeHandler) => void
