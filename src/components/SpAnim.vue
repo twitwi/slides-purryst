@@ -8,7 +8,7 @@ import type { Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
 import type { AnimAction } from '../animCommands'
 import { spApi } from '../sp-api'
-import { addGlobalErrorMessage } from '@/composables/globalErrorMessages'
+import { addGlobalErrorMessage } from '../composables/globalErrorMessages'
 
 const contentVersion = inject<Ref<number>>('contentVersion', ref(0))
 
