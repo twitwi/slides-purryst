@@ -120,9 +120,9 @@ watch(srcRef, async (val) => {
 
 <template>
   <span style="display: none" :data-source-file-push="src"></span>
-  <div v-if="error" class="sp-include-error">{{ error }}</div>
-  <div v-else-if="props.noComponent" class="sp-include" v-html="htmlContent"></div>
-  <component :is="comp" v-else />
+  <div v-if="error" v-bind="$attrs" class="sp-include-error">{{ error }}</div>
+  <div v-else-if="props.noComponent" v-bind="$attrs" class="sp-include" v-html="htmlContent"></div>
+  <component v-else v-bind="$attrs" :is="comp" />
   <span style="display: none" data-source-file-pop=""></span>
 </template>
 

@@ -10,8 +10,10 @@ import { inject, computed, ref, useSlots, type VNode } from 'vue'
 
 const props = withDefaults(defineProps<{
   at?: number | string
+  cycle?: boolean
 }>(), {
   at: 0,
+  cycle: false
 })
 
 const ghostEl = ref<HTMLElement | null>(null)
@@ -26,7 +28,7 @@ function getTargetStep(): number {
 
 const children = computed(() => {
   const defaultSlot = slots.default?.() ?? []
-  return defaultSlot.filter((v: VNode) => v.type !== Comment)
+  return defaultSlot.filter((v: VNode) => typeof v.type == 'string')
 })
 
 const activeIndex = computed(() => {
@@ -34,6 +36,7 @@ const activeIndex = computed(() => {
   const step = getTargetStep()
   const offset = step - (typeof props.at === 'string' ? parseInt(props.at, 10) : props.at)
   if (offset < 0) return -1
+  if (!props.cycle && offset >= children.value.length) return children.value.length - 1
   return offset % children.value.length
 })
 </script>

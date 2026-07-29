@@ -13,6 +13,7 @@
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
+- [ ] better ignore in vue config, because currently, unless using the dev files demo- or index.html.... the full refresh is triggered... should we ignore all as we watch explicitly the location of interest? or keep src etc?
 - [ ] add a png/jpg include to test and illustrate cache
 - [ ] overview scroll current slide into view, and highlight even more
 - [ ] esc should quit devpane

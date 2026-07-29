@@ -2,15 +2,18 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
-import { watch, readFileSync, writeFileSync, existsSync } from 'fs'
+import { watch } from 'fs'
+import { handleEdit } from './lib/edit-handler.mjs'
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
+  const watchDir = process.env.SP_WATCH_DIR || resolve(__dirname, 'example')
+  const rootDir = process.env.SP_ROOT_DIR || __dirname
 
   return {
     server: {
       watch: {
-        ignored: ["**/demo-*.*", "**/,,*"]
+        ignored: ["**/demo-*.*", "**/index.html", "**/,,*"]
       }
     },
     plugins: [
@@ -38,259 +41,9 @@ export default defineConfig(({ mode }) => {
           })
 
           server.middlewares.use('/__sp_edit', (req, res) => {
-            res.setHeader('Access-Control-Allow-Origin', '*')
-            res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-            if (req.method === 'OPTIONS') {
-              res.writeHead(204)
-              res.end()
-              return
-            }
-            if (req.method !== 'POST') {
-              res.writeHead(405)
-              res.end('Method not allowed')
-              return
-            }
-
             let body = ''
             req.on('data', (chunk) => { body += chunk })
-            req.on('end', () => {
-              try {
-                const data = JSON.parse(body)
-                const filePath = resolve(__dirname, './' + data.file)
-                const editableIndex = data.editableIndex
-                const useTypst = filePath.endsWith('.typ')
-
-                console.log(filePath)
-
-                // === Typst mode: edit .typ source via dragId ===
-                if (data.dragId != null && useTypst && existsSync(filePath)) {
-                  const content = readFileSync(filePath, 'utf-8')
-                  const newMatch = data.newAttrs?.match(/at="([^"]+)"/)
-                  if (!newMatch) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' })
-                    res.end(JSON.stringify({ ok: false, error: 'Could not parse at value from newAttrs' }))
-                    return
-                  }
-                  const newValue = newMatch[1]
-                  const typstNew = `at: "${newValue}"`
-
-                  const lines = content.split('\n')
-                  const dragId = parseInt(data.dragId, 10)
-                  let count = -1
-                  let found = false
-
-                  for (let i = 0; i < lines.length; i++) {
-                    if (lines[i].includes('#drag(')) {
-                      count++
-                      if (count === dragId) {
-                        const searchEnd = Math.min(lines.length, i + 4)
-                        for (let j = i; j < searchEnd; j++) {
-                          const match = lines[j].match(/at:\s*"([^"]+)"/)
-                          if (match) {
-                            lines[j] = lines[j].replace(match[0], typstNew)
-                            found = true
-                            break
-                          }
-                        }
-                        break
-                      }
-                    }
-                  }
-
-                  if (!found) {
-                    res.writeHead(404, { 'Content-Type': 'application/json' })
-                    res.end(JSON.stringify({ ok: false, error: `Could not find drag #${dragId}` }))
-                    return
-                  }
-
-                  writeFileSync(filePath, lines.join('\n'), 'utf-8')
-                  console.log(`[sp-edit] Updated drag #${dragId}: ${typstNew}`)
-                  res.writeHead(200, { 'Content-Type': 'application/json' })
-                  res.end(JSON.stringify({ ok: true }))
-                  return
-                }
-
-                // === Chunklet insertion ===
-                if (data.action === 'insert-chunk' && existsSync(filePath)) {
-                  const content = readFileSync(filePath, 'utf-8')
-
-                  const EDITABLE_RE = /<(sp-drag|sp-slide)(\s[^>]*)?(\/?)>/gi
-                  let editCount = 0
-                  let editMatch
-                  let slideStart = 0
-                  while ((editMatch = EDITABLE_RE.exec(content)) !== null) {
-                    if (editCount === editableIndex) {
-                      if (editMatch[1] !== 'sp-slide') {
-                        res.writeHead(400)
-                        res.end(JSON.stringify({ error: `Editable index ${editableIndex} is not a slide` }))
-                        return
-                      }
-                      slideStart = editMatch.index
-                      break
-                    }
-                    editCount++
-                  }
-                  if (!editMatch) {
-                    res.writeHead(404)
-                    res.end(JSON.stringify({ error: `Editable index ${editableIndex} not found` }))
-                    return
-                  }
-
-                  const closeTag = '</sp-slide>'
-                  const closeIdx = content.indexOf(closeTag, slideStart)
-                  if (closeIdx === -1) {
-                    res.writeHead(404)
-                    res.end(JSON.stringify({ error: 'Could not find closing sp-slide tag' }))
-                    return
-                  }
-
-                  const newlineBefore = content.lastIndexOf('\n', closeIdx)
-                  const leading = content.slice(newlineBefore + 1, closeIdx)
-                  const baseIndent = leading.length - leading.trimStart().length
-
-                  const chunkLines = data.html.split('\n')
-                  const firstReal = chunkLines.find((l: string) => l.trim().length > 0)
-                  const chunkIndent = firstReal ? firstReal.length - firstReal.trimStart().length : 0
-                  const allChunkLineOk = chunkLines.every((l: string) => l.slice(0, chunkIndent).trim().length === 0)
-                  const dedented = allChunkLineOk ? chunkLines.map((l: string) => l.slice(chunkIndent)) : chunkLines
-                  const reindented = dedented.map((l: string) => l.length > 0 ? ' '.repeat(baseIndent + 2) + l : '')
-                  const indentedHtml = reindented.join('\n')
-                  console.log(firstReal, chunkIndent, allChunkLineOk, baseIndent)
-
-                  const updated = content.slice(0, closeIdx) + '\n' + indentedHtml + '\n' + ' '.repeat(baseIndent) + content.slice(closeIdx)
-                  writeFileSync(filePath, updated, 'utf-8')
-                  console.log(`[sp-edit] Inserted chunk into editable position #${editableIndex}`)
-                  res.writeHead(200, { 'Content-Type': 'application/json' })
-                  res.end(JSON.stringify({ ok: true }))
-                  return
-                }
-
-                // === HTML mode: edit HTML file via oldAttrs + slide ===
-                const content = readFileSync(filePath, 'utf-8')
-
-                const oldAt = data.oldAttrs?.trim()
-                const newAt = data.newAttrs?.trim()
-                const isInsert = oldAt === '__sp_insert__'
-
-                // find the editableIndex-th editable element (sp-drag|sp-slide) in the file
-                const TAG_RE = /<(sp-drag|sp-slide)(\s[^>]*)?(\/?)>/gi
-                let editMatch
-                let editCount = 0
-                let blockStart = -1
-                while ((editMatch = TAG_RE.exec(content)) !== null) {
-                  if (editCount === editableIndex) {
-                    if (editMatch[1] !== 'sp-drag') {
-                      res.writeHead(400)
-                      res.end(JSON.stringify({ error: `Editable index ${editableIndex} is not a drag element` }))
-                      return
-                    }
-                    blockStart = editMatch.index
-                    break
-                  }
-                  editCount++
-                }
-                if (blockStart === -1) {
-                  res.writeHead(404)
-                  res.end(JSON.stringify({ error: `Could not find editable element for index ${editableIndex}` }))
-                  return
-                }
-                const blockEnd = content.indexOf('</sp-drag>', blockStart)
-                if (blockEnd === -1) {
-                  res.writeHead(404)
-                  res.end(JSON.stringify({ error: `Could not find closing sp-drag tag for editable index ${editableIndex}` }))
-                  return
-                }
-
-                const slice = content.slice(blockStart, blockEnd)
-
-                if (isInsert) {
-                  const newMatch = newAt?.match(/at="([^"]*)"/)
-                  if (!newMatch) {
-                    res.writeHead(400)
-                    res.end(JSON.stringify({ error: 'newAttrs must include at="..." attribute' }))
-                    return
-                  }
-                  const newVal = newMatch[1]
-                  const insertRegex = /<sp-drag\b([^>]*?)(\/?\s*>)/i
-                  const insertMatch = insertRegex.exec(slice)
-                  if (!insertMatch) {
-                    res.writeHead(404)
-                    res.end(JSON.stringify({ error: 'sp-drag tag not found for insert' }))
-                    return
-                  }
-                  const attrs = insertMatch[1]
-                  const closer = insertMatch[2]
-                  let updated: string
-                  const before = content.slice(blockStart, blockEnd)
-                  const after = before.replace(insertRegex, `<sp-drag${attrs} at="${newVal}"${closer}`)
-                  updated = content.slice(0, blockStart) + after + content.slice(blockEnd)
-                  if (updated === content) {
-                    res.writeHead(404)
-                    res.end(JSON.stringify({ error: 'Insertion produced no change' }))
-                    return
-                  }
-                  writeFileSync(filePath, updated, 'utf-8')
-                  res.writeHead(200, { 'Content-Type': 'application/json' })
-                  res.end(JSON.stringify({ ok: true }))
-                  return
-                }
-
-                const atRegex = /at="([^"]*)"/
-                const oldMatch = oldAt?.match(atRegex)
-                if (!oldMatch) {
-                  res.writeHead(400)
-                  res.end(JSON.stringify({ error: 'oldAttrs must include at="..." attribute' }))
-                  return
-                }
-
-                const oldVal = oldMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                const tagRegex = new RegExp(`(<sp-drag\\s[^>]*?at=")${oldVal}(")`)
-
-                let match: RegExpExecArray | null = null
-                tagRegex.lastIndex = 0
-                const sliceMatch = tagRegex.exec(slice)
-                if (sliceMatch) {
-                  match = sliceMatch
-                  match.index = blockStart + sliceMatch.index
-                }
-
-                if (!match) {
-                  res.writeHead(404)
-                  res.end(JSON.stringify({ error: 'sp-drag tag not found', oldAt }))
-                  return
-                }
-
-                const newMatch = newAt?.match(atRegex)
-                if (!newMatch) {
-                  res.writeHead(400)
-                  res.end(JSON.stringify({ error: 'newAttrs must include at="..." attribute' }))
-                  return
-                }
-
-                const newVal = newMatch[1]
-                const before = match[0]
-                const after = `${match[1]}${newVal}${match[2]}`
-
-                let updated: string
-                updated = content.slice(0, blockStart) +
-                  content.slice(blockStart, blockEnd).replace(before, after) +
-                  content.slice(blockEnd)
-
-                if (updated === content) {
-                  res.writeHead(404)
-                  res.end(JSON.stringify({ error: 'Replacement produced no change' }))
-                  return
-                }
-
-                writeFileSync(filePath, updated, 'utf-8')
-                res.writeHead(200, { 'Content-Type': 'application/json' })
-                res.end(JSON.stringify({ ok: true }))
-              } catch (err: any) {
-                res.writeHead(500)
-                res.end(JSON.stringify({ error: err.message, stack: err.stack }))
-              }
-            })
+            req.on('end', () => handleEdit(body, rootDir, req.method as string, res))
           })
 
           // Inject SSE client into HTML responses
@@ -311,7 +64,7 @@ export default defineConfig(({ mode }) => {
 
           let timer: ReturnType<typeof setTimeout> | null = null
           //console.log("WATCHING "+htmlFile)
-          watch('example/', (...o) => {
+          watch(watchDir, { recursive: true }, (...o) => {
             //console.log("CHANGED ", ...o)
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {

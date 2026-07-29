@@ -3,8 +3,14 @@
   "version": "0.1.0",
   "description": "SlidesPurryst: Where Typst meets Vue in purr-fect harmony.",
   "type": "module",
+  "bin": {
+    "slides-purryst": "./bin/cli.mjs",
+    "sp-dev": "./bin/sp-dev.mjs"
+  },
   "files": [
-    "dist"
+    "dist",
+    "bin",
+    "lib"
   ],
   "main": "./dist/slides-purryst.umd.cjs",
   "module": "./dist/slides-purryst.es.js",
@@ -21,14 +27,12 @@
     "./dist/slides-purryst.css"
   ],
   "scripts": {
-    "dev": "node scripts/dev.mjs example/demo-slidespurr.html",
-    "dev:typst": "node scripts/dev.mjs example/demo-slidespurryst.typ",
-    "dev:bundle": "pnpm build:bundle && node scripts/dev.mjs example/demo-purrbundle.html",
-    "do-serve-open": "vite --port 3334 --clearScreen false --open  ",
-    "SLOW-do-prettier-inplace": "prettier --ignore-path ignorregitignore --print-width 160 --write  ",
+    "dev": "node bin/sp-dev.mjs --watch example/ --port 3334 --open",
+    "dev:typst": "node bin/sp-dev.mjs example/demo-slidespurryst.typ --watch example/ --port 3334 --open",
+    "dev:bundle": "node bin/cli.mjs example/",
     "clean": "rm $(git ls-files -o -i -X .gitignore example/ )",
     "clean:dry": "echo rm $(git ls-files -o -i -X .gitignore example/ )",
-    "build": "vite build",
+    "build": "vite build && vite build --config vite.bundle.ts",
     "build:bundle": "vite build --config vite.bundle.ts",
     "preview": "vite preview"
   },
