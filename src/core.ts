@@ -217,6 +217,16 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
     const es = new EventSource('/__sp_events')
+    const generateHash = (s: string) => {
+      let hash = 0
+      for (const char of s) {
+        hash = (hash << 5) - hash + char.charCodeAt(0)
+        hash |= 0
+      }
+      return hash
+    }
+
+    let lastNonContentHash = parseInt(window.localStorage.getItem('sp-non-content-hash') ?? '0', 10)
     es.addEventListener('update', (event: MessageEvent) => {
       liveUpdatesCount.value++
       const filename = (event.data ?? '').trim()
@@ -225,17 +235,25 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
       fetch(window.location.href + '?_=' + Date.now())
       .then(r => r.text())
       .then(html => {
-          const m = html.match(/<script\s+type="text\/html"\s+id="sp-content">([\s\S]*?)<\/script>/)
-          if (m) {
-            ;(async () => {
-              const resolvedHtml = await resolveTopIncludes(m[1])
-              clearGlobalErrorMessages()
-              vm.updateSlides?.(resolvedHtml)
-              reapplyGlobalStyles(resolvedHtml)
-            })().catch(() => {})
-          }
-        })
-        .catch(() => {})
+        const nonContentHash = generateHash(html.replace(/<script\s+type="text\/html"\s+id="sp-content">[\s\S]*?<\/script>/, ''))
+        if (lastNonContentHash !== 0 && lastNonContentHash !== nonContentHash) {
+          // will still miss it if the very first modification is in non-content
+          window.localStorage.setItem('sp-non-content-hash', nonContentHash.toString())
+          window.location.reload()
+          return            
+        }
+        lastNonContentHash = nonContentHash
+        const m = html.match(/<script\s+type="text\/html"\s+id="sp-content">([\s\S]*?)<\/script>/)
+        if (m) {
+          ;(async () => {
+            const resolvedHtml = await resolveTopIncludes(m[1])
+            clearGlobalErrorMessages()
+            vm.updateSlides?.(resolvedHtml)
+            reapplyGlobalStyles(resolvedHtml)
+          })().catch(() => {})
+        }
+      })
+      .catch(() => {})
     })
     es.addEventListener('connected', () => {}, { once: true })
   }

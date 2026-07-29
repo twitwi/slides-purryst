@@ -312,7 +312,7 @@ export default defineConfig(({ mode }) => {
           let timer: ReturnType<typeof setTimeout> | null = null
           //console.log("WATCHING "+htmlFile)
           watch('example/', (...o) => {
-            console.log("CHANGED ", ...o)
+            //console.log("CHANGED ", ...o)
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
               clients.forEach((client) => {

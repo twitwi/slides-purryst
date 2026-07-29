@@ -6,7 +6,6 @@
 - [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)
 - [ ] overview scroll current slide into view, and highlight even more
 - [ ] esc should quit devpane
-- [ ] dev script should look at if something else that template changed and trigger full reload if so (script section etc, bus basically anything outside the currently watched content, avantage to style in template, no full reload)
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
