@@ -66,14 +66,11 @@
 <div id="sp-presentation" data-design-width="1920" data-design-height="1080" data-author="TODO AUTHOR"></div>
 
 <!-- alternatives so this example is somewhate moveable -->
-<script src="../dist/slides-purryst.bundle.js"></script>
-<script src="./dist/slides-purryst.bundle.js"></script>
-<script src="./slides-purryst.bundle.js"></script>
+<script src="../dist/slides-purryst.bundle.js"></script> <!-- for the demo -->
+<script src="slides-purryst.bundle.js"></script> <!-- typical use -->
 
 <script type="module">
-import { createSlidesPurryst } from '../src/index.ts'
-
-await createSlidesPurryst({
+await SlidesPurryst.createSlidesPurryst({
   seed: 20260701,
   components: {},
   plugins: [],

@@ -518,6 +518,7 @@ await createSlidesPurryst({
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>
       it shows children one by one (or cycles if <code>cycle</code>)
+      <sp-alternatives at="0"> <span>🌕</span> <span>🌑</span> </sp-alternatives>
       <sp-alternatives at="0" cycle> <span>🌕</span> <span>🌑</span> </sp-alternatives>
     </p>
     <sp-alternatives cycle>
@@ -1081,13 +1082,11 @@ await createSlidesPurryst({
 <div id="sp-presentation" data-design-width="1920" data-design-height="1080" data-author="SlidesPurryst"></div>
 
 <!-- alternatives so this example is somewhate moveable -->
-<script src="../dist/slides-purryst.bundle.js"></script>
-<script src="./dist/slides-purryst.bundle.js"></script>
-<script src="./slides-purryst.bundle.js"></script>
+<script src="../dist/slides-purryst.bundle.js"></script> <!-- for the demo -->
+<script src="slides-purryst.bundle.js"></script> <!-- typical use -->
 
 <script type="module">
-import { createSlidesPurryst } from '../src/index.ts'
-import Counter from './Counter.vue'
+//import Counter from './Counter.vue'
 
 let testAlert = () => {}
 //testAlert = alert // uncomment and play with order to check
@@ -1100,9 +1099,8 @@ const p = fakePlugin()
 // override order (>= 100 means after custom activate() below)
 p.order = 100
 
-
-await createSlidesPurryst({
-  components: { 'my-counter': Counter },
+await SlidesPurryst.createSlidesPurryst({
+  //components: { 'my-counter': Counter }, // need inlining
   seed: 12345678+90,
   cacheIgnore: ['huge-.*\\.svg$'],  // e.g. to not inline huge SVGs in the output bundle
   plugins: [p],
