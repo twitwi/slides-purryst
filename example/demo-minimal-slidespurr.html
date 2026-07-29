@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-clean">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>(Minimal) SlidesPurr Demo</title>
+</head>
+<body>
+
+ <script type="text/html" id="sp-content">
+
+  <sp-slide>
+    <h1>(Minimal) SlidesPurr(yst)</h1>
+    <p>Where Typst meets Vue in purr-fect harmony.</p>
+    <p style="color:#64748b;font-size:0.9em">Arrow keys or Space to navigate</p>
+    <p>NB: this demo file is not using typst</p>
+  </sp-slide>  
+
+  <sp-slide>
+    <h2>Section</h2>
+  </sp-slide>  
+
+  <sp-slide>
+    <h3>Slide</h3>
+  </sp-slide>
+
+  <sp-slide no-toc>
+    <h2>Overview</h2>
+    <sp-toc end="2"/>
+  </sp-slide>  
+
+  <sp-slide no-toc>
+    <h1>That's all!</h1>
+  </sp-slide>
+
+  <!-- global style, you can use style or sp-style but your tools will likely preffer style -->
+  <style>
+    /* theme override */
+    /* scale font, UI included, default 16px */
+    :root {
+      /* font-size: 19px; */
+    }
+    /* scale font, slides only, default 3.75em */
+    .sp-slide {
+      font-size: 4em;
+    }
+    /* change theme color(s) */
+    /* defaults 25 and 55 */
+    :root {
+      /*
+      --sp-theme-hue: 125;
+      --sp-theme-secondary-hue: 195;
+      */
+    }
+  </style>
+
+  <sp-after>
+  </sp-after>
+
+</script>
+
+<template id="sp-chunklets">
+</template>
+
+<div id="sp-presentation" data-design-width="1920" data-design-height="1080" data-author="TODO AUTHOR"></div>
+
+<script type="module">
+import { createSlidesPurryst } from '../src/index.ts'
+
+await createSlidesPurryst({
+  seed: 20260801,
+  components: {},
+  plugins: [],
+})
+</script>
+</body>
+</html>

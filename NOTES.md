@@ -1,11 +1,6 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
-- [ ] add a png/jpg include to test and illustrate cache even if not v0 target
-- [ ] proper demo (sync to purrbundle too)
-- [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)
-- [ ] overview scroll current slide into view, and highlight even more
-- [ ] esc should quit devpane
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
@@ -18,6 +13,9 @@
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
+- [ ] add a png/jpg include to test and illustrate cache
+- [ ] overview scroll current slide into view, and highlight even more
+- [ ] esc should quit devpane
 - [ ] better theme, including dark with similar contrasts etc
 - [ ] add slugs/tags to slides (one tag can have multiple slugs) so we can link between slides in a semantic manner, allow jumping to next occurrence of a tag, or previous etc (e.g. can allow a custom end-of-section tag)
 - [ ] why are subparts etc shown as 0 Bytes in the dev tools?

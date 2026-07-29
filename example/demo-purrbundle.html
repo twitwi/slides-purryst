@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<script type="text/html" id="sp-content">
+ <script type="text/html" id="sp-content">
 
   <sp-slide>
     <h1>SlidesPurr(yst) with bundle</h1>
@@ -18,23 +18,62 @@
   </sp-slide>
 
   <sp-slide no-toc>
+    <h2>Notes and Disclaimer: welcome to</h2>
+    <sp-drag at="1408|33|468.4521011768494|182.97444578952522|0">
+      <sp-img src="./slides-purryst-banner-sticker.svg" />
+    </sp-drag>
+    <ul>
+      <li>This presentation acts as
+        <ul>
+          <li>a tutorial/demo</li>
+          <li>a documentation</li>
+          <li>an informal test suite</li>
+        </ul>
+      </li>
+      <li>This presentation is NOT:
+        <ul>
+          <li>a starter template (use <code>demo-minimal-slidespurr.html</code> for that)</li>
+          <li>a showcase of the typst version (it is plain html)</li>
+          <li>meant to be visually polished (it illustrates features)</li>
+        </ul>
+      </li>
+    </ul>
+    <p class="eg-small">NB: You can see the source code
+      <ul class="eg-small">
+        <li>in the source html (<kbd>Ctrl</kbd> + <kbd>U</kbd> in many browsers)</li>
+        <li>for individual slides, by pressing <kbd>S</kbd> or clicking the button <code>&amp;lt;/></code> on the right ⇒</li>
+      </ul>
+    </p>
+  </sp-slide>
+
+  <sp-slide no-toc>
     <h2>Here is TOC</h2>
     <sp-toc end="2"/>
   </sp-slide>  
 
+
+
+
+
+
+
+
+  <!-- slide transitions -->
+
   <sp-slide>
     <h2>Slide Transitions</h2>
-    <p>Do not overuse...</p>
+    <div class="eg-center">Do not overuse...</div>
+    <p>Transitions don't necessarily improve the presentation, they are possible but should be used sparingly, only when they add value to the content.</p>
   </sp-slide>  
 
   <sp-slide>
     <h3>Transitions: options</h3>
     <p>Per-slide transitions via <code>transition</code> attribute.</p>
     <ul>
-      <li><code>none</code> — default</li>
-      <li><code>fade</code> — opacity fading</li>
-      <li><code>slide-up</code> — vertical slide</li>
-      <li><code>zoom</code> — scale in/out</li>
+      <li><code>none</code> − default</li>
+      <li><code>fade</code> − opacity fading (next slide)</li>
+      <li><code>slide-up</code> − vertical slide</li>
+      <li><code>zoom</code> − scale in/out</li>
     </ul>
     <p>A "transition" option to createSlidesPurryst, that is used as default.</p>
   </sp-slide>
@@ -42,16 +81,19 @@
   <sp-slide transition="fade">
     <h3>This one is "fade"</h3>
     <img src="./slides-purryst-banner.svg" />
-  </sp-slide>
+    <p>next is "slide-up"</p>
+  </sp-slide>display: inline
 
   <sp-slide transition="slide-up">
     <h3>This one is "slide-up"</h3>
     <img src="./slides-purryst-banner.svg" style="transform: scale(-1,1)" />
+    <p>next is "zoom" (with 600ms, i.e. longer animation)</p>
   </sp-slide>
 
   <sp-slide transition="zoom" transition-duration="600" >
     <h3>This one is "zoom" (with 600ms)</h3>
     <img src="./slides-purryst-banner.svg" />
+    <p>next is "fade" (with 100ms)</p>
   </sp-slide>
 
   <sp-slide transition="fade" transition-duration="100" >
@@ -59,23 +101,59 @@
     <img src="./slides-purryst-banner.svg" style="transform: scale(-1,1)"/>
   </sp-slide>
 
+
+
+
+
+
+  <!-- basic navigation -->
+
   <sp-slide>
-    <h3>Keyboard Navigation</h3>
+    <h2>Navigation, basic features and shortcuts</h2>
+  </sp-slide>  
+
+  <sp-slide>
+    <h3>Keyboard Navigation + touch <sp-step from="1">(please try)</sp-step></h3>
     <ul>
-      <li><kbd>→</kbd> / <kbd>Spc</kbd>: advance the presentation</li>
+      <li><kbd>→</kbd> / <kbd>Spc</kbd> / swipe: advance the presentation</li>
       <li><kbd>←</kbd>: backward</li>
       <li><kbd>↓</kbd> (next) / <kbd>↑</kbd> (previous) slide (skip steps) </li>
       <li><kbd>A</kbd> / <kbd>Z</kbd> to browse: previous/next slide's end</li>
       <li><kbd>G</kbd>: Open goto popup (number, header content)</li>
       <li><kbd>O</kbd>: Toggle overview</li>
-      <li><kbd>F</kbd>: Toggle fullscreen</li>
     </ul>
-    <sp-style>
-      kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-alt); padding: 0 .2em; margin: 0 0.2em;  }
-    </sp-style>
+    <p>More shortcuts</p>
+    <ul>
+      <li><kbd>F</kbd>: Toggle fullscreen</li>
+      <li><kbd>B</kbd>: Trigger blackout</li>
+    </ul>
+    <sp-drag at="922|753|828|204|0">
+      <div class="eg-small">
+        In this presentation
+        <ul>
+          <li><kbd>T</kbd>: Toggle theme (contrasted / basic)</li>
+          <li><kbd>S</kbd>: Toggle slide source view</li>
+        </ul>
+      </div>
+    </sp-drag>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Presenter View and Slide Notes</h3>
+    <p>Use <code>sp-notes</code> to add notes to a slide</p>
+    <p>Use key <code>p</code> (or the <a @click="$sp.toggleNavLock()" title="click to toggle the toolbar">toolbar</a> at the bottom) to toggle presenter view</p>
+    <sp-notes>
+      <h4>Notes for this slide</h4>
+      <p>These notes are only visible in presenter view.</p>
+      <p>You can add any HTML content here, including images, lists, etc.</p>
+    </sp-notes>
   </sp-slide>
 
 
+
+
+
+  <!-- some features -->
 
   <sp-slide>
     <h2>Some interesting features</h2>
@@ -87,7 +165,7 @@
     <sp-toc start="3" context />
     <sp-drag at="1202|62|524.5879060720367|961.4244706670144|0">
       <div style="font-size: 25px; border: 5px solid gray; background: var(--sp-surface); padding: 10px; position: absolute; inset: 0; overflow: scroll;">
-        Full TOC
+        Or a full TOC
         <sp-toc />
       </div>
     </sp-drag>
@@ -102,53 +180,87 @@
     </sp-drag>
   </sp-slide>
 
-  <sp-slide>
+  <sp-slide class="eg-draggables">
     <h3>Draggable Elements</h3>
-    <sp-pause />
-    <sp-drag at="287|249|700|246|15">
-      <div style="color: black;background:#dbeafe;padding:1em;border-radius:8px;border:2px solid #3b82f6">Draggable box</div>
+    <p><code>&amp;lt;sp-drag>stuff&amp;lt;/sp-drag></code> creates a <span style="opacity: 0.2;">draggable box</span></p>
+    <sp-drag at="938|353|587.7729750515967|327.7726886880253|0">
+      <div style="font-size: 0.65em;">HTML and CSS layout are nice and clean but sometimes manual placement is simpler</div>
+    </sp-drag>
+    <p>In dev mode:</p>
+    <ul>
+      <li>select with <b>double click</b></li>
+      <li>move and resize</li>
+      <li>validate by deselecting</li>
+      <li>⇒ the changes are saved to the source</li>
+      <li>…… as a <code>at="..."</code> attribute</li>
+    </ul>
+    <sp-drag at="1076|107|641.887633341839|283.0415048145767|0">
+      <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
     <sp-pause />
-    <sp-drag at="1204|306|830.4111990326578|411.4949085496764|-39">
-      <div style="color: black;background:#dcfce7;padding:1em;border-radius:8px;border:2px solid #22c55e">Another box</div>
+    <sp-drag style="background: rgb(255 255 0 / 0.5);" title="like in the example, at is added on first move">stuff</sp-drag>
+    <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
+      <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
   </sp-slide>
 
-  <sp-slide>
-    <h3>Drag 2</h3>
-    <sp-drag at="287|249|700|246|15">
-      <div style="color: red;background:#dbeafe;padding:1em;border-radius:8px;border:2px solid #3b82f6">Draggable box</div>
+  <sp-style>
+    kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-alt); padding: 0 .2em; margin: 0 0.2em;  }
+    .eg-natural { display: inline-block; }
+    .eg-fill { position: absolute; inset: 0; }
+    .eg-center { display: flex; align-items: center; justify-content: center; }
+    .eg-textcenter { text-align: center; }
+    .eg-draggables .sp-drag-content > * {
+      font-size: 0.75em;
+      color: black;
+      background: lch(90 40 var(--eg-hue));
+      padding: 1em;
+      border-radius: 8px;
+      border: 2px solid lch(40 40 var(--eg-hue));
+    }
+    .eg-inlinechildren {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: .35em;
+    }
+  </sp-style>
+
+  <sp-slide class="eg-draggables">
+   <h3 title="Exact same locations, should not blink, also should move the right one.">Draggable 2 (test)</h3>
+    <sp-drag at="1076|107|641.887633341839|283.0415048145767|0">
+      <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
-    <sp-drag at="1204|306|830.4111990326578|411.4949085496764|-39">
-      <div style="color: red;background:#dcfce7;padding:1em;border-radius:8px;border:2px solid #22c55e">Another box</div>
+    <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
+      <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
+  </sp-slide>
+
+  <sp-slide class="eg-draggables">
+    <h3>Chunklets</h3>
+    <p>In dev mode, <sp-include src="./demo-sp.html"/> allows you to interactively insert content "chunklet".</p>
+    <ul>
+      <li>use <kbd>C</kbd> to toggle the chunklet bar</li>
+      <li>click a chunklet (top left) to start inserting it</li>
+      <li>click or draw a rectangle to decide where to insert it</li>
+      <li>⇒ the chunklet is inserted in the file</li>
+    </ul>
   </sp-slide>
 
   <sp-slide>
     <h3>Inline SVG (styleable, animatable)</h3>
     <p>Move your mouse on the cat</p>
-    <sp-svg src="./slides-purryst-banner-sticker.svg" height="400px"></sp-svg>
+    <sp-svg src="./slides-purryst-banner-sticker.svg" height="400px"></sp-svg><!-- - -->
     <sp-style>
       h2 { filter: blur(2px); }
     </sp-style>
-    <p>(use <code>sp-style</code> in a slide or global)</p>
+    <p>(use <code>sp-style</code> in a slide or global)</p><!-- + -->
     <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" height="200"></sp-svg>
 
-    <sp-drag at="1281|291|707.2299359907619|287.7049303965147|33.2">
+    <sp-drag at="1279|278|707.2299359907619|287.7049303965147|33.2">
       Draggable cat
       <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
-  </sp-slide>
-  
-  <sp-slide>
-    <h3>Presenter View and Slide Notes</h3>
-    <p>Use <code>sp-notes</code> to add notes to a slide</p>
-    <p>Use key <code>p</code> (or the <a @click="$sp.toggleNavLock()" title="click to toggle the toolbar">toolbar</a> at the bottom) to toggle presenter view</p>
-    <sp-notes>
-      <h4>Notes for this slide</h4>
-      <p>These notes are only visible in presenter view.</p>
-      <p>You can add any HTML content here, including images, lists, etc.</p>
-    </sp-notes>
   </sp-slide>
 
   <sp-slide>
@@ -161,143 +273,82 @@ await createSlidesPurryst({
   components: { 'my-counter': Counter },
 })
     </code></pre>
+    <p class="eg-small">(NB: integration not polished, might be removed and become a plugin)</p>
+    <sp-anim spec=".line:nth-of-type(-n+3)" />
   </sp-slide>
 
 
 
+
+
+  <!-- sp-include -->
+
   <sp-slide>
-    <h2>Simple Slide Steps</h2>
+    <h2>Including parts, slides and fragments</h2>
+    <p><code>sp-include</code> allows you to include other slides, parts (set of slides), or fragments (within a slide) into your presentation.</p>
   </sp-slide>
 
   <sp-slide>
-    <h3>Explicit sp-step</h3>
-    <p><code>sp-step</code> declares when its content appears</p>
-    <p>Always visible.</p>
-    <sp-step at="1"><div style="margin-top:0.5em;padding:0.5em 1em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div></sp-step>
-    <sp-step at="2"><div style="padding:0.5em 1em;background:#dcfce7;color:#166534;border-radius:6px">Step 2...</div></sp-step>
-  </sp-slide>
-
-  <sp-slide>
-    <h3>Swap content − <code>sp-alternatives</code></h3>
-    <p>it shows children one by one (or cycles if <code>cycle</code>)</p>
-    <sp-alternatives cycle>
-      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1</p>
-      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2</p>
-      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3</p>
-    </sp-alternatives>
-    <p>It can start delayed (with e.g. <code>at="2"</code>)</p>
-    <sp-alternatives at="2">
-      <span style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">3</span>
-      <span style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">4</span>
-      <span style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">5</span>
-    </sp-alternatives>
-  </sp-slide>
-
-
-
-  <sp-slide>
-    <h2>Generic Slide Animations (steps)</h2>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — @jump (vis groups)</h3>
-    <p>Always visible</p>
-    <sp-jump at="+1" />
-    <p>Appears on click 1</p>
-    <sp-pause />
-    <p>Appears on click 2</p>
-    <sp-jump at="+1" />
-    <p>Appears on click 3</p>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — selectors (actions)</h3>
-    <p>Always visible</p>
-    <sp-anim spec="li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)" />
-    <ul>
-      <li>First</li>
-      <li>Second</li>
-      <li>Third</li>
-    </ul>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — @children</h3>
-    <sp-anim spec="@children(ul)" />
-    <ul>
-      <li>First item</li>
-      <li>Second item</li>
-      <li>Third item</li>
-      <li>Fourth item</li>
-    </ul>
-  </sp-slide>
-
-  <!--
-  -->
-  <sp-slide>
-    <h3><code>sp-anim</code> — Combined (visgroups + @children)</h3>
-    <p>Always visible</p>
-    <sp-pause />
-    <p>After pause</p>
-    <sp-pause />
-    <sp-anim spec="@children(ul)" />
-    <ul>
-      <li>First item</li>
-      <li>Second item</li>
-      <li>Third item</li>
-      <li>Fourth item</li>
-    </ul>
-    <sp-jump at="-1" />
-    <p>After pause</p>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — Combined (selectors then children)</h3>
-    <p>Always visible heading</p>
-    <sp-anim spec=".step1 | .step2 | @children(ul)" />
-    <div class="step1" style="padding:.3em .6em;background:#dbeafe;color:#1e40af;border-radius:6px">Step 1</div>
-    <div class="step2" style="padding:.3em .6em;background:#dcfce7;color:#166534;border-radius:6px">Step 2</div>
-    <ul>
-      <li>Child A</li>
-      <li>Child B</li>
-      <li>Child C</li>
-    </ul>
-  </sp-slide>
-
-  <sp-slide>
-    <h3><code>sp-anim</code> — @add / @remove</h3>
-    <img src="./lizard.png" />
-    <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
-    <div style="display:flex;align-items:center;gap:2em">
-      <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
-      <div style="font-size: 70%">
-        <p><strong>Effects per step:</strong></p>
-        <ol>
-          <li><code>@add(glow, #catfill)</code> — cat fill glows</li>
-          <li><code>@remove(glow, #catfill) ^ @add(pulse, #catTongue)</code> — fill glow off, tongue pulses</li>
-          <li><code>@add(dim, #cat)</code> — whole cat dims</li>
-        </ol>
+    <h3>Include slide fragments</h3>
+    <p>Before include</p>
+    <sp-include src="./demo-fragment.html" />
+    <p>After include</p>
+    <sp-drag at="521|663|864.3488360415503|181.24843314556188|33.1">
+      <div class="eg-fill eg-center" style="background: var(--sp-gray-50);">
+        Draggable in slide 
       </div>
-    </div>
-    <sp-anim spec="@add(glow, #catfill) | @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)" />
-    <sp-style>
-      #catTongue { fill: red; }
-      .glow { filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 40px #ffb300); transition: filter .3s; }
-      .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
-      #cat { filter: none !important; }
-      .dim { opacity: 0.3; transition: opacity 0.3s; }
-    </sp-style>
+    </sp-drag>
   </sp-slide>
-  <sp-style> <!-- for global styles, both style and sp-style work -->
-      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
-  </sp-style>
 
   <sp-slide>
-    <h2>New Animation Features</h2>
+    <h3>Include the same fragment</h3>
+    <sp-include src="./demo-fragment.html" />
   </sp-slide>
+
+  <sp-include src="./demo-subpart.html" />
+  
+
+
+
+
+  <!-- Animation, overview -->
+
+  <sp-slide>
+    <h2>Animations: 1. Overview</h2>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Animations: principles</h3>
+    <ul>
+      <li>"animations" is what happens when we step (with left/right/space/swipe)
+        <sp-steps><strong> like</strong><em> that!</em></sp-steps>
+      </li>
+      <sp-jump at="3" />
+      <li>we call each step a <b>step</b>!</li>
+      <li><sp-include src="./demo-sp.html" /> unifies several approaches to animations</li>
+      <li>inspiration is taken from past frameworks and current frameworks like <a href="https://sli.dev/" target="_blank">Slidev</a>
+        and <a href="https://touying-typ.github.io/" target="_blank">Touying</a></li>
+      <li>the core system tries to follow the ancestor of <sp-include src="./demo-sp.html" />, Slidev <a href="https://github.com/twitwi/slidev-addon-ultracharger" target="_blank">Ultracharger</a></li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide>
+    <h3>Animations: multiple ways</h3>
+    <p>Depending on use cases and preferences, the best approach may vary:</p>
+    <ul>
+      <li>sometimes, we just want to have bullet points appear one by one</li>
+      <li>sometimes, we want to say which block appears when</li>
+      <li>sometimes, we want to animate (show, hide, style, move) elements in a custom sequence</li>
+    </ul>
+    <sp-pause />
+    <p>The next sections show how to use these approaches in practice, knowing they can be combined in a presentation and within a slide.</p>
+  </sp-slide>
+
+
+
 
   <sp-style>
-    .demo-items>*, .d1, .d2, .d3, .d4, .d5 {
+    .demo-items>*, .d1, .d2, .d3, .d4, .d5, .d6 {
       padding: 0.25em 1em;
       border-radius: 6px;
       margin: 0.25em 0;
@@ -306,142 +357,624 @@ await createSlidesPurryst({
       color: lch(20 20 var(--hue));
     }
     .demo-items {
-      >:nth-child(1) { --hue: 220; }
+      >:nth-child(1) { --hue: 240; }
       >:nth-child(2) { --hue: 120; }
-      >:nth-child(3) { --hue: 60; }
-      >:nth-child(4) { --hue: 330; }
-      >:nth-child(5) { --hue: 0; }
+      >:nth-child(3) { --hue: 0; }
+      >:nth-child(4) { --hue: 180; }
+      >:nth-child(5) { --hue: 60; }
+      >:nth-child(6) { --hue: 300; }
     }
-    .d1 { --hue: 220; }
+    .d1 { --hue: 240; }
     .d2 { --hue: 120; }
-    .d3 { --hue: 60; }
-    .d4 { --hue: 330; }
-    .d5 { --hue: 0; }
+    .d3 { --hue: 0; }
+    .d4 { --hue: 180; }
+    .d5 { --hue: 60; }
+    .d6 { --hue: 300; }
     .debug-show-current-step { position: absolute; right: 30px; top: 30px; font-size: 30px; &::before { content: "Step: "; } }
+
+    .sp-badge {
+      font-family: var(--sp-font-mono, monospace);
+      font-size: 0.7em;
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--sp-accent, #8b5cf6) 15%, transparent);
+      color: var(--sp-accent, #8b5cf6);
+      border: 3px solid color-mix(in srgb, var(--sp-accent, #8b5cf6) 30%, transparent);
+    }
+
+    .slide-source {
+      z-index: 1000;
+      transform-origin: 100% 0;
+      &:hover {
+        transition: transform 0.3s;
+      }
+      &:not(:hover) {
+        transform: scale(0.25);
+      }
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-size: 0.66em;
+      opacity: 0.85;
+      width: 80%;
+      height: 80%;
+    }
+
+    .eg-small {
+      font-size: 0.7em;
+      color: var(--sp-gray-700);
+    }
+    .eg-spec {
+      margin: 0.5em 1em;
+      padding: 0.25em !important;
+      font-family: var(--sp-font-mono);
+      padding: 0.5em;
+      background: var(--sp-surface-alt);
+      border: 5px solid var(--sp-gray-400);
+      border-radius: 10px;
+    }
   </sp-style>
 
+
+
+
+
+
+  <!-- Animation, slidev, step, steps, alternatives -->
+
   <sp-slide>
-    <h3><code>sp-step</code> with <code>animation</code> presets</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Elements can now animate in with presets:</p>
-    <sp-step at="1" animation="fade"><div class="d1">Fade in</div></sp-step>
-    <sp-step at="2" animation="up"><div class="d2">Slide up</div></sp-step>
-    <sp-step at="3" animation="scale"><div class="d3">Scale in</div></sp-step>
+    <h2>Animations: 2. Animate like in Slidev</h2>
+    <p>
+      If you know Slidev, you should recognise some concepts of this section.
+      Some concepts do not necessarily have the same names, for instance we call <b>steps</b> what Slidev calls "clicks".
+    </p>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-step</code> with <code>after</code> modifier</h3>
+    <h3>Explicit sp-step</h3>
+    <p><code>sp-step</code> declares when its content appears</p>
+    <p>Always visible.</p>
+    <sp-step from="1"><span class="d1">Step 1</span></sp-step>
+    <sp-step from="2"><span class="d2">Step 2</span></sp-step>
+    <sp-step from="3"><span class="d3">Step 3</span></sp-step>
+    <p style="margin-top: 1em;">Always visible.</p>
+    <sp-step from="3"><div class="d3">Step 3 too.</div></sp-step>
+    <p class="eg-small">NB: sp-step only handle its content, independently of other concepts (presented after)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with <code>animation</code> presets (or <code>hide</code>)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div> <!--HIDE-->
+    <p>Elements can animate with some presets:</p>
+    <sp-step from="1" animation="fade"><div class="d1">Fade in</div></sp-step>
+    <sp-step from="2" animation="up"><div class="d2">Slide up</div></sp-step>
+    <sp-step from="5" hide><div class="d5" style="font-size: .75em;">with "hide" attribute, hidden element takes no space.</div></sp-step>
+    <sp-step from="3" animation="left"><div class="d3">Slide left</div></sp-step>
+    <sp-step from="4" animation="scale"><div class="d4">Scale in</div></sp-step>
+    <p class="eg-small">NB: sp-step only handle its content, independently of other concepts (presented after)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-step</code> with <code>also</code> modifier</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Elements can share timing with the previous step:</p>
-    <sp-step at="1"><div class="d1">Step 1 (first)</div></sp-step>
-    <sp-step after><div class="d2">Step 1 (same timing)</div></sp-step>
-    <sp-step at="2"><div class="d3">Step 2</div></sp-step>
+    <sp-step from="1"><div class="d1">Step 1 (first)</div></sp-step>
+    <sp-step also><div class="d1">Step 1 (same timing)</div></sp-step>
+    <div style="display: flex; gap: 1em;">
+      <sp-step from="2"><span class="d2">Step 2</span></sp-step>
+      <sp-step also><span class="d2">... also Step 2.</span></sp-step>
+    </div>
+    <p>This avoid repeating the same timing for multiple elements.</p>
+    <p class="eg-small">NB: sp-step only handle its content, independently of other concepts (presented after)</p>
   </sp-slide>
 
   <sp-slide>
     <h3><code>sp-step</code> with range visibility</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    ... check it animates <sp-alternatives><span></span><span>step 1</span><span>step 2</span><span>done</span></sp-alternatives>
+    <sp-meanwhile />
     <p>Elements can be visible only in a range of steps:</p>
-    <sp-step from="1" to="3"><div class="d1">Visible at steps 1-2</div></sp-step>
-    <sp-step from="3"><div class="d2">Visible from step 3 onward</div></sp-step>
+    <sp-step from="1" to="2"><div class="d1">Visible at steps 1-2</div></sp-step>
+    <sp-step from="3"><div class="d3">Visible from step 3 onward.</div></sp-step>
+    <sp-step from="0" to="1"><div class="d5">Visible at steps 0-1 (to=1)</div></sp-step>
+    <sp-step from="0" until="2"><div class="d5">Visible at steps 0-1 (until=2)</div></sp-step>
+    <p class="eg-small">NB: sp-step only handle its content, independently of other concepts (presented after)</p>
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-steps</code> wrapper</h3>
+    <h3><code>sp-steps</code> − children one by one</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Sequential list animation (first item on first click):</p>
-    <sp-steps class="demo-items">
-      <div>Item 1</div>
-      <div>Item 2</div>
-      <div>Item 3</div>
+    <p class="eg-small">(NB: <code>sp-steps</code> behavior will intermix with other animation approaches)</p>
+    <p>Like wrapping every child with <code>sp-step</code>, sequentially appearing:</p>
+    <sp-steps class="demo-items eg-inlinechildren">
+      <div>Item 1 (S.1)</div>
+      <div>Item 2 (S.2)</div>
+      <div>Item 3 (S.3)</div>
     </sp-steps>
+    <p>(after item 3) Enter animation via <code>animation="fade"</code>:</p>
+    <ul sp-steps animation="fade" class="eg-inlinechildren">
+      <li class="d4">Fades in (S.4)</li>
+      <li class="d5" style="margin-left: 1em;">Fades in (S.5)</li>
+      <li class="d6" style="margin-left: 1em;">Fades in (S.6)</li>
+    </ul>
+    <p>NB: as a tag (<code>&amp;lt;sp-steps&gt;</code>), or as a directive (e.g. <code>&amp;lt;ul sp-steps</code>).</p>
   </sp-slide>
 
   <sp-slide>
     <h3><code>sp-steps</code> with options</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>With <code>every="2"</code> and <code>at="1"</code>:</p>
-    <sp-steps every="2" at="1" class="demo-items">
-      <div>Items 1 (step 1)</div>
-      <div>Items 2 (step 1)</div>
-      <div>Items 3 (step 2)</div>
-      <div>Items 4 (step 2)</div>
-      <div>Items 5/5 (step 3)</div>
+    <sp-steps every="2" at="1">
+      <div class="d1">Items 1 (step 1)</div>
+      <div class="d1">Items 2 (step 1)</div>
+      <div class="d2">Items 3 (step 2)</div>
+      <div class="d2">Items 4 (step 2)</div>
+      <div class="d3">Items 5 (step 3).</div>
     </sp-steps>
   </sp-slide>
 
-
-
-
-
   <sp-slide>
-    <h2>Animate like Touying</h2>
+    <h3><code>sp-alternatives</code> − Swap content</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>
+      it shows children one by one (or cycles if <code>cycle</code>)
+      <sp-alternatives at="0" cycle> <span>🌕</span> <span>🌑</span> </sp-alternatives>
+    </p>
+    <sp-alternatives cycle>
+      <p style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alternative 1 (step 0, 3, ...)</p>
+      <p style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alternative 2 (step 1, 4, ...)</p>
+      <p style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alternative 3 (step 2, 5, ...)</p>
+    </sp-alternatives>
+    <sp-meanwhile />
+    <p>
+      It can start delayed (with e.g. <code>at="2"</code>)
+    </p>
+    <sp-alternatives at="2">
+      <span style="background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px">Alt 1 (step 2)</span>
+      <span style="background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px">Alt 2 (step 3)</span>
+      <span style="background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px">Alt 3 (step 4)</span>
+    </sp-alternatives>
+    <hr/>
   </sp-slide>
 
-  <sp-slide>
-    <h3><code>sp-pause</code> — structural step separator</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Each <code>sp-pause</code> creates a step boundary:</p>
-    <div class="d1">First — always visible</div>
-    <sp-pause />
-    <div class="d2">Second — after 1st pause</div>
-    <sp-pause />
-    <div class="d3">Third — after 2nd pause</div>
-    <sp-pause />
-    <div class="d4">Fourth — after 3rd pause</div>
-    <p>(<code>sp-pause</code> is an alias for <code>sp-jump at="+1"</code>)</p>
-  </sp-slide>
+
+
+
+
+
+  <!-- Animation, Touying, pause, meanwhile, jump -->
 
   <sp-slide>
-    <h3><code>sp-meanwhile</code> — parallel tracks</h3>
-    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p>Content before and after <code>sp-meanwhile</code> advances in parallel:</p>
-    <sp-pause />
-    <div class="d1" style="float: left">Left: step 1</div>
-    <sp-pause />
-    <div class="d2" style="float: left; clear: left;">Left: step 2</div>
-    <sp-meanwhile />
-    <sp-pause />
-    <div class="d3" style="float: right">Right: step 1</div>
-    <sp-pause />
-    <div class="d4" style="float: right; clear: right;">Right: step 2</div>
-    <sp-pause />
-    <div class="d5" style="float: right; clear: right;">Right: step 3</div>
-    <p>(<code>sp-meanwhile</code> is an alias for <code>sp-jump at="0"</code>)</p>
-    <sp-meanwhile />
-    <div style="border: 10px solid gray; border-radius: .5em; padding: 0.5em; margin-top: 150px; width: 50%;">
-      <span class="d5">also inline</span>
-      <sp-pause />
-      <div>
-        <span class="d1">S1</span>
-        <sp-pause />
-        <span class="d2">S2</span>
-      </div>
+    <h2>Animations: 3. Animate like Touying</h2>
+    <p>
+      Touying is a typst presentation framework, which has a different approach to animations than Slidev.
+      It is based on the concepts of <code>pause</code>, <code>meanwhile</code> and <code>jump</code>, which are illustrated in the next slides.
+    </p>
+    <p>
+      The Touying approach allows to define progressive appearance, by saying "content following this source location should appear at step N".
+    </p>
+    <p>
+      We call <b>visgroup</b> (visibility group) all elements that should appear at a given step.
+      <code>sp-steps</code> already defined visgroups.
+    </p>
+    <div class="eg-small">
+      NB: concepts from this section do not allow to re-hide some element (at least for now).
     </div>
-
   </sp-slide>
 
   <sp-slide>
-    <h3><code>sp-jump</code> — grouped visibility</h3>
+    <h3><code>sp-pause</code> − structural step separator</h3>
+    <sp-style>h3 ~ div { display: inline-block; }</sp-style>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
-    <p><code>sp-jump at="+N"</code> skips N steps — useful for grouping:</p>
-    <sp-jump at="+1" /> <!-- sp-pause -->
-    <div class="d1">Group A — (+1) visible after 1st pause</div>
-    <sp-jump at="+1" /> <!-- sp-pause -->
-    <div class="d2">Group B — (+1) visible after 2nd pause</div>
-    <sp-jump at="+1" /> <!-- sp-pause -->
-    <div class="d3">Group C — (+1) visible after 3rd pause</div>
-    <sp-jump at="-2" />
-    <div class="d1">Group A — (-2) also here (relative negative jump)</div>
-    <sp-jump at="+1" /> <!-- sp-pause -->
-    <div class="d2">Group B — (+1) also here (after previous)</div>
-    <sp-jump at="1" />
-    <div class="d1">Group A — (1) also here (absolute jump)</div>
+    <p>Each <code>sp-pause</code> is used to mark a visgroup boundary:</p>
+    <div class="d6">First − always visible</div>
+    <code class="sp-badge">sp-pause</code> <sp-pause />
+    <div class="d1">Second − after 1st pause</div>
+    <code class="sp-badge">sp-pause</code> <sp-pause />
+    <div class="d2">Third − after 2nd pause</div>
+    <code class="sp-badge">sp-pause</code> <sp-pause />
+    <div class="d3">Fourth − after 3rd pause</div>
+    <p>(<code>sp-pause</code> is an alias for a relative <code>sp-jump at="+1"</code>)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-meanwhile</code> − parallel tracks</h3>
+    <sp-style>h3 ~ div { display: inline-block; }</sp-style>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Content after <code>sp-meanwhile</code> shows as if there were no pause before.</p>
+    <div class="d6">Always</div>
+    <sp-pause /> <code class="sp-badge">sp-pause</code>
+    <div class="d1">Step 1</div>
+    <sp-pause /> <code class="sp-badge">sp-pause</code>
+    <div class="d2">Step 2</div>
+    <br/>
+    <sp-meanwhile /> <code class="sp-badge">sp-meanwhile</code>
+    <br/>
+    <div class="d6">Always</div>
+    <sp-pause /> <code class="sp-badge">sp-pause</code>
+    <div class="d1">Also step 1</div>
+    <sp-pause /> <code class="sp-badge">sp-pause</code>
+    <div class="d2">and step 2</div>
+    <p>(<code>sp-meanwhile</code> is an alias for an absolute <code>sp-jump at="0"</code>)</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-jump</code> − flexible grouping (visgroups)</h3>
+    <sp-style>h3 ~ div { display: inline-block; }</sp-style>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Can be relative to current step (+ or - prefix):
+      <br/>   <code>at="+N"</code> forward, <code>at="-N"</code> backward, e.g. <code>at="+1"</code> = pause</p>
+    <p>Can be absolute: <code>at="N"</code>, e.g. <code>at="0"</code> = meanwhile:</p>
+    <div class="d6">Always</div>
+    <sp-jump at="+1" /> <code class="sp-badge">sp-jump +1</code>
+    <div class="d1">Step 1</div>
+    <sp-jump at="+1" /> <code class="sp-badge">sp-jump +1</code>
+    <div class="d2">Step 2</div>
+    <br/>
+    <sp-jump at="-2" /> <code class="sp-badge">sp-jump -2</code>
+    <div class="d6">Also always (via <code>-2</code>)</div>
+    <sp-jump at="+1" /> <code class="sp-badge">sp-jump +1</code>
+    <div class="d1">Step 1</div>
+    <br/>
+    <sp-jump at="0" /> <code class="sp-badge">sp-jump 0</code>
+    <div class="d6">Again always (via <code>0</code>)</div>
+    <sp-jump at="+3" /> <code class="sp-badge">sp-jump +3</code>
+    <div class="d3">Step 3</div>
+    <br/>
+    <sp-jump at="2" /> <code class="sp-badge">sp-jump 2</code>
+    <div class="d2">Step 2</div>
+    <sp-jump at="+1" /> <code class="sp-badge">sp-jump +1</code>
+    <div class="d3">Step 3</div>
+  </sp-slide>
+
+
+
+  
+
+
+
+
+  <sp-slide>
+    <h2>Animations: 4. Animate like "never before"</h2>
+    <p>
+      The previous approaches are good for many use cases, but sometimes we want to have more control over what happens at each step.
+      <br/>  We can use <code>sp-anim</code> to define animations with a CSS selector syntax.
+    </p>
+    <p>
+      This is an approach used in the <a href="https://github.com/twitwi/slidev-addon-ultracharger" target="_blank">Slidev addon "ultracharger"</a>, the ancestor of <sp-include src="./demo-sp.html" />
+      and the descendant of several <a href="https://home.heeere.com/legacy/tech-deckjs-ext/" target="_blank">previous iterations</a>.
+    </p>
+  </sp-slide>
+
+  <!-- sp-anim pedagogical section -->
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − the <code>spec</code> language</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Think of <code>sp-anim</code> as a <b>storyboard</b>: you write a script of what appears at each click.</p>
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.7em">spec=".d1 | .d2 | .d3"</code>
+    </div>
+    <ul style="font-size:0.7em">
+      <li><code>|</code> − next <b>frame</b>, i.e. visgroup (one step = one frame)</li>
+      <li><code>^</code> − <b>parallel</b> actions within the same frame</li>
+      <li>Default action (<code>selector</code>): <b>show</b> matching elements</li>
+      <li><code>@command(args)</code> − built-in actions (addClass, removeClass, children, play, pause, …)</li>
+    </ul>
+    <p>Step through: three boxes appear, one by one:
+      <span class="d1 eg-small">S1</span>
+      <span class="d2 eg-small">S2</span>
+      <span class="d3 eg-small">S3</span>
+    </p>
+    <sp-anim spec=".d1 | .d2 | .d3" />
+    <p class="eg-small">NB: <code>&amp;lt;sp-anim&gt;</code> will also create visgroups, so place it <b>after</b> the elements it controls.</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − sequential reveal (<code>|</code>)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Each <code>|</code>-separated part is a CSS selector. On slide entry, <code>sp-anim</code> hides all targeted elements, then reveals one group per step:</p>
+    <div class="eg-spec">spec=".first | .second | .second + *"</div>
+    <div class="d1 first">S1 first (class=first)</div>
+    <div class="d2 second">S2 second (class=second)</div>
+    <div class="d3">S3 third (next sibling of class=second).</div>
+    <sp-anim spec=".first | .second | .second + *" />
+    <p style="color:var(--sp-text-3);font-size:0.6em">Any CSS selector works − class, id, tag, <code>:nth-child</code>, <code>:nth-of-type</code>, etc.</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − show, hide, and revisit</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>sp-anim</code> isn't just for revealing − you can <b>hide</b> elements and even make them reappear. Prefix a selector with <code>-</code> to hide:</p>
+    <div class="eg-spec">spec=".box | -.box | .box"</div>
+    <p>Step 1: box appears | Step 2: hides | Step 3: reappears.</p>
+    <div class="d1 box">Cycle me</div>
+    <sp-anim spec=".box | -.box | .box" />
+    <sp-meanwhile />
+    <p style="margin-top:1em;">The <code>spec</code> describes a <b>timeline of actions</b>.</p>
+    <ul style="font-size:0.7em">
+      <li><code>selector</code> − reveal (adds <code>sp-anim-shown</code> class)</li>
+      <li><code>-selector</code> − hide (adds <code>sp-anim-hidden</code> class)</li>
+    </ul>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − parallel actions (<code>^</code>)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>|</code> = "then" (next step).</p>
+    <p><code>^</code> = "at the same time" (within one step):</p>
+    <div class="eg-spec">spec=".a | .b ^ .c"</div>
+    <p>Step 1: A appears | Step 2: B <b>and</b> C appear <b>together</b>.</p>
+    <div class="eg-inlinechildren">
+      <span class="a d1">A</span>
+      <span class="b d2">B</span>
+      <span class="c d2">C</span>
+    </div>
+    <sp-anim spec=".a | .b ^ .c" />
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − @add / @remove, use any CSS class</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Most  of the times, <b>CSS controls the <em>how</em></b> (transitions, look), <b>spec controls the <em>when</em></b>:</p>
+    <div class="eg-spec eg-small">@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)</div>
+    <p>Step 1: A glows | Step 2: A dims, B glows | Step 3: C glows.</p>
+    <div class="demo-items eg-inlinechildren">
+      <span class="a">A</span>
+      <span class="b">B</span>
+      <span class="c">C</span>
+    </div>
+    <sp-anim spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)" />
     <sp-style>
-      .d1,.d2,.d3 { font-size: 0.75em; }
+      .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; } /*<!--HIDE-->*/
+      .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
+    </sp-style>
+    <p class="eg-small">NB: you can create a new <code>@command</code> to avoid repeating a class name that you use a lot.</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − delaying animations</h3>
+    <p><b>Delayed animation:</b> prefix an action with a duration to delay it, typically useful for staggered effects:</p>
+    <div class="eg-spec eg-small">@add(hi, .d1) <br/>| .d2 ^ 750ms @add(hi, .d2) ^ 1s .d2 span <br/>| 1s -.d1</div>
+    </div>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <div style="columns: 2">  
+      <div class="d1">Step 1</div>
+      <div class="d2">Step 2 <span>after 2s</span></div>
+    </div>
+    <sp-anim spec="@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 1s .d2 span | 1s -.d1" />
+    <ul style="font-size:0.7em">
+      <li>Prefix <code>«duration»</code> (e.g. <code>2s</code>, <code>500ms</code>) to delay the action</li>
+      <li><b>CSS transitions:</b> The default fade comes from <code>anim.css</code>. Override <code>.sp-anim-hidden</code> / <code>.sp-anim-shown</code> transitions to change the feel.</li>
+    </ul>
+    <div class="eg-small">NB: duration can be in milliseconds (e.g. <code>500ms</code>) or seconds (e.g. <code>2s</code>).</div>
+    <div class="eg-small">NB: duration can be decimal (e.g. <code>0.5s</code>) but the <code>0</code> is then mandatory (no <span style="text-decoration: line-through;">.5s</span>).</div>
+    <sp-style>
+      .d1, .d2 { box-sizing: border-box; border: 5px solid transparent; } /*<!--HIDE-->*/
+      .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
     </sp-style>
   </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − revealing children (<code>@children</code>)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Reveal children of a container one by one − minimal markup, maximum effect:</p>
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+      <code style="font-size:0.7em">spec="@children(.demo-list) | @children(ol)"</code>
+    </div>
+    <ul class="demo-list eg-inlinechildren">
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+      <li>Item 4</li>
+    </ul>
+    <ol class="eg-inlinechildren">
+      <li>Item</li>
+      <li>Item</li>
+      <li>Item</li>
+      <li>Item</li>
+    </ol>
+    <sp-anim spec="@children(.demo-list) | @children(ol)" />
+    <p>Works on any container (div, ul, ol, table, …). Very similar to the <code>sp-steps</code> directive but in a <code>sp-anim</code> context.</p>
+    <div class="eg-small">NB: some limitation, it cannot be used in parallel (<code>^</code>).</div>
+    <sp-style>li { margin-left: 1em; } ol li { margin-left: 1.78em; }</sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − <code>at</code> offset &amp; <code>no-jump</code></h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p><code>sp-anim</code> <b>creates visgroups</b>.</p>
+    <p>The content after <code>sp-anim</code> appears after the animations.</p>
+    <hr/>
+    <p><b>Offset:</b> <code>at="N"</code> (absolute) or <code>at="±N"</code> (relative) controls when to start the animations.</p>
+    <div class="eg-inlinechildren">
+      <code style="font-size:0.65em">spec=".a | .b | .c" at="2"</code>
+      <span class="a d2">A (S 2)</span>
+      <span class="b d3">B (S 3)</span>
+      <span class="c d4">C (S 4)</span>
+    </div>
+    <sp-anim spec=".a | .b | .c" at="2" />
+    <span>appears with C.</span>
+    <sp-meanwhile /><code class="sp-badge">sp-meanwhile</code><hr style="display: inline-block; width: 50vw;"/>
+    <div class="eg-inlinechildren">
+      <code style="font-size:0.65em">spec=".x | .y | .z" no-jump</code>
+      <span class="x d1">X (S 1)</span>
+      <span class="y d2">Y (S 2)</span>
+      <span class="z d3">Z (S 3)</span>
+    </div>
+    <sp-anim spec=".x | .y | .z" no-jump />
+    <p>This is directly visible because the <code>sp-anim</code> has <code>no-jump</code>.</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − custom @command</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Toggle CSS classes via <code>@add</code> and <code>@remove</code></p>
+    <div style="display:flex;align-items:center;gap:2em">
+      <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" style="flex-shrink:0"></sp-svg>
+      <div style="font-size: 70%">
+        <p><strong>Effects per step:</strong></p>
+        <ol>
+          <li><code>@add(glow, #catfill)</code> − cat fill glows</li>
+          <li><code>2s @remove(glow, #catfill) ^ @add(pulse, #catTongue)</code> − fill glow off, tongue pulses</li>
+          <li><code>@add(dim, #cat) ^ @crazy(#cat) ^ @laser()</code> − whole cat dims, cat goes crazy (plugin), laser effect (plugin)</li>
+        </ol>
+      </div>
+    </div>
+    <sp-anim spec="@add(glow, #catfill) | 2s @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat) ^ @crazy(#cat) ^ @laser() | @laser()" />
+    <sp-style>
+      #catTongue { fill: red; }
+      .glow { filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 40px #ffb300); transition: filter .3s; }
+      .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
+      #cat { filter: none !important; }
+      .dim { opacity: 0.3; transition: opacity 0.3s; }
+      svg circle { animation: pulseblur 2s ease-in-out infinite; }
+      /* @keyframes cannot be scoped (inside a nesting selector), so they need to be global. */
+      /* we have this in a global tag:
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
+      */
+    </sp-style>
+  </sp-slide>
+  <sp-style is-global>
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
+    @keyframes pulseblur { 0%, 100% { filter: blur(0); } 50% { filter: blur(20px); } }
+  </sp-style>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − @play / @pause video</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <video src="https://www.pexels.com/fr-fr/download/video/35332556/" width="400" id="myvideo" style="float:right"></video>
+    <p>The following will happen on steps (skip to step 2 without waiting for the video to play too much)</p>
+    <div>
+      <sp-step from="1" animation="fade"><code>@play(#myvideo)</code></sp-step>
+      <sp-step from="2" animation="fade"><code>| @pause(#myvideo)</code></sp-step>
+    </div>
+    <sp-step from="3" animation="fade"><code>@play(#myvideo) ^ 2s @pause(#myvideo)</code></sp-step>
+    <div>
+      <sp-step from="4" animation="fade"><code>@play(,rewind)</code></sp-step>
+      <sp-step from="5" animation="fade"><code>| @pause</code></sp-step>
+    </div>
+    <sp-anim spec="@play(#myvideo) | @pause(video) | 2s @pause ^ @play | @play(,rewind) | @pause" />
+    <p>Pass a selector, defaulting to <code>video</code></p>
+    <p>You can also add <code>rewind</code> to restart the video from the beginning before playing.</p>
+    <div style="font-size: .5em; position: absolute; right:0; bottom:50px; "><code>https://www.pexels.com/video/35332556/</code></div>
+  </sp-slide>
+
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − Testing (visgroups + @children)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Always visible <span class="more d2">… after pause 2 (via anim)</span></p>
+    <sp-pause />
+    <p class="d1">After pause 1</p>
+    <sp-anim spec=".more" />
+    <p class="d2">After pause 2 (via anim)</p>
+    <ul>
+      <li class="d3">First item (S3)</li>
+      <li class="d4">Second item (S4)</li>
+      <li class="d5">Third item (S5)</li>
+    </ul>
+    <sp-anim spec="@children(ul)" />
+    <sp-meanwhile />
+    <p>Always visible</p>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − Testing (selectors then children)</h3>
+    <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
+    <p>Always visible heading</p>
+    <div class="step1 d1">Step 1 (S1)</div>
+    <div class="step2 d2">Step 2 (S2)</div>
+    <ul>
+      <li>Child A (S3)</li>
+      <li>Child B (S4)</li>
+    </ul>
+    <ol>
+      <li>Child C (S5)</li>
+      <li>Child D (S6)</li>
+      <li>Child E (S7).</li>
+    </ol>
+    <sp-anim spec=".step1 | .step2 | @children(ul)" />
+    <sp-anim spec="@children(ol)" />
+    <sp-style>
+      ul, ol { li {display: inline; border: 5px solid black; margin: 0.25em; } }
+    </sp-style>
+  </sp-slide>
+
+  <sp-slide>
+    <h3><code>sp-anim</code> − syntax reference &amp; extensibility</h3>
+    <table>
+      <tr><th>Syntax</th><th>Meaning</th></tr>
+      <tr><td><code>selector</code></td><td>Show element(s) by CSS selector</td></tr>
+      <tr><td><code>-selector</code></td><td>Hide element(s)</td></tr>
+      <tr class="septop"><td><code>|</code></td><td>Separator between steps</td></tr>
+      <tr><td><code>^</code></td><td>Separator between parallel actions within one step</td></tr>
+      <tr class="septop"><td><code>@add(class, sel)</code></td><td>Add a CSS class to matched elements</td></tr>
+      <tr><td><code>@remove(class, sel)</code></td><td>Remove a CSS class</td></tr>
+      <!--tr><td><code>@+class(class sel)</code></td><td>Alternative: add class (space-separated)</td></tr>
+      <tr><td><code>@-class(class sel)</code></td><td>Alternative: remove class (space-separated)</td></tr-->
+      <tr class="septop"><td><code>@children(sel)</code></td><td>Show children of container one per step</td></tr>
+      <tr><td><code>@play(sel)</code></td><td>Play video element</td></tr>
+      <tr><td><code>@pause(sel)</code></td><td>Pause video</td></tr>
+      <tr><td><code>@command(any, params)</code></td><td>Execute a custom command</td></tr>
+      <tr class="septop"><td><code>«dur» «action»></code></td><td>Do the action after duration (e.g. <code>@add(...) ^ 2s @remove(...)</code>)</td></tr>
+      <tr class="septop"><td><code>at="+N"</code></td><td style="padding:0.2em 0.5em;border-top:1px solid var(--sp-border)">Offset start step by N</td></tr>
+      <tr><td><code>at="N"</code></td><td style="padding:0.2em 0.5em;border-top:1px solid var(--sp-border)">Start animations at step N</td></tr>
+      <tr><td><code>no-jump</code></td><td>Do not advance the global step counter</td></tr>
+    </table>
+    <p class="eg-small">
+      <b>Extensibility:</b> Custom <code>@command</code> can be registered via the plugin API
+      (<code>addAnimCommand</code>), example in the laser/crazy plugin in the demo slide.
+    </p>
+    <sp-style>
+      table {
+        font-size: 0.7em;
+        display: block;
+        border: 2px solid var(--sp-border);
+        max-height: 700px;
+        overflow-y: auto;
+        th {
+          text-align: left;
+          border-bottom: 1px solid var(--sp-border);
+          padding: 0.3em 0.5em;
+        }
+        td {
+          vertical-align: top;
+          padding: 0.2em 0.5em;
+          border: 0 solid var(--sp-border);
+          border-width: 0 2px;
+          tr.septop & {
+            border-top: 2px solid var(--sp-border) !important;
+          }
+        }
+      }
+    </sp-style>
+  </sp-slide>
+
+
+
+
+
+
+  <sp-slide>
+    <h2>Extending with plugins and custom code</h2>
+    <p>
+      The doc is TODO, but you can see an example of a plugin in the demo presentation.
+      Ideally everything should be extensible.
+      The current extension points are:
+      <ul class="eg-small" style="height: 400px; overflow-y: auto;">
+        <li><code>addKeymapSetup</code> − add a function to update the keymap (e.g. add new shortcuts)</li>
+        <li><code>addAnimCommand</code> − add a new <code>@command</code> to the <code>sp-anim</code> spec language</li>
+        <li><code>addAnimActionType</code> − add a new action type to the <code>sp-anim</code> spec language</li>
+        <li><code>injectStyle</code> − inject a CSS style into the presentation</li>
+        <li><code>addChunklet</code> − add a new chunklet definition (see <code>sp-chunk</code>)</li>
+        <li><code>addDomTransform</code> − add a function to transform the DOM after the presentation is built (e.g. for custom processing)</li>
+      </ul>
+    </p>
+  </sp-slide>
+
+
+
 
   <sp-slide no-toc>
     <h2>Here comes the TOC again</h2>
@@ -471,7 +1004,8 @@ await createSlidesPurryst({
     <h1>END (for real)</h1>
   </sp-slide>
 
-  <!-- global style -->
+  <!-- global style, you can use style or sp-style but your tools will likely preffer style -->
+  <!-- putting it in the id="sp-content" is better for live reload -->
   <style>
     svg #cat:not(:hover) { filter: blur(5px); }
     svg #cat:hover {
@@ -487,8 +1021,62 @@ await createSlidesPurryst({
       }
     }
   </style>
+  <style>
+    /* theme override */
+    /* scale font, UI included, default 16px */
+    :root {
+      /* font-size: 19px; */
+    }
+    /* scale font, slides only, default 3.75em */
+    .sp-slide {
+      font-size: 4em;
+    }
+    /* change theme color(s) */
+    /* defaults 25 and 55 */
+    :root {
+      /*
+      --sp-theme-hue: 125;
+      --sp-theme-secondary-hue: 195;
+      */
+    }
+  </style>
+
+  <sp-after>
+    <div :class="{ 'global-source-container': true, 'opacity-change': !$sp.config.noOpacityChange }">
+      <sp-slide-source :transform="$sp.config.sourceTransform" v-slot:header="{ forSlide }">
+        Slide {{ forSlide + 1 }} source
+        <span class="source-hint" title="Toggle source view with key S">[<kbd>S</kbd>]</span>
+        <button :class="{ 'source-strip-btn': true, 'active': $sp.config.sourceTransform !== null }" @click="$sp.toggleSourceTransform()">
+          Strip boilerplate
+        </button>
+        <button :class="{ 'opacity-change-btn': true, 'active': $sp.config.noOpacityChange }" @click="$sp.config.noOpacityChange = !$sp.config.noOpacityChange">
+          Keep opaque
+        </button>
+        <button class="source-close-btn" @click="$sp.toggleSourceVisibility()">✕</button>
+      </sp-slide-source>
+    </div>
+  </sp-after>
 
 </script>
+
+<template id="sp-chunklets">
+  <sp-chunk name="greybox" params="x,y,w,h">
+    <sp-drag at="$x|$y|$w|$h|0">
+      <div class="eg-fill" style="background: rgba(128,128,128,0.6); border: 1px solid grey;">
+      </div>
+    </sp-drag>
+  </sp-chunk>
+  <sp-chunk name="note" params="x,y">
+    <sp-drag at="$x|$y|auto|auto|0">
+      <div style="background: var(--sp-accent-soft); padding: 0.5em 1em; border-radius: 4px; font-size: 0.85em;">
+        Note
+      </div>
+    </sp-drag>
+  </sp-chunk>
+  <sp-chunk name="separator">
+    <hr style="margin: 1em 0; opacity: 0.3;">
+  </sp-chunk>
+</template>
 
 <div id="sp-presentation" data-design-width="1920" data-design-height="1080" data-author="SlidesPurryst"></div>
 
@@ -496,11 +1084,199 @@ await createSlidesPurryst({
 <script src="../dist/slides-purryst.bundle.js"></script>
 <script src="./dist/slides-purryst.bundle.js"></script>
 <script src="./slides-purryst.bundle.js"></script>
+
 <script type="module">
+import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
-await SlidesPurryst.createSlidesPurryst({
+
+let testAlert = () => {}
+//testAlert = alert // uncomment and play with order to check
+const fakePlugin = () => ({ // could typically be from an import
+  activate() {
+    testAlert("Activating plugin")
+  }
+})
+const p = fakePlugin()
+// override order (>= 100 means after custom activate() below)
+p.order = 100
+
+
+await createSlidesPurryst({
   components: { 'my-counter': Counter },
   seed: 12345678+90,
+  cacheIgnore: ['huge-.*\\.svg$'],  // e.g. to not inline huge SVGs in the output bundle
+  plugins: [p],
+  // plugin-like extensions can be added via the activate hook
+  activate: ({ spApi, addKeymapSetup, addAnimCommand, addAnimActionType, injectStyle, addChunklet }) => {
+    testAlert("Activating user code")
+    const cleanupSource = (html) => html
+        .replace(/\n.*<!-- *HIDE *-->.*\n/gm, '\n')
+        .replace(/\n.*debug-show-current-step.*\n/gm, '\n')
+        .replace(/<!-- *- *-->[\s\S]*?<!-- *\+ *-->/g, '')
+      spApi.toggleSourceTransform = () => {
+        spApi.config.sourceTransform = spApi.config.sourceTransform === cleanupSource ? null : cleanupSource
+      }
+      setTimeout(() => {
+        spApi.config.sourceTransform = cleanupSource
+      }, 1)
+    
+    spApi.config.noOpacityChange = false
+    spApi.toggleSourceVisibility = () => document.documentElement.classList.toggle('show-source')
+    // keymap updates
+    addKeymapSetup((km) => {
+      km['t'] = () => { document.documentElement.classList.toggle('theme-clean') }
+      km['S'] = () => spApi.toggleSourceVisibility()
+    })
+    // anim extension, simple shortcut
+    addAnimCommand('crazy', {
+      countSteps: () => 1,
+      parse(argsStr) {
+        const sel = argsStr.trim()
+        return [{ type: 'addClass', className: 'eg-crazy', selector: sel }]
+      },
+    })
+    injectStyle(` /* nicer to have it close to the definition, but it could be a style tag anywhere */
+      .eg-crazy { animation: crazy 0.5s ease-in-out 5; transform-origin: 50% 50%; }
+      @keyframes crazy { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+    `)
+    // anim extension, custom type
+    addAnimCommand('laser', {
+      countSteps: () => 1,
+      parse(argsStr) {
+        return [{ type: 'random-laser' }]
+      },
+    })
+    addAnimActionType('random-laser', {
+      init(container, action) {
+        if (!container.querySelector('.eg-laser')) {
+          const laser = document.createElement('div')
+          laser.classList.add('eg-laser')
+          laser.classList.add('sp-anim-protect')
+          laser.setAttribute('style', `
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            inset: 0;
+            transition: 1s transform;
+            pointer-events: none;
+            background: radial-gradient(circle at 100px 100px, rgba(255,0,0,0.5) 0%, transparent 20%) no-repeat;
+          `)
+          const x = Math.random() * (container.clientWidth - 200)
+          const y = Math.random() * (container.clientHeight - 200)
+          laser.style.transform = `translate(${x}px, ${y}px)`
+          container.appendChild(laser)
+        }
+      },
+      apply(container, action) {
+        const laser = container.querySelector('.eg-laser')
+        if (laser) {
+          const x = Math.random() * (container.clientWidth - 200)
+          const y = Math.random() * (container.clientHeight - 200)
+          laser.style.transform = `translate(${x}px, ${y}px)`
+        }
+      },
+      reverse(container, action) {
+        const laser = container.querySelector('.eg-laser')
+        if (laser) {
+          const x = Math.random() * container.clientWidth
+          const y = Math.random() * container.clientHeight
+          laser.style.transform = `translate(${x}px, ${y}px)`
+        }
+      },
+    })
+    // in plugins: custom style
+    injectStyle(`
+      .eg-patch {
+        background: var(--sp-bg);
+        &:hover {
+          outline: 10px solid gray;
+        }
+      }
+    `)
+    // in plugins: chunklets
+    addChunklet({
+      name: 'patch',
+      params: 'x,y,w,h',
+      html: `
+      <sp-drag at="$x|$y|$w|$h|0">
+        <div class="eg-fill eg-patch">
+        </div>
+      </sp-drag>
+    `})
+    // slide source toggle (S key)
+    injectStyle(`
+      .global-source-container {
+        &.opacity-change:not(:hover) { opacity: 0.5; }
+        display: none;
+        position: fixed;
+        bottom: 80px;
+        left: 20px;
+        right: 20px;
+        z-index: 50;
+        max-height: 40vh;
+        overflow: auto;
+        background: var(--sp-bg);
+        border: 1px solid var(--sp-border);
+        border-radius: 6px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+      .show-source .global-source-container {
+        display: block;
+      }
+      .global-source-container .sp-slide-source {
+        margin: 0;
+        border: none;
+        border-radius: 0;
+      }
+      .global-source-container .sp-slide-source-header {
+        border-bottom: 1px solid var(--sp-border);
+      }
+      .source-strip-btn, .opacity-change-btn, .source-close-btn {
+        font-family: var(--sp-font-mono, monospace);
+        font-size: 11px;
+        padding: 0 6px;
+        border: 1px solid var(--sp-border);
+        border-radius: 3px;
+        background: var(--sp-bg);
+        color: var(--sp-text);
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+        line-height: 1.6;
+        &.active { background: var(--sp-accent-soft);}
+      }
+      .source-strip-btn:hover, .source-close-btn:hover { opacity: 1; }
+      .source-hint {
+        font-size: 11px;
+        opacity: 0.4;
+      }
+      .source-hint kbd { font-size: inherit; }
+      .source-close-btn { margin-left: auto; }
+      .source-toggle-btn {
+        position: fixed;
+        bottom: 50px;
+        right: 20px;
+        z-index: 10000;
+        background: var(--sp-bg-2);
+        border: 1px solid var(--sp-border);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-family: var(--sp-font-mono, monospace);
+        font-size: 13px;
+        cursor: pointer;
+        opacity: 0.35;
+        transition: opacity 0.2s;
+        color: var(--sp-text);
+      }
+      .source-toggle-btn:hover { opacity: 0.8; }
+    `)
+    const btn = document.createElement('button')
+    btn.className = 'source-toggle-btn'
+    btn.textContent = '</>'
+    btn.title = 'Toggle slide source (S)'
+    btn.addEventListener('click', () => spApi.toggleSourceVisibility())
+    document.body.appendChild(btn)
+  }
 })
 </script>
 </body>

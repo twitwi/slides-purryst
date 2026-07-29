@@ -72,7 +72,9 @@ function applyStepWithAnims(step: number, fast: boolean) {
       try {
         const timing = anim.effect?.getComputedTiming()
         let shouldFinish = timing && timing.iterations !== Infinity
-        if (shouldFinish && anim.effect?.target?.closest('.sp-anim-protect') !== null) {
+        const effect = anim.effect as KeyframeEffect | null
+        const target = effect?.target
+        if (shouldFinish && target instanceof Element && target.closest('.sp-anim-protect') !== null) {
           shouldFinish = false
         }
         if (shouldFinish) {

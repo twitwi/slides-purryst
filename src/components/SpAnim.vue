@@ -130,7 +130,7 @@ function applyStep(step: number, fast = false) {
         }, a.delayedBy)
       } else {
         try {
-          handler.apply(container, a, fast)
+          handler.apply(container, a)
         } catch (e) {
           console.error('(Caught) Error applying anim action:', e)
           addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
