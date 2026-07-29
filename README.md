@@ -15,7 +15,7 @@ Originally meant to be an intermediate format for typst, the HTML-like markup ca
 There are several ways to use SlidesPurryst, depending on your needs and preferences.
 The recommended gives you a minimal setup with live reload, and is the easiest to get started with.
 
-Below you will see `github:twitwi/slides-purryst` as argument to `pnpm add`, but you can also use a fork or a local clone, or `twitwi/slides-purryst` (for the version from the npm registry).
+Below you will see `github:twitwi/slides-purryst#latest` as argument to `pnpm add`. You can also use a fork or a local clone, or `twitwi/slides-purryst` (for the version from the npm registry, when published there).
 
 ### Minimal HTML file example
 
@@ -52,7 +52,7 @@ We will create a minimal npm project and install the `slides-purryst` package, w
 mkdir my-talk
 cd my-talk
 pnpm init
-pnpm add github:twitwi/slides-purryst
+pnpm add github:twitwi/slides-purryst#latest
 ```
 
 Then
@@ -79,22 +79,8 @@ NB: loading custom vue components will not work in `file://` mode.
 Just place your slides in `index.html` (see above) and run the server with live reload:
 
 ```bash
-pnpx slides-purryst
+pnpx github:twitwi/slides-purryst#latest
 ```
-
-
-
-### CLI Options
-
-**`slides-purryst`** (bundle-based static server):
-
-```bash
-pnpm/pnpx slides-purryst --port=8080 my-talk.html   # custom port and file
-pnpm/pnpx slides-purryst --copy-bundle              # copy bundle to cwd and exit
-```
-
-`--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
-It is also a means of freezing the version of the framework for a given presentation.
 
 
 
@@ -107,7 +93,7 @@ You work with the full power of Vite and the SlidesPurryst framework but without
 
 ```bash
 pnpm init
-pnpm add github:twitwi/slides-purryst
+pnpm add github:twitwi/slides-purryst#latest
 ```
 
 Create an `index.html` using ES module imports:
@@ -128,11 +114,31 @@ Serve with live reload, SSE, and edit support:
 pnpm sp-dev
 ```
 
-Options:
+
+
+
+
+
+
+
+### CLI(s) Options
+
+**`slides-purryst`** (bundle-based static server):
 
 ```bash
-pnpm sp-dev --port 8080 --open         # custom port, auto-open
-pnpm sp-dev --watch ./slides --root .  # watch a subdirectory, serve from root
+... slides-purryst --port=8080 my-talk.html   # custom port and file
+... slides-purryst --copy-bundle              # copy bundle to cwd and exit
+```
+
+`--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
+It is also a means of freezing the version of the framework for a given presentation.
+
+
+**`sp-dev`** (Vite dev server for npm dependency projects): 
+
+```bash
+... sp-dev --port 8080 --open         # custom port, auto-open
+... sp-dev --watch ./slides --root .  # watch a subdirectory, serve from root
 ```
 
 
@@ -159,6 +165,23 @@ pnpx sp-dev --port 8080 --open          # custom port, auto-open browser
 pnpx sp-dev --watch ./slides --root .   # watch a subdirectory, serve from project root
 ```
 
+
+---
+
+## Version History
+
+**v0.1.0** (`latest`) — Core framework: slides, steps, animations, transitions, presenter mode, live reload, HTML authoring, plugins, chunklets, drag editing, CLI (`slides-purryst` and `sp-dev`), Vite-based dev server, zero-dependency bundle server.
+
+---
+
+## Release via git tags
+
+Update the version in `package.json`, commit, clean your tree, then run:
+
+```bash
+bash scripts/release.sh v0.1.0          # normal release, moves latest
+bash scripts/release.sh --no-latest v0.1.0  # backport fix to existing tag
+```
 
 ---
 

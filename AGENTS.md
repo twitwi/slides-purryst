@@ -611,6 +611,20 @@ pnpm build             # Build dist/ (library + bundle)
 pnpm build:bundle      # Only build slides-purryst.bundle.js
 ```
 
+### Releasing
+
+Tags include `dist/` for zero-setup consumption via `pnpm add github:twitwi/slides-purryst#latest`.
+The `latest` tag is a moving reference; version tags are immutable.
+
+```bash
+bash scripts/release.sh v0.1.0                # normal release, moves latest
+bash scripts/release.sh --no-latest v0.1.0    # backport fix to existing tag
+bash scripts/release.sh --only-latest         # update latest from main (no version tag)
+```
+
+The script builds `dist/`, commits it along with the version tag, pushes
+(both tag and latest), then resets main to its pre-release state.
+
 ### Conventions
 
 - Components are single-file Vue 3 `<script setup lang="ts">`
