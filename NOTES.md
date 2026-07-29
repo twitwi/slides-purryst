@@ -1,6 +1,5 @@
 
-## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
-
+## RELEASED: v0 (0.1.20260725) − no solid export, no solid typst, working, good initial UX
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 

@@ -113,15 +113,13 @@ pnpm add github:twitwi/slides-purryst
 Create an `index.html` using ES module imports:
 
 ```html
-<div id="sp-presentation"></div>
-<script type="text/html" id="sp-content">
-  <sp-slide><h1>Hello world</h1></sp-slide>
-</script>
+...
 <script type="module">
 import { createSlidesPurryst } from 'slides-purryst'
 import 'slides-purryst/style.css'
 createSlidesPurryst()
 </script>
+...
 ```
 
 Serve with live reload, SSE, and edit support:
