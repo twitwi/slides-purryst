@@ -130,10 +130,13 @@ pnpm sp-dev
 ```bash
 pnpm slides-purryst --port=8080 my-talk.html   # custom port and file
 pnpm slides-purryst --copy-bundle              # copy bundle to cwd and exit
+pnpm slides-purryst --copy-agents              # copy agents.md to cwd and exit
 ```
 
 `--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
 It is also a means of freezing the version of the framework for a given presentation.
+
+`--copy-agents` copies `AGENTS.md` to the current directory so you can read the full reference offline.
 
 
 **`sp-dev`** (Vite dev server for npm dependency projects): 

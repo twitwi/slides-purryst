@@ -10,7 +10,8 @@
   "files": [
     "dist",
     "bin",
-    "lib"
+    "lib",
+    "AGENTS.md"
   ],
   "main": "./dist/slides-purryst.umd.cjs",
   "module": "./dist/slides-purryst.es.js",

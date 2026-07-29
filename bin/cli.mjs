@@ -14,6 +14,7 @@ let root = process.cwd()
 let port = 9999
 let specifiedFile = ''
 let copyBundle = false
+let copyAgents = false
 
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i]
@@ -23,12 +24,27 @@ for (let i = 2; i < process.argv.length; i++) {
     port = parseInt(arg.split('=')[1], 10)
   } else if (arg === '--copy-bundle') {
     copyBundle = true
+  } else if (arg === '--copy-agents') {
+    copyAgents = true
   } else if (!arg.startsWith('-')) {
     specifiedFile = arg
   }
 }
 
 const bundleFile = path.join(distDir, 'slides-purryst.bundle.js')
+const agentsFile = path.join(pkgDir, 'AGENTS.md')
+
+if (copyAgents) {
+  const dest = path.join(root, 'AGENTS.md')
+  try {
+    fs.copyFileSync(agentsFile, dest)
+    console.log(`Copied AGENTS.md to ${dest}`)
+  } catch (e) {
+    console.error(`Failed to copy AGENTS.md: ${e.message}`)
+    process.exit(1)
+  }
+  process.exit(0)
+}
 
 if (copyBundle) {
   const dest = path.join(root, 'slides-purryst.bundle.js')
