@@ -10,7 +10,7 @@
 //
 import { computed, defineComponent, provide, shallowRef, watch } from 'vue'
 import type { Component } from 'vue'
-import type { SlideData } from '../types'
+import type { SlideData, AnimHandle } from '../types'
 import SpStepManager from './SpStepManager.vue'
 
 const props = defineProps<{
@@ -28,6 +28,8 @@ const slideClass = computed(() => {
 })
 
 provide('slideNum', computed(() => props.slide?.num))
+const animInstances = new Set<AnimHandle>()
+provide('animInstances', animInstances)
 
 const comp = shallowRef<Component | null>(null)
 

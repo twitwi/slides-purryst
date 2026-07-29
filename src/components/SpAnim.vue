@@ -3,14 +3,13 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, watch, onMounted, computed } from 'vue'
+import { inject, ref, onMounted, onUnmounted, computed } from 'vue'
 import type { Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
 import type { AnimAction } from '../animCommands'
+import type { AnimHandle } from '../types'
 import { spApi } from '../sp-api'
 import { addGlobalErrorMessage } from '../composables/globalErrorMessages'
-
-const contentVersion = inject<Ref<number>>('contentVersion', ref(0))
 
 const props = withDefaults(defineProps<{
   spec: string
@@ -20,7 +19,9 @@ const props = withDefaults(defineProps<{
   at: '+0',
   noJump: false,
 })
+
 const globalStepIndex = inject<Ref<number>>('stepIndex')!
+const animInstances = inject<Set<AnimHandle>>('animInstances')!
 
 const animEl = ref<HTMLElement | null>(null)
 
@@ -109,15 +110,16 @@ function getContainer(): Element {
 
 let previousStep = -1
 
-function applyStep(step: number) {
+function applyStep(step: number, fast = false) {
   const atOffset = getAtOffset()
   const actions = stepActions.value[step - atOffset - 1]
   if (!actions) return
   const container = getContainer()
-  for (const a of actions) {
+  const sorted = [...actions].sort((a, b) => (a.delayedBy ?? 0) - (b.delayedBy ?? 0))
+  for (const a of sorted) {
     const handler = spApi._animActionTypes[a.type]
     if (handler) {
-      if (a.delayedBy) {
+      if (a.delayedBy && !fast) {
         setTimeout(() => {
           try {
             handler.apply(container, a)
@@ -128,7 +130,7 @@ function applyStep(step: number) {
         }, a.delayedBy)
       } else {
         try {
-          handler.apply(container, a)
+          handler.apply(container, a, fast)
         } catch (e) {
           console.error('(Caught) Error applying anim action:', e)
           addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
@@ -151,25 +153,25 @@ function reverseStep(step: number) {
   }
 }
 
-watch(globalStepIndex, (curr) => {
-  curr = getTargetStep()
-  if (curr === previousStep) return
-  if (curr > previousStep) {
-    for (let s = previousStep + 1; s <= curr; s++) {
-      applyStep(s)
+
+function syncToStep(step: number, fast: boolean) {
+  if (step === previousStep) return
+  if (step > previousStep) {
+    for (let s = previousStep + 1; s <= step; s++) {
+      applyStep(s, fast)
     }
   } else {
-    for (let s = previousStep; s > curr; s--) {
+    for (let s = previousStep; s > step; s--) {
       reverseStep(s)
     }
-    for (let s = 1; s <= curr; s++) {
-      applyStep(s)
+    for (let s = 1; s <= step; s++) {
+      applyStep(s, true)
     }
   }
-  previousStep = curr
-})
+  previousStep = step
+}
 
-function refresh() {
+function refresh(fast = true) {
   const container = getContainer()
   for (const actions of stepActions.value) {
     for (const action of actions) {
@@ -184,15 +186,22 @@ function refresh() {
   }
   const curr = getTargetStep()
   previousStep = 0
-  for (let s = 1; s <= curr; s++) {
-    applyStep(s)
+  if (fast) {
+    for (let s = 1; s <= curr; s++) {
+      applyStep(s, true)
+    }
+  } else {
+    for (let s = 1; s <= curr; s++) {
+      applyStep(s, false)
+    }
   }
   previousStep = curr
 }
 
-onMounted(refresh)
-
-watch(contentVersion, () => {
+onMounted(() => {
+  const handle: AnimHandle = { syncToStep, refresh }
+  animInstances.add(handle)
   refresh()
+  onUnmounted(() => { animInstances.delete(handle) })
 })
 </script>

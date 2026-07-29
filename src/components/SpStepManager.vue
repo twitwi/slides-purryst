@@ -4,10 +4,14 @@
 
 <script setup lang="ts">
 import { inject, watch, onMounted, ref, nextTick, type Ref } from 'vue'
+import type { AnimHandle } from '../types'
 
 const rootEl = ref<HTMLElement | null>(null)
 const globalStepIndex = inject<Ref<number>>('stepIndex', { value: 0 } as any)
 const contentVersion = inject<Ref<number>>('contentVersion', { value: 0 } as any)
+const animInstances = inject<Set<AnimHandle>>('animInstances', new Set())
+
+let previousStep = -1
 
 function getContainer(): HTMLElement {
   return rootEl.value?.closest('.sp-slide') as HTMLElement || rootEl.value?.parentElement as HTMLElement
@@ -56,15 +60,43 @@ function applyStep(step: number) {
   })
 }
 
+function applyStepWithAnims(step: number, fast: boolean) {
+  const container = getContainer()
+  if (!container) return
+  applyStep(step)
+  for (const anim of animInstances) {
+    anim.syncToStep(step, fast)
+  }
+  if (fast) {
+    for (const anim of container.getAnimations({ subtree: true })) {
+      try {
+        const timing = anim.effect?.getComputedTiming()
+        let shouldFinish = timing && timing.iterations !== Infinity
+        if (shouldFinish && anim.effect?.target?.closest('.sp-anim-protect') !== null) {
+          shouldFinish = false
+        }
+        if (shouldFinish) {
+          anim.finish()
+        }
+      } catch {}
+    }
+  }
+  previousStep = step
+}
+
 onMounted(() => {
-  nextTick(() => applyStep(getTargetStep()))
+  nextTick(() => applyStepWithAnims(getTargetStep(), true))
 })
 
-watch(globalStepIndex, () => {
-  applyStep(getTargetStep())
+watch(globalStepIndex, (curr) => {
+  const target = getTargetStep()
+  if (target === previousStep) return
+  const fast = Math.abs(target - previousStep) > 1 || previousStep < 0
+  applyStepWithAnims(target, fast)
 })
 
 watch(contentVersion, () => {
-  nextTick(() => applyStep(getTargetStep()))
+  previousStep = -1
+  nextTick(() => applyStepWithAnims(getTargetStep(), true))
 })
 </script>

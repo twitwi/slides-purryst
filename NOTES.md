@@ -1,11 +1,12 @@
 
 ## TODO Now for v0 (0.1.20260725) (no solid export, no solid typst)
 
-- [ ] (anim) delay should be dropped when replaying actions (so have a "fast()" like in previous framework) to avoid race conditions
-- [ ] sources seem already quite processed...
 - [ ] add a png/jpg include to test and illustrate cache even if not v0 target
 - [ ] proper demo (sync to purrbundle too)
 - [ ] make a demo-minimal-slidespurr.html and demo-minimal-slidespurryst.typ and demo-minimal-purrbundle.html, no plugin, no conf, no theme toggle, starter file (people will copy/adapt from the non minimal to add their own stuff)
+- [ ] overview scroll current slide into view, and highlight even more
+- [ ] esc should quit devpane
+- [ ] dev script should look at if something else that template changed and trigger full reload if so (script section etc, bus basically anything outside the currently watched content, avantage to style in template, no full reload)
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 

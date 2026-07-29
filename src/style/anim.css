@@ -1,6 +1,6 @@
 
 .sp-steps-no-tag { display: contents; }
-.sp-anim-ghost { display: none; }
+.sp-anim-ghost { display: none; animation: none !important; }
 
 .sp-anim-hidden { opacity: 0; pointer-events: none; transition: opacity 300ms ease; }
 .sp-anim-hidden.sp-hidden-is-empty { display: none; }
@@ -27,3 +27,11 @@
 .sp-anim-shown.sp-anim-preset-scale { transform: scale(1); transition: opacity 300ms ease, transform 300ms ease; }
 
 .sp-anim-hidden.sp-anim-preset-none { transition: none; }
+
+.sp-anim-fast * {
+  /* transitions and animations cancelled on JS side (only possible with JS for animations) */
+  /*
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  */
+}

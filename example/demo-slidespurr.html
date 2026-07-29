@@ -716,7 +716,7 @@ await createSlidesPurryst({
     <h3><code>sp-anim</code> − @add / @remove, use any CSS class</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Most  of the times, <b>CSS controls the <em>how</em></b> (transitions, look), <b>spec controls the <em>when</em></b>:</p>
-    <div class="eg-spec" style="font-size:0.55em">spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)"</div>
+    <div class="eg-spec eg-small">@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)</div>
     <p>Step 1: A glows | Step 2: A dims, B glows | Step 3: C glows.</p>
     <div class="demo-items eg-inlinechildren">
       <span class="a">A</span>
@@ -725,7 +725,7 @@ await createSlidesPurryst({
     </div>
     <sp-anim spec="@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)" />
     <sp-style>
-      .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; } <!--HIDE-->
+      .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; } /*<!--HIDE-->*/
       .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
     </sp-style>
     <p class="eg-small">NB: you can create a new <code>@command</code> to avoid repeating a class name that you use a lot.</p>
@@ -734,15 +734,14 @@ await createSlidesPurryst({
   <sp-slide>
     <h3><code>sp-anim</code> − delaying animations</h3>
     <p><b>Delayed animation:</b> prefix an action with a duration to delay it, typically useful for staggered effects:</p>
-    <div style="display:flex;gap:1em;margin:0.3em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
-      <code style="font-size:0.6em">spec="@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 2s .d2 span | 1s -.d1"</code>
+    <div class="eg-spec eg-small">@add(hi, .d1) <br/>| .d2 ^ 750ms @add(hi, .d2) ^ 1s .d2 span <br/>| 1s -.d1</div>
     </div>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <div style="columns: 2">  
       <div class="d1">Step 1</div>
       <div class="d2">Step 2 <span>after 2s</span></div>
     </div>
-    <sp-anim spec="@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 2s .d2 span | 1s -.d1" />
+    <sp-anim spec="@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 1s .d2 span | 1s -.d1" />
     <ul style="font-size:0.7em">
       <li>Prefix <code>«duration»</code> (e.g. <code>2s</code>, <code>500ms</code>) to delay the action</li>
       <li><b>CSS transitions:</b> The default fade comes from <code>anim.css</code>. Override <code>.sp-anim-hidden</code> / <code>.sp-anim-shown</code> transitions to change the feel.</li>
@@ -750,7 +749,7 @@ await createSlidesPurryst({
     <div class="eg-small">NB: duration can be in milliseconds (e.g. <code>500ms</code>) or seconds (e.g. <code>2s</code>).</div>
     <div class="eg-small">NB: duration can be decimal (e.g. <code>0.5s</code>) but the <code>0</code> is then mandatory (no <span style="text-decoration: line-through;">.5s</span>).</div>
     <sp-style>
-      .d1, .d2 { box-sizing: border-box; border: 5px solid transparent; } <!--HIDE-->
+      .d1, .d2 { box-sizing: border-box; border: 5px solid transparent; } /*<!--HIDE-->*/
       .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
     </sp-style>
   </sp-slide>
@@ -828,6 +827,7 @@ await createSlidesPurryst({
       .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
       #cat { filter: none !important; }
       .dim { opacity: 0.3; transition: opacity 0.3s; }
+      svg circle { animation: pulseblur 2s ease-in-out infinite; }
       /* @keyframes cannot be scoped (inside a nesting selector), so they need to be global. */
       /* we have this in a global tag:
       @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
@@ -836,6 +836,7 @@ await createSlidesPurryst({
   </sp-slide>
   <sp-style is-global>
     @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
+    @keyframes pulseblur { 0%, 100% { filter: blur(0); } 50% { filter: blur(20px); } }
   </sp-style>
 
   <sp-slide>
@@ -852,7 +853,7 @@ await createSlidesPurryst({
       <sp-step from="4" animation="fade"><code>@play(,rewind)</code></sp-step>
       <sp-step from="5" animation="fade"><code>| @pause</code></sp-step>
     </div>
-    <sp-anim spec="@play(#myvideo) | @pause(video) | @play ^ 2s @pause | @play(,rewind) | @pause" />
+    <sp-anim spec="@play(#myvideo) | @pause(video) | 2s @pause ^ @play | @play(,rewind) | @pause" />
     <p>Pass a selector, defaulting to <code>video</code></p>
     <p>You can also add <code>rewind</code> to restart the video from the beginning before playing.</p>
     <div style="font-size: .5em; position: absolute; right:0; bottom:50px; "><code>https://www.pexels.com/video/35332556/</code></div>
@@ -1003,6 +1004,7 @@ await createSlidesPurryst({
   </sp-slide>
 
   <!-- global style, you can use style or sp-style but your tools will likely preffer style -->
+  <!-- putting it in the id="sp-content" is better for live reload -->
   <style>
     svg #cat:not(:hover) { filter: blur(5px); }
     svg #cat:hover {
@@ -1141,7 +1143,8 @@ await createSlidesPurryst({
       init(container, action) {
         if (!container.querySelector('.eg-laser')) {
           const laser = document.createElement('div')
-          laser.className = 'eg-laser'
+          laser.classList.add('eg-laser')
+          laser.classList.add('sp-anim-protect')
           laser.setAttribute('style', `
             position: absolute;
             width: 200px;

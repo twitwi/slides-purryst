@@ -84,3 +84,8 @@ export interface PresenterState {
   totalSlides: number
   notes?: string
 }
+
+export interface AnimHandle {
+  syncToStep(step: number, fast: boolean): void
+  refresh(fast?: boolean): void
+}
