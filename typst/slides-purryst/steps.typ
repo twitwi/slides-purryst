@@ -13,11 +13,12 @@
   }
 }
 
-#let steps(every: none, at: none, body) = context {
+#let steps(every: none, at: none, animation: none, body) = context {
   if target() == "html" {
     let attrs = (:)
     if every != none { attrs.insert("every", str(every)) }
     if at != none { attrs.insert("at", str(at)) }
+    if animation != none { attrs.insert("animation", animation) }
     html.elem("sp-steps", attrs: attrs)[#body]
   } else {
     body

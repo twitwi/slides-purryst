@@ -6,7 +6,7 @@ import { resolve, dirname, basename, join } from 'path'
 import { fileURLToPath } from 'url'
 import { spawn, execSync } from 'child_process'
 import { formatHtml } from '../lib/format-html.mjs'
-import { preprocessTypst } from '../lib/preprocess-typst.mjs'
+import { preprocessTypst, quickStringHash } from '../lib/preprocess-typst.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkgDir = resolve(__dirname, '..')
@@ -46,8 +46,8 @@ function ensureDir(dir) {
   if (!existsSync(dir)) { mkdirSync(dir, { recursive: true }) }
 }
 
-function setupPreprocessDir(serverRoot, relFile) {
-  const preDir = resolve(serverRoot, PREPROCESS_DIR)
+function setupPreprocessDir(serverRoot, hash, relFile) {
+  const preDir = resolve(serverRoot, PREPROCESS_DIR + '/' + hash)
   if (existsSync(preDir)) {
     rmSync(preDir, { recursive: true, force: true })
   }
@@ -71,8 +71,7 @@ function setupPreprocessDir(serverRoot, relFile) {
   return { preDir, preFilePath }
 }
 
-function setupPreprocessSymlink(serverRoot, linkDir, linkName, linkTarget) {
-  const preDir = resolve(serverRoot, PREPROCESS_DIR)
+function setupPreprocessSymlink(preDir, linkDir, linkName, linkTarget) {
   const preLinkDir = resolve(preDir, linkDir)
   ensureDir(preLinkDir)
   const dstPath = join(preLinkDir, linkName)
@@ -108,10 +107,10 @@ if (fileArg && fileArg.endsWith('.typ')) {
   viteHtml = fileArg.replace(/\.typ$/, '.html')
   const serverRoot = resolve(process.cwd(), rootDir)
   const typFile = resolve(serverRoot, fileArg)
+  const inputFileHash = quickStringHash(typFile)
   const base = basename(fileArg, '.typ')
   const htmlRel = fileArg.replace(/\.typ$/, '.html')
   const htmlFile = resolve(serverRoot, htmlRel)
-  const tmpFile = resolve(serverRoot, `,,${base}-1.html`)
 
   const linkPath = join(dirname(typFile), 'slides-purryst')
   const linkTarget = join(pkgDir, 'typst', 'slides-purryst')
@@ -120,8 +119,10 @@ if (fileArg && fileArg.endsWith('.typ')) {
   }
 
   // --- Preprocessor setup ---
-  const { preFilePath } = setupPreprocessDir(serverRoot, fileArg)
-  setupPreprocessSymlink(serverRoot, dirname(fileArg), 'slides-purryst', linkTarget)
+  const { preDir, preFilePath } = setupPreprocessDir(serverRoot, inputFileHash, fileArg)
+  setupPreprocessSymlink(preDir, dirname(fileArg), 'slides-purryst', linkTarget)
+
+  const tmpFile = resolve(preDir, `,,${inputFileHash}.html`)
 
   const rawSource = readFileSync(typFile, 'utf-8')
   const preprocessed = preprocessTypst(rawSource, fileArg)

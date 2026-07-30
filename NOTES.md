@@ -4,6 +4,8 @@
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
+- [ ] find a way to show typst errors in the ui, e.g. when anim(`wrong quotes`)
+- [ ] typst steps and alternatives should receive a list of content (and wrap it in div display contents)
 - [ ] typst v1 with a decent syntax (might consider later the implicit separator approach or a shortcut for commands )
 - [ ] typst math
 - [ ] typst cetz
@@ -11,9 +13,12 @@
 - [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
 - [ ] demo-minimal-slidespurryst.typ
 - [ ] test in sp-dev but outside of the demo folder
+- [ ] a purryst version that uses the bundle?
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
+- [ ] 'g' when typing a number, show the corresponding slide as preview + also search for the number in the slide title
+- [ ] sp-dev .typ should allow specifying the generated path (or maybe default to ,,sp-generated/${inputpathhash}/) -> done but need to try 2 entry points
 - [ ] @rewind or @pause(,rewind) (if not present) + show demo like "@pause(,rewind)|@play|@pause"
 - [ ] fix draggable "conflict" with text selection
 - [ ] html-export looses attributes on sp-slides (transitions)
