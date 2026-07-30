@@ -452,7 +452,7 @@
 #slide[
   == alternatives — Swap content
 
-  #component("code", [alternatives]) shows children one by one (or cycles if #component("code", [cycle])):#alternatives(at: "0")[🌕]#alternatives(at: "0", cycle: true)[🌕🌑]
+  #component("code", [alternatives]) shows children one by one (or cycles if #component("code", [cycle])):#alternatives(at: "0", [🌕], [🌑])#alternatives(at: "0", cycle: true, [🌕], [🌑])
 
   #alternatives(cycle: true)[
     #component("div", attrs: (style: "background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px"), [Alternative 1 (step 0, 3, ...)])

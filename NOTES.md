@@ -5,7 +5,6 @@
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
 - [ ] find a way to show typst errors in the ui, e.g. when anim(`wrong quotes`)
-- [ ] typst steps and alternatives should receive a list of content (and wrap it in div display contents)
 - [ ] typst v1 with a decent syntax (might consider later the implicit separator approach or a shortcut for commands )
 - [ ] typst math
 - [ ] typst cetz
