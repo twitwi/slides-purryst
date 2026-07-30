@@ -28,9 +28,9 @@
     "./dist/slides-purryst.css"
   ],
   "scripts": {
-    "dev": "node bin/sp-dev.mjs --watch example/ --port 3334 --open",
-    "dev:typst": "node bin/sp-dev.mjs example/demo-slidespurryst.typ --watch example/ --port 3334 --open",
-    "dev:bundle": "node bin/cli.mjs example/",
+    "dev": "node bin/sp-dev.mjs --watch example/ --port 3334 example/demo-slidespurr.html",
+    "dev:bundle": "node bin/cli.mjs --watch example/ example/demo-purrbundle.html",
+    "dev:typst": "node bin/sp-dev.mjs --watch example/ --port 3334 example/demo-slidespurryst.typ",
     "clean": "rm $(git ls-files -o -i -X .gitignore example/ )",
     "clean:dry": "echo rm $(git ls-files -o -i -X .gitignore example/ )",
     "build": "vite build && vite build --config vite.bundle.ts",

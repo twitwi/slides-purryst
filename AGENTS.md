@@ -606,9 +606,8 @@ When `createSlidesPurryst()` boots:
 pnpm install           # Install deps
 pnpm dev               # sp-dev with --watch example/ (opens demo-slidespurr.html)
 pnpm dev:typst         # sp-dev with .typ compilation
-pnpm dev:bundle        # Zero-dep CLI (bundle-based static server)
 pnpm build             # Build dist/ (library + bundle)
-pnpm build:bundle      # Only build slides-purryst.bundle.js
+pnpm dev:bundle        # Zero-dep CLI (bundle-based static server)
 ```
 
 ### Releasing

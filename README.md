@@ -125,10 +125,11 @@ pnpm sp-dev
 
 ### CLI(s) Options
 
-**`slides-purryst`** (bundle-based static server):
+**`slides-purryst`** (bundle-based static server), examples:
 
 ```bash
 pnpm slides-purryst --port=8080 my-talk.html   # custom port and file
+pnpm slides-purryst --watch ./slides --root .  # watch only a subdirectory, serve from root (so as /slides/... here)
 pnpm slides-purryst --copy-bundle              # copy bundle to cwd and exit
 pnpm slides-purryst --copy-agents              # copy agents.md to cwd and exit
 ```
@@ -139,10 +140,10 @@ It is also a means of freezing the version of the framework for a given presenta
 `--copy-agents` copies `AGENTS.md` to the current directory so you can read the full reference offline.
 
 
-**`sp-dev`** (Vite dev server for npm dependency projects): 
+**`sp-dev`** (Vite dev server for npm dependency projects), examples: 
 
 ```bash
-pnpm sp-dev --port 8080 --open         # custom port, auto-open
+pnpm sp-dev --port 8080 --no-open      # custom port, no auto-open
 pnpm sp-dev --watch ./slides --root .  # watch only a subdirectory, serve from root (so as /slides/... here)
 ```
 

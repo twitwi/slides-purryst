@@ -11,10 +11,12 @@ const pkgDir = path.resolve(__dirname, '..')
 const distDir = path.resolve(pkgDir, 'dist')
 
 let root = process.cwd()
+let watchDir = null
 let port = 9999
 let specifiedFile = ''
 let copyBundle = false
 let copyAgents = false
+let autoOpen = true
 
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i]
@@ -22,10 +24,22 @@ for (let i = 2; i < process.argv.length; i++) {
     port = parseInt(process.argv[++i], 10)
   } else if (arg.startsWith('--port=')) {
     port = parseInt(arg.split('=')[1], 10)
+  } else if (arg === '--watch' && i + 1 < process.argv.length) {
+    watchDir = process.argv[++i]
+  } else if (arg.startsWith('--watch=')) {
+    watchDir = arg.split('=')[1]
+  } else if (arg === '--root' && i + 1 < process.argv.length) {
+    root = path.resolve(process.cwd(), process.argv[++i])
+  } else if (arg.startsWith('--root=')) {
+    root = path.resolve(process.cwd(), arg.split('=')[1])
   } else if (arg === '--copy-bundle') {
     copyBundle = true
   } else if (arg === '--copy-agents') {
     copyAgents = true
+  } else if (arg === '--no-open') {
+    autoOpen = false
+  } else if (arg === '--open') {
+    autoOpen = true
   } else if (!arg.startsWith('-')) {
     specifiedFile = arg
   }
@@ -81,9 +95,10 @@ function sendSSE(data) {
   })
 }
 
+const resolvedWatchDir = watchDir ? path.resolve(process.cwd(), watchDir) : root
 let watchTimer = null
 try {
-  fs.watch(root, { recursive: true }, (event, filename) => {
+  fs.watch(resolvedWatchDir, { recursive: true }, (event, filename) => {
     if (!filename || !filename.endsWith('.html')) return
     if (watchTimer) clearTimeout(watchTimer)
     watchTimer = setTimeout(() => sendSSE(filename), 100)
@@ -149,9 +164,11 @@ server.listen(port, () => {
   const addr = `http://localhost:${port}`
   console.log(`\n  SlidesPurryst dev server running at ${addr}`)
   console.log(`  Serving ${root}${specifiedFile ? '  (' + specifiedFile + ')' : ''}\n`)
-  const openUrl = specifiedFile ? `${addr}/${specifiedFile}` : addr
-  const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
-  import('child_process').then(({ spawn }) => {
-    try { spawn(cmd, [openUrl], { stdio: 'ignore' }) } catch {}
-  })
+  if (autoOpen) {
+    const openUrl = specifiedFile ? `${addr}/${specifiedFile}` : addr
+    const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
+    import('child_process').then(({ spawn }) => {
+      try { spawn(cmd, [openUrl], { stdio: 'ignore' }) } catch {}
+    })
+  }
 })

@@ -11,7 +11,7 @@ let watchDir = '.'
 let rootDir = '.'
 let port = 9999
 let fileArg = ''
-let autoOpen = false
+let autoOpen = true
 
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i]
@@ -22,6 +22,7 @@ for (let i = 2; i < process.argv.length; i++) {
   else if (arg === '--root' && i + 1 < process.argv.length) rootDir = process.argv[++i]
   else if (arg.startsWith('--root=')) rootDir = arg.split('=')[1]
   else if (arg === '--open') autoOpen = true
+  else if (arg === '--no-open') autoOpen = false
   else if (!arg.startsWith('-')) fileArg = arg
 }
 
