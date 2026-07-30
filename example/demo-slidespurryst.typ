@@ -1,55 +1,6 @@
 #import "slides-purryst/lib.typ": *
 
 // ============================================================
-// Helper: components not directly exposed by lib.typ
-// ============================================================
-#let jump(at) = context {
-  if target() == "html" {
-    html.elem("sp-jump", attrs: (at: at))
-  }
-}
-#let meanwhile() = jump("0")
-#let pause = jump("+1")
-#let steps(body, every: none, at: none) = context {
-  if target() == "html" {
-    let attrs = (:)
-    if every != none { attrs.insert("every", str(every)) }
-    if at != none { attrs.insert("at", str(at)) }
-    html.elem("sp-steps", attrs: attrs)[#body]
-  }
-}
-#let step(from: none, to: none, until: none, animation: none, hide: false, also: false, body) = context {
-  if target() == "html" {
-    let attrs = (:)
-    if from != none { attrs.insert("from", str(from)) }
-    if to != none { attrs.insert("to", str(to)) }
-    if until != none { attrs.insert("until", str(until)) }
-    if animation != none { attrs.insert("animation", animation) }
-    if hide { attrs.insert("hide", "") }
-    if also { attrs.insert("also", "") }
-    html.elem("sp-step", attrs: attrs)[#body]
-  }
-}
-#let alternatives(at: none, cycle: false, body) = context {
-  if target() == "html" {
-    let attrs = (:)
-    if at != none { attrs.insert("at", str(at)) }
-    if cycle { attrs.insert("cycle", "") }
-    html.elem("sp-alternatives", attrs: attrs)[#body]
-  }
-}
-#let include-fragment(src) = context {
-  if target() == "html" {
-    html.elem("sp-include", attrs: (src: src))
-  }
-}
-#let notes(body) = context {
-  if target() == "html" {
-    html.elem("sp-notes")[#body]
-  }
-}
-
-// ============================================================
 // Helper: colored boxes
 // ============================================================
 #let dbox(body, hue: 220, class: none) = context {
@@ -224,13 +175,13 @@
 
   #pause
 
-  #drag(at: "287|249|700|246|15")[
+  #drag(at: "435|473|700|246|15")[
     #dbox[*Draggable box*]
   ]
 
   #pause
 
-  #drag(at: "1204|306|830.41|411.49|-39")[
+  #drag(at: "889|357|830.41|411.49|-39")[
     #dbox(hue: 120)[*Another box*]
   ]
 ]
@@ -301,6 +252,7 @@
   #step(from: "2", animation: "up")[#dbox([Slide up], hue: 120)]
   #step(from: "5", hide: true)[#dbox([Hidden (no space)], hue: 300)]
   #step(from: "3", animation: "left")[#dbox([Slide left], hue: 0)]
+  #step(from: "4", animation: "scale")[#dbox([Slide right], hue: 60)]
 ]
 
 #slide[
@@ -408,11 +360,11 @@
 
   Each #component("code", [|])—separated part shows one group per step.
 
-  #anim("li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)")
-
   - First
   - Second
   - Third
+
+  #anim("li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)")
 ]
 
 #slide[
@@ -420,9 +372,9 @@
 
   Prefix a selector with `-` to hide.
 
-  #anim(".box | -.box | .box")
-
   #dbox([Cycle me], class: "box")
+
+  #anim(".box | -.box | .box")
 ]
 
 #slide[

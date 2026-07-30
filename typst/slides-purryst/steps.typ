@@ -1,18 +1,24 @@
-
-#let step(at: none, type: none, body) = context {
+#let step(from: none, to: none, until: none, animation: none, hide: false, also: false, body) = context {
   if target() == "html" {
     let attrs = (:)
-    if at != none { attrs.insert("at", str(at)) }
-    if type != none { attrs.insert("type", type) }
+    if from != none { attrs.insert("from", str(from)) }
+    if to != none { attrs.insert("to", str(to)) }
+    if until != none { attrs.insert("until", str(until)) }
+    if animation != none { attrs.insert("animation", animation) }
+    if hide { attrs.insert("hide", "") }
+    if also { attrs.insert("also", "") }
     html.elem("sp-step", attrs: attrs)[#body]
   } else {
     body
   }
 }
 
-#let steps(body) = context {
+#let steps(every: none, at: none, body) = context {
   if target() == "html" {
-    html.elem("sp-alternatives")[#body]
+    let attrs = (:)
+    if every != none { attrs.insert("every", str(every)) }
+    if at != none { attrs.insert("at", str(at)) }
+    html.elem("sp-steps", attrs: attrs)[#body]
   } else {
     body
   }

@@ -7,11 +7,3 @@
     [anim(#spec)]
   }
 }
-
-#let pause() = context {
-  if target() == "html" {
-    html.elem("sp-jump", attrs: (at: "+1"))
-  } else {
-    [pause()]
-  }
-}

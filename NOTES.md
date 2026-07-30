@@ -10,6 +10,7 @@
 - [ ] typst codeblock
 - [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
 - [ ] demo-minimal-slidespurryst.typ
+- [ ] test in sp-dev but outside of the demo folder
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
