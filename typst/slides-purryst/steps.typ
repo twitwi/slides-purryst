@@ -13,14 +13,24 @@
   }
 }
 
-#let steps(every: none, at: none, animation: none, body) = context {
+#let steps(every: none, at: none, animation: none, no-jump: false, ..children) = context {
+  let items = children.pos()
   if target() == "html" {
     let attrs = (:)
     if every != none { attrs.insert("every", str(every)) }
     if at != none { attrs.insert("at", str(at)) }
     if animation != none { attrs.insert("animation", animation) }
-    html.elem("sp-steps", attrs: attrs)[#body]
+    if no-jump { attrs.insert("no-jump", "") }
+    let guessHasBody = children.len() == 1 and type(children.at(0)) == content
+    html.elem("sp-steps", attrs: attrs, {
+      if guessHasBody {
+        children.at(0)
+      } else {
+        for child in items { html.elem("span", attrs: (class: "sp-passthrough"))[#child] }
+      }
+    })
   } else {
-    body
+    [#for child in items { child }]
+    [#body]
   }
 }

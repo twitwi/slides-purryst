@@ -322,7 +322,7 @@
 #slide[
   == Animations: principles
 
-  - "animations" is what happens when we step (with left/right/space/swipe)#steps[like  that]
+  - "animations" is what happens when we step (with left/right/space/swipe)#steps[*like* _that_] #steps([or ], [that])
   - we call each step a #component("b", [step])!
   - SlidesPurryst unifies several approaches to animations
   - inspiration is taken from past and current frameworks like Slidev and Touying

@@ -1,4 +1,6 @@
 
+.sp-passthrough:not(.sp-anim-hidden) { display: contents; } /* used by typst generated, lower priority than animations */
+
 .sp-steps-no-tag { display: contents; }
 .sp-anim-ghost { display: none; animation: none !important; }
 
@@ -35,3 +37,4 @@
   transition-delay: 0s !important;
   */
 }
+
