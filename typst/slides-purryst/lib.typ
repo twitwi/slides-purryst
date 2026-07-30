@@ -13,6 +13,7 @@
 #import "component.typ": component
 #import "theme.typ": slides-theme
 #import "source.typ": source
+#import "slide-source.typ": slide-source
 
 #let no-source-slide = slide
 #let h1(body, attrs: (:)) = component("h1", body, attrs: attrs)

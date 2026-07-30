@@ -6,6 +6,8 @@
   transitionDuration: none,
   no-toc: false,
   fake-end: false,
+  notes: none,
+  class: none,
   bg: none,
   body,
 ) = context {
@@ -17,6 +19,8 @@
     if transitionDuration != none { attrs.insert("transition-duration", transitionDuration) }
     if no-toc { attrs.insert("no-toc", "") }
     if fake-end { attrs.insert("fake-end", "") }
+    if notes != none { attrs.insert("notes", notes) }
+    if class != none { attrs.insert("class", class) }
     if bg != none { attrs.insert("bg", bg) }
     let s = sp-source-state.get()
     if s.file != none {

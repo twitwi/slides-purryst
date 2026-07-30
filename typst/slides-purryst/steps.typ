@@ -1,9 +1,10 @@
-#let step(from: none, to: none, until: none, animation: none, hide: false, also: false, body) = context {
+#let step(from: none, to: none, until: none, only: none, animation: none, hide: false, also: false, body) = context {
   if target() == "html" {
     let attrs = (:)
     if from != none { attrs.insert("from", str(from)) }
     if to != none { attrs.insert("to", str(to)) }
     if until != none { attrs.insert("until", str(until)) }
+    if only != none { attrs.insert("only", str(only)) }
     if animation != none { attrs.insert("animation", animation) }
     if hide { attrs.insert("hide", "") }
     if also { attrs.insert("also", "") }
@@ -31,6 +32,5 @@
     })
   } else {
     [#for child in items { child }]
-    [#body]
   }
 }
