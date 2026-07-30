@@ -1,5 +1,6 @@
 
-## RELEASED: v0 (0.1.20260725) − no solid export, no solid typst, working, good initial UX
+## RC v0.1.0 − no solid export, no solid typst, working, good initial UX
+
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
@@ -12,7 +13,11 @@
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
+- [ ] @rewind or @pause(,rewind) (if not present) + show demo like "@pause(,rewind)|@play|@pause"
+- [ ] fix draggable "conflict" with text selection
+- [ ] html-export looses attributes on sp-slides (transitions)
 - [ ] stronger highlight when using keyboard to select in the 'g' pane
+- [ ] add a cli command to "slides-purryst update" (to update if latest or if the tag moved) and "upgrade" to suggest a list of versions (with change log (from the github README.md) and allow to select one to upgrade to, incl. latest)
 - [ ] better ignore in vue config, because currently, unless using the dev files demo- or index.html.... the full refresh is triggered... should we ignore all as we watch explicitly the location of interest? or keep src etc?
 - [ ] add a png/jpg include to test and illustrate cache
 - [ ] overview scroll current slide into view, and highlight even more
@@ -22,7 +27,7 @@
 - [ ] why are subparts etc shown as 0 Bytes in the dev tools?
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
-- [ ] pdf export
+- [ ] pdf-export
 - [ ] add a toc in the overview somewhat
 - [ ] plugin should be able to contribute to a shared state (like source in demo) or a shared saved (localstorage) state, check that the is properly reactive intially (pb with source in sp-after, has undefined value for transform at first template render, should not need a "set timer")
 
@@ -47,6 +52,9 @@
 - [ ] <sp-pause/> might need (e.g. following) content to be put in a span, not pure text node. This is a limitation of css, but could we detect it (in devmode?) and notify the user?
 - [ ] generate a palette of 20 creative themes, named gen1-01 to gen1-20 (for an ambiguous gen meaning generated / genai / generic / generation1), most of which should have a primary and secondary color that is configurable
 - [ ] investigate if we can have a rewrite of steps/anim that is compile-free, more precisely, can we e.g. imagine a vue component that creates/uses sp-steps sp-anim etc (currently most of the work is at compile time), and a kind of step manager (at the slide level?) that monitors the dom to actually define steps (and count etc)
+- [ ] 4. getSourceFileFromDOMLocation processes pushes from ALL descendants of siblings (LOW, pre-existing)
+src/composables/resolveIncludes.ts:101 — s.querySelectorAll(ofInterest).forEach(process) inside the sibling loop finds [data-source-file-push] across the entire subtree of each preceding sibling, including pushes from later slides (same file, harmless duplicates). Pre-existing issue, not introduced by these changes.
+
 
 ## TODO
 

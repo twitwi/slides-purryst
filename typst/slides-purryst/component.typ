@@ -1,4 +1,4 @@
-#let component(name, attrs: (:), body: none) = context {
+#let component(name, body, attrs: (:)) = context {
   if target() == "html" {
     if body == none {
       html.elem(name, attrs: attrs)

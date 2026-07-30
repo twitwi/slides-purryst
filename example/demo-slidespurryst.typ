@@ -1,10 +1,81 @@
-#import "../typst/slides-purryst/lib.typ": *
+#import "slides-purryst/lib.typ": *
 
-#show: slides-theme.with(
-  title: "SlidesPurryst Demo",
-  author: "You",
-)
+// ============================================================
+// Helper: components not directly exposed by lib.typ
+// ============================================================
+#let jump(at) = context {
+  if target() == "html" {
+    html.elem("sp-jump", attrs: (at: at))
+  }
+}
+#let meanwhile() = jump("0")
+#let pause = jump("+1")
+#let steps(body, every: none, at: none) = context {
+  if target() == "html" {
+    let attrs = (:)
+    if every != none { attrs.insert("every", str(every)) }
+    if at != none { attrs.insert("at", str(at)) }
+    html.elem("sp-steps", attrs: attrs)[#body]
+  }
+}
+#let step(from: none, to: none, until: none, animation: none, hide: false, also: false, body) = context {
+  if target() == "html" {
+    let attrs = (:)
+    if from != none { attrs.insert("from", str(from)) }
+    if to != none { attrs.insert("to", str(to)) }
+    if until != none { attrs.insert("until", str(until)) }
+    if animation != none { attrs.insert("animation", animation) }
+    if hide { attrs.insert("hide", "") }
+    if also { attrs.insert("also", "") }
+    html.elem("sp-step", attrs: attrs)[#body]
+  }
+}
+#let alternatives(at: none, cycle: false, body) = context {
+  if target() == "html" {
+    let attrs = (:)
+    if at != none { attrs.insert("at", str(at)) }
+    if cycle { attrs.insert("cycle", "") }
+    html.elem("sp-alternatives", attrs: attrs)[#body]
+  }
+}
+#let include-fragment(src) = context {
+  if target() == "html" {
+    html.elem("sp-include", attrs: (src: src))
+  }
+}
+#let notes(body) = context {
+  if target() == "html" {
+    html.elem("sp-notes")[#body]
+  }
+}
 
+// ============================================================
+// Helper: colored boxes
+// ============================================================
+#let dbox(body, hue: 220, class: none) = context {
+  let colors = (
+    "0":   (fill: "#f7c5c5", stroke: "#823636", text: "#411e1e"),
+    "60":  (fill: "#f7f7c5", stroke: "#828236", text: "#41411e"),
+    "120": (fill: "#c5f7d5", stroke: "#368252", text: "#1e4123"),
+    "180": (fill: "#c5f7f7", stroke: "#368282", text: "#1e4141"),
+    "220": (fill: "#c5d3f7", stroke: "#364982", text: "#1e2341"),
+    "240": (fill: "#d5c5f7", stroke: "#483682", text: "#231e41"),
+    "270": (fill: "#e4c5f7", stroke: "#633682", text: "#321e41"),
+    "300": (fill: "#f7c5f7", stroke: "#823682", text: "#411e41"),
+  )
+  let c = colors.at(str(hue), default: (fill: "#c5d3f7", stroke: "#364982", text: "#1e2341"))
+  if target() == "html" {
+    let attrs = (style: "background: " + c.fill + "; border: 2pt solid " + c.stroke + "; color: " + c.text + "; padding: 0.3em; border-radius: 6pt;")
+    if class != none { attrs.insert("class", class) }
+    html.elem("div", attrs: attrs)[#body]
+  } else {
+    block(fill: rgb(c.fill), inset: 0.3em, radius: 6pt, stroke: 2pt + rgb(c.stroke))[#text(fill: rgb(c.text))[#body]]
+  }
+}
+
+// ============================================================
+// 1. Welcome
+// ============================================================
 #slide[
   #h1[SlidesPurryst]
 
@@ -15,28 +86,52 @@
   NB: this demo file is using Typst
 ]
 
+// ============================================================
+// 2. Notes & Disclaimer
+// ============================================================
+#slide(no-toc: true)[
+  = Notes and Disclaimer
+
+  - This presentation acts as:
+    - a tutorial/demo
+    - a documentation
+    - an informal test suite
+  - This presentation is NOT:
+    - a starter template
+    - meant to be visually polished
+
+  NB: You can see the source code in the source HTML.
+]
+
+// ============================================================
+// 3. TOC
+// ============================================================
 #slide(no-toc: true)[
   = Table of Contents
 
   #toc(end: "2")
 ]
 
+// ============================================================
+// 4. Slide Transitions
+// ============================================================
 #slide[
   = Slide Transitions
 
   Do not overuse...
+
+  Transitions don't necessarily improve the presentation.
 ]
 
 #slide[
   == Transition Options
 
-  Per-slide transitions via `transition` attribute.
+  Per-slide transitions via `transition` parameter.
 
-  - `fade` — default
+  - `none` — default
+  - `fade` — opacity fading
   - `slide-up` — vertical slide
   - `zoom` — scale in/out
-
-  A "transition" option to createSlidesPurryst, used as default.
 ]
 
 #slide(transition: "fade")[
@@ -63,31 +158,60 @@
   #img(src: path("./slides-purryst-banner.svg"), style: "transform: scale(-1,1)")
 ]
 
+// ============================================================
+// 5. Navigation
+// ============================================================
+#slide[
+  = Navigation, basic features and shortcuts
+]
+
 #slide[
   == Keyboard Navigation
 
-  - #component("kbd", body: [→]) / #component("kbd", body: [Space]) / #component("kbd", body: [↓]): Next
-  - #component("kbd", body: [←]) / #component("kbd", body: [↑]): Previous
-  - #component("kbd", body: [Home]) / #component("kbd", body: [End]): First / Last
-  - #component("kbd", body: [a]) / #component("kbd", body: [z]): End of prev / next slide
-  - #component("kbd", body: [F]): Toggle fullscreen
+  - #component("kbd", [→]) / #component("kbd", [Space]): advance
+  - #component("kbd", [←]): backward
+  - #component("kbd", [↓]) / #component("kbd", [↑]): next/prev slide
+  - #component("kbd", [G]): Go-to prompt
+  - #component("kbd", [O]): Overview grid
+  - #component("kbd", [F]): Fullscreen
+  - #component("kbd", [B]): Blackout
+  - #component("kbd", [P]): Presenter mode
 ]
 
+#slide[
+  == Presenter View and Slide Notes
+
+  Use the presenter view to see speaker notes, next slide preview, and timer.
+
+  Press #component("kbd", [P]) to toggle.
+
+  #notes[
+    = Speaker Notes
+
+    These notes are only visible in presenter view.
+
+    - Key points to mention
+    - Timing suggestions
+  ]
+]
+
+// ============================================================
+// 6. Features
+// ============================================================
 #slide[
   = Some interesting features
 ]
 
 #slide[
-  == A Table of Content
+  == Table of Content
 
-  One can have "local" TOC
+  One can have a "local" TOC showing only a section context.
 
   #toc(start: "3", ctx: true)
 
-  #drag(at: "1096|59|594.1552173913044|847.3330434782608|0")[
-    #component("div", attrs: (style: "font-size: 25px; border: 5px solid gray; background: black; padding: 10px; position: absolute; inset: 0; overflow: scroll;"), body: [
-      Full TOC
-
+  #drag(at: "1096|59|594.15|847.33|0")[
+    #component("div", attrs: (style: "font-size: 25px; border: 5px solid gray; background: black; padding: 10px; position: absolute; inset: 0; overflow: scroll;"), [
+      = Full TOC
       #toc()
     ])
   ]
@@ -96,37 +220,26 @@
 #slide[
   == Draggable Elements
 
-  #pause()
+  #component("kbd", [double-click]) to select, move and resize.
+
+  #pause
 
   #drag(at: "287|249|700|246|15")[
-    #block(fill: rgb("#dbeafe"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#3b82f6"))[
-      #text(fill: black)[*Draggable box*]
-    ]
+    #dbox[*Draggable box*]
   ]
 
-  #pause()
+  #pause
 
   #drag(at: "1204|306|830.41|411.49|-39")[
-    #block(fill: rgb("#dcfce7"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#22c55e"))[
-      #text(fill: black)[*Another box*]
-    ]
+    #dbox(hue: 120)[*Another box*]
   ]
 ]
 
 #slide[
-  == Drag 2
+  == Chunklets
 
-  #drag(at: "287|249|700|246|15")[
-    #block(fill: rgb("#dbeafe"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#3b82f6"))[
-      #text(fill: red)[*Draggable box*]
-    ]
-  ]
-
-  #drag(at: "1204|306|830.41|411.49|-39")[
-    #block(fill: rgb("#dcfce7"), inset: 1em, radius: 8pt, stroke: 2pt + rgb("#22c55e"))[
-      #text(fill: red)[*Another box*]
-    ]
-  ]
+  Press #component("kbd", [C]) to toggle the chunklet toolbar,
+  then click a chunklet and click or drag on the slide to insert it.
 ]
 
 #slide[
@@ -135,71 +248,165 @@
   Move your mouse on the cat.
 
   #svg(src: path("./slides-purryst-banner-sticker.svg"), height: "400px")
+]
 
-  #style("
-    h2 { filter: blur(2px); }
-  ")
+// ============================================================
+// 7. Steps & Animations Overview
+// ============================================================
+#slide[
+  = Animations overview
+]
 
-  Use `sp-style` in a slide or globally.
+#slide[
+  == Principles
 
-  #svg(src: path("./slides-purryst-banner-sticker.svg"), width: "100%", height: "200")
+  - "animations" is what happens when we step with arrow keys
+  - each step is called a _step_
+  - several approaches exist, combinable in a presentation
+]
 
-  #drag(at: "1100|267|564.37|227.06|36.2")[
-    #svg(src: path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
+#slide[
+  == Multiple ways
+
+  - `step` — declare when content appears
+  - `steps` — children one by one
+  - `step` with `from` / `to` / `until` / `animation` — fine-grained
+  - `pause` / `meanwhile` / `jump` — structural visgroups
+  - `anim` — CSS selector-based spec language
+]
+
+// ============================================================
+// 8. Slidev-style step/steps
+// ============================================================
+#slide[
+  = Animations like in Slidev
+]
+
+#slide[
+  == Explicit step
+
+  Always visible.
+
+  #step(from: "1")[#dbox([Step 1], hue: 240)]
+  #step(from: "2")[#dbox([Step 2], hue: 120)]
+  #step(from: "3")[#dbox([Step 3], hue: 0)]
+
+  Always visible.
+]
+
+#slide[
+  == step with animation presets
+
+  #step(from: "1", animation: "fade")[#dbox([Fade in], hue: 240)]
+  #step(from: "2", animation: "up")[#dbox([Slide up], hue: 120)]
+  #step(from: "5", hide: true)[#dbox([Hidden (no space)], hue: 300)]
+  #step(from: "3", animation: "left")[#dbox([Slide left], hue: 0)]
+]
+
+#slide[
+  == step with range visibility
+
+  #step(from: "1", to: "2")[#dbox([Steps 1-2], hue: 240)]
+  #step(from: "3")[#dbox([From step 3], hue: 120)]
+  #step(from: "0", until: "2")[#dbox([Steps 0-1], hue: 180)]
+]
+
+#slide[
+  == steps — children one by one
+
+  #steps[
+    #dbox([Item 1], hue: 240)
+    #dbox([Item 2], hue: 120)
+    #dbox([Item 3], hue: 0)
   ]
 ]
 
 #slide[
-  == Code Highlighting (by typst)
+  == steps with options
 
-  Use Typst raw blocks for code snippets.
-
-  //#show "\n": [#{"\n"}#component("span", attrs: (class: "sp-eol"), body: [eol])]
-
-  #show raw.line: (it) => component("span", attrs: (:), body: it)
-
-  ```typst
-#import "../typst/slides-purryst/lib.typ": *
-#show: slides-theme.with(title: "Demo")
-
-#slide[ = Hello ]
-  ```
-
-  //#anim("@children(code)")
-
-]
-
-
-
-
-
-
-#slide[
-  = Some Animations
+  #steps(every: "2", at: "1")[
+    #dbox([1 + 2], hue: 240)
+    #dbox([1 + 2], hue: 240)
+    #dbox([3 + 4], hue: 120)
+    #dbox([3 + 4], hue: 120)
+    #dbox([5th], hue: 0)
+  ]
 ]
 
 #slide[
-  == Animations: pause etc
+  == alternatives
+
+  #alternatives(cycle: true)[
+    #block(fill: rgb("#dbeafe"), inset: 0.5em, radius: 6pt)[#text(fill: rgb("#1e40af"))[Alternative 1]]
+    #block(fill: rgb("#dcfce7"), inset: 0.5em, radius: 6pt)[#text(fill: rgb("#166534"))[Alternative 2]]
+    #block(fill: rgb("#fef9c3"), inset: 0.5em, radius: 6pt)[#text(fill: rgb("#653416"))[Alternative 3]]
+  ]
+]
+
+// ============================================================
+// 9. Touying-style pause/jump
+// ============================================================
+#slide[
+  = Animations like Touying
+]
+
+#slide[
+  == pause
 
   Always visible.
 
   #pause
 
-  Appears on click 1.
+  First pause.
 
   #pause
 
-  Appears on click 2.
-
-  #pause
-
-  Appears on click 3.
+  Second pause.
 ]
 
 #slide[
-  == Animations: selectors
+  == meanwhile
 
   Always visible.
+
+  #pause
+
+  Step 1.
+
+  #meanwhile
+
+  Also step 1 (parallel track).
+]
+
+#slide[
+  == jump — flexible grouping
+
+  Always visible.
+
+  #jump("+1")
+
+  Step 1.
+
+  #jump("+1")
+
+  Step 2.
+
+  #jump("0")
+
+  Always visible again.
+]
+
+// ============================================================
+// 10. sp-anim spec language
+// ============================================================
+#slide[
+  = Animations: spec language
+]
+
+#slide[
+  == Sequential reveal
+
+  Each #component("code", [|])—separated part shows one group per step.
 
   #anim("li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)")
 
@@ -209,66 +416,70 @@
 ]
 
 #slide[
-  == Animations: \@children
+  == Show, hide, and revisit
 
-  #anim("@children(ul)")
+  Prefix a selector with `-` to hide.
 
-  - First item
-  - Second item
-  - Third item
-  - Fourth item
+  #anim(".box | -.box | .box")
+
+  #dbox([Cycle me], class: "box")
 ]
 
 #slide[
-  == Animations: Combined
+  == Parallel actions with `^`
 
-  Always visible heading.
+  Within one step, separate parallel actions with `^`.
 
-  #anim(".step1 | .step2 | @children(ul)")
+  #anim(".a | .b ^ .c")
 
-  #component("div", attrs: (class: "step1"), body: [
-    #block(fill: rgb("#dbeafe"), inset: 0.3em, radius: 6pt)[
-      #text(fill: rgb("#1e40af"))[Step 1]
-    ]
-  ])
+  #dbox([A], class: "a", hue: 240)
+  #dbox([B], class: "b", hue: 120)
+  #dbox([C], class: "c", hue: 120)
+]
 
-  #component("div", attrs: (class: "step2"), body: [
-    #block(fill: rgb("#dcfce7"), inset: 0.3em, radius: 6pt)[
-      #text(fill: rgb("#166534"))[Step 2]
-    ]
-  ])
+#slide[
+  == \@add / \@remove CSS classes
+
+  #anim("@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)")
+
+  Step 1: A glows | Step 2: A dims, B glows | Step 3: C glows.
+
+  #dbox([A], class: "a", hue: 240)
+  #dbox([B], class: "b", hue: 120)
+  #dbox([C], class: "c", hue: 0)
+
+  #style(".a, .b, .c { box-sizing: border-box; border: 5px solid transparent; transition: box-shadow 0.2s; }
+    .hi { box-shadow: 0 0 10px gold; }")
+]
+
+#slide[
+  == \@children — reveal children one by one
+
+  #anim("@children(ul)")
 
   - Child A
   - Child B
   - Child C
+  - Child D
 ]
 
 #slide[
-  == Animations: \@add / \@remove
+  == at offset & no-jump
 
-  #svg(src: path("./slides-purryst-banner-sticker.svg"), width: "100%")
+  Start animations at a specific step with `at="2"`:
 
-  #text(size: 0.7em)[
-    Effects per step:
-    + `@add(glow, #catfill)` — cat fill glows
-    + `@remove(glow, #catfill) ^ @add(pulse, #catTongue)` — fill glow off, tongue pulses
-    + `@add(dim, #cat)` — whole cat dims
-  ]
+  #anim("li:nth-of-type(1) | li:nth-of-type(2) | li:nth-of-type(3)", at: "2")
 
-  #anim("@add(glow, #catfill) | @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)")
-
-  #style("
-    #catTongue { fill: red; }
-    .glow { filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 40px #ffb300); transition: filter .3s; }
-    .pulse { animation: pulse 0.5s ease-in-out 5; transform-origin: 50% 58%; }
-    .dim { opacity: 0.3; transition: opacity 0.3s; }
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
-    #cat { filter: none !important; }
-  ")
+  - This appears at step 2
+  - This at step 3
+  - This at step 4
 ]
 
+// ============================================================
+// 11. TOC again
+// ============================================================
 #slide(no-toc: true)[
-  == TOC again
+  = TOC again
 
   (expect scrolling given the number of items)
 
@@ -276,11 +487,14 @@
 ]
 
 #slide[
-  == TOC again, full
+  = TOC again, full
 
   #toc(end: "2")
 ]
 
+// ============================================================
+// 12. End slides
+// ============================================================
 #slide(no-toc: true, fake-end: true)[
   #h1[The END]
 
@@ -299,12 +513,11 @@
   #h1[END (for real)]
 ]
 
+// ============================================================
+// 13. Global style
+// ============================================================
 #style("
   svg #cat:not(:hover) { filter: blur(5px); }
-  svg #cat:hover {
-    #catfill { fill: yellow; }
-    .smallcat & { fill: chartreuse; }
-    #catTongue { fill: chartreuse; }
-    #catT, #catV { filter: blur(10px); }
-  }
+  svg #cat:hover #catfill { fill: yellow; }
+  .smallcat #catfill { fill: chartreuse; }
 ")

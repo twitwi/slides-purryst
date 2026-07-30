@@ -1,6 +1,8 @@
-#let anim(spec) = context {
+#let anim(spec, at: none) = context {
   if target() == "html" {
-    html.elem("sp-anim", attrs: (spec: spec))
+    let attrs = (spec: spec)
+    if at != none { attrs.insert("at", at) }
+    html.elem("sp-anim", attrs: attrs)
   } else {
     [anim(#spec)]
   }

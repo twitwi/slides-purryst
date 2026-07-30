@@ -9,5 +9,7 @@
 #import "style.typ": style
 #import "component.typ": component
 #import "theme.typ": slides-theme
+#import "source.typ": source
 
-#let h1(body, attrs: (:)) = component("h1", body: body, attrs: attrs)
+#let no-source-slide = slide
+#let h1(body, attrs: (:)) = component("h1", body, attrs: attrs)

@@ -79,15 +79,17 @@ export function getSourceFileFromDOMLocation(e: HTMLElement | null): string | nu
 
   const sourceStack = [] as string[]
   function buildSourceStack(e: HTMLElement) {
-    function process(e: Element) {
-        const push = e.getAttribute('data-source-file-push')
+    function process(el: Element) {
+        const push = el.getAttribute('data-source-file-push')
         if (push) {
           sourceStack.push(push)
         }
-        if (e.hasAttribute('data-source-file-pop')) {
+        if (el.hasAttribute('data-source-file-pop')) {
           sourceStack.pop()
         }
     }
+    // Check the element itself first
+    process(e)
     const ofInterest = '[data-source-file-push],[data-source-file-pop]'
     if (e.parentElement === null) return
     buildSourceStack(e.parentElement)

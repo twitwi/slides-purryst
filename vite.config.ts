@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       watch: {
-        ignored: ["**/demo-*.*", "**/index.html", "**/,,*"]
+        ignored: ["**/demo-*.*", "**/index.html", "**/,,*", "**/slides-purryst"]
       }
     },
     plugins: [

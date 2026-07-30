@@ -151,8 +151,9 @@ function saveToSource() {
 
   const hasAt = !!props.at
   const dragId = el.value?.getAttribute('data-drag-id')
-  const file = getSourceFileFromDOMLocation(el.value)
-  
+  const sourceLine = el.value?.getAttribute('data-source-line')
+  const file = el.value?.getAttribute('data-source-file') || getSourceFileFromDOMLocation(el.value)
+ 
   fetch('/__sp_edit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -160,6 +161,7 @@ function saveToSource() {
       oldAttrs: hasAt ? oldAttrs : '__sp_insert__',
       newAttrs,
       file,
+      sourceLine: sourceLine ? parseInt(sourceLine, 10) : null,
       editableIndex: props.editableIndex,
       slide: slideIndex.value,
       dragId,

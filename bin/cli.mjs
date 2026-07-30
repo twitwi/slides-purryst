@@ -17,6 +17,7 @@ let specifiedFile = ''
 let copyBundle = false
 let copyAgents = false
 let autoOpen = true
+let linkTypst = false
 
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i]
@@ -40,6 +41,8 @@ for (let i = 2; i < process.argv.length; i++) {
     autoOpen = false
   } else if (arg === '--open') {
     autoOpen = true
+  } else if (arg === '--link-typst') {
+    linkTypst = true
   } else if (!arg.startsWith('-')) {
     specifiedFile = arg
   }
@@ -47,6 +50,19 @@ for (let i = 2; i < process.argv.length; i++) {
 
 const bundleFile = path.join(distDir, 'slides-purryst.bundle.js')
 const agentsFile = path.join(pkgDir, 'AGENTS.md')
+const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
+
+if (linkTypst) {
+  const dest = path.join(root, 'slides-purryst')
+  try {
+    fs.symlinkSync(typstLibSrc, dest)
+    console.log(`Linked ${dest} → ${typstLibSrc}`)
+  } catch (e) {
+    console.error(`Failed to link typst library: ${e.message}`)
+    process.exit(1)
+  }
+  process.exit(0)
+}
 
 if (copyAgents) {
   const dest = path.join(root, 'AGENTS.md')
@@ -164,8 +180,9 @@ server.listen(port, () => {
   const addr = `http://localhost:${port}`
   console.log(`\n  SlidesPurryst dev server running at ${addr}`)
   console.log(`  Serving ${root}${specifiedFile ? '  (' + specifiedFile + ')' : ''}\n`)
+  const openUrl = specifiedFile ? `${addr}/${specifiedFile}` : addr
+  console.log(`  URL: ${openUrl}`)
   if (autoOpen) {
-    const openUrl = specifiedFile ? `${addr}/${specifiedFile}` : addr
     const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
     import('child_process').then(({ spawn }) => {
       try { spawn(cmd, [openUrl], { stdio: 'ignore' }) } catch {}
