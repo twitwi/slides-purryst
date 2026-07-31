@@ -796,6 +796,25 @@
 ]
 
 #slide[
+  == anim — `@child` (reveal specific children)
+
+  #component("code", [`@child(sel, n)`]) reveals one child, #component("code", [`@child(sel, a, b)`]) reveals a range — both in a single step:
+
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px"), [
+    #component("code", attrs: (style: "font-size:0.7em"), [`spec="@child(ul, 2) | @child(ul, 1, 3) | @child(ul, 1, 4)"`])
+  ])
+
+  - Child A
+  - Child B
+  - Child C
+  - Child D
+
+  #anim("@child(ul, 2) | @child(ul, 1, 3) | @child(ul, 1, 4)")
+
+  #component("code", [`@child(sel, n)`]) is an alias for #component("code", [`+sel > :nth-child(n)`]); the range form maps to a double #component("code", [`:nth-child(n+a):nth-child(-n+b)`]).
+]
+
+#slide[
   == anim — custom `@command`
 
   Toggle CSS classes via #component("code", [`@add`]) and #component("code", [`@remove`]):
@@ -921,6 +940,7 @@
     #component("tr")[#component("td")[`@add(class, sel)`]#component("td")[Add a CSS class]]
     #component("tr")[#component("td")[`@remove(class, sel)`]#component("td")[Remove a CSS class]]
     #component("tr")[#component("td")[`@children(sel)`]#component("td")[Show children one per step]]
+    #component("tr")[#component("td")[`@child(sel, n[, b])`]#component("td")[Show child n (or range a..b) of a container]]
     #component("tr")[#component("td")[`@play(sel)`]#component("td")[Play video element]]
     #component("tr")[#component("td")[`@pause(sel)`]#component("td")[Pause video]]
     #component("tr")[#component("td")[`@command(...)`]#component("td")[Execute custom command]]

@@ -4,7 +4,7 @@
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
-- [ ] typst codeblock improve
+- [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] test in sp-dev but outside of the demo folder
 - [ ] a purryst version that uses the bundle?
 

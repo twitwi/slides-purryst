@@ -214,6 +214,23 @@ const builtinCommands: Record<string, AnimCommandHandler> = {
       }
     },
   },
+  child: {
+    countSteps: () => 1,
+    parse(argsStr) {
+      const args = parseArgs(argsStr)
+      const sel = args[0] ?? ''
+      if (!sel) return []
+      if (args.length >= 3) {
+        const a = parseInt(args[1])
+        const b = parseInt(args[2])
+        if (isNaN(a) || isNaN(b)) return []
+        return [{ type: 'show', selector: `${sel} > :nth-child(n+${a}):nth-child(-n+${b})` }]
+      }
+      const n = parseInt(args[1] ?? '')
+      if (isNaN(n)) return []
+      return [{ type: 'show', selector: `${sel} > :nth-child(${n})` }]
+    },
+  },
   add: {
     countSteps: () => 1,
     parse(argsStr) {
