@@ -1002,7 +1002,7 @@
 ]
 
 #slide[
-  == Animating the Cetz Cat
+  == Animating a Cetz Cat
 
   Class markers tag SVG paths in a single canvas — a post-processor injects `class` attrs \
   ... so we can animate them with `anim`

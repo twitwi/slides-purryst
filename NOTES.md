@@ -5,17 +5,13 @@
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
 - [ ] find a way to show typst errors in the ui, e.g. when anim(`wrong quotes`)
-- [ ] typst v1 with a decent syntax (might consider later the implicit separator approach or a shortcut for commands )
-- [ ] typst math
-- [ ] typst cetz
-- [ ] typst codeblock
-- [ ] anim of the typst features, at least minimal line appear, class addition to cetz, ideally itegrate #pause in cetz etc
-- [ ] demo-minimal-slidespurryst.typ
+- [ ] typst codeblock improve
 - [ ] test in sp-dev but outside of the demo folder
 - [ ] a purryst version that uses the bundle?
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
+- [ ] fix emoji scaling? use an emoji font?
 - [ ] maybe a cetz/gribouille example
 - [ ] 'g' when typing a number, show the corresponding slide as preview + also search for the number in the slide title
 - [ ] sp-dev .typ should allow specifying the generated path (or maybe default to ,,sp-generated/${inputpathhash}/) -> done but need to try 2 entry points
@@ -36,6 +32,8 @@
 - [ ] pdf-export
 - [ ] add a toc in the overview somewhat
 - [ ] plugin should be able to contribute to a shared state (like source in demo) or a shared saved (localstorage) state, check that the is properly reactive intially (pb with source in sp-after, has undefined value for transform at first template render, should not need a "set timer")
+- [ ] (typst) ideally allow pause etc in cetz too...
+- [ ] (typst) separator to break slides (to avoid ] #slide[ but don't get too far, we're not redoing a markdown either)
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 

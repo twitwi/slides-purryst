@@ -8,6 +8,8 @@ import { spawn, execSync } from 'child_process'
 import { formatHtml } from '../lib/format-html.mjs'
 import { preprocessTypst, quickStringHash } from '../lib/preprocess-typst.mjs'
 import { injectCetzClasses } from '../tools/inject-cetz-classes.mjs'
+import { setTypstErrors } from '../lib/sse.mjs'
+import { createTypstErrorParser } from '../lib/typst-errors.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkgDir = resolve(__dirname, '..')
@@ -150,6 +152,8 @@ if (fileArg && fileArg.endsWith('.typ')) {
     designHeight: 1080,
   }
 
+  const rewritePath = (loc) => loc.replace(`,,sp-preprocess/${inputFileHash}/`, '')
+
   try {
     const compileArgs = [
       'compile',
@@ -161,14 +165,24 @@ if (fileArg && fileArg.endsWith('.typ')) {
       preFilePath, tmpFile,
     ]
     const argStr = compileArgs.map(a => a.includes(' ') ? `"${a}"` : a).join(' ')
-    execSync(`typst ${argStr}`, { cwd: pkgDir, stdio: 'inherit', timeout: 60000 })
+    execSync(`typst ${argStr}`, { cwd: pkgDir, stdio: 'pipe', timeout: 60000 })
     const raw = readFileSync(tmpFile, 'utf-8')
     const body = extractBody(raw)
     writeFileSync(htmlFile, wrapPage(injectCetzClasses(formatHtml(body)), wrapOpts), 'utf-8')
+    setTypstErrors([])
     console.log('Initial typst compile done.')
   } catch (e) {
-    console.error('Initial typst compile failed, will retry via watch:', e.message)
+    const stderr = (e.stderr ?? '').toString()
+    const parser = createTypstErrorParser({ onErrors: setTypstErrors, rewritePath })
+    parser.push(stderr)
+    parser.end()
+    console.error('Initial typst compile failed, will retry via watch:', stderr.trim())
+    if (!existsSync(htmlFile)) {
+      writeFileSync(htmlFile, wrapPage('', wrapOpts), 'utf-8')
+    }
   }
+
+  const typstErrorParser = createTypstErrorParser({ onErrors: setTypstErrors, rewritePath })
 
   let lastMtime = 0
   let busy = false
@@ -182,6 +196,7 @@ if (fileArg && fileArg.endsWith('.typ')) {
         const raw = readFileSync(tmpFile, 'utf-8')
         const body = extractBody(raw)
         writeFileSync(htmlFile, wrapPage(injectCetzClasses(formatHtml(body)), wrapOpts), 'utf-8')
+        setTypstErrors([])
       } finally { busy = false }
     }
   })
@@ -201,7 +216,11 @@ if (fileArg && fileArg.endsWith('.typ')) {
     }, 100)
   })
 
-  typstProcess = spawn('typst', typstArgs, { stdio: 'inherit', cwd: pkgDir })
+  typstProcess = spawn('typst', typstArgs, { stdio: ['ignore', 'inherit', 'pipe'], cwd: pkgDir })
+  typstProcess.stderr.on('data', (chunk) => {
+    process.stderr.write(chunk)
+    typstErrorParser.push(chunk.toString())
+  })
 
 }
 

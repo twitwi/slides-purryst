@@ -4,6 +4,7 @@ import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
 import { watch } from 'fs'
 import { handleEdit } from './lib/edit-handler.mjs'
+import { sseRegisterClient, sseBroadcast, getTypstErrors } from './lib/sse.mjs'
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === 'production'
@@ -23,8 +24,6 @@ export default defineConfig(({ mode }) => {
         name: 'sp-reload',
         configureServer(server) {
 
-          const clients: import('http').ServerResponse[] = []
-
           server.middlewares.use('/__sp_events', (req, res) => {
             res.writeHead(200, {
               'Content-Type': 'text/event-stream',
@@ -33,11 +32,9 @@ export default defineConfig(({ mode }) => {
               'Access-Control-Allow-Origin': '*',
             })
             res.write('event: connected\ndata: \n\n')
-            clients.push(res)
-            req.on('close', () => {
-              const i = clients.indexOf(res)
-              if (i !== -1) clients.splice(i, 1)
-            })
+            sseRegisterClient(res)
+            const errs = getTypstErrors()
+            if (errs.length) res.write(`event: typst-error\ndata: ${JSON.stringify(errs)}\n\n`)
           })
 
           server.middlewares.use('/__sp_edit', (req, res) => {
@@ -68,9 +65,7 @@ export default defineConfig(({ mode }) => {
             //console.log("CHANGED ", ...o)
             if (timer) clearTimeout(timer)
             timer = setTimeout(() => {
-              clients.forEach((client) => {
-                client.write(`event: update\ndata: ${o[1] ?? ''}\n\n`)
-              })
+              sseBroadcast('update', o[1] ?? '')
             }, 100)
           })
         }

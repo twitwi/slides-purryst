@@ -21,7 +21,7 @@ import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
-import { clearGlobalErrorMessages } from './composables/globalErrorMessages.js'
+import { addGlobalErrorMessage, clearGlobalErrorMessages } from './composables/globalErrorMessages.js'
 
 const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
@@ -256,6 +256,13 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
       .catch(() => {})
     })
     es.addEventListener('connected', () => {}, { once: true })
+    es.addEventListener('typst-error', (event: MessageEvent) => {
+      clearGlobalErrorMessages()
+      try {
+        const msgs = JSON.parse(event.data ?? '[]')
+        ;(Array.isArray(msgs) ? msgs : [msgs]).forEach(msg => addGlobalErrorMessage(msg))
+      } catch {}
+    })
   }
 
   ;(app as any).export = exportStandalone
