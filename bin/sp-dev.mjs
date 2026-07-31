@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import { spawn, execSync } from 'child_process'
 import { formatHtml } from '../lib/format-html.mjs'
 import { preprocessTypst, quickStringHash } from '../lib/preprocess-typst.mjs'
+import { injectCetzClasses } from '../tools/inject-cetz-classes.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkgDir = resolve(__dirname, '..')
@@ -163,7 +164,7 @@ if (fileArg && fileArg.endsWith('.typ')) {
     execSync(`typst ${argStr}`, { cwd: pkgDir, stdio: 'inherit', timeout: 60000 })
     const raw = readFileSync(tmpFile, 'utf-8')
     const body = extractBody(raw)
-    writeFileSync(htmlFile, wrapPage(formatHtml(body), wrapOpts), 'utf-8')
+    writeFileSync(htmlFile, wrapPage(injectCetzClasses(formatHtml(body)), wrapOpts), 'utf-8')
     console.log('Initial typst compile done.')
   } catch (e) {
     console.error('Initial typst compile failed, will retry via watch:', e.message)
@@ -180,7 +181,7 @@ if (fileArg && fileArg.endsWith('.typ')) {
       try {
         const raw = readFileSync(tmpFile, 'utf-8')
         const body = extractBody(raw)
-        writeFileSync(htmlFile, wrapPage(formatHtml(body), wrapOpts), 'utf-8')
+        writeFileSync(htmlFile, wrapPage(injectCetzClasses(formatHtml(body)), wrapOpts), 'utf-8')
       } finally { busy = false }
     }
   })

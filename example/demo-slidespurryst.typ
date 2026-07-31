@@ -1,4 +1,70 @@
 #import "slides-purryst/lib.typ": *
+#import "@preview/cetz:0.3.3"
+#import "@preview/lilaq:0.6.0" as lq
+
+// ============================================================
+// Helper: Cetz drawing → HTML SVG via html.frame
+// ============================================================
+#let cetz-drawing(..args) = {
+  let canvas = cetz.canvas(..args)
+  context if target() == "html" {
+    html.frame(canvas)
+  } else {
+    canvas
+  }
+}
+
+// ============================================================
+// Cetz class marker system — injects SVG class attributes via
+// post-processing (see tools/inject-cetz-classes.mjs)
+// ============================================================
+#let _cmap = state("cetz-class-map", (:))
+
+#let _class-id(name) = {
+  let alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+  let h = 5381
+  for ch in name.codepoints() {
+    let p = alpha.position(ch)
+    let v = if p == none { 0 } else { p }
+    h = calc.rem(h * 33 + v + name.len(), 65536)
+  }
+  calc.rem(h, 65536)
+}
+
+#let _marker(sentinel, name) = (
+  ctx => {
+    let id = if name == none { 0 } else { _class-id(name) }
+    let cfunc = cetz.draw.circle((0, 0), radius: 0.001pt,
+      fill: rgb("#" + str(sentinel, base: 16) + ("0000" + str(id, base: 16)).slice(-4) + "01"),
+      stroke: none).at(0)
+    let d = cfunc(ctx)
+    if name != none {
+      let up = cetz.drawable.content((0, 0, 0), 0, 0, none,
+        _cmap.update(mm => (..mm, (name): id)))
+      d.insert("drawables", (d.at("drawables", default: ()) + (up,)))
+    }
+    return d
+  },
+)
+
+#let class(name) = _marker(0x42, name)
+#let class-begin(name) = _marker(0x43, name)
+#let class-end() = _marker(0x44, none)
+
+#let emit-class-map() = {
+  context if target() == "html" {
+    let m = _cmap.get()
+    html.elem("script", attrs: (type: "application/json", id: "cetz-classes"), json.encode(m))
+  }
+}
+
+#let lilaq-plot(body) = {
+  context if target() == "html" {
+    html.frame(body)
+  } else {
+    body
+  }
+}
 
 // ============================================================
 // Helper: colored boxes (from HTML demo's eg-* pattern)
@@ -865,7 +931,156 @@
 ]
 
 // ============================================================
-// 11. TOC again
+// 11. Typst-Specific Gains
+// ============================================================
+#slide[
+  = Typst-Specific Gains
+
+  Features uniquely enabled by authoring in Typst.
+]
+
+#slide[
+  == Code Highlighting — Native, No Shiki
+
+  Typst's #component("code", [raw]) provides syntax highlighting at compile time — no Shiki bundle needed.
+
+  #raw("fn main() {
+    println!(\"Hello Typst!\");
+  }", lang: "rust")
+
+  #step(from: "1")[
+    #raw("print('hello world')", lang: "python")
+  ]
+
+  #step(from: "2")[
+    #raw("import { createSlidesPurryst } from \"slides-purryst\"
+
+  createSlidesPurryst({
+    transition: \"fade\",
+  })", lang: "typescript")
+  ]
+
+  #step(from: "3")[
+    #raw("#import \"slides-purryst/lib.typ\": *
+  slide[
+    = Hello
+    World
+  ]", lang: "typst")
+  ]
+]
+
+#slide[
+  == Native Math Typesetting
+
+  No MathJax or KaTeX — Typst renders math to MathML at compile time.
+
+  Inline: $a^2 + b^2 = c^2$
+
+  Display:
+  $ sum_(k=0)^n k = (n(n+1)) / 2 $
+
+  #step(from: "1")[
+    Matrices: $ mat(1, 2; 3, 4) vec(5, 6) = vec(17, 39) $
+  ]
+
+  #step(from: "2")[
+    Cases: $ f(x) = cases(0 & "if " x < 0, 1 & "otherwise") $
+  ]
+]
+
+#slide[
+  == Native Vector Graphics with CeTZ
+
+  CeTZ diagrams compile to inline SVG — no external editors needed.
+
+  #cetz-drawing(length: 2cm, {
+    import cetz.draw: *
+    rect((-1.5, -1), (1.5, 1), fill: blue.transparentize(70%))
+    circle((0, 0), radius: 0.8, stroke: blue + 3pt, fill: white)
+    line((-0.5, -0.5), (0.5, 0.5), stroke: red + 2pt)
+  })
+]
+
+#slide[
+  == Animating the Cetz Cat
+
+  Class markers tag SVG paths in a single canvas — a post-processor injects `class` attrs.
+
+  #cetz-drawing(length: 3cm, {
+    import cetz.draw: *
+    class("ears")
+    circle((-1cm, 1.3cm), radius: 0.8cm, fill: gray.transparentize(50%))
+    class("ears")
+    circle((1cm, 1.3cm), radius: 0.8cm, fill: gray.transparentize(50%))
+    class("head")
+    circle((0, 0), radius: 1.2cm, fill: gray.transparentize(50%))
+    class-begin("eyes")
+    circle((-0.4cm, -0.1cm), radius: 0.18cm, fill: white)
+    circle((0.4cm, -0.1cm), radius: 0.18cm, fill: white)
+    circle((-0.4cm, -0.1cm), radius: 0.08cm, fill: black)
+    circle((0.4cm, -0.1cm), radius: 0.08cm, fill: black)
+    class-end()
+    class("nose")
+    circle((0, -0.45cm), radius: 0.08cm, fill: black)
+    class-begin("whiskers")
+    line((-0.3cm, -0.4cm), (-1.4cm, -0.55cm))
+    line((-0.3cm, -0.45cm), (-1.4cm, -0.35cm))
+    line((0.3cm, -0.4cm), (1.4cm, -0.55cm))
+    line((0.3cm, -0.45cm), (1.4cm, -0.35cm))
+    class-end()
+    class-begin("mouth")
+    line((0, -0.5cm), (-0.2cm, -0.65cm))
+    line((0, -0.5cm), (0.2cm, -0.65cm))
+    class-end()
+  })
+
+  #anim(".ears | .head | .eyes | .nose | .whiskers | .mouth")
+]
+
+#slide[
+  == Plotting with Lilaq
+
+  Lilaq provides ready-made plots backed by CeTZ.
+
+  #lilaq-plot[
+    #let xs = lq.linspace(-3, 3)
+    #lq.diagram(
+      height: 4.4cm,
+      width: 9cm,
+      xlabel: $x$,
+      ylabel: $y$,
+      lq.plot(xs, xs.map(x => x * x), label: $x^2$),
+      lq.plot(xs, xs.map(x => calc.sin(x)), label: $sin(x)$),
+      lq.plot(xs, xs.map(x => calc.cos(x)), label: $cos(x)$),
+    )
+  ]
+]
+
+#slide[
+  == Example 🤯 : Lilaq + alternatives + for loops
+
+  Each step shows the same plot with an evolving parameter:
+
+  #{
+    let xs = lq.linspace(0, 6, num: 101)
+    let plots = (1, 2, 3, 4, 5).map(f => {
+      lilaq-plot(
+        lq.diagram(
+          height: 4.4cm,
+          width: 7.5cm,
+          xlabel: $x$,
+          ylabel: $y$,
+          legend: (position: (100% + .5em, 0%)),
+          lq.plot(xs, xs.map(x => calc.sin(f * x)), label: [$ sin(#f x) $], mark: none),
+        )
+      )
+    })
+    alternatives(at: "0", ..plots)
+  }
+]
+
+// ============================================================
+// 12. TOC again
 // ============================================================
 #slide(no-toc: true)[
   = Here comes the TOC again
@@ -882,7 +1097,7 @@
 ]
 
 // ============================================================
-// 12. End slides
+// 13. End slides
 // ============================================================
 #slide(no-toc: true, fake-end: true)[
   #h1[The END]
@@ -902,8 +1117,10 @@
   #h1[END (for real)]
 ]
 
+#emit-class-map()
+
 // ============================================================
-// 13. Global style (cat blur)
+// 14. Global style (cat blur)
 // ============================================================
 #style("
   svg #cat:not(:hover) { filter: blur(5px); }

@@ -16,6 +16,7 @@
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
+- [ ] maybe a cetz/gribouille example
 - [ ] 'g' when typing a number, show the corresponding slide as preview + also search for the number in the slide title
 - [ ] sp-dev .typ should allow specifying the generated path (or maybe default to ,,sp-generated/${inputpathhash}/) -> done but need to try 2 entry points
 - [ ] @rewind or @pause(,rewind) (if not present) + show demo like "@pause(,rewind)|@play|@pause"
