@@ -1004,37 +1004,43 @@
 #slide[
   == Animating the Cetz Cat
 
-  Class markers tag SVG paths in a single canvas — a post-processor injects `class` attrs.
+  Class markers tag SVG paths in a single canvas — a post-processor injects `class` attrs \
+  ... so we can animate them with `anim`
 
   #cetz-drawing(length: 3cm, {
     import cetz.draw: *
-    class("ears")
-    circle((-1cm, 1.3cm), radius: 0.8cm, fill: gray.transparentize(50%))
-    class("ears")
-    circle((1cm, 1.3cm), radius: 0.8cm, fill: gray.transparentize(50%))
     class("head")
-    circle((0, 0), radius: 1.2cm, fill: gray.transparentize(50%))
+    circle((0, 0), radius: (1.3cm, 1.15cm), fill: gray.transparentize(30%), stroke: black + 1.5pt)
+    class("head")
+    circle((-0.8cm, 0.25cm), radius: 0.22cm, fill: rgb("#f2c4c4"), stroke: none)
+    class("head")
+    circle((0.8cm, 0.25cm), radius: 0.22cm, fill: rgb("#f2c4c4"), stroke: none)
+    class-begin("ears")
+    polygon((-0.8cm, 0.95cm), 3, angle: 100deg, radius: 0.25, fill: gray.transparentize(50%), stroke: black + 1.5pt)
+    polygon((0.8cm, 0.95cm), 3, angle: 80deg, radius: 0.25, fill: gray.transparentize(50%), stroke: black + 1.5pt)
+    polygon((-0.8cm, 1.0cm), 3, angle: 100deg, radius: 0.12, fill: rgb("#e6a0a0"), stroke: none)
+    polygon((0.8cm, 1.0cm), 3, angle: 80deg, radius: 0.12, fill: rgb("#e6a0a0"), stroke: none)
+    class-end()
     class-begin("eyes")
-    circle((-0.4cm, -0.1cm), radius: 0.18cm, fill: white)
-    circle((0.4cm, -0.1cm), radius: 0.18cm, fill: white)
-    circle((-0.4cm, -0.1cm), radius: 0.08cm, fill: black)
-    circle((0.4cm, -0.1cm), radius: 0.08cm, fill: black)
+    arc((-0.58cm, -0.1cm), start: 180deg, stop: 0deg, radius: 0.18cm, stroke: black + 1.5pt)
+    arc((0.22cm, -0.1cm), start: 180deg, stop: 0deg, radius: 0.18cm, stroke: black + 1.5pt)
     class-end()
     class("nose")
     circle((0, -0.45cm), radius: 0.08cm, fill: black)
     class-begin("whiskers")
-    line((-0.3cm, -0.4cm), (-1.4cm, -0.55cm))
-    line((-0.3cm, -0.45cm), (-1.4cm, -0.35cm))
-    line((0.3cm, -0.4cm), (1.4cm, -0.55cm))
-    line((0.3cm, -0.45cm), (1.4cm, -0.35cm))
+    line((-0.3cm, -0.4cm), (-1.4cm, -0.35cm))
+    line((-0.3cm, -0.5cm), (-1.4cm, -0.55cm))
+    line((-0.3cm, -0.6cm), (-1.4cm, -0.75cm))
+    line((0.3cm, -0.4cm), (1.4cm, -0.35cm))
+    line((0.3cm, -0.5cm), (1.4cm, -0.55cm))
+    line((0.3cm, -0.6cm), (1.4cm, -0.75cm))
     class-end()
     class-begin("mouth")
-    line((0, -0.5cm), (-0.2cm, -0.65cm))
-    line((0, -0.5cm), (0.2cm, -0.65cm))
+    arc((-0.25cm, -0.55cm), start: 180deg, stop: 360deg, radius: 0.25cm, stroke: black + 1.5pt)
     class-end()
   })
 
-  #anim(".ears | .head | .eyes | .nose | .whiskers | .mouth")
+  #anim(".whiskers | .eyes | .nose | .mouth | .ears | .head")
 ]
 
 #slide[
