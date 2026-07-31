@@ -54,6 +54,14 @@ export function annotateEditableWithIndex(html: string): string {
   })
 }
 
+export function wrapEmojisInSvg(html: string): string {
+  // Matches only Unicode Emoji Presentation characters
+  const emojiRegex = /(\p{Emoji_Presentation})/gu;
+  return html.replace(emojiRegex, (match) => {
+    return `<span style="display: inline-flex; vertical-align: middle; line-height: 0;"><svg viewBox="0 0 100 100" style="width:1em; height:1em; display: block;"><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central">${match}</text></svg></span>`;
+  });
+}
+
 function processAliases(tmp: Element) {
   tmp.querySelectorAll('sp-pause').forEach(el => {
     const jump = document.createElement('sp-jump')

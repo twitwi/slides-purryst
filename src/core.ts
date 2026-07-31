@@ -16,7 +16,7 @@ import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache } from './composables/includeCache'
-import { fixVoidElementsHtml, annotateEditableWithIndex } from './composables/useSteps'
+import { fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from './composables/useSteps'
 import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunklets } from './composables/useChunklets'
 import { exportStandalone } from './export'
@@ -55,7 +55,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     const rawHtml = scriptEl.textContent || ''
     const resolvedHtml = await resolveTopIncludes(rawHtml)
     rawSlideSources.push(...extractRawSlideSources(resolvedHtml))
-    const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml))
+    const fixedHtml = wrapEmojisInSvg(annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml)))
     contentRoot = document.createElement('div')
     contentRoot.innerHTML = fixedHtml
   }

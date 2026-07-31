@@ -4,14 +4,12 @@
 
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
-- [ ] find a way to show typst errors in the ui, e.g. when anim(`wrong quotes`)
 - [ ] typst codeblock improve
 - [ ] test in sp-dev but outside of the demo folder
 - [ ] a purryst version that uses the bundle?
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
-- [ ] fix emoji scaling? use an emoji font?
 - [ ] maybe a cetz/gribouille example
 - [ ] 'g' when typing a number, show the corresponding slide as preview + also search for the number in the slide title
 - [ ] sp-dev .typ should allow specifying the generated path (or maybe default to ,,sp-generated/${inputpathhash}/) -> done but need to try 2 entry points

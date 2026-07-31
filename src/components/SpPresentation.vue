@@ -242,7 +242,7 @@ import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onU
 import type { Component } from 'vue'
 import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides, extractRawSlideSources } from '../composables/useSlides'
-import { useSteps, processSlideHtml, fixVoidElementsHtml, annotateEditableWithIndex } from '../composables/useSteps'
+import { useSteps, processSlideHtml, fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from '../composables/useSteps'
 import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes'
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
@@ -971,7 +971,7 @@ function onChunkletKeydown(e: KeyboardEvent) {
 
 function updateSlides(templateHtml: string) {
   rawSlideSources.value = extractRawSlideSources(templateHtml)
-  const fixedHtml = annotateEditableWithIndex(fixVoidElementsHtml(templateHtml))
+  const fixedHtml = wrapEmojisInSvg(annotateEditableWithIndex(fixVoidElementsHtml(templateHtml)))
   const tmp = document.createElement('div')
   tmp.innerHTML = fixedHtml
   const newSlides = parseElementToSlides(tmp)
