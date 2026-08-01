@@ -964,24 +964,22 @@
 
   Typst's #component("code", [raw]) provides syntax highlighting at compile time — no Shiki bundle needed.
 
-  #raw("fn main() {
+  #codeblock("fn main() {
     println!(\"Hello Typst!\");
-  }", lang: "rust")
+  }", lang: "rust", class: "demo-cb1")
 
-  #step(from: "1")[
-    #raw("print('hello world')", lang: "python")
-  ]
+  #anim("@children(.demo-cb1)")
 
-  #step(from: "2")[
-    #raw("import { createSlidesPurryst } from \"slides-purryst\"
+  #codeblock("import { createSlidesPurryst } from \"slides-purryst\"
 
   createSlidesPurryst({
     transition: \"fade\",
-  })", lang: "typescript")
-  ]
+  })", lang: "typescript", class: "demo-cb2")
 
-  #step(from: "3")[
-    #raw("#import \"slides-purryst/lib.typ\": *
+  #anim("@child(.demo-cb2, 1, 2) | @child(.demo-cb2, 3, 4)")
+
+  #step(from: "5")[
+    #codeblock("#import \"slides-purryst/lib.typ\": *
   slide[
     = Hello
     World

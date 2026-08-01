@@ -11,6 +11,8 @@
 .sp-slide code { background: var(--sp-code-bg); padding: 0.15em 0.3em; border-radius: var(--sp-radius-sm); font-size: 0.75em; font-family: var(--sp-font-mono); }
 .sp-slide pre { margin-bottom: 0.75em; }
 .sp-slide pre code { display: block; padding: 1em 1.2em; background: var(--sp-code-block); color: var(--sp-code-text); border-radius: var(--sp-radius); overflow-x: auto; font-size: 0.75em; line-height: 1.5; }
+.sp-slide .cb { margin-bottom: 0.75em; padding: 0.8em 1.2em; background: var(--sp-code-block); color: var(--sp-code-text); border-radius: var(--sp-radius); overflow-x: auto; font-family: var(--sp-font-mono); font-size: 0.75em; line-height: 1.5; }
+.sp-slide .cb .cb-line { display: block; white-space: pre; min-height: 1lh; }
 .sp-slide blockquote { border-left: 4px solid var(--sp-accent); padding-left: 1em; margin: 1em 0; color: var(--sp-text-2); font-style: italic; }
 .sp-slide a { color: var(--sp-accent); text-decoration: underline; }
 .sp-slide img { max-width: 100%; height: auto; border-radius: var(--sp-radius); }

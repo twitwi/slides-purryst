@@ -10,6 +10,9 @@
 
 ## TODO v2 (2.0.0) (export and polish and plugins?)
 
+- [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?
+- [ ] can we class-tag in lilaq somewhat?
+- [ ] anim some @child with negative for disappear @child(-ul, 1), handle empty in range @child(ul,1,) @child(ul,,3) and also negative indexing etc (and maybe step?), maybe with a python syntax then @child(ul, 1:-1)... maybe start at 0 for this one? think...
 - [ ] maybe a cetz/gribouille example
 - [ ] 'g' when typing a number, show the corresponding slide as preview + also search for the number in the slide title
 - [ ] sp-dev .typ should allow specifying the generated path (or maybe default to ,,sp-generated/${inputpathhash}/) -> done but need to try 2 entry points
@@ -80,7 +83,7 @@ src/composables/resolveIncludes.ts:101 — s.querySelectorAll(ofInterest).forEac
 - [ ] overview could insert separators when breaking a section (go from h3 to h2, have .sp-overview-leave-h3) to allow css styling (break flow of overview)
 - [ ] consider history management (think about when to push)
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
-- [ ] (typst) integrate show raw.line into the typst theme
+- [x] (typst) integrate show raw.line into the typst theme — codeblock uses `it.lines` in a `show raw` rule, emitting `span.cb-line` children (whole-text highlight, no JS)
 - [ ] (typst) show rule to map block onto a div, with explicit attributes (of block) transformed in style in div
 - [ ] (typst) drag will not work with multifile input or even loop probably, or function that creates a drag, etc
 - [ ] (js) drag will also not work if including a file (already done most of the work but need to add a test and sp-include support)

@@ -11,6 +11,7 @@
 #import "toc.typ": toc
 #import "style.typ": style
 #import "component.typ": component
+#import "codeblock.typ": codeblock
 #import "theme.typ": slides-theme
 #import "source.typ": source
 #import "slide-source.typ": slide-source
