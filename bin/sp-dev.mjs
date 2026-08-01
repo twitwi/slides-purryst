@@ -250,7 +250,7 @@ await server.listen()
 console.log(`\n  SlidesPurryst dev server running at http://localhost:${port}`)
 console.log(`  Serving ${serverRoot}`)
 const openUrl = fileArg ? `http://localhost:${port}/${viteHtml}` : `http://localhost:${port}/`
-console.log(`  URL: ${openUrl}`)
+console.log(`  🚀 URL: ${openUrl}`)
 if (autoOpen) {
     const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
     import('child_process').then(({ spawn }) => {

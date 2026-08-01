@@ -181,7 +181,7 @@ server.listen(port, () => {
   console.log(`\n  SlidesPurryst dev server running at ${addr}`)
   console.log(`  Serving ${root}${specifiedFile ? '  (' + specifiedFile + ')' : ''}\n`)
   const openUrl = specifiedFile ? `${addr}/${specifiedFile}` : addr
-  console.log(`  URL: ${openUrl}`)
+  console.log(`  🚀 URL: ${openUrl}`)
   if (autoOpen) {
     const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
     import('child_process').then(({ spawn }) => {
