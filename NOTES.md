@@ -38,6 +38,7 @@
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 
+- [ ] have a way to specify a cascade of delays, simplify .da1 ^ 1s .da2 ^ 2s .da3 etc or even a delay children or something.
 - [ ] notes with click markers like slidev, maybe not the same syntax, maybe closer to sp-pause
 - [ ] insert images from some sites? or generators (sana?)? no, rather have an easy import from clipboard/url
 - [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
