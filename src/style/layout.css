@@ -8,6 +8,10 @@
   color: var(--sp-text);
 }
 
+.sp-slide {
+  background: var(--sp-bg);
+}
+
 .sp-viewport {
   flex: 1;
   position: relative;
@@ -43,7 +47,7 @@
   height: 100%;
   padding: var(--sp-8) var(--sp-12) var(--sp-12);
   overflow: hidden;
-  font-size: 3.75em;
+  font-size: calc(var(--sp-base-font-size) * var(--sp-slide-scale));
 }
 
 .sp-slide-footer {

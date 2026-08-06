@@ -1,7 +1,5 @@
-@import './style/theme.css';
 @import './style/reset.css';
 @import './style/layout.css';
-@import './style/typography.css';
 @import './style/navigation.css';
 @import './style/transitions.css';
 @import './style/anim.css';
@@ -10,3 +8,7 @@
 @import './style/go-prompt.css';
 @import './style/toc.css';
 @import './style/dev-pane.css';
+
+@import './style/common-variables.css';
+@import './style/typography.css';
+@import './style/themes.css';

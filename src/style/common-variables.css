@@ -12,6 +12,7 @@
   --sp-theme-secondary-hue: 55;
 
   /* ── Semantic colors (light) ── */
+  --sp-darkness: 0;
   --sp-bg:            lch(98 2 var(--sp-theme-hue));
   --sp-surface:       lch(100 1 var(--sp-theme-hue));
   --sp-surface-alt:   lch(97 2 var(--sp-theme-hue));
@@ -24,6 +25,15 @@
   --sp-accent-soft:   lch(95 20 var(--sp-theme-hue));
   --sp-accent-text:   lch(42 60 var(--sp-theme-hue));
   --sp-accent-2:      lch(58 75 var(--sp-theme-secondary-hue));
+
+  /* ── Headings (themeable) ── */
+  --sp-heading-1:     var(--sp-text);
+  --sp-heading-2:     var(--sp-text-2);
+  --sp-heading-3:     var(--sp-text);
+
+  /* ── Slide scale (for variants, e.g. variant-smaller), actual size is the product ── */
+  --sp-slide-scale: 1;
+  --sp-base-font-size: 3.75em;
 
   /* ── Gray scale (hue-tinted) ── */
   --sp-gray-50:  lch(98 2 var(--sp-theme-hue));
@@ -90,6 +100,7 @@
 /* ── Dark: OS preference (when no explicit data-dark-mode set) ── */
 @media (prefers-color-scheme: dark) {
   :root:not([data-dark-mode="light"]) {
+    --sp-darkness: 1;
     --sp-bg:            lch(13 8 var(--sp-theme-hue));
     --sp-surface:       lch(16 8 var(--sp-theme-hue));
     --sp-surface-alt:   lch(20 8 var(--sp-theme-hue));
@@ -127,6 +138,7 @@
 
 /* ── Dark: explicit data-dark-mode="dark" ── */
 :root[data-dark-mode="dark"] {
+  --sp-darkness: 1;
   --sp-bg:            lch(13 8 var(--sp-theme-hue));
   --sp-surface:       lch(16 8 var(--sp-theme-hue));
   --sp-surface-alt:   lch(20 8 var(--sp-theme-hue));
@@ -161,36 +173,3 @@
   --sp-code-text:  lch(88 4 var(--sp-theme-hue));
 }
 
-/* Theme Variants */
-
-/* ── Clean theme: pure white slides, vivid headings ── */
-:root.theme-clean {
-  --sp-bg:            #fff;
-  --sp-surface:       #fff;
-  --sp-shadow-sm: 0 1px 2px  lch(12 5 var(--sp-theme-hue) / 0.2);
-  --sp-shadow:    0 4px 12px lch(12 5 var(--sp-theme-hue) / 0.3);
-  --sp-shadow-lg: 0 8px 32px lch(12 5 var(--sp-theme-hue) / 0.4);
-}
-
-:root.theme-clean .sp-slide h1 { color: var(--sp-accent); }
-:root.theme-clean .sp-slide h2 { color: var(--sp-accent-2); }
-:root.theme-clean .sp-slide h3 { color: var(--sp-accent-text); }
-
-/* ── Clean theme dark mode: black bg, vivid headings ── */
-@media (prefers-color-scheme: dark) {
-  :root.theme-clean:not([data-dark-mode="light"]) {
-    --sp-bg:            #000;
-    --sp-surface:       #000;
-    --sp-shadow-sm: 0 1px 2px  lch(96 5 var(--sp-theme-hue) / 0.2);
-    --sp-shadow:    0 4px 12px lch(96 5 var(--sp-theme-hue) / 0.3);
-    --sp-shadow-lg: 0 8px 32px lch(96 5 var(--sp-theme-hue) / 0.4);
-  }
-}
-
-:root.theme-clean[data-dark-mode="dark"] {
-    --sp-bg:            #000;
-    --sp-surface:       #000;
-    --sp-shadow-sm: 0 1px 2px  lch(96 5 var(--sp-theme-hue) / 0.2);
-    --sp-shadow:    0 4px 12px lch(96 5 var(--sp-theme-hue) / 0.3);
-    --sp-shadow-lg: 0 8px 32px lch(96 5 var(--sp-theme-hue) / 0.4);
-}

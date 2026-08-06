@@ -1,6 +1,6 @@
-.sp-slide h1 { font-size: 1.444em; font-weight: 700; margin-bottom: 0.25em; line-height: 1.05; }
-.sp-slide h2 { font-size: 1.222em; font-weight: 700; margin-bottom: 0.3em; line-height: 1.05; color: var(--sp-text-2); }
-.sp-slide h3 { font-size: 1.111em; font-weight: 600; margin-bottom: 0.3em; line-height: 1.1; }
+.sp-slide h1 { font-size: 1.444em; font-weight: 700; margin-bottom: 0.25em; line-height: 1.05; color: var(--sp-heading-1); }
+.sp-slide h2 { font-size: 1.222em; font-weight: 700; margin-bottom: 0.3em; line-height: 1.05; color: var(--sp-heading-2); }
+.sp-slide h3 { font-size: 1.111em; font-weight: 600; margin-bottom: 0.3em; line-height: 1.1; color: var(--sp-heading-3); }
 .sp-slide p { line-height: 1.35; margin-bottom: 0.3em; }
 .sp-slide ul,
 .sp-slide ol { line-height: 1.3; padding-left: 1.1em; margin-bottom: 0.3em; }
