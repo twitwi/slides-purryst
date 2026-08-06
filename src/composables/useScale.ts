@@ -11,7 +11,7 @@ export function useScale(designWidth = 1920, designHeight = 1080) {
 
   const scale = computed(() => {
     const s = Math.min(vw.value / designWidth, vh.value / designHeight)
-    return Math.min(s, 1)
+    return Math.min(s, 10)
   })
 
   const transformStyle = computed(() => {
@@ -23,6 +23,7 @@ export function useScale(designWidth = 1920, designHeight = 1080) {
       transformOrigin: 'top left',
       width: designWidth + 'px',
       height: designHeight + 'px',
+      '--slide-transform-scale': `${scale.value}`,
     }
   })
 
