@@ -5,6 +5,8 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { handleEdit } from '../lib/edit-handler.mjs'
+import { startTypstDev, ensureTypstLink, wrapPage, extractBody } from '../lib/typst-dev.mjs'
+import { sseRegisterClient, sseBroadcast, getTypstErrors } from '../lib/sse.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pkgDir = path.resolve(__dirname, '..')
@@ -53,9 +55,8 @@ const agentsFile = path.join(pkgDir, 'AGENTS.md')
 const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
 
 if (linkTypst) {
-  const dest = path.join(root, 'slides-purryst')
   try {
-    fs.symlinkSync(typstLibSrc, dest)
+    const dest = ensureTypstLink(pkgDir, root)
     console.log(`Linked ${dest} → ${typstLibSrc}`)
   } catch (e) {
     console.error(`Failed to link typst library: ${e.message}`)
@@ -103,21 +104,13 @@ const MIME = {
   '.wasm': 'application/wasm',
 }
 
-const clients = []
-
-function sendSSE(data) {
-  clients.forEach(res => {
-    try { res.write(`event: update\ndata: ${data}\n\n`) } catch {}
-  })
-}
-
 const resolvedWatchDir = watchDir ? path.resolve(process.cwd(), watchDir) : root
 let watchTimer = null
 try {
   fs.watch(resolvedWatchDir, { recursive: true }, (event, filename) => {
     if (!filename || !filename.endsWith('.html')) return
     if (watchTimer) clearTimeout(watchTimer)
-    watchTimer = setTimeout(() => sendSSE(filename), 100)
+    watchTimer = setTimeout(() => sseBroadcast('update', filename), 100)
   })
 } catch {}
 
@@ -145,6 +138,28 @@ function resolveFilePath(urlPath) {
   return null
 }
 
+// --- Typst compilation (shared pipeline) ---
+let typstProcess = null
+if (specifiedFile && specifiedFile.endsWith('.typ')) {
+  const htmlRel = specifiedFile.replace(/\.typ$/, '.html')
+  const depth = htmlRel.split('/').length - 1
+  const jsPath = (depth ? '../'.repeat(depth) : './') + 'slides-purryst.bundle.js'
+  try {
+    const { stop } = startTypstDev({
+      pkgDir,
+      rootDir: root,
+      fileArg: specifiedFile,
+      jsPath,
+      useModule: false,
+      wrapOutput: (raw) => wrapPage(extractBody(raw), { title: 'SlidesPurryst', author: '', jsPath, useModule: false, designWidth: 1920, designHeight: 1080 }),
+    })
+    typstProcess = { kill: stop }
+  } catch (e) {
+    console.error(`\n${e.message}\n`)
+    process.exit(1)
+  }
+}
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://localhost:${port}`)
   const pathname = url.pathname
@@ -157,11 +172,9 @@ const server = http.createServer((req, res) => {
       'Access-Control-Allow-Origin': '*',
     })
     res.write('event: connected\ndata: \n\n')
-    clients.push(res)
-    req.on('close', () => {
-      const i = clients.indexOf(res)
-      if (i !== -1) clients.splice(i, 1)
-    })
+    sseRegisterClient(res)
+    const errs = getTypstErrors()
+    if (errs.length) res.write(`event: typst-error\ndata: ${JSON.stringify(errs)}\n\n`)
     return
   }
 
@@ -180,7 +193,8 @@ server.listen(port, () => {
   const addr = `http://localhost:${port}`
   console.log(`\n  SlidesPurryst dev server running at ${addr}`)
   console.log(`  Serving ${root}${specifiedFile ? '  (' + specifiedFile + ')' : ''}\n`)
-  const openUrl = specifiedFile ? `${addr}/${specifiedFile}` : addr
+  const servedFile = specifiedFile && specifiedFile.endsWith('.typ') ? specifiedFile.replace(/\.typ$/, '.html') : specifiedFile
+  const openUrl = servedFile ? `${addr}/${servedFile}` : addr
   console.log(`  🚀 URL: ${openUrl}`)
   if (autoOpen) {
     const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
@@ -189,3 +203,10 @@ server.listen(port, () => {
     })
   }
 })
+
+const cleanup = () => {
+  if (typstProcess) typstProcess.kill()
+  process.exit()
+}
+process.on('SIGINT', cleanup)
+process.on('SIGTERM', cleanup)

@@ -5,10 +5,13 @@
 ## TODO v1 (1.0.0) (typst simplest syntax)
 
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
-- [ ] test in sp-dev but outside of the demo folder
 - [ ] a purryst version that uses the bundle?
 
-## TODO v2 (2.0.0) (export and polish and plugins?)
+## TODO v2 (2.0.0) (export)
+
+- [ ] pdf-export
+
+## TODO v2 (3.0.0) (polish and plugins?)
 
 - [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?
 - [ ] can we class-tag in lilaq somewhat?
@@ -30,7 +33,6 @@
 - [ ] why are subparts etc shown as 0 Bytes in the dev tools?
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
-- [ ] pdf-export
 - [ ] add a toc in the overview somewhat
 - [ ] plugin should be able to contribute to a shared state (like source in demo) or a shared saved (localstorage) state, check that the is properly reactive intially (pb with source in sp-after, has undefined value for transform at first template render, should not need a "set timer")
 - [ ] (typst) ideally allow pause etc in cetz too...
@@ -42,6 +44,9 @@
 - [ ] notes with click markers like slidev, maybe not the same syntax, maybe closer to sp-pause
 - [ ] insert images from some sites? or generators (sana?)? no, rather have an easy import from clipboard/url
 - [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
+- [ ] chunklet/draggable demo: add some font-size varying things, like https://stackoverflow.com/questions/16056591/font-scaling-based-on-size-of-container could also have post-hoc controllable params in chunklets, maybe not too "componenty" so using data-param-size.1.100="..." (controlled by a slider or something) and used in the chuncklet style="font-size: calc(var(--param-size) * 1vw)" ... reimplementing components here? maybe directly work with components, orthogonal to chunklets: if a component has a v-conf="{size: [1, 100]}" then it gets a slider to control its value :size="42"... need to resurface up to typst also
+- [ ] have a configurable default, i.e. all <sp-drag> inherit a v-conf={x,y,w,h} etc
+- [ ] by the way, typst chunklets?
 
 ## TODO typst syntax
 

@@ -231,6 +231,7 @@ Classes applied at runtime:
 | `.my-class` | Show matching elements |
 | `-#my-id` | Hide matching elements |
 | `@children(sel)` | Expand each child of `sel` into one step per child |
+| `@child(sel, n[, b])` | Show child `n` (or range `a..b`) of `sel` in one step — alias for `+sel > :nth-child(n)` / `+sel > :nth-child(n+a):nth-child(-n+b)` |
 | `@add(cls, sel)` | Add class `cls` to elements matching `sel` |
 | `@remove(cls, sel)` | Remove class |
 | `@+class cls sel` | Add class (space-separated syntax) |

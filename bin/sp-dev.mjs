@@ -1,87 +1,12 @@
 #!/usr/bin/env node
 
 import { createServer, loadConfigFromFile, mergeConfig } from 'vite'
-import { existsSync, symlinkSync, watchFile, watch, readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync } from 'fs'
-import { resolve, dirname, basename, join } from 'path'
+import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { spawn, execSync } from 'child_process'
-import { formatHtml } from '../lib/format-html.mjs'
-import { preprocessTypst, quickStringHash } from '../lib/preprocess-typst.mjs'
-import { injectCetzClasses } from '../tools/inject-cetz-classes.mjs'
-import { setTypstErrors } from '../lib/sse.mjs'
-import { createTypstErrorParser } from '../lib/typst-errors.mjs'
+import { startTypstDev, wrapPage, extractBody } from '../lib/typst-dev.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkgDir = resolve(__dirname, '..')
-
-const PREPROCESS_DIR = ',,sp-preprocess'
-
-function extractBody(html) {
-  const m = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)
-  return m ? m[1].trim() : html
-}
-
-function wrapPage(content, { title, author, jsPath, useModule, designWidth, designHeight }) {
-  const designW = designWidth || 1920
-  const designH = designHeight || 1080
-  const scriptHtml = useModule
-    ? `<script type="module">import { createSlidesPurryst } from "${jsPath}";\nawait createSlidesPurryst()</script>`
-    : `<script src="${jsPath}"></script>\n<script>SlidesPurryst.createSlidesPurryst()</script>`
-  return `<!DOCTYPE html>
-<html lang="en" class="theme-clean">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<title>${title || 'Presentation'}</title>
-</head>
-<body>
-<script type="text/html" id="sp-content">
-${content}
-</script>
-<div id="sp-presentation" data-design-width="${designW}" data-design-height="${designH}" data-author="${author || ''}"></div>
-${scriptHtml}
-</body>
-</html>`
-}
-
-function ensureDir(dir) {
-  if (!existsSync(dir)) { mkdirSync(dir, { recursive: true }) }
-}
-
-function setupPreprocessDir(serverRoot, hash, relFile) {
-  const preDir = resolve(serverRoot, PREPROCESS_DIR + '/' + hash)
-  if (existsSync(preDir)) {
-    rmSync(preDir, { recursive: true, force: true })
-  }
-
-  const fileDir = dirname(relFile)
-  const preFileDir = resolve(preDir, fileDir)
-  ensureDir(preFileDir)
-
-  const srcDir = resolve(serverRoot, fileDir)
-  if (existsSync(srcDir)) {
-    for (const entry of readdirSync(srcDir)) {
-      if (entry === basename(relFile)) continue
-      if (entry.startsWith(',,')) continue
-      const srcPath = join(srcDir, entry)
-      const dstPath = join(preFileDir, entry)
-      try { symlinkSync(srcPath, dstPath) } catch {}
-    }
-  }
-
-  const preFilePath = resolve(preDir, relFile)
-  return { preDir, preFilePath }
-}
-
-function setupPreprocessSymlink(preDir, linkDir, linkName, linkTarget) {
-  const preLinkDir = resolve(preDir, linkDir)
-  ensureDir(preLinkDir)
-  const dstPath = join(preLinkDir, linkName)
-  if (!existsSync(dstPath)) {
-    try { symlinkSync(resolve(linkTarget), dstPath) } catch {}
-  }
-}
 
 let watchDir = '.'
 let rootDir = '.'
@@ -104,124 +29,23 @@ for (let i = 2; i < process.argv.length; i++) {
 
 let viteHtml = fileArg
 
-// --- Typst compilation ---
+// --- Typst compilation (shared pipeline) ---
 let typstProcess = null
 if (fileArg && fileArg.endsWith('.typ')) {
   viteHtml = fileArg.replace(/\.typ$/, '.html')
   const serverRoot = resolve(process.cwd(), rootDir)
-  const typFile = resolve(serverRoot, fileArg)
-  const inputFileHash = quickStringHash(typFile)
-  const base = basename(fileArg, '.typ')
-  const htmlRel = fileArg.replace(/\.typ$/, '.html')
-  const htmlFile = resolve(serverRoot, htmlRel)
-
-  const linkPath = join(dirname(typFile), 'slides-purryst')
-  const linkTarget = join(pkgDir, 'typst', 'slides-purryst')
-  if (!existsSync(linkPath)) {
-    try { symlinkSync(linkTarget, linkPath) } catch {}
-  }
-
-  // --- Preprocessor setup ---
-  const { preDir, preFilePath } = setupPreprocessDir(serverRoot, inputFileHash, fileArg)
-  setupPreprocessSymlink(preDir, dirname(fileArg), 'slides-purryst', linkTarget)
-
-  const tmpFile = resolve(preDir, `,,${inputFileHash}.html`)
-
-  const rawSource = readFileSync(typFile, 'utf-8')
-  const preprocessed = preprocessTypst(rawSource, fileArg)
-  writeFileSync(preFilePath, preprocessed, 'utf-8')
-
   const slidesPurrystPath = serverRoot === pkgDir ? '../src/index.ts' : 'slides-purryst'
+  const wrapOpts = { title: 'SlidesPurryst', author: '', jsPath: slidesPurrystPath, useModule: true, designWidth: 1920, designHeight: 1080 }
 
-  const typstArgs = [
-    'watch', '--no-serve',
-    '--root', serverRoot,
-    '--input', `slides-purryst-path=${slidesPurrystPath}`,
-    '--input', 'slides-purryst-module=true',
-    '--input', `slides-purryst-filepath=${typFile}`,
-    '--format', 'html', '--features', 'html',
-    preFilePath, tmpFile,
-  ]
-
-  const wrapOpts = {
-    title: 'SlidesPurryst',
-    author: '',
+  const { stop } = startTypstDev({
+    pkgDir,
+    rootDir: serverRoot,
+    fileArg,
     jsPath: slidesPurrystPath,
-    useModule: serverRoot === pkgDir,
-    designWidth: 1920,
-    designHeight: 1080,
-  }
-
-  const rewritePath = (loc) => loc.replace(`,,sp-preprocess/${inputFileHash}/`, '')
-
-  try {
-    const compileArgs = [
-      'compile',
-      '--root', serverRoot,
-      '--input', `slides-purryst-path=${slidesPurrystPath}`,
-      '--input', 'slides-purryst-module=true',
-      '--input', `slides-purryst-filepath=${typFile}`,
-      '--format', 'html', '--features', 'html',
-      preFilePath, tmpFile,
-    ]
-    const argStr = compileArgs.map(a => a.includes(' ') ? `"${a}"` : a).join(' ')
-    execSync(`typst ${argStr}`, { cwd: pkgDir, stdio: 'pipe', timeout: 60000 })
-    const raw = readFileSync(tmpFile, 'utf-8')
-    const body = extractBody(raw)
-    writeFileSync(htmlFile, wrapPage(injectCetzClasses(formatHtml(body)), wrapOpts), 'utf-8')
-    setTypstErrors([])
-    console.log('Initial typst compile done.')
-  } catch (e) {
-    const stderr = (e.stderr ?? '').toString()
-    const parser = createTypstErrorParser({ onErrors: setTypstErrors, rewritePath })
-    parser.push(stderr)
-    parser.end()
-    console.error('Initial typst compile failed, will retry via watch:', stderr.trim())
-    if (!existsSync(htmlFile)) {
-      writeFileSync(htmlFile, wrapPage('', wrapOpts), 'utf-8')
-    }
-  }
-
-  const typstErrorParser = createTypstErrorParser({ onErrors: setTypstErrors, rewritePath })
-
-  let lastMtime = 0
-  let busy = false
-  watchFile(tmpFile, { interval: 300 }, (cur) => {
-    if (busy) return
-    const mtime = cur.mtimeMs
-    if (mtime !== lastMtime) {
-      lastMtime = mtime
-      busy = true
-      try {
-        const raw = readFileSync(tmpFile, 'utf-8')
-        const body = extractBody(raw)
-        writeFileSync(htmlFile, wrapPage(injectCetzClasses(formatHtml(body)), wrapOpts), 'utf-8')
-        setTypstErrors([])
-      } finally { busy = false }
-    }
+    useModule: true,
+    wrapOutput: (raw) => wrapPage(extractBody(raw), wrapOpts),
   })
-
-  // Watch original .typ file for changes → re-preprocess
-  let ppTimer = null
-  watch(typFile, () => {
-    clearTimeout(ppTimer)
-    ppTimer = setTimeout(() => {
-      try {
-        const src = readFileSync(typFile, 'utf-8')
-        const pp = preprocessTypst(src, fileArg)
-        writeFileSync(preFilePath, pp, 'utf-8')
-      } catch (e) {
-        console.error('Preprocessing failed:', e.message)
-      }
-    }, 100)
-  })
-
-  typstProcess = spawn('typst', typstArgs, { stdio: ['ignore', 'inherit', 'pipe'], cwd: pkgDir })
-  typstProcess.stderr.on('data', (chunk) => {
-    process.stderr.write(chunk)
-    typstErrorParser.push(chunk.toString())
-  })
-
+  typstProcess = { kill: stop }
 }
 
 // --- Vite server ---
