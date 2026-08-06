@@ -14,7 +14,7 @@ export { useStorage, resetConfig } from './composables/useStorage'
 export type { SpStorageConfig } from './composables/useStorage'
 export { useSlideTree } from './composables/useSlideTree'
 export type { TocItem } from './composables/useSlideTree'
-export { parseChunklets, substituteParams, chunkPlacementMode } from './composables/useChunklets'
+export { parseChunklets, parseChunkletsFromText, substituteParams, chunkPlacementMode } from './composables/useChunklets'
 export type { PlacementMode } from './composables/useChunklets'
 
 export { default as SpPresentation } from './components/SpPresentation.vue'

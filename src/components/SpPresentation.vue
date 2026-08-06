@@ -861,9 +861,27 @@ function slideCoords(e: PointerEvent): { x: number; y: number } {
 
 function insertChunk(chunk: typeof spApi.selectedChunklet, params: Record<string, number | string>) {
   if (!chunk) return
-  const html = substituteParams(chunk.html, params)
   const idx = currentIndex.value
   const slide = slides.value[idx]
+  if (chunk.kind === 'typst') {
+    const src = substituteParams(chunk.html, params)
+    const placeholder = `<div class="sp-chunklet-placeholder">chunklet: ${chunk.name}</div>`
+    slides.value = slides.value.map((s, i) =>
+      i === idx ? { ...s, html: s.html + '\n' + placeholder } : s
+    )
+    if (rawSlideSources.value[idx]) {
+      rawSlideSources.value = rawSlideSources.value.map((src, i) =>
+        i === idx ? src + '\n' + placeholder : src
+      )
+    }
+    totalSteps.value = processSlideHtml(current.value.html).steps
+    contentVersion.value++
+    spApi.chunkletMode = false
+    spApi.selectedChunklet = null
+    saveChunkletToSource(src, slide.editableIndex, chunk, { file: slide.sourceFile, sourceLine: slide.sourceLine })
+    return
+  }
+  const html = substituteParams(chunk.html, params)
   const oldHtml = slide.html
   slides.value = slides.value.map((s, i) =>
     i === idx ? { ...s, html: oldHtml + '\n' + html } : s
@@ -893,8 +911,20 @@ function toggleChunkBar() {
   spApi.showChunkBar = !spApi.showChunkBar
 }
 
-function saveChunkletToSource(html: string, editableIndex: number) {
+function saveChunkletToSource(html: string | null, editableIndex: number, chunk?: typeof spApi.selectedChunklet, source?: { file?: string; sourceLine?: number }) {
   const slideEl = transitionWrapEl.value?.querySelector('.sp-slide-current') as HTMLElement | null
+  if (chunk?.kind === 'typst') {
+    const file = source?.file ?? null
+    const sourceLine = source?.sourceLine != null ? String(source.sourceLine) : null
+    if (file && sourceLine) {
+      fetch('/__sp_edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'insert-chunk', kind: 'typst', src: html, file, sourceLine, editableIndex }),
+      }).catch(() => {})
+    }
+    return
+  }
   const targetEl = transitionWrapEl.value?.querySelector('.sp-slide-current [data-source-file-push] + *') ?? slideEl as HTMLElement | null
   const file = (slideEl ? getSourceFileFromDOMLocation(targetEl as HTMLElement) : null)
   fetch('/__sp_edit', {

@@ -354,10 +354,25 @@
   ]
 ]
 
+// ============================================================
+// Chunklet definitions (bodies are Typst markup, captured raw)
+// ============================================================
+#chunklet("note", params: "x,y")[
+  #component("div", attrs: (style: "position:absolute; background:#fef9c3; color:#653416; border:3px solid #eab308; border-radius:6px; padding:0.4em 0.8em; font-size:0.8em;"), [Noteeee])
+]
+
+#chunklet("dbox", params: "x,y,w,h")[
+  #drag(at: "$x|$y|$w|$h|0")[
+    #component("div", attrs: (style: "position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:lch(90 40 var(--hue, 220)); border-radius:6px;"), [Drag me])
+  ]
+]
+
 #slide[
   == Chunklets
 
   Press #component("kbd", [C]) to toggle the chunklet toolbar, then click a chunklet and click or drag on the slide to insert it.
+
+  Chunklet bodies are Typst markup: the preprocessor captures them verbatim, and placing one writes the snippet back into the source.
 ]
 
 #slide[

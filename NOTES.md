@@ -46,7 +46,6 @@
 - [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
 - [ ] chunklet/draggable demo: add some font-size varying things, like https://stackoverflow.com/questions/16056591/font-scaling-based-on-size-of-container could also have post-hoc controllable params in chunklets, maybe not too "componenty" so using data-param-size.1.100="..." (controlled by a slider or something) and used in the chuncklet style="font-size: calc(var(--param-size) * 1vw)" ... reimplementing components here? maybe directly work with components, orthogonal to chunklets: if a component has a v-conf="{size: [1, 100]}" then it gets a slider to control its value :size="42"... need to resurface up to typst also
 - [ ] have a configurable default, i.e. all <sp-drag> inherit a v-conf={x,y,w,h} etc
-- [ ] by the way, typst chunklets?
 
 ## TODO typst syntax
 
@@ -54,6 +53,11 @@
 - [ ] same for #slide[...] #slide[...] vs ... SOMESEP --- or maybe ... #slide ...
 
 ## TOREVIEW
+
+- [ ] export: pnx decktape
+-             rm -rf ~/.cache/puppeteer/
+-             pnx puppeteer browsers install chrome
+-             pnx decktape http://localhost:3334/example/demo-slidespurryst.html ,,test.pdf
 
 - [ ] wrapping the sp-alternatives at="0" cycle in a div actually changes semantics!!!
 - [ ] should sp-step hide animation="scale"

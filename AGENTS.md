@@ -1,3 +1,15 @@
+
+- Do not git commit.
+- Analyze with care.
+- Reflect on what you propose.
+- Keep architecture clean.
+
+
+
+Below is the AGENTS.md for authoring slides.
+...... (CUTMARK) ......
+
+
 # SlidesPurryst
 
 SlidesPurryst is a Vue 3 presentation framework. Slides are authored in HTML-like markup inside a `<script>` tag. The framework handles scaling, stepping, animations, transitions, presenter mode, live reload, and export.
@@ -366,16 +378,19 @@ Open with `p` key or `?presenter=1` URL param. Shows current slide, next slide p
 
 ### 2.12 Chunklets
 
-Define reusable content blocks for on-the-fly insertion:
+Define reusable content blocks for on-the-fly insertion. Definitions live in a
+`<script type="text/html" id="sp-chunklets">` element (same convention as
+`#sp-content`); the raw body is parsed at runtime without HTML parsing, so the
+chunk bodies may contain any markup — including Typst snippets:
 
 ```html
-<template id="sp-chunklets">
+<script type="text/html" id="sp-chunklets">
   <sp-chunk name="box" params="x,y,w,h">
     <sp-drag at="$x|$y|$w|$h|0">
       <div style="background: var(--sp-accent-soft); padding: 1em;"></div>
     </sp-drag>
   </sp-chunk>
-</template>
+</script>
 ```
 
 - **`params=""`** — inserted immediately
@@ -383,6 +398,32 @@ Define reusable content blocks for on-the-fly insertion:
 - **`params="x,y,w,h"`** — drag to draw rectangle
 - `$x`, `$y`, `$w`, `$h` are substituted on placement
 - Toggle the bar with `c`, select a chunklet, then click/drag on the slide
+
+#### Typst chunklets
+
+In a `.typ` source, define chunklets with `#chunklet("name", params: "...")[...]`.
+The preprocessor captures the body verbatim and injects it as `src`, then
+`chunklet-defs()` (auto-appended by the preprocessor, or emitted by
+`slides-theme`) writes the `<sp-chunk>` markup into the `sp-chunklets` script
+with `data-kind="typst"`:
+
+```typst
+#chunklet("box", params: "x,y,w,h")[
+  #drag(at: "$x|$y|$w|$h|0")[
+    Drag me
+  ]
+]
+```
+
+Placing a Typst chunklet shows a placeholder on the slide and POSTs the
+substituted snippet (plus the slide's `data-source-line`) to `/__sp_edit`; the
+snippet is inserted into the matching `#slide(...)[...]` block in the source
+and the slide reappears after recompilation.
+
+The `sp-chunklets` script emitted by Typst is a raw-text element, so its
+`<sp-chunk>` markup must be one concatenated text child (`html.elem("script")`
+cannot contain element children). Chunklet bodies are excluded from `#source`
+line annotation during preprocessing.
 
 ### 2.13 Live Reload
 

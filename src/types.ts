@@ -33,6 +33,8 @@ export interface SlideData {
   notes?: string
   transitionDuration?: number
   fakeEnd?: boolean
+  sourceFile?: string
+  sourceLine?: number
 }
 
 export interface Navigation {
@@ -74,6 +76,7 @@ export interface ChunkDef {
   name: string
   params: string[]
   html: string
+  kind: 'html' | 'typst'
 }
 
 export type Transformer = (root: Element) => void

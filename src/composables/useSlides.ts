@@ -92,6 +92,13 @@ export function parseElementToSlides(root: ParentNode): SlideData[] {
         : undefined,
       noToc: el.hasAttribute('no-toc'),
       fakeEnd: el.hasAttribute('fake-end'),
+      sourceFile: el.getAttribute('data-source-file') || undefined,
+      sourceLine: (() => {
+        const v = el.getAttribute('data-source-line')
+        if (v == null) return undefined
+        const n = parseInt(v, 10)
+        return Number.isFinite(n) ? n : undefined
+      })(),
       notes,
     })
   })

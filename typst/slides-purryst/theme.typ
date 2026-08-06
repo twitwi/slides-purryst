@@ -1,3 +1,5 @@
+#import "chunklet.typ": chunklet-defs
+
 #let slides-theme(
   body,
   title: "Presentation",
@@ -38,6 +40,7 @@
           #html.elem("sp-before")[]
           #body
         ]
+        #chunklet-defs()
         #html.elem("div", attrs: (
           id: "sp-presentation",
           "data-design-width": str(design-width),

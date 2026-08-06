@@ -18,7 +18,7 @@ import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './co
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache } from './composables/includeCache'
 import { fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from './composables/useSteps'
 import { resolveTopIncludes } from './composables/resolveIncludes'
-import { parseChunklets } from './composables/useChunklets'
+import { parseChunkletsFromText } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
 import { addGlobalErrorMessage, clearGlobalErrorMessages } from './composables/globalErrorMessages.js'
@@ -82,9 +82,12 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     parseRawInto(contentRoot, raw)
   }
 
-  const chunkletsTemplate = document.getElementById('sp-chunklets') as HTMLTemplateElement | null
-  if (chunkletsTemplate?.content) {
-    spApi.chunkletDefs = parseChunklets(chunkletsTemplate.content)
+  const chunkletsEl = document.getElementById('sp-chunklets')
+  if (chunkletsEl?.tagName === 'SCRIPT') {
+    const text = (chunkletsEl as HTMLScriptElement).textContent || ''
+    if (text.trim()) {
+      spApi.chunkletDefs = parseChunkletsFromText(text)
+    }
   }
 
   if (!designWidth || !designHeight || !author || !seed) {
