@@ -68,7 +68,10 @@ if (linkTypst) {
 if (copyAgents) {
   const dest = path.join(root, 'AGENTS.md')
   try {
-    fs.copyFileSync(agentsFile, dest)
+    const content = fs.readFileSync(agentsFile, 'utf-8')
+    const cutIdx = content.indexOf('...... (CUTMARK) ......')
+    const copied = cutIdx === -1 ? content : content.slice(content.indexOf('\n', cutIdx) + 1)
+    fs.writeFileSync(dest, copied)
     console.log(`Copied AGENTS.md to ${dest}`)
   } catch (e) {
     console.error(`Failed to copy AGENTS.md: ${e.message}`)
