@@ -112,6 +112,7 @@ let watchTimer = null
 try {
   fs.watch(resolvedWatchDir, { recursive: true }, (event, filename) => {
     if (!filename || !filename.endsWith('.html')) return
+    if (filename.split('/').some(seg => seg.startsWith(',,'))) return
     if (watchTimer) clearTimeout(watchTimer)
     watchTimer = setTimeout(() => sseBroadcast('update', filename), 100)
   })

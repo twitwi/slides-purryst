@@ -7,9 +7,10 @@
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] a purryst version that uses the bundle?
 
-## TODO v2 (2.0.0) (export)
+## TODO v2 (2.0.0) (export and decent theme)
 
 - [ ] pdf-export
+- [ ] theme, h2 is calibri bold black centered w/h , h1 is, h3 is top center in the primary color
 
 ## TODO v2 (3.0.0) (polish and plugins?)
 
@@ -40,6 +41,7 @@
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 
+- [ ] unocss integration
 - [ ] have a way to specify a cascade of delays, simplify .da1 ^ 1s .da2 ^ 2s .da3 etc or even a delay children or something.
 - [ ] notes with click markers like slidev, maybe not the same syntax, maybe closer to sp-pause
 - [ ] insert images from some sites? or generators (sana?)? no, rather have an easy import from clipboard/url
