@@ -29,15 +29,15 @@ Theme authors can use the pattern used below, with:
 .is-smallerer { :root& .sp-slide:not(.nogt), .sp-slide& {
     --sp-scale: 0.65;
 }}
-.is-draft { :root& .sp-slide:not(.nogt), .sp-slide& {
-    font-family: 'Cedarville Cursive', handwriting !important;
-}}
 .is-sharp { :root& .sp-slide:not(.nogt), .sp-slide& {
     --sp-text: var(--sp-auto-black);
     --sp-bg: var(--sp-auto-white);
     h1 { color: var(--sp-text) !important; }
     h2 { color: var(--sp-accent-2) !important; }
     h3 { color: var(--sp-accent) !important; }
+}}
+.is-draft { :root& .sp-slide:not(.nogt), .sp-slide& {
+    font-family: 'Cedarville Cursive', handwriting !important;
 }}
 .is-paper { :root& .sp-slide:not(.nogt), .sp-slide& {
     background: url("data:image/svg+xml;utf8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 1920 1920%22%3E%3Cdefs%3E%3Cfilter id%3D%22noise%22 x%3D%220%25%22 y%3D%220%25%22 width%3D%22100%25%22 height%3D%22100%25%22%3E%3CfeTurbulence type%3D%22fractalNoise%22 baseFrequency%3D%220.98%22 numOctaves%3D%221%22 seed%3D%22191518%22 stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%222.2 0 0 0 -0.55  0 2.2 0 0 -0.55  0 0 2.2 0 -0.55  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%22-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%220 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.34 0 0%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Crect width%3D%221920%22 height%3D%221920%22 fill%3D%22%23ffffff%22%2F%3E%3Crect width%3D%221920%22 height%3D%221920%22 filter%3D%22url(%23noise)blur(1px)%22 opacity%3D%220.200%22%2F%3E%3C%2Fsvg%3E");
@@ -54,8 +54,13 @@ Theme authors can use the pattern used below, with:
 
 /* Themes */
 
+/* apply style outside .sp-slide */
+:root.theme-conference {
+    .sp-progress { bottom: 0; top: revert; }
+}
+/* apply style to slides */
 .theme-conference { :root& .sp-slide:not(.nogt), .sp-slide& {
-    font-family: 'Nunito', sans-serif;
+    --sp-font-sans: 'Nunito', sans-serif;
     --sp-base-font-size: 3em; /*2.35em */;
     --sp-bg: var(--sp-auto-white);
     /*
@@ -83,10 +88,11 @@ Theme authors can use the pattern used below, with:
         }
         &:not(:has(+ h4)), & + h4 { margin-bottom: 0.8em; }
     }
-    h2, h4, p {    outline: 1px solid blue;}
+    /*h2, h4, p {    outline: 1px solid blue;}*/
     h2 {
         font-size: 2em; /*1.65em for 3.75em*/
-        color: var(--sp-pure-fg);
+        color: var(--sp-auto-black);
+        text-align: center;
         background: hsl(0 0% calc(100% - 100% * var(--sp-darkness)) / 0.75);
         line-height: 1.25;
         --margin-factor: 1;
@@ -104,7 +110,7 @@ Theme authors can use the pattern used below, with:
     --h3-font-size: 1.55em; /*1.25em for 3.75em*/
     h3 {
         font-size: var(--h3-font-size);
-        --sp-heading-3: var(--sp-accent);
+        color: var(--sp-accent);
         text-align: center;
         font-weight: 700;
         --margin-factor: 1;
@@ -119,22 +125,12 @@ Theme authors can use the pattern used below, with:
         &:not(:has(+ h4)), & + h4 { margin-bottom: calc(0.3em / var(--margin-factor)); }
     }
 }}
-:root.theme-conference .sp-progress { bottom: 0; top: revert; }
 
 .theme-draft { :root& .sp-slide:not(.nogt), .sp-slide& {
     /* Paper Sketchbook Aesthetics */
     font-family: 'Cabin Sketch', display;
     --sp-bg: lch(95 3 200); /* Creamy off-white paper tone */
     --sp-text: lch(10 15 0); /* Charcoal/Graphite color */
-    /*
-    --sp-surface: lch(98 2 200);
-
-    --sp-text-2: lch(10 15 0);
-    --sp-text-3: lch(10 15 0);
-    --sp-accent: lch(50 10 220);
-    --sp-accent-2: lch(40 5 220);
-    --sp-accent-text: lch(8 5 220);
-    */
 
     /* Paper Texture Simulation */
     background: url("data:image/svg+xml;utf8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 1920 1920%22%3E%3Cdefs%3E%3Cfilter id%3D%22noise%22 x%3D%220%25%22 y%3D%220%25%22 width%3D%22100%25%22 height%3D%22100%25%22%3E%3CfeTurbulence type%3D%22fractalNoise%22 baseFrequency%3D%220.98%22 numOctaves%3D%221%22 seed%3D%22191518%22 stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%222.2 0 0 0 -0.55  0 2.2 0 0 -0.55  0 0 2.2 0 -0.55  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%22-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%220 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.34 0 0%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Crect width%3D%221920%22 height%3D%221920%22 fill%3D%22%23ffffff%22%2F%3E%3Crect width%3D%221920%22 height%3D%221920%22 filter%3D%22url(%23noise)blur(1px)%22 opacity%3D%220.200%22%2F%3E%3C%2Fsvg%3E");
@@ -157,12 +153,6 @@ Theme authors can use the pattern used below, with:
 .theme-funky { :root& .sp-slide:not(.nogt), .sp-slide& {
   --sp-theme-hue: 310;
   --sp-theme-secondary-hue: 165;
-  --sp-radius-sm:   8px;
-  --sp-radius:      16px;
-  --sp-radius-lg:   24px;
-  --sp-shadow-sm: 0 1px 3px  lch(38 45 310 / 0.3);
-  --sp-shadow:    0 6px 20px lch(38 45 310 / 0.35);
-  --sp-shadow-lg: 0 12px 48px lch(38 45 310 / 0.4);
   --sp-bg: lch(98 4 310);
   --sp-heading-1: var(--sp-accent);
   --sp-heading-2: var(--sp-accent-2);
@@ -172,14 +162,8 @@ Theme authors can use the pattern used below, with:
                     radial-gradient(120% 90% at 85% 100%, lch(5 30 var(--sp-theme-secondary-hue)  / 0.8), transparent 60%);
   [data-dark-mode="dark"] & {
     --sp-bg: lch(13 12 310);
-    /*
-    --sp-surface: lch(16 12 310);
-    */
-    --sp-shadow-sm: 0 1px 3px  lch(10 20 310 / 0.5);
-    --sp-shadow:    0 6px 20px lch(10 20 310 / 0.5);
-    --sp-shadow-lg: 0 12px 48px lch(10 20 310 / 0.55);
-      background-image: radial-gradient(120% 90% at 15% 0%, lch(98 30 var(--sp-theme-hue) / 0.9), transparent 60%),
-                    radial-gradient(120% 90% at 85% 100%, lch(97 30 var(--sp-theme-secondary-hue) / 0.8), transparent 60%);
+    background-image: radial-gradient(120% 90% at 15% 0%, lch(98 30 var(--sp-theme-hue) / 0.9), transparent 60%),
+                      radial-gradient(120% 90% at 85% 100%, lch(97 30 var(--sp-theme-secondary-hue) / 0.8), transparent 60%);
   }
 }}
 

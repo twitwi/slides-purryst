@@ -1,5 +1,6 @@
 .sp-slide {
     font-size: var(--sp-bem);
+    font-family: var(--sp-font-sans);
     h1 { font-size: 1.444em; font-weight: 700; margin-bottom: 0.25em; line-height: 1.05; }
     h2 { font-size: 1.222em; font-weight: 700; margin-bottom: 0.3em;  line-height: 1.05; }
     h3 { font-size: 1.111em; font-weight: 600; margin-bottom: 0.3em;  line-height: 1.1; }
@@ -10,14 +11,14 @@
     ol ol { font-size: 0.72em; line-height: 1.2; padding-left: 1.3em; margin-top: 0.15em; margin-bottom: 0; }
     li { margin-bottom: 0.25em; }
     li p { line-height: inherit; margin-bottom: 0; }
-    code { background: var(--sp-code-bg); padding: 0.15em 0.3em; border-radius: var(--sp-radius-sm); font-size: 0.75em; font-family: var(--sp-font-mono); }
+    code { background: var(--sp-code-bg); padding: 0.15em 0.3em; border-radius: 0.25em; font-size: 0.75em; font-family: var(--sp-font-mono); }
     pre { margin-bottom: 0.75em; }
-    pre code { display: block; padding: 1em 1.2em; background: var(--sp-code-block); color: var(--sp-code-text); border-radius: var(--sp-radius); overflow-x: auto; font-size: 0.75em; line-height: 1.5; }
-    .cb { margin-bottom: 0.75em; padding: 0.8em 1.2em; background: var(--sp-code-block); color: var(--sp-code-text); border-radius: var(--sp-radius); overflow-x: auto; font-family: var(--sp-font-mono); font-size: 0.75em; line-height: 1.5; }
+    pre code { display: block; padding: 1em 1.2em; background: var(--sp-code-block); color: var(--sp-code-text); border-radius: 0.25em; overflow-x: auto; font-size: 0.75em; line-height: 1.5; }
+    .cb { margin-bottom: 0.75em; padding: 0.8em 1.2em; background: var(--sp-code-block); color: var(--sp-code-text); border-radius: 0.25em; overflow-x: auto; font-family: var(--sp-font-mono); font-size: 0.75em; line-height: 1.5; }
     .cb .cb-line { display: block; white-space: pre; min-height: 1lh; }
     blockquote { border-left: 4px solid var(--sp-accent); padding-left: 1em; margin: 1em 0; color: var(--sp-text-2); font-style: italic; }
     a { color: var(--sp-accent); text-decoration: underline; }
-    img { max-width: 100%; height: auto; border-radius: var(--sp-radius); }
+    img { max-width: 100%; height: auto; border-radius: 0.1em; }
     table { width: 100%; border-collapse: collapse; margin: 1em 0; }
     th,
     td { padding: 0.5em 1em; border: var(--sp-px) solid var(--sp-border); text-align: left; }

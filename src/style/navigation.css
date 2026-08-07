@@ -10,7 +10,7 @@
   background: var(--sp-bg-2);
   backdrop-filter: blur(8px);
   padding: var(--sp-2) var(--sp-4) var(--sp-1);
-  border-radius: var(--sp-radius-full);
+  border-radius: 1000vmax;
   box-shadow: var(--sp-shadow);
   z-index: 100;
   opacity: 0.3;
@@ -144,7 +144,7 @@
   right: 0;
   background: var(--sp-bg-2);
   backdrop-filter: blur(8px);
-  border-radius: var(--sp-radius-lg);
+  border-radius: 1em;
   box-shadow: var(--sp-shadow-lg);
   padding: var(--sp-1);
   min-width: 160px;
@@ -158,7 +158,7 @@
   width: 100%;
   padding: var(--sp-2) var(--sp-3);
   border: none;
-  border-radius: var(--sp-radius);
+  border-radius: 1em;
   background: transparent;
   color: var(--sp-text-2);
   font-size: var(--sp-text-sm);
@@ -196,23 +196,21 @@
   display: flex;
   gap: var(--sp-1);
   padding: var(--sp-1) var(--sp-2);
-}
+  &:hover { background: inherit; }
+  .sp-nav-more-browse-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-1_5);
+    border: none;
+    background: transparent;
+    color: var(--sp-text-2);
+    cursor: pointer;
+    transition: background var(--sp-fast);
 
-.sp-nav-more-browse-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--sp-1_5);
-  border: none;
-  border-radius: var(--sp-radius-sm);
-  background: transparent;
-  color: var(--sp-text-2);
-  cursor: pointer;
-  transition: background var(--sp-fast);
+    &:hover {
+      background: var(--sp-gray-200);
+    }
+  }
 }
-
-.sp-nav-more-browse-btn:hover {
-  background: var(--sp-gray-200);
-}
-

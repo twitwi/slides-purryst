@@ -136,6 +136,7 @@
                     <path d="M4 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                   </svg>
                 </button>
+                |
                 <button class="sp-nav-more-browse-btn" title="End of next slide (Z)" @click="goToNextEnd()">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M6 13l5-5-5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>

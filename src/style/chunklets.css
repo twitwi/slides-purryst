@@ -7,6 +7,7 @@
   border-top: 1px solid var(--sp-border);
   border-end-end-radius: 0.5em;
   background: rgba(from var(--sp-text) r g b / 0.5);
+  box-shadow: var(--sp-shadow-lg-gray);
   align-items: center;
   flex-shrink: 0;
   position: relative;
@@ -18,14 +19,13 @@
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.25em;
   border: 1px solid var(--sp-border);
   background: var(--sp-bg-2);
   color: var(--sp-text-2);
   cursor: pointer;
   white-space: nowrap;
   font-size: 13px;
-  font-family: var(--sp-font-sans);
   transition: all var(--sp-fast);
   flex-shrink: 0;
   font-weight: bold;

@@ -18,7 +18,7 @@
 .sp-toc li {
   cursor: pointer;
   padding: var(--sp-1_5) var(--sp-2);
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.25em;
   transition: background var(--sp-fast);
 }
 .sp-toc li:hover {

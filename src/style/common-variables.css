@@ -10,9 +10,11 @@
   --sp-theme-hue: 25;
   --sp-theme-secondary-hue: 55;
   --sp-scale: 1; /* controlled by is-small etc */
+  --sp-shadow-scale: 1; /* for box-shadows opacity */
   --sp-base-font-size: 64px;
+  --sp-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --sp-font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
 
-  
   /* −−− Maybe interesting to override −−− */
   /* Gray reference */
   --sp-gray-500: lch(67 5 var(--sp-theme-hue));
@@ -28,7 +30,8 @@
   
   /* −−− Useful design variables −−− */
   .sp-slide {
-    --sp-bem: calc(var(--sp-base-font-size) * var(--sp-scale)); /* in px (wrt design size), base font size, kind of rem but may be overridden per slide. */
+    --sp-bem: calc(var(--sp-base-font-size) * var(--sp-scale));
+    /* in px (wrt design size), base font size, kind of rem but may be overridden per slide. */
   }
   --sp-darkness: 0;
   --sp-lightness: 1;
@@ -60,46 +63,39 @@
   --sp-accent-2-light: color-mix(in srgb, var(--sp-accent-2), var(--sp-auto-white) 70%);
 
   /* −−− Main variations −−− */
-  --sp-text-2: lch(from var(--sp-text) calc(l + 30 * var(--sp-lightness-dir)) calc(c - 5) h);
-  --sp-text-3: lch(from var(--sp-text) calc(l + 45 * var(--sp-lightness-dir)) calc(c - 10) h);
+  --sp-text-2: color-mix(in srgb, var(--sp-text), var(--sp-auto-white) 30%);
+  --sp-text-3: color-mix(in srgb, var(--sp-text), var(--sp-auto-white) 45%);
   --sp-bg-2: color-mix(in srgb, var(--sp-bg), var(--sp-auto-white) 80%);
   --sp-bg-3: color-mix(in srgb, var(--sp-bg), var(--sp-auto-black) 10%);
 
-  /* NEW */
-  --asp-border: lch();
+  /* −−− Borders −−− */
+  --sp-border: color-mix(in srgb, var(--sp-accent) 7%, var(--sp-gray-800) 80%, var(--sp-auto-black));
+  --sp-border-2: color-mix(in srgb, var(--sp-accent) 7%, var(--sp-gray-700) 70%, var(--sp-auto-black));
+
+
+  /* −−− Shadows −−− */
+  --sp-shadow-sm: 0 0px 10px lch(from var(--sp-auto-black) l c h / calc(0.10 * var(--sp-shadow-scale)));
+  --sp-shadow:    0 0px 20px lch(from var(--sp-auto-black) l c h / calc(0.15 * var(--sp-shadow-scale)));
+  --sp-shadow-lg: 0 0px 40px lch(from var(--sp-auto-black) l c h / calc(0.20 * var(--sp-shadow-scale)));
+  --sp-shadow-lg-gray: 0 0px 40px lch(from var(--sp-gray-500) l c h / calc(0.70 * var(--sp-shadow-scale)));
+
+  /* −−− Code −−− */
+  --sp-code-bg:    var(--sp-gray-100);
+  --sp-code-block: var(--sp-gray-900);
+  --sp-code-text:  var(--sp-gray-200);
+
+
+
+  /* −−− UI Transitions −−− */
+  --sp-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --sp-fast:   0.12s var(--sp-ease);
+  --sp-normal: 0.2s  var(--sp-ease);
+  --sp-slow:   0.3s  var(--sp-ease);
 
 
 
 
-
-
-
-
-  /* −−− Headings (themeable) −−− */
-  --sp-heading-1:     var(--sp-text);
-  --sp-heading-2:     var(--sp-text-2);
-  --sp-heading-3:     var(--sp-text);
-
-  /* −−− Slide scale (for variants, e.g. variant-smaller), actual size is the product −−− */
-
-  --sp-slide-scale: 1;
-  /*--sp-base-font-size: 3.75em;*/
-
-  /* −−− Gray scale (hue-tinted) −−− */
-  /*
-  --sp-gray-50:  lch(98 2 var(--sp-theme-hue));
-  --sp-gray-100: lch(96 3 var(--sp-theme-hue));
-  --sp-gray-200: lch(92 4 var(--sp-theme-hue));
-  --sp-gray-300: lch(84 5 var(--sp-theme-hue));
-  --sp-gray-400: lch(68 6 var(--sp-theme-hue));
-  --sp-gray-500: lch(55 6 var(--sp-theme-hue));
-  --sp-gray-600: lch(42 8 var(--sp-theme-hue));
-  --sp-gray-700: lch(32 10 var(--sp-theme-hue));
-  --sp-gray-800: lch(22 10 var(--sp-theme-hue));
-  --sp-gray-900: lch(15 8 var(--sp-theme-hue));
-  --sp-gray-950: lch(10 6 var(--sp-theme-hue));
-  */
-
+  /* UI shortcuts, consider removal */
   /* −−− Spacing (4-px base) −−− */
   --sp-0:   0;
   --sp-px:  1px;
@@ -116,8 +112,6 @@
   --sp-12:  3rem;
 
   /* −−− Typography −−− */
-  --sp-font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --sp-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
   --sp-text-xs:   0.75rem;
   --sp-text-sm:   0.875rem;
@@ -126,65 +120,4 @@
   --sp-text-xl:   1.25rem;
   --sp-text-2xl:  1.5rem;
 
-  /* −−− Border radius −−− */
-  --sp-radius-sm:   4px;
-  --sp-radius:      8px;
-  --sp-radius-lg:   12px;
-  --sp-radius-full: 9999px;
-
-  /* −−− Shadows −−− */
-  --sp-shadow-sm: 0 1px 2px lch(0 0 0 / 0.05);
-  --sp-shadow:    0 4px 12px lch(0 0 0 / 0.10);
-  --sp-shadow-lg: 0 8px 32px lch(0 0 0 / 0.15);
-
-  /* −−− Transitions −−− */
-  --sp-ease:      cubic-bezier(0.4, 0, 0.2, 1);
-  --sp-fast:      0.12s var(--sp-ease);
-  --sp-normal:    0.2s  var(--sp-ease);
-  --sp-slow:      0.3s  var(--sp-ease);
-
-  /* −−− Code −−− */
-  --sp-code-bg:     lch(96 3 var(--sp-theme-hue));
-  --sp-code-block:  lch(16 6 var(--sp-theme-hue));
-  --sp-code-text:   lch(90 4 var(--sp-theme-hue));
 }
-
-/* −−− Dark mode −−− */
-/*
-:root[data-dark-mode="dark"] {
-  --sp-darkness: 1;
-  --sp-bg:            lch(13 8 var(--sp-theme-hue));
-  --sp-surface:       lch(16 8 var(--sp-theme-hue));
-  --sp-surface-2:   lch(20 8 var(--sp-theme-hue));
-  --sp-text:          lch(92 5 var(--sp-theme-hue));
-  --sp-text-2:        lch(70 8 var(--sp-theme-hue));
-  --sp-text-3:        lch(55 6 var(--sp-theme-hue));
-  --sp-border:        lch(25 6 var(--sp-theme-hue));
-  --sp-border-2:      lch(32 8 var(--sp-theme-hue));
-  --sp-accent:        lch(62 85 var(--sp-theme-hue));
-  --sp-accent-soft:   lch(18 20 var(--sp-theme-hue));
-  --sp-accent-text:   lch(75 60 var(--sp-theme-hue));
-  --sp-accent-2:      lch(65 75 var(--sp-theme-secondary-hue));
-
-  --sp-gray-50:  lch(96 3 var(--sp-theme-hue));
-  --sp-gray-100: lch(92 4 var(--sp-theme-hue));
-  --sp-gray-200: lch(84 5 var(--sp-theme-hue));
-  --sp-gray-300: lch(72 5 var(--sp-theme-hue));
-  --sp-gray-400: lch(58 5 var(--sp-theme-hue));
-  --sp-gray-500: lch(48 5 var(--sp-theme-hue));
-  --sp-gray-600: lch(38 6 var(--sp-theme-hue));
-  --sp-gray-700: lch(30 7 var(--sp-theme-hue));
-  --sp-gray-800: lch(22 7 var(--sp-theme-hue));
-  --sp-gray-900: lch(16 6 var(--sp-theme-hue));
-  --sp-gray-950: lch(12 5 var(--sp-theme-hue));
-
-  --sp-shadow-sm: 0 1px 2px lch(0 0 0 / 0.25);
-  --sp-shadow:    0 4px 12px lch(0 0 0 / 0.35);
-  --sp-shadow-lg: 0 8px 32px lch(0 0 0 / 0.45);
-
-  --sp-code-bg:    lch(20 6 var(--sp-theme-hue));
-  --sp-code-block: lch(8 4 var(--sp-theme-hue));
-  --sp-code-text:  lch(88 4 var(--sp-theme-hue));
-}
-
-*/

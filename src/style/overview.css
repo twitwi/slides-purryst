@@ -18,11 +18,12 @@
 
 .sp-overview-thumb {
   border: 2px solid var(--sp-border);
-  border-radius: var(--sp-radius);
+  border-radius: 0.5em;
   overflow: hidden;
   cursor: pointer;
   position: relative;
   transition: border-color var(--sp-fast), box-shadow var(--sp-fast), transform var(--sp-normal);
+  box-shadow: var(--sp-shadow);
 }
 
 .sp-overview-thumb:hover {

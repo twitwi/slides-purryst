@@ -83,7 +83,7 @@ body {
 }
 .sp-loading-text {
   font-size: var(--sp-text-lg);
-  font-family: var(--sp-font-sans);
+  font-family: var(--sp-font-mono);
 }
 
 .sp-global-error-overlay {

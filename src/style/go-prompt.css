@@ -10,7 +10,7 @@
 .sp-go-prompt-box {
   background: var(--sp-bg-2);
   border: var(--sp-px) solid var(--sp-border);
-  border-radius: var(--sp-radius);
+  border-radius: 0.5em;
   box-shadow: var(--sp-shadow-lg);
   padding: var(--sp-3);
   width: 520px;
@@ -22,9 +22,9 @@
 
 .sp-go-prompt-input {
   border: var(--sp-px) solid var(--sp-border-2);
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.5em;
   padding: var(--sp-2) var(--sp-3);
-  font-size: var(--sp-text-base);
+  font-size: var(--bem);
   width: 100%;
   outline: none;
   box-sizing: border-box;
@@ -49,20 +49,19 @@
   display: flex;
   gap: var(--sp-3);
   padding: var(--sp-2);
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.5em;
   cursor: pointer;
   transition: background var(--sp-fast);
 }
 
-.sp-go-result:hover,
 .sp-go-result.focused {
-  background: var(--sp-bg-2-alt);
+  background: var(--sp-bg-3);
 }
 
 .sp-go-result-thumb {
   width: 210px;
   height: 118px;
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.5em;
   overflow: hidden;
   flex-shrink: 0;
   position: relative;

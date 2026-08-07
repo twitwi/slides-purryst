@@ -13,7 +13,6 @@
 .sp-presenter-main {
   display: flex;
   flex-direction: column;
-  padding: var(--sp-4);
   gap: 0;
   overflow: hidden;
 }
@@ -21,7 +20,7 @@
 .sp-presenter-divider {
   width: 6px;
   cursor: col-resize;
-  background: var(--sp-border-2);
+  background: var(--sp-border);
   transition: background var(--sp-fast);
 }
 .sp-presenter-divider:hover {
@@ -30,10 +29,8 @@
 
 .sp-presenter-preview {
   flex: 1;
-  border-radius: var(--sp-radius);
   overflow: hidden;
   position: relative;
-  background: var(--sp-bg-2);
   color: var(--sp-text);
 }
 
@@ -44,23 +41,32 @@
 }
 
 .sp-presenter-vdivider {
-  height: 6px;
+  height: 7px;
   cursor: row-resize;
   background: var(--sp-border-2);
   transition: background var(--sp-fast);
   flex-shrink: 0;
+  border-radius: 100vmax;
+  margin: 0 7px -4px;
+  z-index: 10;
 }
 .sp-presenter-vdivider:hover {
   background: var(--sp-accent);
 }
 
 .sp-presenter-next {
+  padding-top: .5em;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
+  background: var(--sp-bg-3);
 }
 
 .sp-presenter-next-label {
+  position: absolute;
+  top: 0.5em;
+  left: 0;
   font-size: var(--sp-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -69,7 +75,7 @@
 
 .sp-presenter-next-slide-wrap {
   flex: 1;
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.25em;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -77,7 +83,7 @@
 
 .sp-presenter-sidebar {
   padding: var(--sp-4);
-  background: var(--sp-bg-2-alt);
+  background: var(--sp-bg-3);
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
@@ -103,8 +109,8 @@
 
 .sp-presenter-progress {
   height: 4px;
-  background: var(--sp-border);
-  border-radius: 2px;
+  background: var(--sp-bg-2);
+  border-radius: 100vmax;
   overflow: hidden;
 }
 
@@ -112,7 +118,7 @@
   height: 100%;
   background: var(--sp-accent);
   transition: width var(--sp-slow);
-  border-radius: 2px;
+  border-radius: 100vmax;
 }
 
 .sp-presenter-notes {
@@ -133,7 +139,7 @@
   padding: var(--sp-3);
   background: var(--sp-bg-2);
   border: var(--sp-px) solid var(--sp-border);
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.25em;
   min-height: 80px;
   color: var(--sp-text-2);
   font-size: var(--sp-text-sm);
@@ -148,7 +154,7 @@
   padding: var(--sp-2);
   background: var(--sp-bg-2);
   border: var(--sp-px) solid var(--sp-border);
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.25em;
   letter-spacing: 0.05em;
   user-select: none;
   position: relative;
@@ -157,7 +163,7 @@
   justify-content: space-between;
   gap: var(--sp-2);
 }
-.sp-presenter-clock:hover { background: var(--sp-bg-2-alt); }
+.sp-presenter-clock:hover { background: var(--sp-bg); }
 
 .sp-presenter-clock-time { transition: opacity var(--sp-fast); }
 .sp-presenter-clock-feedback {
@@ -183,7 +189,7 @@
   color: var(--sp-text-3);
   font-size: 0.9rem;
   padding: 2px 6px;
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.25em;
   cursor: pointer;
   line-height: 1;
   transition: color var(--sp-fast), border-color var(--sp-fast);
@@ -198,9 +204,10 @@
   padding: var(--sp-2);
   background: #dc2626;
   color: #fff;
-  border-radius: var(--sp-radius-sm);
+  border-radius: 0.25em;
   font-weight: 700;
   font-size: 0.9rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  cursor:no-drop;
 }
