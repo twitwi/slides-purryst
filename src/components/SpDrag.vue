@@ -553,6 +553,6 @@ function handleOutsideClick(e: MouseEvent) {
 }
 
 .sp-drag-save-btn:hover {
-  background: var(--sp-accent-text);
+  background: var(--sp-accent-dark);
 }
 </style>

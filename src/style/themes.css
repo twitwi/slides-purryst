@@ -21,13 +21,13 @@ Theme authors can use the pattern used below, with:
 
 /* Variants, meant to be combined with most themes */
 .is-small { :root& .sp-slide:not(.nogt), .sp-slide& {
-    --sp-slide-scale: 0.85 !important;
+    --sp-scale: 0.85 !important;
 }}
 .is-smaller { :root& .sp-slide:not(.nogt), .sp-slide& {
-    --sp-slide-scale: 0.75 !important;
+    --sp-scale: 0.75 !important;
 }}
 .is-smallerer { :root& .sp-slide:not(.nogt), .sp-slide& {
-    --sp-slide-scale: 0.65 !important;
+    --sp-scale: 0.65 !important;
 }}
 .is-draft { :root& .sp-slide:not(.nogt), .sp-slide& {
     font-family: 'Cedarville Cursive', handwriting !important;

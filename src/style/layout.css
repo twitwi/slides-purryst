@@ -47,7 +47,6 @@
   height: 100%;
   padding: var(--sp-8) var(--sp-12) var(--sp-12);
   overflow: hidden;
-  font-size: calc(var(--sp-base-font-size) * var(--sp-slide-scale));
 }
 
 .sp-slide-footer {
@@ -56,7 +55,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--sp-8);
-  font-size: var(--sp-text-xs);
+  font-size: calc(0.35 * var(--sp-bem));
   color: var(--sp-text-3);
   border-top: var(--sp-px) solid var(--sp-border);
 }

@@ -1,41 +1,90 @@
 /* ================================================================
    SLIDES-PURRYST THEME
-   Minimal, LCH-based design tokens.
+   Minimal, LCH-based design.
    Change --sp-theme-hue / --sp-theme-secondary-hue to re-skin.
-   Dark mode: use data-dark-mode="dark" / "light" on <html>,
-   leave unset to follow OS preference.
+   Dark mode: use data-dark-mode="dark" / "light" on <html>, ignores os preferences.
    ================================================================ */
 
 :root {
-  /* ── Hues ── */
+  /* −−− Typically parametrizable −−− */
   --sp-theme-hue: 25;
   --sp-theme-secondary-hue: 55;
+  --sp-scale: 1; /* controlled by is-small etc */
+  --sp-base-font-size: 64px;
 
-  /* ── Semantic colors (light) ── */
+  
+  /* −−− Maybe interesting to override −−− */
+  /* Gray reference */
+  --sp-gray-500: lch(67 5 var(--sp-theme-hue));
+  /* Accent colors (should work for both light and dark */
+  --sp-accent:   lch(55 80 var(--sp-theme-hue));
+  --sp-accent-2: lch(55 75 var(--sp-theme-secondary-hue));
+  --sp-text:     lch(5 25 var(--sp-theme-hue));
+  --sp-bg:       lch(98 5 var(--sp-theme-hue));
+  &[data-dark-mode="dark"] {
+    --sp-text:   lch(98 20 var(--sp-theme-hue));
+    --sp-bg:     lch(10 5 var(--sp-theme-hue));
+  }
+  
+  /* −−− Useful design variables −−− */
+  --sp-bem: calc(var(--sp-base-font-size) * var(--sp-scale)); /* in px (wrt design size), base font size, kind of rem but may be overridden per slide. */
   --sp-darkness: 0;
-  --sp-bg:            lch(98 2 var(--sp-theme-hue));
-  --sp-surface:       lch(100 1 var(--sp-theme-hue));
-  --sp-surface-alt:   lch(97 2 var(--sp-theme-hue));
-  --sp-text:          lch(18 30 var(--sp-theme-hue));
-  --sp-text-2:        lch(40 18 var(--sp-theme-hue));
-  --sp-text-3:        lch(55 10 var(--sp-theme-hue));
-  --sp-border:        lch(90 4 var(--sp-theme-hue));
-  --sp-border-2:      lch(82 6 var(--sp-theme-hue));
-  --sp-accent:        lch(55 80 var(--sp-theme-hue));
-  --sp-accent-soft:   lch(95 20 var(--sp-theme-hue));
-  --sp-accent-text:   lch(42 60 var(--sp-theme-hue));
-  --sp-accent-2:      lch(58 75 var(--sp-theme-secondary-hue));
+  --sp-lightness: 1;
+  &[data-dark-mode="dark"] {
+    --sp-darkness: 1;
+    --sp-lightness: 0;
+  }
+  --sp-auto-white: hsl(0 0% calc(100% * var(--sp-lightness)));
+  --sp-auto-black: hsl(0 0% calc(100% * var(--sp-darkness)));
+  --sp-lightness-dir: calc(var(--sp-lightness) - var(--sp-darkness)); /* -1 or +1 */
 
-  /* ── Headings (themeable) ── */
+  /* −−− Hue-tinted grays */
+  --sp-gray-400: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-white) 20%);
+  --sp-gray-300: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-white) 40%);
+  --sp-gray-200: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-white) 60%);
+  --sp-gray-100: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-white) 80%);
+  --sp-gray-50:  color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-white) 90%);
+  --sp-gray-600: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-black) 20%);
+  --sp-gray-700: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-black) 40%);
+  --sp-gray-800: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-black) 60%);
+  --sp-gray-900: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-black) 80%);
+  --sp-gray-950: color-mix(in srgb, var(--sp-gray-500), var(--sp-auto-black) 90%);
+
+  /* −−− Accent variations −−− */
+  --sp-accent-mid:     color-mix(in oklch shorter hue, var(--sp-accent) 60%, var(--sp-accent-2));
+  --sp-accent-dark:    color-mix(in srgb, var(--sp-accent), var(--sp-auto-black) 20%);
+  --sp-accent-light:   color-mix(in srgb, var(--sp-accent), var(--sp-auto-white) 70%);
+  --sp-accent-2-dark:  color-mix(in srgb, var(--sp-accent-2), var(--sp-auto-black) 20%);
+  --sp-accent-2-light: color-mix(in srgb, var(--sp-accent-2), var(--sp-auto-white) 70%);
+
+  /* −−− Main variations −−− */
+  --sp-text-2: lch(from var(--sp-text) calc(l + 30 * var(--sp-lightness-dir)) calc(c - 5) h);
+  --sp-text-3: lch(from var(--sp-text) calc(l + 45 * var(--sp-lightness-dir)) calc(c - 10) h);
+  --sp-bg-2: color-mix(in srgb, var(--sp-bg), var(--sp-auto-white) 80%);
+  --sp-bg-3: color-mix(in srgb, var(--sp-bg), var(--sp-auto-black) 10%);
+
+  /* NEW */
+  --asp-border: lch();
+
+
+
+
+
+
+
+
+  /* −−− Headings (themeable) −−− */
   --sp-heading-1:     var(--sp-text);
   --sp-heading-2:     var(--sp-text-2);
   --sp-heading-3:     var(--sp-text);
 
-  /* ── Slide scale (for variants, e.g. variant-smaller), actual size is the product ── */
-  --sp-slide-scale: 1;
-  --sp-base-font-size: 3.75em;
+  /* −−− Slide scale (for variants, e.g. variant-smaller), actual size is the product −−− */
 
-  /* ── Gray scale (hue-tinted) ── */
+  --sp-slide-scale: 1;
+  /*--sp-base-font-size: 3.75em;*/
+
+  /* −−− Gray scale (hue-tinted) −−− */
+  /*
   --sp-gray-50:  lch(98 2 var(--sp-theme-hue));
   --sp-gray-100: lch(96 3 var(--sp-theme-hue));
   --sp-gray-200: lch(92 4 var(--sp-theme-hue));
@@ -47,8 +96,9 @@
   --sp-gray-800: lch(22 10 var(--sp-theme-hue));
   --sp-gray-900: lch(15 8 var(--sp-theme-hue));
   --sp-gray-950: lch(10 6 var(--sp-theme-hue));
+  */
 
-  /* ── Spacing (4-px base) ── */
+  /* −−− Spacing (4-px base) −−− */
   --sp-0:   0;
   --sp-px:  1px;
   --sp-0_5: 0.125rem;
@@ -63,7 +113,7 @@
   --sp-10:  2.5rem;
   --sp-12:  3rem;
 
-  /* ── Typography ── */
+  /* −−− Typography −−− */
   --sp-font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
   --sp-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
@@ -74,74 +124,36 @@
   --sp-text-xl:   1.25rem;
   --sp-text-2xl:  1.5rem;
 
-  /* ── Border radius ── */
+  /* −−− Border radius −−− */
   --sp-radius-sm:   4px;
   --sp-radius:      8px;
   --sp-radius-lg:   12px;
   --sp-radius-full: 9999px;
 
-  /* ── Shadows ── */
+  /* −−− Shadows −−− */
   --sp-shadow-sm: 0 1px 2px lch(0 0 0 / 0.05);
   --sp-shadow:    0 4px 12px lch(0 0 0 / 0.10);
   --sp-shadow-lg: 0 8px 32px lch(0 0 0 / 0.15);
 
-  /* ── Transitions ── */
+  /* −−− Transitions −−− */
   --sp-ease:      cubic-bezier(0.4, 0, 0.2, 1);
   --sp-fast:      0.12s var(--sp-ease);
   --sp-normal:    0.2s  var(--sp-ease);
   --sp-slow:      0.3s  var(--sp-ease);
 
-  /* ── Code ── */
+  /* −−− Code −−− */
   --sp-code-bg:     lch(96 3 var(--sp-theme-hue));
   --sp-code-block:  lch(16 6 var(--sp-theme-hue));
   --sp-code-text:   lch(90 4 var(--sp-theme-hue));
 }
 
-/* ── Dark: OS preference (when no explicit data-dark-mode set) ── */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-dark-mode="light"]) {
-    --sp-darkness: 1;
-    --sp-bg:            lch(13 8 var(--sp-theme-hue));
-    --sp-surface:       lch(16 8 var(--sp-theme-hue));
-    --sp-surface-alt:   lch(20 8 var(--sp-theme-hue));
-    --sp-text:          lch(92 5 var(--sp-theme-hue));
-    --sp-text-2:        lch(70 8 var(--sp-theme-hue));
-    --sp-text-3:        lch(55 6 var(--sp-theme-hue));
-    --sp-border:        lch(25 6 var(--sp-theme-hue));
-    --sp-border-2:      lch(32 8 var(--sp-theme-hue));
-    --sp-accent:        lch(62 85 var(--sp-theme-hue));
-    --sp-accent-soft:   lch(18 20 var(--sp-theme-hue));
-    --sp-accent-text:   lch(75 60 var(--sp-theme-hue));
-    --sp-accent-2:      lch(65 75 var(--sp-theme-secondary-hue));
-
-    --sp-gray-50:  lch(96 3 var(--sp-theme-hue));
-    --sp-gray-100: lch(92 4 var(--sp-theme-hue));
-    --sp-gray-200: lch(84 5 var(--sp-theme-hue));
-    --sp-gray-300: lch(72 5 var(--sp-theme-hue));
-    --sp-gray-400: lch(58 5 var(--sp-theme-hue));
-    --sp-gray-500: lch(48 5 var(--sp-theme-hue));
-    --sp-gray-600: lch(38 6 var(--sp-theme-hue));
-    --sp-gray-700: lch(30 7 var(--sp-theme-hue));
-    --sp-gray-800: lch(22 7 var(--sp-theme-hue));
-    --sp-gray-900: lch(16 6 var(--sp-theme-hue));
-    --sp-gray-950: lch(12 5 var(--sp-theme-hue));
-
-    --sp-shadow-sm: 0 1px 2px lch(0 0 0 / 0.25);
-    --sp-shadow:    0 4px 12px lch(0 0 0 / 0.35);
-    --sp-shadow-lg: 0 8px 32px lch(0 0 0 / 0.45);
-
-    --sp-code-bg:    lch(20 6 var(--sp-theme-hue));
-    --sp-code-block: lch(8 4 var(--sp-theme-hue));
-    --sp-code-text:  lch(88 4 var(--sp-theme-hue));
-  }
-}
-
-/* ── Dark: explicit data-dark-mode="dark" ── */
+/* −−− Dark mode −−− */
+/*
 :root[data-dark-mode="dark"] {
   --sp-darkness: 1;
   --sp-bg:            lch(13 8 var(--sp-theme-hue));
   --sp-surface:       lch(16 8 var(--sp-theme-hue));
-  --sp-surface-alt:   lch(20 8 var(--sp-theme-hue));
+  --sp-surface-2:   lch(20 8 var(--sp-theme-hue));
   --sp-text:          lch(92 5 var(--sp-theme-hue));
   --sp-text-2:        lch(70 8 var(--sp-theme-hue));
   --sp-text-3:        lch(55 6 var(--sp-theme-hue));
@@ -173,3 +185,4 @@
   --sp-code-text:  lch(88 4 var(--sp-theme-hue));
 }
 
+*/
