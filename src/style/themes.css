@@ -11,23 +11,28 @@ Theme authors can use the pattern used below, with:
 - the "theme-" convention for themes
 */
 
+@import url(/example/nunito.css);
 /*@import url(https://fonts.bunny.net/css?family=roboto-flex:400);*/
 @import url(https://fonts.bunny.net/css?family=cedarville-cursive:400);
-@import url(/example/nunito.css);
+@import url(https://fonts.bunny.net/css?family=cabin-sketch:400,700);
+
+
+
 
 /* Variants, meant to be combined with most themes */
 .is-small { :root& .sp-slide:not(.nogt), .sp-slide& {
-    --sp-slide-scale: 0.85;
+    --sp-slide-scale: 0.85 !important;
 }}
 .is-smaller { :root& .sp-slide:not(.nogt), .sp-slide& {
-    --sp-slide-scale: 0.75;
+    --sp-slide-scale: 0.75 !important;
 }}
 .is-smallerer { :root& .sp-slide:not(.nogt), .sp-slide& {
-    --sp-slide-scale: 0.65;
+    --sp-slide-scale: 0.65 !important;
 }}
 .is-draft { :root& .sp-slide:not(.nogt), .sp-slide& {
     font-family: 'Cedarville Cursive', handwriting !important;
 }}
+
 
 
 
@@ -43,23 +48,13 @@ Theme authors can use the pattern used below, with:
     --sp-text-2: var(var(--sp-pure-fg));
     --sp-text-3: var(var(--sp-pure-fg));
     outline: calc(50vmax / var(--slide-transform-scale)) solid var(--sp-bg); /* ensure the sp-presentation background is hidden. */
-    /*padding-top: 0;*/
-    h2 {
-        font-size: 2em; /*1.65em for 3.75em*/
-        position: absolute;
-        inset: 0;
-        align-self: center;
-        text-align: center;
-        margin: 0 50px;
-        color: var(--sp-pure-fg);
-        background: hsl(0 0% calc(100% - 100% * var(--sp-darkness)) / 0.75);
-        line-height: 1.25;
+    &:has(h1,h2) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
-    h3 {
-        font-size: 1.55em; /*1.25em for 3.75em*/
-        --sp-heading-3: var(--sp-accent);
-        text-align: center;
-        font-weight: 700;
+    h1 {
+        font-size: 1.8em;
         &:has(+ h4) {
             margin-bottom: 0em;
             + h4 {
@@ -67,10 +62,69 @@ Theme authors can use the pattern used below, with:
                 color: var(--sp-text);
             }
         }
-        &:not(:has(+ h4)), & + h4 { margin-bottom: 0.6em; }
+        &:not(:has(+ h4)), & + h4 { margin-bottom: 0.8em; }
+    }
+    h2, h4, p {    outline: 1px solid blue;}
+    h2 {
+        font-size: 2em; /*1.65em for 3.75em*/
+        color: var(--sp-pure-fg);
+        background: hsl(0 0% calc(100% - 100% * var(--sp-darkness)) / 0.75);
+        line-height: 1.25;
+        --margin-factor: 1;
+        &:has(+ h4) {
+            margin-bottom: -.1em;
+            + h4 {
+                --margin-factor: 0.5;
+                text-align: center;
+                opacity: 0.8;
+                color: var(--sp-text);
+            }
+        }
+        &:not(:has(+ h4)), & + h4 { margin-bottom: calc(0.3em / var(--margin-factor)); }
+    }
+    --h3-font-size: 1.55em; /*1.25em for 3.75em*/
+    h3 {
+        font-size: var(--h3-font-size);
+        --sp-heading-3: var(--sp-accent);
+        text-align: center;
+        font-weight: 700;
+        --margin-factor: 1;
+        &:has(+ h4) {
+            margin-bottom: 0em;
+            + h4 {
+                --margin-factor: 0.65;
+                opacity: 0.8;
+                color: var(--sp-text);
+            }
+        }
+        &:not(:has(+ h4)), & + h4 { margin-bottom: calc(0.3em / var(--margin-factor)); }
     }
 }}
 :root.theme-conference .sp-progress { bottom: 0; top: revert; }
+
+.theme-draft { :root& .sp-slide:not(.nogt), .sp-slide& {
+    /* Paper Sketchbook Aesthetics */
+    font-family: 'Cabin Sketch', display;
+    --sp-bg: lch(95 3 200); /* Creamy off-white paper tone */
+    --sp-surface: lch(98 2 200); /* Slightly lighter for content blocks */
+    --sp-text: lch(10 15 0); /* Charcoal/Graphite color */
+    --sp-text-2: lch(10 15 0);
+    --sp-text-3: lch(10 15 0);
+    --sp-accent: lch(50 10 220); /* Muted ink blue */
+    --sp-accent-2: lch(40 5 220);
+    --sp-accent-text: lch(8 5 220);
+
+    /* Paper Texture Simulation */
+    background: url("data:image/svg+xml;utf8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 1920 1920%22%3E%3Cdefs%3E%3Cfilter id%3D%22noise%22 x%3D%220%25%22 y%3D%220%25%22 width%3D%22100%25%22 height%3D%22100%25%22%3E%3CfeTurbulence type%3D%22fractalNoise%22 baseFrequency%3D%220.98%22 numOctaves%3D%221%22 seed%3D%22191518%22 stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%222.2 0 0 0 -0.55  0 2.2 0 0 -0.55  0 0 2.2 0 -0.55  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%22-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%220 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.34 0 0%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Crect width%3D%221920%22 height%3D%221920%22 fill%3D%22%23ffffff%22%2F%3E%3Crect width%3D%221920%22 height%3D%221920%22 filter%3D%22url(%23noise)blur(1px)%22 opacity%3D%220.200%22%2F%3E%3C%2Fsvg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
+    [data-dark-mode="dark"] & {
+        background: url("data:image/svg+xml;utf8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 1920 1920%22%3E%3Cdefs%3E%3Cfilter id%3D%22noise%22 x%3D%220%25%22 y%3D%220%25%22 width%3D%22100%25%22 height%3D%22100%25%22%3E%3CfeTurbulence type%3D%22fractalNoise%22 baseFrequency%3D%220.98%22 numOctaves%3D%221%22 seed%3D%22191518%22 stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%222.2 0 0 0 -0.55  0 2.2 0 0 -0.55  0 0 2.2 0 -0.55  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%22-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%220 1 0 0 0  0 1 0 0 0  0 0 1 0 0  0.33 0.33 0.34 0 0%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Crect width%3D%221920%22 height%3D%221920%22 fill%3D%22%23000000%22%2F%3E%3Crect width%3D%221920%22 height%3D%221920%22 filter%3D%22url(%23noise)blur(1px)%22 opacity%3D%220.350%22%2F%3E%3C%2Fsvg%3E");
+    }
+    & > * > *:not(h1,h2,h3,h4) {
+        font-family: 'Cedarville Cursive', handwriting !important;
+    }
+}}
 
 .theme-clean { :root& .sp-slide:not(.nogt), .sp-slide& {
     --sp-bg:      hsl(0 0% calc(100% - 100% * var(--sp-darkness)));
@@ -110,4 +164,7 @@ Theme authors can use the pattern used below, with:
                     radial-gradient(120% 90% at 85% 100%, lch(97 30 var(--sp-theme-secondary-hue) / 0.8), transparent 60%);
   }
 }}
+
+
+
 
