@@ -22,12 +22,12 @@
   transition: background var(--sp-fast);
 }
 .sp-toc li:hover {
-  background: var(--sp-surface-alt);
+  background: var(--sp-bg-3);
 }
 .sp-toc-active {
   font-weight: 700;
   color: var(--sp-accent);
-  background: var(--sp-accent-soft);
+  background: var(--sp-accent-light);
 }
 .sp-toc li.sp-toc-h1 {
   padding-left: 0;

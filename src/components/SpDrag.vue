@@ -494,7 +494,7 @@ function handleOutsideClick(e: MouseEvent) {
   position: absolute;
   width: 30px;
   height: 30px;
-  background: var(--sp-surface);
+  background: var(--sp-bg-2);
   border: 3px solid var(--sp-accent);
   border-radius: 3px;
   pointer-events: auto;
@@ -527,7 +527,7 @@ function handleOutsideClick(e: MouseEvent) {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--sp-surface);
+  background: var(--sp-bg-2);
   border: 3px solid var(--sp-accent);
   cursor: grab;
   pointer-events: auto;
@@ -542,7 +542,7 @@ function handleOutsideClick(e: MouseEvent) {
   padding: 6px 18px;
   font-size: 13px;
   background: var(--sp-accent);
-  color: var(--sp-surface);
+  color: var(--sp-bg-2);
   border: none;
   border-radius: 4px;
   cursor: pointer;

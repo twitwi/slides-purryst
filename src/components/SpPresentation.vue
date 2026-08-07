@@ -122,7 +122,7 @@
               <button class="sp-nav-more-item" @click="showOverview = !showOverview; showMoreMenu = false">
                 <span class="sp-nav-more-icon">⊞</span> Overview
               </button>
-              <button class="sp-nav-more-item" :class="{ active: spApi.showChunkBar }" @click="toggleChunkBar(); showMoreMenu = false">
+              <button class="sp-nav-more-item" :class="{ active: spApi.showChunkletsBar }" @click="toggleChunkBar(); showMoreMenu = false">
                 <span class="sp-nav-more-icon">▤</span> Chunks
               </button>
               <div class="sp-nav-more-divider"></div>
@@ -165,17 +165,18 @@
         </div>
       </nav>
 
-      <div v-if="spApi.showChunkBar && spApi.chunkletDefs.length" class="sp-chunk-bar">
+      <div v-if="spApi.showChunkletsBar && spApi.chunkletDefs.length" class="sp-chunklets-bar">
         <button
           v-for="chunk in spApi.chunkletDefs"
           :key="chunk.name"
-          class="sp-chunk-bar-btn"
+          class="sp-chunklets-bar-btn"
           :class="{ active: spApi.selectedChunklet === chunk }"
           @click="selectChunk(chunk)"
         >
           {{ chunk.name }}
-          <span class="sp-chunk-bar-badge">{{ chunkPlacementMode(chunk) }}</span>
+          <span class="sp-chunklets-bar-badge">{{ chunkPlacementMode(chunk) }}</span>
         </button>
+        <button class="sp-chunklets-bar-btn" @click="spApi.showChunkletsBar = !spApi.showChunkletsBar">×</button>
       </div>
 
       <div class="sp-progress">
@@ -908,7 +909,7 @@ function selectChunk(chunk: ChunkDef) {
 }
 
 function toggleChunkBar() {
-  spApi.showChunkBar = !spApi.showChunkBar
+  spApi.showChunkletsBar = !spApi.showChunkletsBar
 }
 
 function saveChunkletToSource(html: string | null, editableIndex: number, chunk?: typeof spApi.selectedChunklet, source?: { file?: string; sourceLine?: number }) {

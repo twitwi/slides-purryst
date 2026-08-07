@@ -7,7 +7,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0;
-  background: var(--sp-surface);
+  background: var(--sp-bg-2);
   backdrop-filter: blur(8px);
   padding: var(--sp-2) var(--sp-4) var(--sp-1);
   border-radius: var(--sp-radius-full);
@@ -45,8 +45,8 @@
 }
 
 .sp-nav-btn:hover { background: var(--sp-gray-200); }
-.sp-nav-btn.active { background: var(--sp-accent-soft); color: var(--sp-accent); }
-.sp-nav-btn.locked { background: var(--sp-accent-soft); color: var(--sp-accent); }
+.sp-nav-btn.active { background: var(--sp-accent-light); color: var(--sp-accent); }
+.sp-nav-btn.locked { background: var(--sp-accent-light); color: var(--sp-accent); }
 .sp-nav-btn:disabled { opacity: 0.3; cursor: default; }
 
 .sp-nav-pills {
@@ -76,7 +76,7 @@
 
 .sp-nav-pill.active {
   background: var(--sp-accent);
-  box-shadow: 0 0 0 2px var(--sp-surface), 0 0 0 3.5px var(--sp-text);
+  box-shadow: 0 0 0 2px var(--sp-bg-2), 0 0 0 3.5px var(--sp-text);
 }
 
 .sp-nav-pill-ellipsis {
@@ -142,7 +142,7 @@
   position: absolute;
   bottom: calc(100% + var(--sp-2));
   right: 0;
-  background: var(--sp-surface);
+  background: var(--sp-bg-2);
   backdrop-filter: blur(8px);
   border-radius: var(--sp-radius-lg);
   box-shadow: var(--sp-shadow-lg);
@@ -216,59 +216,3 @@
   background: var(--sp-gray-200);
 }
 
-.sp-chunk-bar {
-  display: flex;
-  gap: 8px;
-  padding: 8px 16px;
-  overflow-x: auto;
-  border-top: 1px solid var(--sp-border);
-  background: var(--sp-surface);
-  align-items: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 2;
-}
-
-.sp-chunk-bar-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: var(--sp-radius-sm);
-  border: 1px solid var(--sp-border);
-  background: var(--sp-surface);
-  color: var(--sp-text-2);
-  cursor: pointer;
-  white-space: nowrap;
-  font-size: 13px;
-  font-family: var(--sp-font-sans);
-  transition: all var(--sp-fast);
-  flex-shrink: 0;
-}
-
-.sp-chunk-bar-btn:hover {
-  border-color: var(--sp-accent);
-  background: var(--sp-accent-soft);
-  color: var(--sp-text);
-}
-
-.sp-chunk-bar-btn.active {
-  border-color: var(--sp-accent);
-  background: var(--sp-accent);
-  color: var(--sp-surface);
-}
-
-.sp-chunk-bar-badge {
-  font-size: 10px;
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: var(--sp-accent-soft);
-  color: var(--sp-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.sp-chunk-bar-btn.active .sp-chunk-bar-badge {
-  background: rgba(0,0,0,0.2);
-  color: var(--sp-surface);
-}

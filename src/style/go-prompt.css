@@ -8,7 +8,7 @@
 }
 
 .sp-go-prompt-box {
-  background: var(--sp-surface);
+  background: var(--sp-bg-2);
   border: var(--sp-px) solid var(--sp-border);
   border-radius: var(--sp-radius);
   box-shadow: var(--sp-shadow-lg);
@@ -35,7 +35,7 @@
 
 .sp-go-prompt-input:focus {
   border-color: var(--sp-accent);
-  box-shadow: 0 0 0 2px var(--sp-accent-soft);
+  box-shadow: 0 0 0 2px var(--sp-accent-light);
 }
 
 .sp-go-results {
@@ -56,7 +56,7 @@
 
 .sp-go-result:hover,
 .sp-go-result.focused {
-  background: var(--sp-surface-alt);
+  background: var(--sp-bg-2-alt);
 }
 
 .sp-go-result-thumb {

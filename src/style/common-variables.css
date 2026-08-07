@@ -27,7 +27,9 @@
   }
   
   /* −−− Useful design variables −−− */
-  --sp-bem: calc(var(--sp-base-font-size) * var(--sp-scale)); /* in px (wrt design size), base font size, kind of rem but may be overridden per slide. */
+  .sp-slide {
+    --sp-bem: calc(var(--sp-base-font-size) * var(--sp-scale)); /* in px (wrt design size), base font size, kind of rem but may be overridden per slide. */
+  }
   --sp-darkness: 0;
   --sp-lightness: 1;
   &[data-dark-mode="dark"] {

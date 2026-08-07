@@ -1,0 +1,55 @@
+.sp-chunklets-bar {
+  display: flex;
+  width: fit-content;
+  gap: 8px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  border-top: 1px solid var(--sp-border);
+  border-end-end-radius: 0.5em;
+  background: rgba(from var(--sp-text) r g b / 0.5);
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.sp-chunklets-bar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--sp-radius-sm);
+  border: 1px solid var(--sp-border);
+  background: var(--sp-bg-2);
+  color: var(--sp-text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 13px;
+  font-family: var(--sp-font-sans);
+  transition: all var(--sp-fast);
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.sp-chunklets-bar-btn:hover {
+  border-color: var(--sp-accent);
+  background: var(--sp-accent-light);
+  color: var(--sp-text);
+}
+
+.sp-chunklets-bar-btn.active {
+  border-color: var(--sp-accent);
+  background: var(--sp-accent);
+  color: var(--sp-bg-2);
+}
+
+.sp-chunklets-bar-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--sp-bg);
+  color: var(--sp-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+

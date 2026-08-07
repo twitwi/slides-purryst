@@ -14,6 +14,8 @@
 
 ## TODO v2 (3.0.0) (polish and plugins?)
 
+- [ ] consider propagating the global theme / classes (param of create?) to all sp-slides that don't have "no-gt" (attribute instead of class?)
+- [ ] footer should probably be in all slides, maybe <sp-inside (like before and after), simpler for styling, and for export too
 - [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?
 - [ ] can we class-tag in lilaq somewhat?
 - [ ] anim some @child with negative for disappear @child(-ul, 1), handle empty in range @child(ul,1,) @child(ul,,3) and also negative indexing etc (and maybe step?), maybe with a python syntax then @child(ul, 1:-1)... maybe start at 0 for this one? think...

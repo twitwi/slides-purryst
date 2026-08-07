@@ -2,9 +2,9 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: var(--sp-surface);
+  background: var(--sp-bg-2);
   overflow-y: auto;
-  padding: var(--sp-8);
+  padding: 1em;
 }
 
 .sp-overview-grid {
