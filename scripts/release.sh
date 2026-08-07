@@ -4,21 +4,24 @@ set -euo pipefail
 # --- Parse args ---
 no_latest=false
 only_latest=false
+only_test=false
 version=""
 
 for arg in "$@"; do
   case "$arg" in
     --no-latest) no_latest=true ;;
     --only-latest) only_latest=true ;;
+    --only-test) only_test=true ;;
     -*) echo "Unknown option: $arg"; exit 1 ;;
     *) version="$arg" ;;
   esac
 done
 
 if [ -z "$version" ] && [ "$only_latest" = false ]; then
-  echo "usage: release.sh [--no-latest|--only-latest] v0.1.0"
+  echo "usage: release.sh [--no-latest|--only-latest|--only-test] v0.1.0"
   exit 1
 fi
+
 
 # --only-latest and --no-latest are mutually exclusive
 if [ "$only_latest" = true ] && [ "$no_latest" = true ]; then
@@ -33,7 +36,7 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 # --- Version tag must match package.json ---
-if [ "$only_latest" = false ]; then
+if [ "$only_latest" = false ] && [ "$only_test" = false ]; then
   pkg_ver="v$(node -p "require('./package.json').version")"
   if [ "$version" != "$pkg_ver" ]; then
     echo "Error: tag '$version' doesn't match package.json version '$pkg_ver'"
@@ -49,7 +52,10 @@ msg="${version:-main@$(git rev-parse --short HEAD)}"
 git add -f dist/
 git commit -m "$msg"
 
-if [ "$only_latest" = true ]; then
+if [ "$only_test" = true ]; then
+  git tag -f test
+  git push origin test --force
+elif [ "$only_latest" = true ]; then
   git tag -f latest
   git push origin latest --force
 elif [ "$no_latest" = true ]; then

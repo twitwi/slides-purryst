@@ -132,6 +132,8 @@ pnpm slides-purryst --port=8080 my-talk.html   # custom port and file
 pnpm slides-purryst --watch ./slides --root .  # watch only a subdirectory, serve from root (so as /slides/... here)
 pnpm slides-purryst --copy-bundle              # copy bundle to cwd and exit
 pnpm slides-purryst --copy-agents              # copy agents.md to cwd and exit
+pnpm slides-purryst --copy-fonts               # copy fonts and associated css to cwd and exit
+pnpm slides-purryst --copy-fonts --copy-bundle --copy-agents
 ```
 
 `--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
@@ -178,6 +180,8 @@ Update the version in `package.json`, commit, clean your tree, then run:
 
 ```bash
 bash scripts/release.sh v0.1.0          # normal release, moves latest
+bash scripts/release.sh --only-latest
+bash scripts/release.sh --only-test
 bash scripts/release.sh --no-latest v0.1.0  # backport fix to existing tag
 ```
 

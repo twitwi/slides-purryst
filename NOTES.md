@@ -2,7 +2,7 @@
 ## RC v0.1.0 − no solid export, no solid typst, working, good initial UX
 
 
-## TODO v1 (1.0.0) (typst simplest syntax)
+## TODO v1 (1.0.0) (typst simplest syntax, css rework)
 
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] a purryst version that uses the bundle?
@@ -12,7 +12,7 @@
 - [ ] pdf-export
 - [ ] theme, h2 is calibri bold black centered w/h , h1 is, h3 is top center in the primary color
 
-## TODO v2 (3.0.0) (polish and plugins?)
+## TODO v3 (3.0.0) (polish and plugins?)
 
 - [ ] consider propagating the global theme / classes (param of create?) to all sp-slides that don't have "no-gt" (attribute instead of class?)
 - [ ] footer should probably be in all slides, maybe <sp-inside (like before and after), simpler for styling, and for export too

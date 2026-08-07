@@ -18,6 +18,7 @@ let port = 9999
 let specifiedFile = ''
 let copyBundle = false
 let copyAgents = false
+let copyFonts = false
 let autoOpen = true
 let linkTypst = false
 
@@ -39,6 +40,8 @@ for (let i = 2; i < process.argv.length; i++) {
     copyBundle = true
   } else if (arg === '--copy-agents') {
     copyAgents = true
+  } else if (arg === '--copy-fonts') {
+    copyFonts = true
   } else if (arg === '--no-open') {
     autoOpen = false
   } else if (arg === '--open') {
@@ -54,6 +57,8 @@ const bundleFile = path.join(distDir, 'slides-purryst.bundle.js')
 const agentsFile = path.join(pkgDir, 'AGENTS.md')
 const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
 
+let oneShot = false
+
 if (linkTypst) {
   try {
     const dest = ensureTypstLink(pkgDir, root)
@@ -62,7 +67,7 @@ if (linkTypst) {
     console.error(`Failed to link typst library: ${e.message}`)
     process.exit(1)
   }
-  process.exit(0)
+  oneShot= true
 }
 
 if (copyAgents) {
@@ -77,7 +82,7 @@ if (copyAgents) {
     console.error(`Failed to copy AGENTS.md: ${e.message}`)
     process.exit(1)
   }
-  process.exit(0)
+  oneShot= true
 }
 
 if (copyBundle) {
@@ -89,6 +94,26 @@ if (copyBundle) {
     console.error(`Failed to copy bundle: ${e.message}`)
     process.exit(1)
   }
+  oneShot= true
+}
+
+if (copyFonts) {
+  const files = ['example/nunito.css', 'example/nunito-latin-wght-italic.woff2', 'example/nunito-latin-wght-normal.woff2']
+  files.forEach(f => {
+    const src = path.join(pkgDir, f)
+    const dest = path.join(root, f.replace(/^.*\//, ''))
+    try {
+      fs.copyFileSync(bundleFile, dest)
+      console.log(`Copied file to ${dest}`)
+    } catch (e) {
+      console.error(`Failed to copy: ${e.message}`)
+      //process.exit(1)
+    }
+  })
+  oneShot= true
+}
+
+if (oneShot) {
   process.exit(0)
 }
 
