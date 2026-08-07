@@ -1,0 +1,37 @@
+import { AnimCommandHandler, ActionTypeHandler } from './animCommands';
+export type SpApi = typeof spApi;
+export declare const spApi: {
+    navLocked: boolean;
+    currentIndex: number;
+    stepIndex: number;
+    total: number;
+    effectiveLast: number;
+    effectiveTotal: number;
+    fakeEndIndices: number[];
+    toggleNavLock: () => void;
+    goTo: (_n: number) => void;
+    next: () => void;
+    prev: () => void;
+    nextSlide: () => void;
+    prevSlide: () => void;
+    export: () => void;
+    dragging: boolean;
+    config: Record<string, unknown>;
+    _animCommands: Record<string, AnimCommandHandler>;
+    _animActionTypes: Record<string, ActionTypeHandler>;
+    showChunkletsBar: boolean;
+    chunkletDefs: {
+        name: string;
+        params: string[];
+        html: string;
+        kind: "html" | "typst";
+    }[];
+    chunkletMode: boolean;
+    selectedChunklet: {
+        name: string;
+        params: string[];
+        html: string;
+        kind: "html" | "typst";
+    } | null;
+};
+export declare const exportInitOptions: Record<string, unknown>;
