@@ -11,7 +11,7 @@
       </div>
     </div>
     <!-- === MAIN (non-presenter) LAYOUT === -->
-    <template v-if="!presenter">
+    <template v-if="viewMode == 'main'">
       <div v-if="loading" class="sp-loading">
         <div class="sp-loading-text">Loading…</div>
       </div>
@@ -191,7 +191,7 @@
     </template>
 
     <!-- === PRESENTER LAYOUT === -->
-    <template v-else>
+    <template v-else-if="viewMode == 'presenter'">
       <SpPresenterView
         :current="current"
         :currentIndex="currentIndex"
@@ -205,6 +205,18 @@
         :designHeight="props.designHeight"
         :config="config"
         :slides="slides"
+      />
+    </template>
+
+    <!-- === PRINT LAYOUT === -->
+    <template v-else-if="viewMode == 'print-slides' || viewMode == 'print-steps'">
+      <SpPrintView
+        :steps="viewMode == 'print-steps'"
+        :components="props.components"
+        :designWidth="props.designWidth"
+        :designHeight="props.designHeight"
+        :config="config"
+        :slides="slides"      
       />
     </template>
 
@@ -239,7 +251,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onUpdated, nextTick, shallowRef, defineComponent } from 'vue'
-import type { Component } from 'vue'
+import type { Component, PropType } from 'vue'
 import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides, extractRawSlideSources } from '../composables/useSlides'
 import { useSteps, processSlideHtml, maybeProcessed, fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from '../composables/useSteps'
@@ -251,6 +263,7 @@ import { useStorage } from '../composables/useStorage'
 import SpSlide from './SpSlide.vue'
 import SpDevPane from './SpDevPane.vue'
 import SpPresenterView from './SpPresenterView.vue'
+import SpPrintView from './SpPrintView.vue'
 import SpOverview from './SpOverview.vue'
 import SpGoPrompt from './SpGoPrompt.vue'
 import { spApi } from '../sp-api'
@@ -266,6 +279,7 @@ const props = withDefaults(defineProps<{
   transition?: string
   transitionDuration?: number
   presenter?: boolean
+  print?: false | 'slides' | 'steps'
   designWidth?: number
   designHeight?: number
   author?: string
@@ -276,12 +290,19 @@ const props = withDefaults(defineProps<{
   transition: 'none',
   transitionDuration: 200,
   presenter: false,
+  print: false,
   designWidth: 1920,
   designHeight: 1080,
   author: '',
   components: () => ({}),
   seed: 12345678,
 })
+
+const viewMode = computed(() => 
+  props.print === 'slides' ? 'print-slides'
+  : props.print === 'steps' ? 'print-steps'
+  : props.presenter ? 'presenter' : 'main'
+)
 
 const {
   slides,

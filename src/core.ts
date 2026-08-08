@@ -188,6 +188,12 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     await registry.register(plugin)
   }
 
+  // TODO: fuse use of window.location (see other window.location.search)
+  function has(q: string) {
+    return window.location.search.match(`[?]${q}($|[?])`)
+  }
+  const print = has('print') ? has('steps') ? 'steps' : 'slides' : false
+
   const app = createApp(SpPresentation, {
     slides,
     rawSlideSources,
@@ -200,6 +206,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     raw,
     components: merged,
     presenter: isPresenter,
+    print
   })
   app.config.globalProperties.$sp = spApi
   app.provide('sp-api', spApi)

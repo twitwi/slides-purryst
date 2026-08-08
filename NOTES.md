@@ -10,7 +10,7 @@
 
 ## TODO v2 (2.0.0) (export and decent theme)
 
-- [ ] pdf-export
+- [ ] pdf-export witch steps
 - [ ] theme, h2 is calibri bold black centered w/h , h1 is, h3 is top center in the primary color
 
 ## TODO v3 (3.0.0) (polish and plugins?)
