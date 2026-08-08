@@ -6,13 +6,14 @@
 
 - [ ] fix live reload in typst
 - [ ] integrate cetz classing
-- [ ] rename theme.typ
 - [ ] have an common-tags.typ with div span etc as typst commands
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] a purryst version that uses the bundle?
 - [ ] easy nice way to add a background images? with extensions that can parse slides dataset?
 
 ## TODO v2 (2.0.0) (export and decent theme)
+
+- [ ] Track useless recomputes (loopy + process html only once + overview+liveupate=memhog)
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 

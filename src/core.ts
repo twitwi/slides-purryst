@@ -225,7 +225,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     return app
   }
 
-  if (typeof EventSource !== 'undefined' && window.location.hostname === 'localhost') {
+  if (typeof EventSource !== 'undefined') {
     const es = new EventSource('/__sp_events')
     const generateHash = (s: string) => {
       let hash = 0
