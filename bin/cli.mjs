@@ -223,8 +223,7 @@ const server = http.createServer((req, res) => {
   serveFile(res, filePath)
 })
 
-// TODO host
-server.listen(port, () => {
+server.listen(port, host, () => {
   const addr = `http://${host}:${port}`
   console.log(`\n  SlidesPurryst dev server running at ${addr}`)
   console.log(`  Serving ${root}${specifiedFile ? '  (' + specifiedFile + ')' : ''}\n`)

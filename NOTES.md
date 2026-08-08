@@ -16,7 +16,6 @@
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
-- [ ] use host in cli.mjs, see // TODO: host
 - [ ] (export) allow links (e.g. TOC) in pdfs
 - [ ] (export) allow e.g. $sp.slideIndex in slides to actually take the right value when fixing the step (pass/inject a wrapper?) 
 - [ ] consider propagating the global theme / classes (param of create?) to all sp-slides that don't have "no-gt" (attribute instead of class?)
