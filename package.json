@@ -1,6 +1,6 @@
 {
   "name": "slides-purryst",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "SlidesPurryst: Where Typst meets Vue in purr-fect harmony.",
   "type": "module",
   "bin": {
