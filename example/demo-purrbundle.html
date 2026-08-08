@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="theme-clean">
+<html lang="en" class="theme-simple">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -50,7 +50,6 @@
     <h2>Here is TOC</h2>
     <sp-toc end="2"/>
   </sp-slide>  
-
 
 
 
@@ -164,7 +163,7 @@
     <p>One can have "local" TOC</p>
     <sp-toc start="3" context />
     <sp-drag at="1202|62|524.5879060720367|961.4244706670144|0">
-      <div style="font-size: 25px; border: 5px solid gray; background: var(--sp-surface); padding: 10px; position: absolute; inset: 0; overflow: scroll;">
+      <div style="font-size: 25px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; position: absolute; inset: 0; overflow: scroll;">
         Or a full TOC
         <sp-toc />
       </div>
@@ -175,7 +174,7 @@
     <h3>Custom Vue Components</h3>
     <p>Custom components work inside slides.</p>
     <my-counter :count="5"></my-counter>
-    <sp-drag at="1334|375|549.7021037795132|559.4658884977841|0" style="font-size: 35px; border: 5px solid gray; background: var(--sp-surface); padding: 10px; overflow: scroll;">
+    <sp-drag at="1334|375|549.7021037795132|559.4658884977841|0" style="font-size: 35px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; overflow: scroll;">
       <sp-toc start="3"/>
     </sp-drag>
   </sp-slide>
@@ -205,7 +204,7 @@
   </sp-slide>
 
   <sp-style>
-    kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-2); padding: 0 .2em; margin: 0 0.2em;  }
+    kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-bg-3); padding: 0 .2em; margin: 0 0.2em;  }
     .eg-natural { display: inline-block; }
     .eg-fill { position: absolute; inset: 0; }
     .eg-center { display: flex; align-items: center; justify-content: center; }
@@ -410,7 +409,7 @@ await createSlidesPurryst({
       padding: 0.25em !important;
       font-family: var(--sp-font-mono);
       padding: 0.5em;
-      background: var(--sp-surface-alt);
+      background: var(--sp-bg-3);
       border: 5px solid var(--sp-gray-400);
       border-radius: 10px;
     }
@@ -653,7 +652,7 @@ await createSlidesPurryst({
     <h3><code>sp-anim</code> − the <code>spec</code> language</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Think of <code>sp-anim</code> as a <b>storyboard</b>: you write a script of what appears at each click.</p>
-    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px">
       <code style="font-size:0.7em">spec=".d1 | .d2 | .d3"</code>
     </div>
     <ul style="font-size:0.7em">
@@ -760,7 +759,7 @@ await createSlidesPurryst({
     <h3><code>sp-anim</code> − revealing children (<code>@children</code>)</h3>
     <div class="debug-show-current-step">{{ $sp.stepIndex }}</div>
     <p>Reveal children of a container one by one − minimal markup, maximum effect:</p>
-    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px">
+    <div style="display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px">
       <code style="font-size:0.7em">spec="@children(.demo-list) | @children(ol)"</code>
     </div>
     <ul class="demo-list eg-inlinechildren">
@@ -957,6 +956,81 @@ await createSlidesPurryst({
 
 
 
+
+  <sp-slide>
+    <h2>Themes and tuning appearance</h2>
+  </sp-slide>
+
+  <sp-slide class="is-small">
+    <h3>Theme variables (auto adapt to dark/light)</h4>
+    <div>
+    <table>
+      <thead>
+        <tr>
+          <th v-for="h in ['c / bg', 'bg / c', 'c / fg', 'fg / c']">{{h}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="c in [
+          '@Main colors',
+          'text', 'text-2', 'text-3',
+          'accent', 'accent-2',
+          '@Background colors (bg for slide, bg-2 for cards)',
+          'bg', 'bg-2', 'bg-3',
+          '@Variations of accent and accent-2 (light/dark wrt a light theme)',
+          'accent', 'accent-dark', 'accent-light',
+          'accent-2', 'accent-2-dark', 'accent-2-light',
+          'accent-mid',
+          '@Borders',
+          'border', 'border-2',
+          '@Virtual pure colors that adapt to dark mode (incl. tinted grays)',
+          'auto-black', 'auto-white',
+          ...[5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95].map(v => `gray-${v}0`),
+          'auto-black',
+          '@End'
+        ]">
+          <td v-if="c.startsWith('@')" colspan="4" class="section">
+            {{c.substring(1)}}
+          </td>
+          <template v-else>
+            <td :style="'color: var(--sp-'+c+')'">--sp-<b>{{c}}</b></td>  
+            <td :style="'background: var(--sp-'+c+')'">--<b>sp-{{c}}</b></td>  
+            <td :style="'color: var(--sp-'+c+')'">--sp-<b>{{c}}</b></td>  
+            <td :style="'background: var(--sp-'+c+')'">--sp-<b>{{c}}</b></td>
+          </template>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <sp-style>
+      div:has(>table) {
+        height: 900px;
+        overflow: auto;
+        th { position: sticky; top: 0; background: var(--sp-auto-white); }
+        .section { position: sticky; top: 2em; background: var(--sp-auto-white); }
+        tr:has(.section):last-child { display: block; opacity: 0; height: 50vh;}
+      }
+      table {
+        font-size: calc(0.4 * var(--sp-bem));
+      }
+      th { text-align: center; }
+      tr { line-height: 1em; padding: 0;}
+      td:nth-child(1) { background: var(--sp-bg);}
+      td:nth-child(2) { color: var(--sp-bg);}
+      td:nth-child(3) { background: var(--sp-text);}
+      td:nth-child(4) { color: var(--sp-text);}
+      .section {
+        color: var(--sp-accent);
+        background: var(--sp-text) !important;
+        font-weight: bold;
+        padding-top: 1em;
+      }
+    </sp-style>
+  </sp-slide>
+
+
+
+
   <sp-slide>
     <h2>Extending with plugins and custom code</h2>
     <p>
@@ -1024,13 +1098,11 @@ await createSlidesPurryst({
   </style>
   <style>
     /* theme override */
-    /* scale font, UI included, default 16px */
     :root {
+      /* scale font, UI included, default 16px */
       /* font-size: 19px; */
-    }
-    /* scale font, slides only, default 3.75em */
-    .sp-slide {
-      font-size: 4em;
+      /* scale slide fonts */
+      /* --sp-scale: 1; */
     }
     /* change theme color(s) */
     /* defaults 25 and 55 */
@@ -1069,7 +1141,7 @@ await createSlidesPurryst({
   </sp-chunk>
   <sp-chunk name="note" params="x,y">
     <sp-drag at="$x|$y|auto|auto|0">
-      <div style="background: var(--sp-accent-soft); padding: 0.5em 1em; border-radius: 4px; font-size: 0.85em;">
+      <div style="background: var(--sp-bg-2); padding: 0.5em 1em; border-radius: 4px; font-size: 0.85em;">
         Note
       </div>
     </sp-drag>
@@ -1122,7 +1194,7 @@ await SlidesPurryst.createSlidesPurryst({
     spApi.toggleSourceVisibility = () => document.documentElement.classList.toggle('show-source')
     // keymap updates
     addKeymapSetup((km) => {
-      km['t'] = () => { document.documentElement.classList.toggle('theme-clean') }
+      km['t'] = () => { document.documentElement.classList.toggle('is-sharp') }
       km['S'] = () => spApi.toggleSourceVisibility()
     })
     // anim extension, simple shortcut
@@ -1241,7 +1313,7 @@ await SlidesPurryst.createSlidesPurryst({
         opacity: 0.5;
         transition: opacity 0.2s;
         line-height: 1.6;
-        &.active { background: var(--sp-accent-soft);}
+        &.active { background: var(--sp-bg-2);}
       }
       .source-strip-btn:hover, .source-close-btn:hover { opacity: 1; }
       .source-hint {
