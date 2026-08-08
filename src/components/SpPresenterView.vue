@@ -61,7 +61,7 @@ import { inject } from 'vue'
 import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
 import { useElementScale } from '../composables/useElementScale'
-import { processSlideHtml } from '../composables/useSteps'
+import { maybeProcessed } from '../composables/useSteps'
 import type { SpStorageConfig } from '../composables/useStorage'
 
 const props = defineProps<{
@@ -69,10 +69,10 @@ const props = defineProps<{
   currentIndex: number
   total: number
   activeHtml: string
-  components: Record<string, any>
   progressPercent: number
   blackout: boolean
   exitBlackout: () => void
+  components: Record<string, any>
   designWidth: number
   designHeight: number
   config: SpStorageConfig
@@ -144,16 +144,9 @@ const nextSlideData = computed(() => {
   if (props.currentIndex >= props.total - 1) return null
   return props.slides[props.currentIndex + 1] ?? null
 })
-
-const nextHtml = computed(() => {
-  if (!nextSlideData.value) return ''
-  return processSlideHtml(nextSlideData.value.html).html
-})
-
-const nextSlideSteps = computed(() => {
-  if (!nextSlideData.value) return 0
-  return processSlideHtml(nextSlideData.value.html).steps
-})
+const nextProcessed = computed(() => maybeProcessed(nextSlideData.value))
+const nextHtml = computed(() => nextProcessed.value?.html ?? '')
+const nextSlideSteps = computed(() => nextProcessed.value?.steps ?? 0)
 
 const CLOCK_KEY = 'sp-presentation-clock'
 const LOG_KEY = 'sp-presentation-log'

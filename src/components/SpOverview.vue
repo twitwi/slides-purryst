@@ -18,8 +18,8 @@
           <div :style="overviewSlideStyle">
             <SpSlide
               :slide="slide"
-              :html="overviewHtmls[i]"
-              :fixedStep="processSlideHtml(slide.html).steps - 1"
+              :html="processedHtml[i].html"
+              :fixedStep="processedHtml[i].steps - 1"
               :components="components"
             />
           </div>
@@ -33,17 +33,19 @@
 <script setup lang="ts">
 import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
-import { processSlideHtml } from '../composables/useSteps'
+import { maybeProcessed } from '../composables/useSteps'
+import { computed } from 'vue';
 
-defineProps<{
+const props = defineProps<{
   slides: SlideData[]
   currentIndex: number
   slideHeadingLevels: number[]
-  overviewHtmls: string[]
   overviewThumbStyle: Record<string, string>
   overviewSlideStyle: Record<string, string>
   components: Record<string, any>
 }>()
+
+const processedHtml = computed(() => props.slides.map(s => maybeProcessed(s)!))
 
 defineEmits<{
   close: []

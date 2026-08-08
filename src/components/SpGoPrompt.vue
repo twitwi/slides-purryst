@@ -24,7 +24,7 @@
             <div :style="goResultScaleStyle">
               <SpSlide
                 :slide="slides[r.index]"
-                :html="overviewHtmls[r.index]"
+                :html="processedHtml[r.index].html"
                 :components="components"
               />
             </div>
@@ -46,10 +46,10 @@
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
+import { maybeProcessed } from '../composables/useSteps';
 
 const props = defineProps<{
   slides: SlideData[]
-  overviewHtmls: string[]
   designWidth: number
   designHeight: number
   components: Record<string, any>
@@ -60,6 +60,8 @@ const emit = defineEmits<{
   close: []
   select: [index: number]
 }>()
+
+const processedHtml = computed(() => props.slides.map(s => maybeProcessed(s)!))
 
 const goPromptValue = ref('')
 const goPromptFocused = ref(0)

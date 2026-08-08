@@ -2,6 +2,7 @@ import { ref, computed, type Ref } from 'vue'
 import { getAnimCommand } from '../animCommands'
 import { registry } from '../plugin'
 import { addGlobalErrorMessage } from './globalErrorMessages'
+import { SlideData } from '../types'
 
 function countAnimSpecParts(spec: string, htmlForQuery?: Element): number {
   if (!spec.trim()) return 0
@@ -320,4 +321,9 @@ export function useSteps() {
     prevStep,
     processSlideHtml,
   }
+}
+
+export function maybeProcessed(v: SlideData | null | undefined) {
+  if (v === null || v === undefined) return null
+  return processSlideHtml(v.html)
 }

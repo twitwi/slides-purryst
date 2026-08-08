@@ -197,10 +197,10 @@
         :currentIndex="currentIndex"
         :total="total"
         :activeHtml="activeHtml"
-        :components="props.components"
         :progressPercent="progressPercent"
         :blackout="blackout"
         :exitBlackout="exitBlackout"
+        :components="props.components"
         :designWidth="props.designWidth"
         :designHeight="props.designHeight"
         :config="config"
@@ -214,7 +214,6 @@
       :slides="slides"
       :currentIndex="currentIndex"
       :slideHeadingLevels="slideHeadingLevels"
-      :overviewHtmls="overviewHtmls"
       :overviewThumbStyle="overviewThumbStyle"
       :overviewSlideStyle="overviewSlideStyle"
       :components="props.components"
@@ -227,7 +226,6 @@
     <SpGoPrompt
       v-if="showGoPrompt"
       :slides="slides"
-      :overviewHtmls="overviewHtmls"
       :designWidth="props.designWidth"
       :designHeight="props.designHeight"
       :components="props.components"
@@ -244,7 +242,7 @@ import { computed, ref, watch, watchEffect, onMounted, provide, onUnmounted, onU
 import type { Component } from 'vue'
 import type { SlideData, ChunkDef } from '../types'
 import { useSlides, parseElementToSlides, extractRawSlideSources } from '../composables/useSlides'
-import { useSteps, processSlideHtml, fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from '../composables/useSteps'
+import { useSteps, processSlideHtml, maybeProcessed, fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from '../composables/useSteps'
 import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes'
 import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
@@ -435,11 +433,9 @@ const effectiveLast = computed(() =>
 
 const effectiveTotal = computed(() => effectiveLast.value + 1)
 
-const activeHtml = computed(() => {
-  const slide = current.value
-  if (!slide) return ''
-  return processSlideHtml(slide.html).html
-})
+const currentProcessed = computed(() => maybeProcessed(current.value))
+
+const activeHtml = computed(() => currentProcessed.value?.html ?? '')
 
 function next() {
   if (!isLastStep.value) {
@@ -462,27 +458,17 @@ const preloadPrevSlideData = computed(() => {
   if (currentIndex.value === 0) return null
   return slides.value[currentIndex.value - 1] ?? null
 })
-
-const preloadPrevHtml = computed(() => {
-  if (!preloadPrevSlideData.value) return ''
-  return processSlideHtml(preloadPrevSlideData.value.html).html
-})
-
-const preloadPrevSteps = computed(() => {
-  if (!preloadPrevSlideData.value) return 0
-  return processSlideHtml(preloadPrevSlideData.value.html).steps
-})
+const preloadPrevProcessed = computed(() => maybeProcessed(preloadPrevSlideData.value))
+const preloadPrevHtml = computed(() => preloadPrevProcessed?.value?.html ?? '')
+const preloadPrevSteps = computed(() => preloadPrevProcessed?.value?.steps ?? '')
 
 const preloadNextSlideData = computed(() => {
   if (currentIndex.value >= total.value - 1) return null
   return slides.value[currentIndex.value + 1] ?? null
 })
-
-const preloadNextHtml = computed(() => {
-  if (!preloadNextSlideData.value) return ''
-  return processSlideHtml(preloadNextSlideData.value.html).html
-})
-
+const preloadNextProcessed = computed(() => maybeProcessed(preloadNextSlideData.value))
+const preloadNextHtml = computed(() => preloadNextProcessed?.value?.html ?? '')
+const preloadNextSteps = computed(() => preloadNextProcessed?.value?.steps ?? '')
 
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
@@ -560,10 +546,6 @@ const overviewSlideStyle = computed(() => ({
   width: props.designWidth + 'px',
   height: props.designHeight + 'px',
 }))
-
-const overviewHtmls = computed(() => {
-  return slides.value.map(s => processSlideHtml(s.html).html)
-})
 
 const slideHeadingLevels = computed(() => {
   return slides.value.map(s => {
