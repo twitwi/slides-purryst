@@ -97,7 +97,7 @@
 // Global style (from HTML demo's style section at top)
 // ============================================================
 #style("
-  kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-surface-alt); padding: 0 .2em; margin: 0 0.2em; }
+  kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-bg-3); padding: 0 .2em; margin: 0 0.2em; }
   .eg-natural { display: inline-block; }
   .eg-fill { position: absolute; inset: 0; }
   .eg-center { display: flex; align-items: center; justify-content: center; }
@@ -107,7 +107,7 @@
     margin: 0.5em 1em;
     padding: 0.5em;
     font-family: var(--sp-font-mono, monospace);
-    background: var(--sp-surface-alt);
+    background: var(--sp-bg-3);
     border: 5px solid var(--sp-gray-400);
     border-radius: 10px;
   }
@@ -309,7 +309,7 @@
   #toc(start: "3", ctx: true)
 
   #drag(at: "1202|62|524.59|961.42|0")[
-    #component("div", attrs: (style: "font-size: 25px; border: 5px solid gray; background: var(--sp-surface); padding: 10px; position: absolute; inset: 0; overflow: scroll;"), [
+    #component("div", attrs: (style: "font-size: 25px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; position: absolute; inset: 0; overflow: scroll;"), [
       = Full TOC
       #toc()
     ])
@@ -409,8 +409,7 @@
   - inspiration is taken from past and current frameworks like Slidev and Touying
   - the core system tries to follow the ancestor of SlidesPurr, the Slidev addon "Ultracharger"
 
-  #jump("+3")
-
+  #pause
   The next sections show how to use these approaches in practice.
 ]
 
@@ -533,7 +532,8 @@
 #slide[
   == alternatives — Swap content
 
-  #component("code", [alternatives]) shows children one by one (or cycles if #component("code", [cycle])):#alternatives(at: "0", [🌕], [🌑])#alternatives(at: "0", cycle: true, [🌕], [🌑])
+  #component("code", [alternatives]) shows children one by one (or cycles if #component("code", [cycle])):
+  #alternatives(at: "0", [cycle: 🌕], [cycle: 🌑])#alternatives(at: "0", cycle: true, [; no cycle: 🌕], [; no cycle: 🌑])
 
   #alternatives(cycle: true)[
     #component("div", attrs: (style: "background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px"), [Alternative 1 (step 0, 3, ...)])
@@ -668,7 +668,7 @@
 
   Think of #component("code", [anim]) as a #component("b", [storyboard]): you write a script of what appears at each click.
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px"), [
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
     #component("code", attrs: (style: "font-size:0.7em"), [`spec=".d1 | .d2 | .d3 | .d4 | .d5 | .d6"`])
   ])
 
@@ -687,7 +687,7 @@
 
   Each #component("code", [|])-separated part is a CSS selector. Elements are revealed one group per step:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px"), [
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
     #component("code", attrs: (style: "font-size:0.7em"), [`spec=".first | .second | .second + *"`])
   ])
 
@@ -724,7 +724,7 @@
 
   #component("code", [|]) = then. #component("code", [^]) = at the same time:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px"), [
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
     #component("code", attrs: (style: "font-size:0.7em"), [`spec=".a | .b ^ .c"`])
   ])
 
@@ -740,7 +740,7 @@
 
   #component("code", [`@add(class, sel)`]) and #component("code", [`@remove(class, sel)`]) control CSS classes:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px;font-size:0.7em"), [
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px;font-size:0.7em"), [
     #component("code", [`@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)`])
   ])
 
@@ -790,7 +790,7 @@
 
   #component("code", [`@children(sel)`]) reveals children of a container one per step:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px"), [
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
     #component("code", attrs: (style: "font-size:0.7em"), [`spec="@children(ul) | @children(ol)"`])
   ])
 
@@ -815,7 +815,7 @@
 
   #component("code", [`@child(sel, n)`]) reveals one child, #component("code", [`@child(sel, a, b)`]) reveals a range — both in a single step:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px"), [
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
     #component("code", attrs: (style: "font-size:0.7em"), [`spec="@child(ul, 2) | @child(ul, 1, 3) | @child(ul, 1, 4)"`])
   ])
 
@@ -932,7 +932,7 @@
 
   Start animations at a specific step with #component("code", [at: "2"]):
   
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-surface-alt);padding:0.5em;border-radius:6px;font-size:0.7em"), [
+  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px;font-size:0.7em"), [
     #component("code", [`spec=".d240 | .d120 | .d0" at="2"`])
   ])
 

@@ -63,15 +63,7 @@ Theme authors can use the pattern used below, with:
     --sp-font-sans: 'Nunito', sans-serif;
     --sp-base-font-size: 3em; /*2.35em */;
     --sp-bg: var(--sp-auto-white);
-    /*
-    --sp-pure-fg: hsl(0 0% calc(100% * var(--sp-darkness)));
-    --sp-surface: var(--sp-bg);
-    */
     --sp-text: var(--sp-auto-black);
-    /*
-    --sp-text-2: var(var(--sp-pure-fg));
-    --sp-text-3: var(var(--sp-pure-fg));
-    */
     &:has(h1,h2) {
         display: flex;
         justify-content: center;
