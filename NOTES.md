@@ -6,6 +6,7 @@
 
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] a purryst version that uses the bundle?
+- [ ] use host in cli.mjs // TODO: host
 
 ## TODO v2 (2.0.0) (export and decent theme)
 

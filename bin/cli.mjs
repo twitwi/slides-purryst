@@ -14,6 +14,7 @@ const distDir = path.resolve(pkgDir, 'dist')
 
 let root = process.cwd()
 let watchDir = null
+let host = '127.0.0.1'
 let port = 9999
 let specifiedFile = ''
 let copyBundle = false
@@ -28,6 +29,10 @@ for (let i = 2; i < process.argv.length; i++) {
     port = parseInt(process.argv[++i], 10)
   } else if (arg.startsWith('--port=')) {
     port = parseInt(arg.split('=')[1], 10)
+  } else if (arg === '--host' && i + 1 < process.argv.length) {
+    host = process.argv[++i]
+  } else if (arg.startsWith('--host=')) {
+    host = arg.split('=')[1]
   } else if (arg === '--watch' && i + 1 < process.argv.length) {
     watchDir = process.argv[++i]
   } else if (arg.startsWith('--watch=')) {
@@ -190,7 +195,7 @@ if (specifiedFile && specifiedFile.endsWith('.typ')) {
 }
 
 const server = http.createServer((req, res) => {
-  const url = new URL(req.url, `http://localhost:${port}`)
+  const url = new URL(req.url, `http://${host}:${port}`)
   const pathname = url.pathname
 
   if (pathname === '/__sp_events') {
@@ -218,8 +223,9 @@ const server = http.createServer((req, res) => {
   serveFile(res, filePath)
 })
 
+// TODO host
 server.listen(port, () => {
-  const addr = `http://localhost:${port}`
+  const addr = `http://${host}:${port}`
   console.log(`\n  SlidesPurryst dev server running at ${addr}`)
   console.log(`  Serving ${root}${specifiedFile ? '  (' + specifiedFile + ')' : ''}\n`)
   const servedFile = specifiedFile && specifiedFile.endsWith('.typ') ? specifiedFile.replace(/\.typ$/, '.html') : specifiedFile

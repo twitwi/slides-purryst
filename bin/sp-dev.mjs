@@ -10,6 +10,7 @@ const pkgDir = resolve(__dirname, '..')
 
 let watchDir = '.'
 let rootDir = '.'
+let host = '127.0.0.1'
 let port = 9999
 let fileArg = ''
 let autoOpen = true
@@ -18,6 +19,8 @@ for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i]
   if (arg === '--port' && i + 1 < process.argv.length) port = parseInt(process.argv[++i], 10)
   else if (arg.startsWith('--port=')) port = parseInt(arg.split('=')[1], 10)
+  else if (arg === '--host' && i + 1 < process.argv.length) host = process.argv[++i]
+  else if (arg.startsWith('--host=')) host = arg.split('=')[1]
   else if (arg === '--watch' && i + 1 < process.argv.length) watchDir = process.argv[++i]
   else if (arg.startsWith('--watch=')) watchDir = arg.split('=')[1]
   else if (arg === '--root' && i + 1 < process.argv.length) rootDir = process.argv[++i]
@@ -64,16 +67,18 @@ const overrides = {
   configFile: false,
   server: {
     port,
+    host,
   },
 }
 
 const finalConfig = mergeConfig(spConfig, overrides)
+console.log(`  Starting server`)
 const server = await createServer(finalConfig)
 await server.listen()
 
-console.log(`\n  SlidesPurryst dev server running at http://localhost:${port}`)
+console.log(`\n  SlidesPurryst dev server running at http://${host}:${port}`)
 console.log(`  Serving ${serverRoot}`)
-const openUrl = fileArg ? `http://localhost:${port}/${viteHtml}` : `http://localhost:${port}/`
+const openUrl = fileArg ? `http://${host}:${port}/${viteHtml}` : `http://${host}:${port}/`
 console.log(`  🚀 URL: ${openUrl}`)
 if (autoOpen) {
     const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
