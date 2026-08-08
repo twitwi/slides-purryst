@@ -5,3 +5,5 @@ dist/
 example/demo-slidespurryst.pdf
 example/demo-slidespurryst.html
 *.tsbuildinfo
+# link
+/slides-purryst

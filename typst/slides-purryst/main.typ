@@ -1,6 +1,6 @@
 #import "chunklet.typ": chunklet-defs
 
-#let slides-theme(
+#let slides-purryst-presentation(
   body,
   title: "Presentation",
   author: "",

@@ -4,9 +4,7 @@
 
 ## TODO v1 (1.0.0) (typst simplest syntax, css rework, export)
 
-- [ ] fix live reload in typst
 - [ ] integrate cetz classing
-- [ ] have an common-tags.typ with div span etc as typst commands
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] a purryst version that uses the bundle?
 - [ ] easy nice way to add a background images? with extensions that can parse slides dataset?

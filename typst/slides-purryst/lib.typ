@@ -12,10 +12,14 @@
 #import "style.typ": style
 #import "component.typ": component
 #import "codeblock.typ": codeblock
-#import "theme.typ": slides-theme
 #import "source.typ": source
 #import "slide-source.typ": slide-source
 #import "chunklet.typ": chunklet, chunklet-defs
+#import "main.typ": slides-purryst-presentation
+#import "common-tags.typ": *
 
+// "no-source-slide" is to make a "source transparent" slide (for #drag, #chunklets, etc),
+// typically used in a secondary .typ file that defines a function that creates a slide.
 #let no-source-slide = slide
-#let h1(body, attrs: (:)) = component("h1", body, attrs: attrs)
+
+
