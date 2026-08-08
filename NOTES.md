@@ -2,19 +2,19 @@
 ## RC v0.1.0 − no solid export, no solid typst, working, good initial UX
 
 
-## TODO v1 (1.0.0) (typst simplest syntax, css rework)
+## TODO v1 (1.0.0) (typst simplest syntax, css rework, export)
 
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] a purryst version that uses the bundle?
-- [ ] use host in cli.mjs // TODO: host
+- [ ] easy nice way to add a background images? with extensions that can parse slides dataset?
 
 ## TODO v2 (2.0.0) (export and decent theme)
 
-- [ ] pdf-export witch steps
-- [ ] theme, h2 is calibri bold black centered w/h , h1 is, h3 is top center in the primary color
-
 ## TODO v3 (3.0.0) (polish and plugins?)
 
+- [ ] use host in cli.mjs, see // TODO: host
+- [ ] (export) allow links (e.g. TOC) in pdfs
+- [ ] (export) allow e.g. $sp.slideIndex in slides to actually take the right value when fixing the step (pass/inject a wrapper?) 
 - [ ] consider propagating the global theme / classes (param of create?) to all sp-slides that don't have "no-gt" (attribute instead of class?)
 - [ ] footer should probably be in all slides, maybe <sp-inside (like before and after), simpler for styling, and for export too
 - [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?

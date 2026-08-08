@@ -14,21 +14,18 @@
         <p><label>Dismiss this dialog! (reload to get back)<input type="checkbox"/></label> </p>
       </div>
     </div>
-    <div
-      v-for="(slide, i) in slides"
-      :key="i"
-      class="sp-print-wrapper"
-      :style="sized"
-    >
-      <SpSlide
-        :slide="slide"
-        :style="sized"
-        :html="processedHtml[i].html"
-        :fixedStep="processedHtml[i].steps - 1"
-        :components="components"
-      />
-      <div class="sp-overview-thumb-num">{{ i + 1 }}</div>
-    </div>
+    <template v-for="({ slide, slideI, html, step }, i) in slidesToShow" :key="i">
+      <div class="sp-print-wrapper" :style="sized">
+        <SpSlide
+          :slide="slide"
+          :style="sized"
+          :html="html"
+          :fixedStep="step"
+          :components="components"
+        />
+        <div class="sp-overview-thumb-num">{{ slideI + 1 }}</div>
+      </div>
+    </template>
     <component is="style" v-html="injectStyle" />
   </div>
 </template>
@@ -38,7 +35,7 @@ import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
 import { maybeProcessed } from '../composables/useSteps'
 import { SpStorageConfig } from '../composables/useStorage';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 const props = defineProps<{
   steps: boolean
@@ -56,6 +53,27 @@ const injectStyle = computed(() => `
   size: ${props.designWidth}px ${props.designHeight}px;
 }
 `)
+const slidesToShow = computed(() => {
+  if (props.steps) {
+    return props.slides.flatMap((slide, slideI) => {
+      const nSteps = processedHtml.value[slideI].steps
+      return [...Array(nSteps).keys()].map((step) => ({
+        step, slide, slideI,
+        html: processedHtml.value[slideI].html,
+      }))
+    })
+  } else {
+    return props.slides.map((slide, slideI) => ({
+      slide, slideI,
+      html: processedHtml.value[slideI].html,
+      step: processedHtml.value[slideI].steps - 1,
+    }))
+  }
+})
+
+watch(slidesToShow, () => {
+  console.log(slidesToShow.value.length, slidesToShow.value)
+})
 
 </script>
 

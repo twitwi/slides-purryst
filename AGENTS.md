@@ -370,7 +370,7 @@ Inside a slide, the CSS is scoped to that slide's `.sp-slide-{num}` class. Outsi
 | `toggleChunkBar()` | Toggle chunklet toolbar |
 | `export()` | Download standalone HTML |
 
-**Properties**: `navLocked`, `currentIndex`, `stepIndex`, `total`, `dragging`, `showChunkBar`, `config`, `chunkletDefs`, `chunkletMode`, `selectedChunklet`.
+**Properties**: `navLocked`, `currentIndex`, `stepIndex`, `total`, `dragging`, `showChunletskBar`, `config`, `chunkletDefs`, `chunkletMode`, `selectedChunklet`.
 
 ### 2.11 Presenter Mode
 
