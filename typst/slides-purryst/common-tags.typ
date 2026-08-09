@@ -15,6 +15,18 @@
   }
   (id: id, classes: classes)
 }
+
+// to be typically used with something like sel: ".no-bullet"
+// and a custom css like ":has(> .no-bullet) {...}"
+#let A(sel) = {
+  let (id, classes) = parse-sel(sel)
+  let attrs = (class: classes.join(" "))
+  if id != none { attrs.insert("id", id) }
+  return component("span", none, attrs: attrs)
+}
+
+// wrap base HTML elements
+
 #let h1(body, attrs: (:)) = component("h1", body, attrs: attrs)
 #let h2(body, attrs: (:)) = component("h2", body, attrs: attrs)
 #let h3(body, attrs: (:)) = component("h3", body, attrs: attrs)

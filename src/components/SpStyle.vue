@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { inject, ref, onMounted, onUnmounted, useSlots, type VNode, type Ref } from 'vue'
 
+// This component handle sp-style in sp-slide. Global sp-style / style are handled during parsing (core.ts)
+
 const props = withDefaults(defineProps<{
   css?: string
 }>(), {

@@ -177,10 +177,11 @@
     NB: You can see the source code
   ]
 
-  #component("ul", attrs: (class: "eg-small"), [
-    #component("li")[in the source typst file]
-    #component("li")[for individual slides, by pressing #component("kbd", [S])]
-  ])
+  #ul(attrs: (class: "eg-small"))[
+    #li[in the source typst file #A(".no-square")]
+    #li[for individual slides, by pressing #component("kbd", [S])]
+  ]
+  #style(":has(>.no-square) { list-style: square; }")
 ]
 
 // ============================================================

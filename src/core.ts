@@ -110,7 +110,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   function injectGlobalStyles(root: ParentNode) {
     Array.from(root.children).forEach(el => {
       if (['sp-style', 'style'].includes(el.tagName.toLowerCase())) {
-        const css = el.textContent?.trim()
+        const css = el.getAttribute('css') ?? el.textContent?.trim()
         if (!css) return
         const s = document.createElement('style')
         s.textContent = css
