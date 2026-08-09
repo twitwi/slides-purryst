@@ -4,7 +4,6 @@
 
 ## TODO v1 (1.0.0) (typst simplest syntax, css rework, export)
 
-- [ ] fix drag insertion
 - [ ] better html reformat (less newlines that change semantics)
 - [ ] integrate cetz classing
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
@@ -17,6 +16,10 @@
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
+- [ ] (chunklets) for $x,$y do not allow drag, just click
+- [ ] (chunklets) allow ${x} to avoid patterns like calc($x * 1px)
+- [ ] (chunklets) allow some shortcut to easily loop/add several ones
+- [ ] (chunklets) allow chunklet groups/folders, so a plugin can contribute a "flags" group with many flags, with proper ux
 - [ ] consider #svg (and sp-svg) to behave by default exactly like #img, at least in a #drag
 - [ ] (export) allow links (e.g. TOC) in pdfs
 - [ ] (export) allow e.g. $sp.slideIndex in slides to actually take the right value when fixing the step (pass/inject a wrapper?) 

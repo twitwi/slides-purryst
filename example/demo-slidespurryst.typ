@@ -356,15 +356,15 @@
 ]
 
 // ============================================================
-// Chunklet definitions (bodies are Typst markup, captured raw)
+// Chunklets (definitions) (bodies are Typst markup, captured raw)
 // ============================================================
-#chunklet("note", params: "x,y")[
-  #component("div", attrs: (style: "position:absolute; background:#fef9c3; color:#653416; border:3px solid #eab308; border-radius:6px; padding:0.4em 0.8em; font-size:0.8em;"), [Noteeee])
+#chunklet("X-mark", params: "x,y")[
+  #div(attrs: (style: "position:absolute; left:calc($x * 1px - 1em); top: calc($y * 1px - 1em); width: 2em; height: 2em; color:var(--sp-accent); font-size:0.8em; display:flex; align-items:center; justify-content:center;"))[X]
 ]
 
-#chunklet("dbox", params: "x,y,w,h")[
+#chunklet("Draggable Box", params: "x,y,w,h")[
   #drag(at: "$x|$y|$w|$h|0")[
-    #component("div", attrs: (style: "position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:lch(90 40 var(--hue, 220)); border-radius:6px;"), [Drag me])
+    #div(attrs: (style: "position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--sp-bg-2); border-radius:0.25em; border: 5px solid var(--sp-border)"))[Drag me]
   ]
 ]
 

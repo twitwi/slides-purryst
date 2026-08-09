@@ -1146,8 +1146,8 @@ await createSlidesPurryst({
       </div>
     </sp-drag>
   </sp-chunk>
-  <sp-chunk name="separator">
-    <hr style="margin: 1em 0; opacity: 0.3;">
+  <sp-chunk name="X-Mark" params="x,y">
+    <div style="position:absolute; left:calc($x * 1px - 1em); top: calc($y * 1px - 1em); width: 2em; height: 2em; color:var(--sp-accent); font-size:0.8em; display:flex; align-items:center; justify-content:center;">X</div>
   </sp-chunk>
 </script>
 
