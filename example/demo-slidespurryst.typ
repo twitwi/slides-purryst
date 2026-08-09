@@ -97,6 +97,9 @@
 // Global style (from HTML demo's style section at top)
 // ============================================================
 #style("
+  :root {
+    --sp-scale: .95;
+  }
   kbd { border: 5px solid var(--sp-accent-2) ; border-radius: .2em ; background: var(--sp-bg-3); padding: 0 .2em; margin: 0 0.2em; }
   .eg-natural { display: inline-block; }
   .eg-fill { position: absolute; inset: 0; }
@@ -270,11 +273,11 @@
   - #component("kbd", [F]): Toggle fullscreen
   - #component("kbd", [B]): Trigger blackout
 
-  #drag(at: "922|753|828|204|0")[
+  #drag(at: "956|672|828|204|0")[
     #component("div", attrs: (class: "eg-small"), [
       In this presentation
-      - #component("kbd", [T]): Toggle theme
-      - #component("kbd", [S]): Toggle slide source view
+      - #component("kbd", [T]): Toggle theme (TODO)
+      - #component("kbd", [S]): Toggle slide source view (TODO)
     ])
   ]
 ]
@@ -404,8 +407,8 @@
 #slide[
   == Animations: principles
 
-  - "animations" is what happens when we step (with left/right/space/swipe)#steps[*like* _that_] #steps([or ], [that])
-  - we call each step a #component("b", [step])!
+  - "animations" is what happens when we step (with left/right/space/swipe)#steps[like *that*] #steps([ _or_], [ that])
+  - we call each step a *step*!
   - SlidesPurryst unifies several approaches to animations
   - inspiration is taken from past and current frameworks like Slidev and Touying
   - the core system tries to follow the ancestor of SlidesPurr, the Slidev addon "Ultracharger"
@@ -510,10 +513,11 @@
   Enter animation via #component("code", [animation: "fade"]):
 
   #steps(animation: "fade")[
-    #dbox([Fades in (S.4)], hue: 180, class: "d4")
-    #dbox([Fades in (S.5)], hue: 60, class: "d5")
-    #dbox([Fades in (S.6)], hue: 300, class: "d6")
+    #dbox([Fades in (S.4)], hue: 180, class: "d4 inline")
+    #dbox([Fades in (S.5)], hue: 60, class: "d5 inline")
+    #dbox([Fades in (S.6)], hue: 300, class: "d6 inline")
   ]
+  #style(".inline {display:inline}")
 ]
 
 #slide[
@@ -590,28 +594,23 @@
 
   Content after #component("code", [meanwhile]) shows as if there were no pause before.
 
-  #dbox(hue: 300)[Always]
-
-  #pause #component("code", attrs: (class: "sp-badge"), [pause])
-
-  #dbox(hue: 240)[Step 1]
-
-  #pause #component("code", attrs: (class: "sp-badge"), [pause])
-
-  #dbox(hue: 120)[Step 2]
-
-  #jump("0") #component("code", attrs: (class: "sp-badge"), [meanwhile])
-
-  #dbox(hue: 300)[Always]
-
-  #pause #component("code", attrs: (class: "sp-badge"), [pause])
-
-  #dbox(hue: 240)[Also step 1]
-
-  #pause #component("code", attrs: (class: "sp-badge"), [pause])
-
-  #dbox(hue: 120)[and step 2]
+  #div(attrs: (class: "two-cols"), {
+    dbox(hue: 300)[Always]
+    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    dbox(hue: 240)[Step 1]
+    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    dbox(hue: 120)[Step 2]
+    component("br", [])
+    meanwhile ; component("code", attrs: (class: "sp-badge"), [meanwhile])
+    dbox(hue: 300)[Always]
+    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    dbox(hue: 240)[Also step 1]
+    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    dbox(hue: 120)[and step 2]
+    style(".two-cols { columns: 2}")
+  })
 ]
+
 
 #slide[
   == jump — flexible grouping (visgroups)
@@ -681,6 +680,7 @@
   #stepbox(hue: 240)[Step through] #stepbox(hue: 120)[S2] #stepbox(hue: 0)[S3] #stepbox(hue: 180)[S4] #stepbox(hue: 60)[S5] #stepbox(hue: 300)[S6]
 
   #anim(".d240 | .d120 | .d0 | .d180 | .d60 | .d300")
+  #style("ul~div { display: inline }")
 ]
 
 #slide[
@@ -752,11 +752,11 @@
   #anim("@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)")
 
   #style("
-    .a, .b, .c { box-sizing: border-box; border: 5px solid transparent; display: inline-block; padding: 0.25em 1em; border-radius: 6px; margin: 0.25em; }
+    .a, .b, .c { box-sizing: border-box; border: 20px solid transparent; display: inline-block; padding: 0.25em 1em; border-radius: 6px; margin: 0.25em; }
     .a { background: lch(90 40 240); }
     .b { background: lch(90 40 120); }
     .c { background: lch(90 40 0); }
-    .hi { border-color: var(--sp-accent); box-shadow: 0 0 10px gold; }
+    .hi { border-color: var(--sp-accent) !important; box-shadow: 0 0 10px gold; }
   ")
 ]
 
@@ -781,7 +781,7 @@
   - CSS transitions: override #component("code", [.sp-anim-hidden]) / #component("code", [.sp-anim-shown]) to change feel
 
   #style("
-    .d1, .d2 { box-sizing: border-box; border: 5px solid transparent; }
+    .d1, .d2 { box-sizing: border-box; border: 20px solid transparent; }
     .hi { border-color: var(--sp-accent) !important; box-shadow: 0 0 10px gold; }
   ")
 ]
@@ -947,23 +947,31 @@
 #slide[
   == anim — syntax reference
 
-  #component("table", attrs: (style: "font-size: 0.7em;"), [
-    #component("tr")[#component("th")[Syntax]#component("th")[Meaning]]
-    #component("tr")[#component("td")[selector]#component("td")[Show element(s) by CSS selector]]
-    #component("tr")[#component("td")[-selector]#component("td")[Hide element(s)]]
-    #component("tr")[#component("td")[|]#component("td")[Separator between steps]]
-    #component("tr")[#component("td")[^]#component("td")[Parallel actions within one step]]
-    #component("tr")[#component("td")[`@add(class, sel)`]#component("td")[Add a CSS class]]
-    #component("tr")[#component("td")[`@remove(class, sel)`]#component("td")[Remove a CSS class]]
-    #component("tr")[#component("td")[`@children(sel)`]#component("td")[Show children one per step]]
-    #component("tr")[#component("td")[`@child(sel, n[, b])`]#component("td")[Show child n (or range a..b) of a container]]
-    #component("tr")[#component("td")[`@play(sel)`]#component("td")[Play video element]]
-    #component("tr")[#component("td")[`@pause(sel)`]#component("td")[Pause video]]
-    #component("tr")[#component("td")[`@command(...)`]#component("td")[Execute custom command]]
-    #component("tr")[#component("td")[«dur» «action»]#component("td")[Delay action by duration]]
-    #component("tr")[#component("td")[at="+N"]#component("td")[Offset start step by N]]
-    #component("tr")[#component("td")[no-jump]#component("td")[Don't advance step counter]]
-  ])
+  #drag(at: "144|122|1669.398390531129|879.3043729754388|0")[
+    #table[
+      #tr[#th[Syntax]#th[Meaning]]
+      #tr[#td[selector]#td[Show element(s) by CSS selector]]
+      #tr[#td[-selector]#td[Hide element(s)]]
+      #tr[#td[|]#td[Separator between steps]]
+      #tr[#td[^]#td[Parallel actions within one step]]
+      #tr[#td[`@add(class, sel)`]#td[Add a CSS class]]
+      #tr[#td[`@remove(class, sel)`]#td[Remove a CSS class]]
+      #tr[#td[`@children(sel)`]#td[Show children one per step]]
+      #tr[#td[`@child(sel, n[, b])`]#td[Show child n (or range a..b) of a container]]
+      #tr[#td[`@play(sel)`]#td[Play video element]]
+      #tr[#td[`@pause(sel)`]#td[Pause video]]
+      #tr[#td[`@command(...)`]#td[Execute custom command]]
+      #tr[#td[«dur» «action»]#td[Delay action by duration]]
+      #tr[#td[at="+N"]#td[Offset start step by N]]
+      #tr[#td[no-jump]#td[Don't advance step counter]]
+    ]]
+  #style(":has(>table) {
+    font-size: 0.6em;
+    border: 3px solid var(--sp-accent);
+    overflow: auto;
+    position: absolute;
+    inset: 0;
+  }")
 ]
 
 // ============================================================
@@ -976,7 +984,7 @@
 ]
 
 #slide[
-  == Code Highlighting — Native, No Shiki
+  == Code Highlighting — Native, "No Shiki"
 
   Typst's #component("code", [raw]) provides syntax highlighting at compile time — no Shiki bundle needed.
 
@@ -1074,7 +1082,8 @@
     class-end()
   })
 
-  #anim(".whiskers | .eyes | .nose | .mouth | .ears | .head")
+  #anim(".whiskers | .eyes | .nose | .mouth | .ears | .head | @add(rotate, .eyes)")
+  #style("svg { margin: auto; } .rotate { transition: transform 2s; transform: translate(45.921259843px, 45.598275064px) rotate(5turn); ")
 ]
 
 #slide[
@@ -1095,6 +1104,7 @@
     )
   ]
 ]
+
 
 #slide[
   == Example 🤯 : Lilaq + alternatives + for loops

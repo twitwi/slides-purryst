@@ -4,6 +4,6 @@
   }
 }
 
-#let meanwhile() = jump("0")
+#let meanwhile = jump("0")
 
 #let pause = jump("+1")

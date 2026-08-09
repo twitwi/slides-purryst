@@ -4,11 +4,14 @@
 
 ## TODO v1 (1.0.0) (typst simplest syntax, css rework, export)
 
-- [ ] better html reformat (less newlines that change semantics)
+- [ ] redo todo planning
 - [ ] integrate cetz classing
+- [ ] typst allow annotating classes etc
 - [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
-- [ ] a purryst version that uses the bundle?
+- [ ] typst bibliography: save the actually #bibliography to a cache entry (rename as embedded content?) allow to include it with a css filter (auto that is based on the #loc- that are used in the current slide.
+- [ ] test a purryst version that uses the bundle?
 - [ ] easy nice way to add a background images? with extensions that can parse slides dataset?
+- [ ] document and rationalize processing steps (typst preprocess, typst, html reformat, sp-content parsing, slide html parsing, more?)
 
 ## TODO v2 (2.0.0) (export and decent theme)
 

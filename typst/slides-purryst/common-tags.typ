@@ -27,15 +27,20 @@
 
 // wrap base HTML elements
 
-#let h1(body, attrs: (:)) = component("h1", body, attrs: attrs)
-#let h2(body, attrs: (:)) = component("h2", body, attrs: attrs)
-#let h3(body, attrs: (:)) = component("h3", body, attrs: attrs)
+#let h1(body, attrs: (:)) = component("h1", attrs: attrs, body)
+#let h2(body, attrs: (:)) = component("h2", attrs: attrs, body)
+#let h3(body, attrs: (:)) = component("h3", attrs: attrs, body)
 
-#let p(body, attrs: (:)) = component("p", body, attrs: attrs)
-#let span(body, attrs: (:)) = component("span", body, attrs: attrs)
-#let div(body, attrs: (:)) = component("div", body, attrs: attrs)
+#let p(body, attrs: (:)) = component("p", attrs: attrs, body)
+#let span(body, attrs: (:)) = component("span", attrs: attrs, body)
+#let div(body, attrs: (:)) = component("div", attrs: attrs, body)
 
-#let ul(body, attrs: (:)) = component("ul", body, attrs: attrs)
-#let ol(body, attrs: (:)) = component("ol", body, attrs: attrs)
-#let li(body, attrs: (:)) = component("li", body, attrs: attrs)
+#let ul(body, attrs: (:)) = component("ul", attrs: attrs, body)
+#let ol(body, attrs: (:)) = component("ol", attrs: attrs, body)
+#let li(body, attrs: (:)) = component("li", attrs: attrs, body)
+
+#let table(body, attrs: (:)) = component("table", attrs: attrs, body)
+#let tr(body, attrs: (:)) = component("tr", attrs: attrs, body)
+#let td(body, attrs: (:)) = component("td", attrs: attrs, body)
+#let th(body, attrs: (:)) = component("th", attrs: attrs, body)
 
