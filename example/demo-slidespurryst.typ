@@ -180,10 +180,10 @@
     NB: You can see the source code
   ]
 
-  #ul(attrs: (class: "eg-small"))[
-    #li[in the source typst file #A(".no-square")]
-    #li[for individual slides, by pressing #component("kbd", [S])]
-  ]
+  #anno(".eg-small")
+  - in the source typst file #MARK(".no-square")
+  - for individual slides, by pressing #component("kbd", [S])
+
   #style(":has(>.no-square) { list-style: square; }")
 ]
 

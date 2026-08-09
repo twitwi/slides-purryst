@@ -5,23 +5,29 @@
 ## TODO v1 (1.0.0) (typst simplest syntax, css rework, export)
 
 - [ ] redo todo planning
-- [ ] integrate cetz classing
-- [ ] typst allow annotating classes etc
-- [ ] typst codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
-- [ ] typst bibliography: save the actually #bibliography to a cache entry (rename as embedded content?) allow to include it with a css filter (auto that is based on the #loc- that are used in the current slide.
+- [ ] (typst) integrate cetz classing
+- [ ] (typst) codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
+- [ ] (typst) bibliography: save the actually #bibliography to a cache entry (rename as embedded content?) allow to include it with a css filter (auto that is based on the #loc- that are used in the current slide.
 - [ ] test a purryst version that uses the bundle?
-- [ ] easy nice way to add a background images? with extensions that can parse slides dataset?
+- [ ] easy nice way to add a background images? with extensions that can parse slides dataset (data-)?
+
+# TODO ratio
+
 - [ ] document and rationalize processing steps (typst preprocess, typst, html reformat, sp-content parsing, slide html parsing, more?)
+- [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
+- [ ] consider moving #A as post processing 
 
 ## TODO v2 (2.0.0) (export and decent theme)
 
 - [ ] (demos) check overflow (TOC mainly?)
 - [ ] Track useless recomputes (loopy + process html only once + overview+liveupate=memhog)
 - [ ] typst and all, allow selecting theme without putting the class on html, conf var
-- [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
+- [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?
+- [ ] (typst) maybe a cetz/gribouille example
+- [ ] (typst) separator to break slides (to avoid ] #slide[ but don't get too far, we're not redoing a markdown either)
 - [ ] (chunklets) for $x,$y do not allow drag, just click
 - [ ] (chunklets) allow ${x} to avoid patterns like calc($x * 1px)
 - [ ] (chunklets) allow some shortcut to easily loop/add several ones
@@ -31,30 +37,23 @@
 - [ ] (export) allow e.g. $sp.slideIndex in slides to actually take the right value when fixing the step (pass/inject a wrapper?) 
 - [ ] consider propagating the global theme / classes (param of create?) to all sp-slides that don't have "no-gt" (attribute instead of class?)
 - [ ] footer should probably be in all slides, maybe <sp-inside (like before and after), simpler for styling, and for export too
-- [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?
 - [ ] can we class-tag in lilaq somewhat?
 - [ ] anim some @child with negative for disappear @child(-ul, 1), handle empty in range @child(ul,1,) @child(ul,,3) and also negative indexing etc (and maybe step?), maybe with a python syntax then @child(ul, 1:-1)... maybe start at 0 for this one? think...
-- [ ] maybe a cetz/gribouille example
 - [ ] 'g' when typing a number, show the corresponding slide as preview + also search for the number in the slide title
 - [ ] sp-dev .typ should allow specifying the generated path (or maybe default to ,,sp-generated/${inputpathhash}/) -> done but need to try 2 entry points
 - [ ] @rewind or @pause(,rewind) (if not present) + show demo like "@pause(,rewind)|@play|@pause"
 - [ ] fix draggable "conflict" with text selection
 - [ ] html-export looses attributes on sp-slides (transitions)
-- [ ] stronger highlight when using keyboard to select in the 'g' pane
 - [ ] add a cli command to "slides-purryst update" (to update if latest or if the tag moved) and "upgrade" to suggest a list of versions (with change log (from the github README.md) and allow to select one to upgrade to, incl. latest)
 - [ ] better ignore in vue config, because currently, unless using the dev files demo- or index.html.... the full refresh is triggered... should we ignore all as we watch explicitly the location of interest? or keep src etc?
 - [ ] add a png/jpg include to test and illustrate cache
 - [ ] overview scroll current slide into view, and highlight even more
 - [ ] esc should quit devpane
-- [ ] better theme, including dark with similar contrasts etc
 - [ ] add slugs/tags to slides (one tag can have multiple slugs) so we can link between slides in a semantic manner, allow jumping to next occurrence of a tag, or previous etc (e.g. can allow a custom end-of-section tag)
 - [ ] why are subparts etc shown as 0 Bytes in the dev tools?
 - [ ] should cache also be in a script text and not in a template? probably
-- [ ] nested includes, at toplevel include part that includes slides, path probably wrong currently export async function resolveTopIncludes(
 - [ ] add a toc in the overview somewhat
 - [ ] plugin should be able to contribute to a shared state (like source in demo) or a shared saved (localstorage) state, check that the is properly reactive intially (pb with source in sp-after, has undefined value for transform at first template render, should not need a "set timer")
-- [ ] (typst) ideally allow pause etc in cetz too...
-- [ ] (typst) separator to break slides (to avoid ] #slide[ but don't get too far, we're not redoing a markdown either)
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 

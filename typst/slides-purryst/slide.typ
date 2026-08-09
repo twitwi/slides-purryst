@@ -1,4 +1,5 @@
 #import "source.typ": sp-source-state
+#import "common-tags.typ": anno-list-like, anno-heading
 
 #let slide-counter = counter("sp-slide-id")
 #let slide(
@@ -14,6 +15,9 @@
   let slideId = slide-counter.get().at(0)
   slide-counter.step()
   if target() == "html" {
+    show list: anno-list-like("ul")
+    show enum: anno-list-like("ol")
+    show heading: anno-heading
     let attrs = (:)
     if transition != none { attrs.insert("transition", transition) }
     if transitionDuration != none { attrs.insert("transition-duration", transitionDuration) }
