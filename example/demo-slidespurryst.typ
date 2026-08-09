@@ -149,7 +149,7 @@
 
   Where Typst meets Vue in purr-fect harmony.
 
-  #component("p", attrs: (style: "color:#64748b;font-size:0.9em"), [Arrow keys or Space to navigate])
+  #p(attrs: (style: "color:#64748b;font-size:0.9em"))[Arrow keys or Space to navigate]
 
   NB: this demo file is using Typst
 ]
@@ -161,7 +161,7 @@
   = Notes and Disclaimer: welcome to
 
   #drag(at: "1408|33|468.45|182.97|0")[
-    #svg(src: path("./slides-purryst-banner-sticker.svg"))
+    #img(src: path("./slides-purryst-banner-sticker.svg"))
   ]
 
   - This presentation acts as
@@ -173,9 +173,9 @@
     - a showcase of the typst version (it is Typst)
     - meant to be visually polished (it illustrates features)
 
-  #component("p", attrs: (class: "eg-small"), [
+  #p(attrs: (class: "eg-small"))[
     NB: You can see the source code
-  ])
+  ]
 
   #component("ul", attrs: (class: "eg-small"), [
     #component("li")[in the source typst file]
