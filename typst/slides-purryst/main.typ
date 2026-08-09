@@ -25,7 +25,8 @@
       cssPath = sys.inputs.at("slides-purryst-css-path")
     }
 
-    html.elem("html", attrs: (lang: "en"))[
+    // warning: currently page gets rewrapped (TODO)
+    html.elem("html", attrs: (lang: "en", class: "theme-simple"))[
       #html.elem("head")[
         #html.elem("meta", attrs: (charset: "utf-8"))
         #html.elem("meta", attrs: (name: "viewport", content: "width=device-width, initial-scale=1.0"))

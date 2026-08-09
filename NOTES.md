@@ -12,7 +12,10 @@
 
 ## TODO v2 (2.0.0) (export and decent theme)
 
+- [ ] (demos) check overflow (TOC mainly?)
 - [ ] Track useless recomputes (loopy + process html only once + overview+liveupate=memhog)
+- [ ] typst and all, allow selecting theme without putting the class on html, conf var
+- [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
