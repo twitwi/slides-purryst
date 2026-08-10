@@ -1,30 +1,28 @@
 
-## RC v0.1.0 − no solid export, no solid typst, working, good initial UX
+## v1 (1.0.0) (typst simplest syntax, decent theme, export, bibliography)
 
-
-## TODO v1 (1.0.0) (typst simplest syntax, css rework, export)
-
-- [ ] redo todo planning
-- [ ] (typst) integrate cetz classing
-- [ ] (typst) codeblock improve demo,, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] (typst) bibliography: save the actually #bibliography to a cache entry (rename as embedded content?) allow to include it with a css filter (auto that is based on the #loc- that are used in the current slide.
 - [ ] test a purryst version that uses the bundle?
-- [ ] easy nice way to add a background images? with extensions that can parse slides dataset (data-)?
+- [ ] release
 
-# TODO ratio
+
+# TODO rationalize parsing etc
 
 - [ ] document and rationalize processing steps (typst preprocess, typst, html reformat, sp-content parsing, slide html parsing, more?)
 - [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
 - [ ] consider moving #A as post processing 
 
-## TODO v2 (2.0.0) (export and decent theme)
+## TODO v2 (2.0.0) consolidate internals, potential breakage
 
-- [ ] (demos) check overflow (TOC mainly?)
+- [ ] (demo(s)) check overflow (TOC mainly?)
 - [ ] Track useless recomputes (loopy + process html only once + overview+liveupate=memhog)
 - [ ] typst and all, allow selecting theme without putting the class on html, conf var
+- [ ] rework list of todos
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
+- [ ] (typst) can we have a typst-based preview in tinymist etc... at least view all slides allow clicking etc (when?)
+- [ ] (typst) codeblock improve demo, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?
 - [ ] (typst) maybe a cetz/gribouille example
 - [ ] (typst) separator to break slides (to avoid ] #slide[ but don't get too far, we're not redoing a markdown either)
@@ -57,21 +55,23 @@
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 
-- [ ] unocss integration
+- [ ] easy nice way to add a background images? with extensions that can parse slides dataset (data-)?
+- [ ] unocss integration?
 - [ ] have a way to specify a cascade of delays, simplify .da1 ^ 1s .da2 ^ 2s .da3 etc or even a delay children or something.
 - [ ] notes with click markers like slidev, maybe not the same syntax, maybe closer to sp-pause
 - [ ] insert images from some sites? or generators (sana?)? no, rather have an easy import from clipboard/url
-- [ ] (live) have a mode where each text change is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
+- [ ] (live) have a mode where each text change (character) is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
 - [ ] chunklet/draggable demo: add some font-size varying things, like https://stackoverflow.com/questions/16056591/font-scaling-based-on-size-of-container could also have post-hoc controllable params in chunklets, maybe not too "componenty" so using data-param-size.1.100="..." (controlled by a slider or something) and used in the chuncklet style="font-size: calc(var(--param-size) * 1vw)" ... reimplementing components here? maybe directly work with components, orthogonal to chunklets: if a component has a v-conf="{size: [1, 100]}" then it gets a slider to control its value :size="42"... need to resurface up to typst also
 - [ ] have a configurable default, i.e. all <sp-drag> inherit a v-conf={x,y,w,h} etc
 
 ## TODO typst syntax
 
-- [ ] ponder wether hacking a more compact than #anim('......') would be of any use
+- [ ] ponder wether hacking a more compact than #anim('......') would be of any use (probably not)
 - [ ] same for #slide[...] #slide[...] vs ... SOMESEP --- or maybe ... #slide ...
 
 ## TOREVIEW
 
+- [ ] export from CLI? still using the ?print route
 - [ ] export: pnx decktape
 -             rm -rf ~/.cache/puppeteer/
 -             pnx puppeteer browsers install chrome

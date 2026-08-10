@@ -95,4 +95,3 @@
 #let tr(body, attrs: (:)) = component("tr", attrs: attrs, body)
 #let td(body, attrs: (:)) = component("td", attrs: attrs, body)
 #let th(body, attrs: (:)) = component("th", attrs: attrs, body)
-
