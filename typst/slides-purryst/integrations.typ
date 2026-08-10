@@ -14,7 +14,7 @@
 
 // ============================================================
 // Cetz class marker system — injects SVG class attributes via
-// post-processing (see tools/inject-cetz-classes.mjs)
+// post-processing (see lib/inject-cetz-classes.mjs)
 // ============================================================
 #let _cmap = state("cetz-class-map", (:))
 

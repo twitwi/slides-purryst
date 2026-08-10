@@ -1072,7 +1072,7 @@
 // against this file). `#slide-bib()` then includes it per slide, filtered at
 // runtime to the references cited on the current slide.
 #sp-bibliography(path("demo.bib"))
-#bibliography("demo.bib")
+//#bibliography("demo.bib")
 
 #slide[
   == Bibliography

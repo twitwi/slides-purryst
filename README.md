@@ -17,6 +17,36 @@ The recommended gives you a minimal setup with live reload, and is the easiest t
 
 Below you will see `github:twitwi/slides-purryst#latest` as argument to `pnpm add`. You can also use a fork or a local clone, or `twitwi/slides-purryst` (for the version from the npm registry, when published there).
 
+
+
+### Recommended for typst
+
+``bash
+mkdir my-talk
+cd my-talk
+pnpm init
+pnpm add 'github:twitwi/slides-purryst#latest'
+```
+
+Create a minimal typst file:
+
+
+```typst
+#import "slides-purryst/lib.typ": *
+
+#slide[
+  #h1[SlidesPurr(yst)]
+  Where Typst meets Vue in purr-fect harmony.
+]
+
+#slide[
+  = Part 1
+]
+
+```
+
+
+
 ### Minimal HTML file example
 
 You can use as `index.html` the following content (or start from the "minimal" demo and/or pick content from the main demo):
@@ -59,7 +89,6 @@ Then
 
 - edit `index.html` with your slides (see above)
 - run `pnpm slides-purryst` to start a server with live reload
-
 
 
 ### Extremely minimal standalone setting (HTML + bundle)
@@ -170,7 +199,7 @@ You can also create your own HTML in the `example/` folder.
 
 ## Version History
 
-**v1.0.0** (`latest`) — PDF Export (via browser), consolidate theme CSS, first version including typst (build script, live reload, touying).
+**v1.0.0** (`latest`) — PDF Export (via browser), consolidate theme CSS, first version including typst (build script, live reload, bibliography, cetz, lilaq).
 **v0.1.0** — Core framework: slides, steps, animations, transitions, presenter mode, live reload, HTML authoring, plugins, chunklets, drag editing, CLI (`slides-purryst` and `sp-dev`), Vite-based dev server, zero-dependency bundle server.
 
 
