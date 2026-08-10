@@ -1,9 +1,7 @@
 
-## v1 (1.0.0) (typst simplest syntax, decent theme, export, bibliography)
+# NEXT
 
-- [ ] test a purryst version that uses the bundle?
-- [ ] release
-
+- [ ] rework list of todos
 
 # TODO rationalize parsing etc
 
@@ -17,7 +15,7 @@
 - [ ] (demo(s)) check overflow (TOC mainly?)
 - [ ] Track useless recomputes (loopy + process html only once + overview+liveupate=memhog)
 - [ ] typst and all, allow selecting theme without putting the class on html, conf var
-- [ ] rework list of todos
+- [ ] when updating, the symlink (slides-purryst) is not updated on run, causing issues, should automatically update (if symlink) and warn it did
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 

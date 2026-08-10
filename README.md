@@ -19,6 +19,30 @@ Below you will see `github:twitwi/slides-purryst#latest` as argument to `pnpm ad
 
 
 
+### Minimal Typst file example
+
+You can use as `index.typ` the following content (or start from the "minimal" demo and/or pick content from the main demo):
+
+```typst
+#import "slides-purryst/lib.typ": *
+
+#slide[
+  #h1[SlidesPurr(yst)]
+]
+
+#slide[
+  = Go Typst!
+]
+
+#style("
+")
+
+//#sp-bibliography(path("biblio.bib"))
+
+```
+
+
+
 ### Recommended for typst
 
 ``bash
@@ -28,22 +52,21 @@ pnpm init
 pnpm add 'github:twitwi/slides-purryst#latest'
 ```
 
-Create a minimal typst file:
+Create a minimal `index.typ` file.
 
-
-```typst
-#import "slides-purryst/lib.typ": *
-
-#slide[
-  #h1[SlidesPurr(yst)]
-  Where Typst meets Vue in purr-fect harmony.
-]
-
-#slide[
-  = Part 1
-]
-
+```bash
+pnpm slides-purryst index.typ
 ```
+
+NB: this will create
+- `slides-purryst/` link so your presentation can `#import "slides-purryst/...",
+- `,,sp-preprocess/` folder with temporary build files,
+- `slides.html` the final compiled presentation as html (SlidesPurr sources).
+
+
+
+
+
 
 
 
