@@ -9,6 +9,7 @@
 - [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
 - [ ] consider moving #A as post processing 
 - [ ] rationalize also the format (#sp-content, #sp-chunklets, [data-sp-cache-...], #sp-cache #sp-presentation)
+- [ ] sp-step and the more generic produced data-sp-step-from etc can be restrictive. If DOM tag kept, consider more generic alt like data-sp-visible-at="2,3,4,5,8,9" ...
 
 ## TODO v2 (2.0.0) consolidate internals, potential breakage
 

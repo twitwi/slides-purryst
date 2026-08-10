@@ -60,6 +60,7 @@ for (let i = 2; i < process.argv.length; i++) {
 
 const bundleFile = path.join(distDir, 'slides-purryst.bundle.js')
 const agentsFile = path.join(pkgDir, 'AGENTS.md')
+const authoringFile = path.join(pkgDir, 'AUTHORING.md')
 const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
 
 let oneShot = false
@@ -85,6 +86,14 @@ if (copyAgents) {
     console.log(`Copied AGENTS.md to ${dest}`)
   } catch (e) {
     console.error(`Failed to copy AGENTS.md: ${e.message}`)
+    process.exit(1)
+  }
+  const authoringDest = path.join(root, 'AUTHORING.md')
+  try {
+    fs.copyFileSync(authoringFile, authoringDest)
+    console.log(`Copied AUTHORING.md to ${authoringDest}`)
+  } catch (e) {
+    console.error(`Failed to copy AUTHORING.md: ${e.message}`)
     process.exit(1)
   }
   oneShot= true

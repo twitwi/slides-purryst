@@ -191,7 +191,7 @@ pnpm slides-purryst --copy-fonts --copy-bundle --copy-agents
 `--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
 It is also a means of freezing the version of the framework for a given presentation.
 
-`--copy-agents` copies `AGENTS.md` to the current directory so you can read the full reference offline.
+`--copy-agents` copies `AGENTS.md` and `AUTHORING.md` to the current directory so you can read the full reference offline.
 
 
 **`sp-dev`** (Vite dev server for npm dependency projects), examples: 
@@ -247,4 +247,9 @@ bash scripts/release.sh --no-latest v0.1.0  # backport fix to existing tag
 
 ## Documentation
 
-See [AGENTS.md](AGENTS.md) for the full reference: step system, animation spec syntax, all `sp-*` components, plugins, navigation, presenter mode, chunklets, and architecture.
+See [AUTHORING.md](AUTHORING.md) for the full authoring reference: step system,
+animation spec syntax, all `sp-*` components, navigation, presenter mode,
+chunklets, plugins, and architecture.
+
+[AGENTS.md](AGENTS.md) holds the working rules for AI agents and contributors.
+[docs/pipeline.md](docs/pipeline.md) describes the internal server-side pipeline.
