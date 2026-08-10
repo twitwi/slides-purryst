@@ -9,7 +9,8 @@
 - [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
 - [ ] consider moving #A as post processing 
 - [ ] rationalize also the format (#sp-content, #sp-chunklets, [data-sp-cache-...], #sp-cache #sp-presentation)
-- [ ] sp-step and the more generic produced data-sp-step-from etc can be restrictive. If DOM tag kept, consider more generic alt like data-sp-visible-at="2,3,4,5,8,9" ...
+- [ ] sp-step and the more generic produced data-sp-step-from etc can be restrictive. If DOM tag kept, consider more generic alt like data-sp-visible-at="2,3,4,5,8,9" ... or a list of list ="[[3, 6], [8,10]]"
+- [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst
 
 ## TODO v2 (2.0.0) consolidate internals, potential breakage
 
@@ -19,6 +20,7 @@
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
+- [ ] (chunklets) show "no chunklet" instead of nothing when bar is shown
 - [ ] (typst) can we have a typst-based preview in tinymist etc... at least view all slides allow clicking etc (when?)
 - [ ] (typst) codeblock improve demo, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
 - [ ] (typst) do we really need a specific codeblock or is raw sufficient in the end?
@@ -54,6 +56,7 @@
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 
+- [ ] (presenter) laser pointer / cursor replication
 - [ ] easy nice way to add a background images? with extensions that can parse slides dataset (data-)?
 - [ ] unocss integration?
 - [ ] have a way to specify a cascade of delays, simplify .da1 ^ 1s .da2 ^ 2s .da3 etc or even a delay children or something.

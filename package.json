@@ -12,6 +12,7 @@
     "bin",
     "lib",
     "typst",
+    "AUTHORING.md",
     "AGENTS.md"
   ],
   "main": "./dist/slides-purryst.umd.cjs",

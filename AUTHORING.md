@@ -217,13 +217,13 @@ Init params resolve from several layers. Precedence (highest wins):
 localStorage prefs          (darkMode, navLocked, ... — user-level, own keys)
 createSlidesPurryst({...})  ← JS, overrides everything below
   #sp-init config           ← page author (typst #sp-init or HTML payload)
-    data-* on #sp-presentation  (design-width, design-height, author, seed,
+    data-* on id="sp-presentation"  (design-width, design-height, author, seed,
                                  theme, transition, transition-duration,
                                  presenter, or a data-sp-init='{...json...}' blob)
       framework defaults    ← lowest
 ```
 
-`#sp-presentation` accepts the `data-*` scalars shown above, or one
+`id="sp-presentation"` accepts the `data-*` scalars shown above, or one
 `data-sp-init='{...json...}'` blob containing any of them (the blob wins over
 the individual scalars). `createSlidesPurryst({...})` always wins.
 
@@ -562,7 +562,7 @@ Extracts `h1`/`h2`/`h3` from all slides. Props: `start` (default 2), `end`
 #toc(start: 1, end: 3)
 ```
 
-## 11. Showing slide source
+## 11. Showing slide source (for demo)
 
 ```html
 <sp-slide-source for="2" :transform="(html) => html.replace(/secret/g, '***')"></sp-slide-source>
@@ -665,7 +665,7 @@ Renders the bibliography once. Then any slide that cites works:
 
 ```typst
 #slide[
-  Citing @kadkhodaie2024generalization.
+  Citing @pearson1901pca.
   #slide-bib()
 ]
 ```
@@ -741,12 +741,12 @@ available via Vue `provide('sp-api')`.
 counter (clickable for the Go prompt), fullscreen / presenter / menu buttons,
 and slide "pills". The 🔒 button locks the nav visible (`config.navLocked`).
 
-**URL**: `#slide/step` is kept in the hash; `?presenter=1` opens presenter
-mode; `?print=slides` / `?print=steps` render a printable layout.
+**URL**: `#slide/step` is kept in the hash; `?presenter` opens presenter
+mode; `?print` / `?print?steps` render a printable layout.
 
 ## 17. Presenter mode
 
-Open with `p` or `?presenter=1`. Shows the current slide, a preview of the
+Open with `p` or `?presenter`. Shows the current slide, a preview of the
 next slide (at its final step), speaker notes, and a timer with CSV export.
 State syncs between windows via `BroadcastChannel`.
 
@@ -805,7 +805,7 @@ import { definePlugin } from 'slides-purryst'
 
 export default definePlugin({
   name: 'my-plugin',
-  order: 0,                    // Lower runs first
+  order: 0,                    // Lower runs first (so can be erased by higher)
   disable: [],                 // Facets to skip: 'anim' | 'keymap' | 'style' | 'chunklet'
   activate: (api: PluginAPI) => {
     // Return a teardown function if needed
@@ -846,6 +846,8 @@ live key context (`dragging`, `overview`, `presenter`, `blackout`, `devPane`,
 plugin can add keys or override existing ones (e.g. replace `ArrowLeft`).
 
 ### 19.4 Anim commands
+
+Add a new `@fade` anim command (that produces an already existing `addClass` action type).
 
 ```ts
 api.addAnimCommand('fade', {
