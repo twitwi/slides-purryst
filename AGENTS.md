@@ -457,7 +457,55 @@ Config is reactive and auto-saved. Access via `spApi.config`.
 
 ## 3. Authoring Slides with SlidesPurryst (Typst)
 
-*(To be filled)*
+Slides are authored in `.typ` with a `main.typ`-style document, or compiled
+through the demo/CLI path (`example/demo-slidespurryst.typ`). The preprocessor
+(`lib/preprocess-typst.mjs`) and the typst dev server
+(`lib/typst-dev.mjs`) turn Typst into the same `#sp-content` markup the HTML
+path uses; everything in §2 (slides, steps, animations, drag, chunklets, …)
+is available. Several helpers are re-exported from `slides-purryst/lib.typ`:
+
+| Helper | Emits |
+|---|---|
+| `#slide(transition: "fade", ...)[...]` | `<sp-slide>` |
+| `#steps[...]` / `#step(...)` | `<sp-steps>` / `<sp-step>` |
+| `#anim(at, spec)` | `<sp-anim>` |
+| `#drag(at: "…")[...]` | `<sp-drag>` |
+| `#chunklet("name", params: "…")[...]` | `<sp-chunk>` definition |
+| `#add-cache-entry("name.html")[rendered content]` | cache entry |
+| `#slide-bib(name: "biblio.html")` | `<sp-include class="sp-bib">` |
+
+### Cache entries
+
+`#add-cache-entry(name)[body]` registers *rendered* HTML once; `#cache-defs()`
+then emits each entry as an inert `<template data-sp-cache="…">`. The engine
+seeds those into the include cache at boot (`readPayload` in `src/core.ts`), so
+`<sp-include src="name">` (or `#include-fragment`) resolves without a fetch —
+also in exported/`file://` standalone pages. When the preprocessor finds an
+`#add-cache-entry` and no explicit `#cache-defs()` call, it appends one; the
+templates are pulled out of `#sp-content` by `wrapPage` (same treatment as the
+chunklets script) so they end up as real DOM.
+
+### Bibliographies
+
+```typst
+#add-cache-entry("biblio.html")[#bibliography("demo.bib")]
+```
+
+Renders the bibliography once. Then any slide that cites works:
+
+```typst
+#slide[
+  Citing @kadkhodaie2024generalization.
+  #slide-bib()
+]
+```
+
+`#slide-bib()` includes the cached entry with class `sp-bib`; the runtime
+filter (`src/composables/useBibFilter.ts`) hides every `li` whose `id` is not
+referenced by a *currently step-visible* citation on that slide, and hides the
+whole block when nothing is cited (`sp-bib-empty`). Typst's HTML export marks
+citations as `a[role="doc-biblioref"][href="#loc-…"]` and entries as
+`li#loc-…`, so filtering happens against the live DOM after compile.
 
 ---
 

@@ -1066,6 +1066,33 @@
   }
 ]
 
+
+// The bibliography is rendered once and registered as a cache entry via
+// `#sp-bibliography` (the bib path is wrapped in `path()` so it resolves
+// against this file). `#slide-bib()` then includes it per slide, filtered at
+// runtime to the references cited on the current slide.
+#sp-bibliography(path("demo.bib"))
+
+#slide[
+  == Bibliography
+
+  Citing @kadkhodaie2024generalization.
+
+  #slide-bib()
+]
+
+#slide[
+  == Another Bibliography
+
+  Citing @Vastola2025generalization.
+
+  #slide-bib()
+
+  #steps[
+    #html.elem("p")[And now @kadkhodaie2024generalization too (stepped).]
+  ]
+]
+
 // ============================================================
 // 12. TOC again
 // ============================================================

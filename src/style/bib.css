@@ -1,0 +1,37 @@
+/* Cached bibliographies (`<sp-bib>`, from `#slide-bib()` in typst).
+   Entries are shown/hidden at runtime by the step-aware filter
+   (useBibFilter): only references cited on the current slide are visible. */
+
+.sp-bib {
+  display: block !important; /* override sp-include */
+  position: absolute;
+  border-top: 5px solid var(--sp-border);
+  --pad: 40px;
+  bottom: var(--pad);
+  left: var(--pad);
+  right: var(--pad);
+  font-size: 0.55em;
+  line-height: 1.35;
+  color: var(--sp-text-2);
+}
+
+.sp-bib h2 {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--sp-text-3);
+}
+
+.sp-bib ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sp-bib li {
+  margin: 0.25em 0;
+}
+
+.sp-bib li.sp-bib-hidden,
+.sp-bib.sp-bib-empty {
+  display: none;
+}

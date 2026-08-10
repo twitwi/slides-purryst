@@ -260,6 +260,7 @@ import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
 import { useStorage } from '../composables/useStorage'
+import { useBibFilter } from '../composables/useBibFilter'
 import SpSlide from './SpSlide.vue'
 import SpDevPane from './SpDevPane.vue'
 import SpPresenterView from './SpPresenterView.vue'
@@ -353,6 +354,15 @@ const { transformStyle, containerStyle } = useScale(props.designWidth, props.des
 
 const viewportEl = ref<HTMLElement | null>(null)
 const transitionWrapEl = ref<HTMLElement | null>(null)
+
+// Step-aware filtering of cached bibliographies (`<sp-bib>` includes) on the
+// current slide.
+useBibFilter({
+  getSlideEl: () => transitionWrapEl.value?.querySelector('.sp-slide-current') ?? null,
+  currentIndex,
+  stepIndex,
+  contentVersion,
+})
 
 provide('stepIndex', stepIndex)
 provide('slideIndex', currentIndex)

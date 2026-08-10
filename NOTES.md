@@ -1,7 +1,6 @@
 
 ## v1 (1.0.0) (typst simplest syntax, decent theme, export, bibliography)
 
-- [ ] (typst) bibliography: save the actually #bibliography to a cache entry (rename as embedded content?) allow to include it with a css filter (auto that is based on the #loc- that are used in the current slide.
 - [ ] test a purryst version that uses the bundle?
 - [ ] release
 
@@ -11,6 +10,7 @@
 - [ ] document and rationalize processing steps (typst preprocess, typst, html reformat, sp-content parsing, slide html parsing, more?)
 - [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
 - [ ] consider moving #A as post processing 
+- [ ] rationalize also the format (#sp-content, #sp-chunklets, [data-sp-cache-...], #sp-cache #sp-presentation)
 
 ## TODO v2 (2.0.0) consolidate internals, potential breakage
 
@@ -52,6 +52,7 @@
 - [ ] should cache also be in a script text and not in a template? probably
 - [ ] add a toc in the overview somewhat
 - [ ] plugin should be able to contribute to a shared state (like source in demo) or a shared saved (localstorage) state, check that the is properly reactive intially (pb with source in sp-after, has undefined value for transform at first template render, should not need a "set timer")
+- [ ] (typst) chunklets and cache actually as typst, not a preprocess?
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 

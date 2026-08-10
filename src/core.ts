@@ -15,7 +15,7 @@ import SpSlideSource from './components/SpSlideSource.vue'
 import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './composables/useSlides'
-import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache } from './composables/includeCache'
+import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache, getCachedInclude } from './composables/includeCache'
 import { fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from './composables/useSteps'
 import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunkletsFromText } from './composables/useChunklets'
@@ -40,6 +40,19 @@ function resolveEl(el?: string | HTMLElement): HTMLElement | null {
   return typeof el === 'string'
     ? document.querySelector<HTMLElement>(el)
     : (el ?? null)
+}
+
+// Read the payload of a raw-text `<script type="text/html">` or an inert
+// `<template>` uniformly. Scripts hold escaped text (`textContent`); templates
+// hold real elements in a `DocumentFragment` (which has no `innerHTML`), so
+// serialize it through a temporary wrapper.
+function readPayload(el: Element): string {
+  if (el.tagName === 'TEMPLATE') {
+    const div = document.createElement('div')
+    div.append((el as HTMLTemplateElement).content.cloneNode(true))
+    return div.innerHTML
+  }
+  return el.textContent || ''
 }
 
 export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
@@ -89,6 +102,17 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
       spApi.chunkletDefs = parseChunkletsFromText(text)
     }
   }
+
+  // Seed cache entries (`<template data-sp-cache="...">`, emitted by the typst
+  // `#cache-defs()`) into the include cache so that `<sp-include src="...">`
+  // resolves without a network fetch, in all modes (dev, export, file://).
+  document.querySelectorAll('template[data-sp-cache]').forEach(t => {
+    const src = t.getAttribute('data-sp-cache')
+    const html = readPayload(t).trim()
+    if (src && html) {
+      getCachedInclude(src).value = html
+    }
+  })
 
   if (!designWidth || !designHeight || !author || !seed) {
     const root = document.getElementById('sp-presentation')

@@ -15,6 +15,7 @@
 #import "source.typ": source
 #import "slide-source.typ": slide-source
 #import "chunklet.typ": chunklet, chunklet-defs
+#import "cache.typ": add-cache-entry, cache-defs, slide-bib, sp-bibliography
 #import "main.typ": slides-purryst-presentation
 #import "common-tags.typ": *
 

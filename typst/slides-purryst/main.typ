@@ -1,4 +1,5 @@
 #import "chunklet.typ": chunklet-defs
+#import "cache.typ": cache-defs
 
 #let slides-purryst-presentation(
   body,
@@ -42,6 +43,7 @@
           #body
         ]
         #chunklet-defs()
+        #cache-defs()
         #html.elem("div", attrs: (
           id: "sp-presentation",
           "data-design-width": str(design-width),
