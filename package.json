@@ -11,6 +11,7 @@
     "dist",
     "bin",
     "lib",
+    "typst",
     "AGENTS.md"
   ],
   "main": "./dist/slides-purryst.umd.cjs",
