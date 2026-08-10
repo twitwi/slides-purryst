@@ -1,7 +1,7 @@
 import { createApp, ref } from 'vue'
 import type { Component } from 'vue'
 import SpPresentation from './components/SpPresentation.vue'
-import { spApi, exportInitOptions } from './sp-api'
+import { spApi, exportInitOptions, runtimeStyleEls } from './sp-api'
 import SpAlternatives from './components/SpAlternatives.vue'
 import SpAnim from './components/SpAnim.vue'
 import SpDrag from './components/SpDrag.vue'
@@ -12,7 +12,7 @@ import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
 import SpSlideSource from './components/SpSlideSource.vue'
-import type { SPSlidesOptions, SlideData, SlidesPlugin } from './types'
+import type { SPSlidesOptions, SlideData, SlidesPlugin, SpInitPayload } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache, getCachedInclude } from './composables/includeCache'
@@ -55,8 +55,110 @@ function readPayload(el: Element): string {
   return el.textContent || ''
 }
 
+// Parse the `#sp-init` payload (JSON emitted by the typst `#sp-init(...)`
+// helper, or hand-written). Tolerates both `js-mounted` (kebab, what typst
+// emits) and `jsMounted` (camel, hand-written JSON).
+function parseInitPayload(text: string): SpInitPayload {
+  const t = text.trim()
+  if (!t) return {}
+  try {
+    const data = JSON.parse(t)
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      return {
+        config: data.config,
+        css: data.css,
+        js: data.js,
+        jsMounted: data['js-mounted'] ?? data.jsMounted,
+      } as SpInitPayload
+    }
+  } catch {
+    console.warn('sp-init: could not parse payload', text.slice(0, 80))
+  }
+  return {}
+}
+
+// Run raw init JS. A fresh `<script>` element executes synchronously on
+// append and works under `file://` (no fetch involved).
+function runInitScript(code: string | undefined) {
+  if (!code || !code.trim()) return
+  const s = document.createElement('script')
+  s.textContent = code
+  ;(document.head ?? document.documentElement).appendChild(s)
+  s.remove()
+}
+
+function injectInitCss(css: string | undefined) {
+  if (!css || !css.trim()) return
+  const s = document.createElement('style')
+  s.textContent = css
+  document.head.appendChild(s)
+  runtimeStyleEls.add(s)
+}
+
+// Swap the active `.theme-*` class on `<html>`. Themes are pure class names
+// (see src/style/themes.css); colors/vars stay in CSS.
+function applyThemeClass(name: string) {
+  const el = document.documentElement
+  Array.from(el.classList)
+    .filter(c => c.startsWith('theme-'))
+    .forEach(c => el.classList.remove(c))
+  el.classList.add('theme-' + name.replace(/[^a-zA-Z0-9_-]/g, ''))
+}
+
+// Read the "page author" layer of init params off `#sp-presentation`:
+// individual `data-*` scalars, then a `data-sp-init` JSON blob (wins).
+function readPresentationParams(): Record<string, unknown> {
+  const root = document.getElementById('sp-presentation')
+  if (!root) return {}
+  const attrs: Record<string, unknown> = {}
+  const num = (name: string) => {
+    const v = root.getAttribute(name)
+    return v ? parseInt(v, 10) : undefined
+  }
+  const dw = num('data-design-width')
+  const dh = num('data-design-height')
+  if (dw !== undefined && dh !== undefined) {
+    attrs.designWidth = dw
+    attrs.designHeight = dh
+  }
+  const author = root.getAttribute('data-author')
+  if (author !== null) attrs.author = author
+  const seed = num('data-seed')
+  if (seed !== undefined) attrs.seed = seed
+  const theme = root.getAttribute('data-theme')
+  if (theme !== null && theme) attrs.theme = theme
+  const transition = root.getAttribute('data-transition')
+  if (transition !== null && transition) attrs.transition = transition
+  const transitionDuration = num('data-transition-duration')
+  if (transitionDuration !== undefined) attrs.transitionDuration = transitionDuration
+  const presenter = root.getAttribute('data-presenter')
+  if (presenter !== null) attrs.presenter = presenter === '' || presenter === 'true' || presenter === '1'
+  const json = root.getAttribute('data-sp-init')
+  if (json) {
+    try {
+      const obj = JSON.parse(json)
+      if (obj && typeof obj === 'object' && !Array.isArray(obj)) Object.assign(attrs, obj)
+    } catch {
+      console.warn('sp-init: could not parse data-sp-init attribute on #sp-presentation')
+    }
+  }
+  return attrs
+}
+
 export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
-  let { slides, el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, plugins, activate } = options
+  // Early `#sp-init`: run `js` first (may set up globals/hooks), inject `css`
+  // before anything renders, then merge `config` into the page-author layer.
+  const initEl = document.getElementById('sp-init')
+  const init = initEl ? parseInitPayload(readPayload(initEl)) : {}
+  runInitScript(init.js)
+  injectInitCss(init.css)
+
+  const pageParams = { ...readPresentationParams(), ...(init.config ?? {}) }
+  const resolved = { ...pageParams, ...options }
+  const { el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, plugins, activate, theme, presenter } = resolved
+  let slides = resolved.slides
+
+  if (theme) applyThemeClass(String(theme))
 
   const scriptEl = document.getElementById('sp-content') as HTMLScriptElement | null
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
@@ -114,22 +216,6 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     }
   })
 
-  if (!designWidth || !designHeight || !author || !seed) {
-    const root = document.getElementById('sp-presentation')
-    if (root) {
-      const dw = root.getAttribute('data-design-width')
-      const dh = root.getAttribute('data-design-height')
-      if (dw && dh) {
-        designWidth = parseInt(dw, 10)
-        designHeight = parseInt(dh, 10)
-      }
-      const da = root.getAttribute('data-author')
-      if (da) author = da
-      const ds = root.dataset.seed
-      if (ds) seed = parseInt(ds, 10)
-    }
-  }
-
   let globalStyleEls: HTMLStyleElement[] = []
   function injectGlobalStyles(root: ParentNode) {
     Array.from(root.children).forEach(el => {
@@ -140,6 +226,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
         s.textContent = css
         document.head.appendChild(s)
         globalStyleEls.push(s)
+        runtimeStyleEls.add(s)
       }
     })
   }
@@ -189,8 +276,8 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     document.getElementById('app') ??
     document.body
 
-  const params = new URLSearchParams(window.location.search)
-  const isPresenter = options.presenter ?? params.has('presenter')
+  const query = new URLSearchParams(window.location.search)
+  const isPresenter = presenter ?? query.has('presenter')
 
   Object.assign(exportInitOptions, {
     transition,
@@ -199,6 +286,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     designHeight,
     author,
     seed,
+    theme,
     raw,
     el: '#app',
   })
@@ -242,6 +330,9 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     ;(globalThis as any).__sp__ = spApi
   }
   const vm = app.mount(target) as any
+
+  // `js-mounted`: spApi / window.__sp__ is live now.
+  runInitScript(init.jsMounted)
 
   ;(app as any).use = async (plugin: SlidesPlugin) => {
     await registry.register(plugin)

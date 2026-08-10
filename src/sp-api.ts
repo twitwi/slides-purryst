@@ -30,3 +30,8 @@ export const spApi = reactive({
 })
 
 export const exportInitOptions: Record<string, unknown> = {}
+
+// `<style>` elements injected by the framework at runtime (init `css`, global
+// `sp-style`). Export copies head styles EXCEPT these, to avoid duplicating
+// framework-injected CSS in the standalone output.
+export const runtimeStyleEls = new Set<HTMLStyleElement>()

@@ -4,6 +4,18 @@
 #import "@preview/lilaq:0.6.0" as lq
 
 // ============================================================
+// Global init (#sp-init): config/css/js consumed at boot
+// Emitted as a <script id="sp-init"> payload;
+// #sp-init-defs() is auto-appended by the preprocessor.
+// ============================================================
+#sp-init(
+  config: (:), // (theme: "conference")
+  css: "html.theme-simple { --sp-scale: .97; }",
+  js: "console.log('Will init SlidesPyrryst')",
+  js-mounted: "console.log('SlidesPurryst mounted with', window.__sp__.total, 'slides')",
+)
+
+// ============================================================
 // Helper: colored boxes (from HTML demo's eg-* pattern)
 // ============================================================
 #let dbox(body, hue: 220, class: none) = context {

@@ -1,5 +1,5 @@
 import { serializeCache } from './composables/includeCache'
-import { exportInitOptions } from './sp-api'
+import { exportInitOptions, runtimeStyleEls } from './sp-api'
 import { fixVoidElementsHtml } from './composables/useSteps'
 
 export async function exportStandalone(): Promise<void> {
@@ -31,8 +31,17 @@ export async function exportStandalone(): Promise<void> {
       if (r.ok) styles.push(await r.text())
     } catch {}
   }
+  // Copy user-authored `<style>` blocks from the head (theme tweaks, etc.),
+  // but not styles the framework injected at runtime (`#sp-init` css, `sp-style`
+  // globals) nor Vite-injected dev styles.
+  document.querySelectorAll<HTMLStyleElement>('head style').forEach(el => {
+    if (runtimeStyleEls.has(el)) return
+    if (el.hasAttribute('data-vite-dev-id')) return
+    styles.push(el.textContent ?? '')
+  })
   const cacheJson = serializeCache()
   const cacheTemplate = `<template id="sp-cache">${cacheJson.replace(/</g, '&lt;')}</template>`
+  const initScript = document.getElementById('sp-init')?.outerHTML ?? ''
 
   const initOpts: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(exportInitOptions)) {
@@ -41,8 +50,11 @@ export async function exportStandalone(): Promise<void> {
   const optsJson = JSON.stringify(initOpts, null, 2)
     .replace(/"([^"]+)":/g, '$1:')   // unquote keys
 
+  const themeClass = Array.from(document.documentElement.classList).find(c => c.startsWith('theme-')) ?? ''
+  const htmlClassAttr = themeClass ? ` class="${themeClass}"` : ''
+
   const html = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en"${htmlClassAttr}>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,6 +67,7 @@ ${styles.length ? `<style>\n${styles.join('\n')}\n</style>` : ''}
 ${slidesHtml}
 </script>
 ${cacheTemplate}
+${initScript}
 <script src="./slides-purryst.bundle.js"></script>
 <script>
 (async () => { await SlidesPurryst.createSlidesPurryst(${optsJson}) })()

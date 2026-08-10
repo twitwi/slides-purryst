@@ -65,11 +65,23 @@ export interface SPSlidesOptions {
   designHeight?: number
   author?: string
   presenter?: boolean
+  theme?: string
   components?: Record<string, Component>
   seed?: number
   cacheIgnore?: string[]
   plugins?: SlidesPlugin[]
   activate?: (api: PluginAPI) => void
+}
+
+// Payload of the `<script type="text/html" id="sp-init">` element (emitted by
+// the typst `#sp-init(...)` helper, or hand-written in HTML). `config` merges
+// into the page-author init-param layer; `css` is injected before mount; `js`
+// runs at the very start of createSlidesPurryst(); `jsMounted` runs after mount.
+export interface SpInitPayload {
+  config?: Record<string, unknown>
+  css?: string
+  js?: string
+  jsMounted?: string
 }
 
 export interface ChunkDef {

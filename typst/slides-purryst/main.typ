@@ -1,5 +1,6 @@
 #import "chunklet.typ": chunklet-defs
 #import "cache.typ": cache-defs
+#import "init.typ": sp-init-defs
 
 #let slides-purryst-presentation(
   body,
@@ -7,6 +8,9 @@
   author: "",
   design-width: 1920,
   design-height: 1080,
+  theme: "simple",
+  transition: "",
+  transition-duration: none,
 ) = context {
   if target() == "html" {
     let useModule = false
@@ -26,8 +30,24 @@
       cssPath = sys.inputs.at("slides-purryst-css-path")
     }
 
+    let presentation-attrs = (
+      id: "sp-presentation",
+      "data-design-width": str(design-width),
+      "data-design-height": str(design-height),
+      "data-author": author,
+    )
+    if theme != "" {
+      presentation-attrs.insert("data-theme", theme)
+    }
+    if transition != "" {
+      presentation-attrs.insert("data-transition", transition)
+    }
+    if transition-duration != none {
+      presentation-attrs.insert("data-transition-duration", str(transition-duration))
+    }
+
     // warning: currently page gets rewrapped (TODO)
-    html.elem("html", attrs: (lang: "en", class: "theme-simple"))[
+    html.elem("html", attrs: (lang: "en", class: "theme-" + theme))[
       #html.elem("head")[
         #html.elem("meta", attrs: (charset: "utf-8"))
         #html.elem("meta", attrs: (name: "viewport", content: "width=device-width, initial-scale=1.0"))
@@ -44,12 +64,8 @@
         ]
         #chunklet-defs()
         #cache-defs()
-        #html.elem("div", attrs: (
-          id: "sp-presentation",
-          "data-design-width": str(design-width),
-          "data-design-height": str(design-height),
-          "data-author": author,
-        ))
+        #sp-init-defs()
+        #html.elem("div", attrs: presentation-attrs)
         #if useModule [
           #let scriptSrc = "import { createSlidesPurryst } from \"" + jsPath + "\"\nawait createSlidesPurryst()"
           #html.elem("script", attrs: (type: "module"))[#text(scriptSrc)]

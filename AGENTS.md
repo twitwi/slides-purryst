@@ -132,10 +132,59 @@ createSlidesPurryst({
   designHeight: 1080,
   author: 'Your Name',     // Footer text
   presenter: false,        // Force presenter mode
+  theme: 'simple',         // <html> class theme-* (themes.css registry)
   plugins: [],             // See §4
   activate: (api) => {},   // Inline plugin
 })
 ```
+
+**`theme`** is a class name only: the framework swaps the `.theme-*` class on
+`<html>` (built-in themes live in `src/style/themes.css`). Colors stay in CSS
+(custom hues via `--sp-theme-hue`/`--sp-theme-secondary-hue`); use `#sp-init`
+`css:` (below) to inject arbitrary overrides.
+
+#### Layer-like configuration
+
+Init params are resolved from several layers. Precedence (highest wins):
+
+```
+localStorage prefs          (darkMode, navLocked, ... — user-level, own keys)
+createSlidesPurryst({...})  ← JS, overrides everything below
+  #sp-init config           ← page author (typst #sp-init or HTML payload)
+    data-* on #sp-presentation  (design-width, design-height, author, seed,
+                                 theme, transition, transition-duration,
+                                 presenter, or a data-sp-init='{...json...}' blob)
+      framework defaults    ← lowest
+```
+
+All three authoring layers (HTML, Typst, JS) end up in the same resolution, so
+the *same* option can be set from `createSlidesPurryst({...})`, from a
+`data-*` attribute, or from Typst — and the JS call always wins.
+
+#### `#sp-init` — raw config/css/js from the page
+
+Both HTML and Typst can ship an optional `<script type="text/html" id="sp-init">`
+payload consumed at boot:
+
+```html
+<script type="text/html" id="sp-init">
+{"config": {"theme": "conference"}, "css": "html { --sp-scale: .9; }",
+ "js": "window.__myHooks = {...}", "jsMounted": "console.log(window.__sp__.total)"}
+</script>
+```
+
+- **`config`** — merges into the page-author layer (see precedence above).
+- **`css`** — injected into `<head>` before the app mounts (no FOUC: the page
+  is blank until mount anyway).
+- **`js`** — runs at the very start of `createSlidesPurryst()` (before options
+  resolve / mount). `window.__sp__` does **not** exist yet — use it to define
+  globals, patch helpers, or install plugin hooks.
+- **`js-mounted`** — runs right after mount; `window.__sp__` / `spApi` and the
+  DOM are live.
+
+Typst authors use `#sp-init(...)` (§3) which emits this element; `wrapPage`
+pulls it out of the body. Export re-inlines it (and the theme class and
+user `<head>` styles) into the standalone file.
 
 ---
 
@@ -473,6 +522,30 @@ is available. Several helpers are re-exported from `slides-purryst/lib.typ`:
 | `#chunklet("name", params: "…")[...]` | `<sp-chunk>` definition |
 | `#add-cache-entry("name.html")[rendered content]` | cache entry |
 | `#slide-bib(name: "biblio.html")` | `<sp-include class="sp-bib">` |
+| `#sp-init(config: (:), css: "", js: "", js-mounted: "")` | `#sp-init` payload |
+
+### `#sp-init` — deck-level config / css / js
+
+Call it once at the top of the deck; it emits nothing by itself. `#sp-init-defs()`
+writes the actual `<script type="text/html" id="sp-init">` payload: the
+preprocessor auto-appends it on the bare/demo path, and `main.typ` emits it
+itself. All keys are optional:
+
+```typst
+#sp-init(
+  config: (transition: "fade", theme: "conference", presenter: false),
+  css: "html.theme-conference { --sp-scale: .97; }",
+  js: "window.__myPlugin = { activate(api) { ... } }",
+  js-mounted: "console.log('booted', window.__sp__.total)",
+)
+```
+
+Semantics are those of the HTML `#sp-init` payload in §1.2: `config` merges into
+the page-author init-param layer, `css` is injected before mount, `js` runs at
+the start of `createSlidesPurryst()` (before `window.__sp__` exists), and
+`js-mounted` runs after mount. The payload is `json.encode()`d with `</` escaped
+to `<\/` (valid JSON, so it can never terminate the raw-text `<script>` early);
+values must be JSON-serializable (strings, numbers, bools, arrays, dicts).
 
 ### Cache entries
 
@@ -671,6 +744,7 @@ src/
 
 When `createSlidesPurryst()` boots:
 
+0. Read the `#sp-init` payload — run its `js`, inject its `css` into `<head>`, and merge its `config` into the page-author init-param layer (`createSlidesPurryst` options win over it; it wins over `data-*` on `#sp-presentation`; defaults come last). Apply `theme` (`theme-*` class on `<html>`) if set.
 1. Read `#sp-content` text content
 2. `resolveTopIncludes()` — recursively resolve `<sp-include>` tags in raw HTML
 3. `extractRawSlideSources()` — save unmodified per-slide HTML for source display
@@ -679,6 +753,7 @@ When `createSlidesPurryst()` boots:
 6. `parseElementToSlides()` — parse DOM into `SlideData[]`
 7. For each slide: `processSlideHtml()` — process aliases, `sp-step`, `sp-steps`, `sp-jump`, `sp-anim`, alternatives, apply DOM transforms, compute step count
 8. Mount `SpPresentation` with props (slides, transitions, components)
+9. Run `#sp-init`'s `js-mounted` (`window.__sp__` is live).
 
 ### Key Architecture
 

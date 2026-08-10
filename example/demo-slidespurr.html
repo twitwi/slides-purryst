@@ -1153,6 +1153,10 @@ await createSlidesPurryst({
 
 <div id="sp-presentation" data-design-width="1920" data-design-height="1080" data-author="SlidesPurryst"></div>
 
+<script type="text/html" id="sp-init">
+{"jsMounted": "console.log('sp-init js-mounted: booted with', window.__sp__.total, 'slides')"}
+</script>
+
 <script type="module">
 import { createSlidesPurryst } from '../src/index.ts'
 import Counter from './Counter.vue'
