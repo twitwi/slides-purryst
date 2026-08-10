@@ -1,6 +1,9 @@
 /* Cached bibliographies (`<sp-bib>`, from `#slide-bib()` in typst).
-   Entries are shown/hidden at runtime by the step-aware filter
-   (useBibFilter): only references cited on the current slide are visible. */
+   Entries are tagged at runtime by the step-aware filter (useBibFilter):
+   - `sp-bib-hidden` — ref is cited on the slide but not by a *currently step
+     visible* citation: keep its space, just hide it (visibility).
+   - `sp-bib-absent` — ref is not cited anywhere on the slide: drop it entirely
+     (display none). */
 
 .sp-bib {
   display: block !important; /* override sp-include */
@@ -31,7 +34,11 @@
   margin: 0.25em 0;
 }
 
-.sp-bib li.sp-bib-hidden,
+.sp-bib li.sp-bib-absent,
 .sp-bib.sp-bib-empty {
   display: none;
+}
+
+.sp-bib li.sp-bib-hidden {
+  visibility: hidden;
 }

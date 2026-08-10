@@ -12,6 +12,7 @@ import { watch, nextTick, type Ref } from 'vue'
 
 const CITE_SELECTOR = 'a[role="doc-biblioref"]'
 const HIDDEN_CLASS = 'sp-bib-hidden'
+const ABSENT_CLASS = 'sp-bib-absent'
 const EMPTY_CLASS = 'sp-bib-empty'
 
 // The step system toggles `.sp-anim-hidden` (opacity 0) and `.sp-anim-only`
@@ -20,13 +21,20 @@ function isStepVisible(el: Element): boolean {
   return el.closest('.sp-anim-hidden, .sp-anim-only') === null
 }
 
-function filterBibBlock(block: HTMLElement, targetIds: Set<string>): void {
+function filterBibBlock(block: HTMLElement, targetIds: Set<string>, slideIds: Set<string>): void {
   let shown = 0
   block.querySelectorAll('li').forEach(li => {
     const id = li.getAttribute('id')
-    const show = id !== null && targetIds.has(id)
-    li.classList.toggle(HIDDEN_CLASS, !show)
-    if (show) shown++
+    if (id !== null && targetIds.has(id)) {
+      li.classList.remove(HIDDEN_CLASS, ABSENT_CLASS)
+      shown++
+    } else {
+      // Keep space for refs cited later in the steps (`sp-bib-hidden`,
+      // visibility) and drop refs not cited anywhere on the slide
+      // (`sp-bib-absent`, display none).
+      li.classList.add(HIDDEN_CLASS)
+      li.classList.toggle(ABSENT_CLASS, id === null || !slideIds.has(id))
+    }
   })
   block.classList.toggle(EMPTY_CLASS, shown === 0)
 }
@@ -42,13 +50,18 @@ export function useBibFilter(opts: {
     if (!slideEl) return
     const blocks = slideEl.querySelectorAll<HTMLElement>('.sp-bib')
     if (blocks.length === 0) return
+    // `slideIds`: refs cited anywhere on the slide (any step). `targetIds`:
+    // refs cited by a *currently step-visible* citation.
+    const slideIds = new Set<string>()
     const targetIds = new Set<string>()
     slideEl.querySelectorAll(CITE_SELECTOR).forEach(a => {
-      if (!isStepVisible(a)) return
       const href = a.getAttribute('href')
-      if (href?.startsWith('#')) targetIds.add(href.slice(1))
+      if (!href?.startsWith('#')) return
+      const id = href.slice(1)
+      slideIds.add(id)
+      if (isStepVisible(a)) targetIds.add(id)
     })
-    blocks.forEach(b => filterBibBlock(b, targetIds))
+    blocks.forEach(b => filterBibBlock(b, targetIds, slideIds))
   }
 
   const schedule = () => nextTick(run)

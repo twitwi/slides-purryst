@@ -1072,11 +1072,12 @@
 // against this file). `#slide-bib()` then includes it per slide, filtered at
 // runtime to the references cited on the current slide.
 #sp-bibliography(path("demo.bib"))
+#bibliography("demo.bib")
 
 #slide[
   == Bibliography
 
-  Citing @kadkhodaie2024generalization.
+  Citing @gagneux2025avisualdive @bertrand2025self
 
   #slide-bib()
 ]
@@ -1084,12 +1085,12 @@
 #slide[
   == Another Bibliography
 
-  Citing @Vastola2025generalization.
+  Citing @pearson1901pca
 
   #slide-bib()
 
   #steps[
-    #html.elem("p")[And now @kadkhodaie2024generalization too (stepped).]
+    #html.elem("p")[And now @gagneux2025avisualdive too (stepped).]
   ]
 ]
 

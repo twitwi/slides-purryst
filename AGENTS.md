@@ -501,10 +501,13 @@ Renders the bibliography once. Then any slide that cites works:
 ```
 
 `#slide-bib()` includes the cached entry with class `sp-bib`; the runtime
-filter (`src/composables/useBibFilter.ts`) hides every `li` whose `id` is not
-referenced by a *currently step-visible* citation on that slide, and hides the
-whole block when nothing is cited (`sp-bib-empty`). Typst's HTML export marks
-citations as `a[role="doc-biblioref"][href="#loc-…"]` and entries as
+filter (`src/composables/useBibFilter.ts`) tags each entry and the block:
+`li` whose `id` is cited by a *currently step-visible* citation is shown; a
+`li` cited on the slide but not at the current step gets `sp-bib-hidden`
+(visibility), and a `li` whose ref is not cited anywhere on the slide gets
+`sp-bib-absent` (display none, in addition to `sp-bib-hidden`). The block is
+tagged `sp-bib-empty` and hidden when nothing is cited. Typst's HTML export
+marks citations as `a[role="doc-biblioref"][href="#loc-…"]` and entries as
 `li#loc-…`, so filtering happens against the live DOM after compile.
 
 ---
