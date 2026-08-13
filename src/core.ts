@@ -375,6 +375,8 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
         if (lastNonContentHash !== 0 && lastNonContentHash !== nonContentHash) {
           // will still miss it if the very first modification is in non-content
           window.localStorage.setItem('sp-non-content-hash', nonContentHash.toString())
+          // Hand the overview-open state to the next page load.
+          try { sessionStorage.setItem('sp-live-overview', spApi.overview ? '1' : '0') } catch {}
           window.location.reload()
           return            
         }

@@ -140,7 +140,7 @@
 // 3. TOC
 // ============================================================
 #slide(no-toc: true)[
-  = Here is TOC
+  = Here is TOC (table of contents)
 
   #toc(end: "2")
 ]

@@ -522,7 +522,20 @@ function togglePresenter() {
 
 const config = useStorage()
 spApi.config = config
-const showOverview = ref(false)
+
+// Restore after a live-update-triggered reload keeps the overview open, and
+// mirror the state onto spApi so the reload path (core.ts) can save it back.
+function popLiveUpdateFlag() {
+  try {
+    const v = sessionStorage.getItem('sp-live-overview')
+    sessionStorage.removeItem('sp-live-overview')
+    return v === '1'
+  } catch {
+    return false
+  }
+}
+const showOverview = ref(popLiveUpdateFlag())
+watch(showOverview, (v) => { spApi.overview = v }, { immediate: true })
 const showDevPane = ref(false)
 const blackout = ref(false)
 const loading = ref(true)

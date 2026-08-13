@@ -23,6 +23,7 @@ export const spApi = reactive({
   config: {} as Record<string, unknown>,
   _animCommands: {} as Record<string, AnimCommandHandler>,
   _animActionTypes: {} as Record<string, ActionTypeHandler>,
+  overview: false,
   showChunkletsBar: false,
   chunkletDefs: [] as ChunkDef[],
   chunkletMode: false,
