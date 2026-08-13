@@ -1,5 +1,5 @@
 <template>
-  <div class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
+  <div ref="rootEl" class="sp-presentation" :class="{ 'sp-presenter-mode': presenter }" :style="rootStyle">
     <span style="display: none" :data-source-file-push="dataSourceFile"></span>
     <component :is="beforeComp" v-if="props.raw?.before" />
     <div v-if="globalErrorMessages.length > 0" class="sp-global-error-overlay" @click.self="clearGlobalErrorMessages()">
@@ -260,7 +260,7 @@ import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
 import { useStorage } from '../composables/useStorage'
-import { useBibFilter } from '../composables/useBibFilter'
+import { useSlideRefine } from '../composables/useSlideRefine'
 import SpSlide from './SpSlide.vue'
 import SpDevPane from './SpDevPane.vue'
 import SpPresenterView from './SpPresenterView.vue'
@@ -354,14 +354,15 @@ const { transformStyle, containerStyle } = useScale(props.designWidth, props.des
 
 const viewportEl = ref<HTMLElement | null>(null)
 const transitionWrapEl = ref<HTMLElement | null>(null)
+const rootEl = ref<HTMLElement | null>(null)
 
-// Step-aware filtering of cached bibliographies (`<sp-bib>` includes) on the
-// current slide.
-useBibFilter({
-  getSlideEl: () => transitionWrapEl.value?.querySelector('.sp-slide-current') ?? null,
+// Run registered slide refinements (e.g. the `bib` refinement — step-aware
+// filtering of bibliography blocks) against every rendered `.sp-slide`.
+useSlideRefine({
   currentIndex,
   stepIndex,
   contentVersion,
+  root: () => rootEl.value,
 })
 
 provide('stepIndex', stepIndex)

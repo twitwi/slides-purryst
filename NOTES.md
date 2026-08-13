@@ -4,7 +4,6 @@
 - [ ] rework list of todos
 - [ ] better footer in theme
 - [ ] sp-svg not caching anymore? (maybe the demo uses it also as img so threated both ways?
-- [ ] biblio not ok in the print view
 - [ ] fix print view dont showing svg anims
 - [ ] bug in theme for h3:has(h4)? it center vertically... ---> actually bibliography h2 causes the misfire, should guard agains sp-bib probably ... fixed and monkey patched, needs commit push release
 - [ ] typst option to add #slide-bib to all slides (it is hidden if empty anyway)

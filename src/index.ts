@@ -1,4 +1,4 @@
-export type { SPSlidesOptions, SlideData, ChunkDef, Navigation, PresenterState, Transformer, SlidesPlugin, PluginAPI, FacetName } from './types'
+export type { SPSlidesOptions, SlideData, ChunkDef, Navigation, PresenterState, Transformer, SlideRefinement, SlidesPlugin, PluginAPI, FacetName } from './types'
 
 export { createSlidesPurryst } from './core'
 export { exportStandalone } from './export'
@@ -28,6 +28,7 @@ export { default as SpSvg } from './components/SpSvg.vue'
 export { default as SpStyle } from './components/SpStyle.vue'
 export { default as SpToc } from './components/SpToc.vue'
 export { default as SpSlideSource } from './components/SpSlideSource.vue'
+export { default as SpBib } from './components/SpBib.vue'
 
 export { useKeymap, createDefaultKeymap, bind } from './keymap'
 export type { Keymap, KeymapSetupFn, KeyContext, BindOptions } from './keymap'

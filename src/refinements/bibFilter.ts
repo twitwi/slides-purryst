@@ -1,16 +1,20 @@
-import { watch, nextTick, type Ref } from 'vue'
+import type { SlideRefinement } from '../types'
 
-// Step-aware filtering for `<sp-bib>` blocks (cached bibliographies included
-// via `<sp-include class="sp-bib">`). Typst's HTML export marks bibliography
-// entries as `<li id="loc-*">` inside `section[role="doc-bibliography"]` and
-// citations as `<a href="#loc-*" role="doc-biblioref">`. The ids are only
-// known after compilation, so the filter must run against the live DOM.
+// Step-aware refinement of `.sp-bib` bibliography blocks (tagged `<sp-bib>`
+// elements or `<sp-include class="sp-bib">`, as emitted by typst's
+// `#slide-bib()`). The ids of the entries are only known after compilation,
+// so the refinement must run against the live DOM.
 //
-// For the current slide, an entry is shown iff at least one *currently step
-// visible* citation in that slide points to it. Everything else is hidden, and
-// the whole block is hidden when nothing is cited on the slide.
+// For a slide, an entry is shown iff at least one *currently step visible*
+// citation in that slide points to it. Everything else is hidden, and the
+// whole block is hidden when nothing is cited on the slide.
+//
+// Typst's HTML export marks bibliography entries as `<li id="loc-*">` inside
+// a `section[role="doc-bibliography"]` and citations as
+// `a[role="doc-biblioref"]`. Hand-written HTML may use the `.sp-bib-cite`
+// class on its citation links instead — both are matched.
 
-const CITE_SELECTOR = 'a[role="doc-biblioref"]'
+const CITE_SELECTOR = 'a[role="doc-biblioref"], .sp-bib-cite'
 const HIDDEN_CLASS = 'sp-bib-hidden'
 const ABSENT_CLASS = 'sp-bib-absent'
 const EMPTY_CLASS = 'sp-bib-empty'
@@ -39,15 +43,10 @@ function filterBibBlock(block: HTMLElement, targetIds: Set<string>, slideIds: Se
   block.classList.toggle(EMPTY_CLASS, shown === 0)
 }
 
-export function useBibFilter(opts: {
-  getSlideEl: () => Element | null
-  currentIndex: Ref<number>
-  stepIndex: Ref<number>
-  contentVersion: Ref<number>
-}) {
-  function run() {
-    const slideEl = opts.getSlideEl()
-    if (!slideEl) return
+export const bibRefinement: SlideRefinement = {
+  name: 'bib',
+  appliesTo: slideEl => slideEl.querySelector('.sp-bib') !== null,
+  apply: slideEl => {
     const blocks = slideEl.querySelectorAll<HTMLElement>('.sp-bib')
     if (blocks.length === 0) return
     // `slideIds`: refs cited anywhere on the slide (any step). `targetIds`:
@@ -62,12 +61,5 @@ export function useBibFilter(opts: {
       if (isStepVisible(a)) targetIds.add(id)
     })
     blocks.forEach(b => filterBibBlock(b, targetIds, slideIds))
-  }
-
-  const schedule = () => nextTick(run)
-
-  watch([opts.currentIndex, opts.stepIndex, opts.contentVersion], schedule, { flush: 'post' })
-  schedule()
-
-  return { run, schedule }
+  },
 }

@@ -1,5 +1,7 @@
-/* Cached bibliographies (`<sp-bib>`, from `#slide-bib()` in typst).
-   Entries are tagged at runtime by the step-aware filter (useBibFilter):
+/* Cached bibliographies (the `sp-bib` block — `<sp-bib>`, or
+   `<sp-include class="sp-bib">` from typst's `#slide-bib()`).
+   Entries are tagged at runtime by the `bib` slide refinement (skimming
+   `a[role="doc-biblioref"]` and `.sp-bib-cite` citations):
    - `sp-bib-hidden` — ref is cited on the slide but not by a *currently step
      visible* citation: keep its space, just hide it (visibility).
    - `sp-bib-absent` — ref is not cited anywhere on the slide: drop it entirely

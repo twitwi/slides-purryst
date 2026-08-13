@@ -12,6 +12,8 @@ import SpStyle from './components/SpStyle.vue'
 import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
 import SpSlideSource from './components/SpSlideSource.vue'
+import SpBib from './components/SpBib.vue'
+import { bibRefinement } from './refinements/bibFilter'
 import type { SPSlidesOptions, SlideData, SlidesPlugin, SpInitPayload } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './composables/useSlides'
@@ -34,6 +36,7 @@ const builtins: Record<string, Component> = {
   'sp-style': SpStyle,
   'sp-toc': SpToc,
   'sp-slide-source': SpSlideSource,
+  'sp-bib': SpBib,
 }
 
 function resolveEl(el?: string | HTMLElement): HTMLElement | null {
@@ -289,6 +292,14 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     theme,
     raw,
     el: '#app',
+  })
+
+  // Default: step-aware bibliography filtering. Registered through the public
+  // plugin API (a slide refinement), so it can be overridden or removed by
+  // userland plugins ordering after it.
+  await registry.register({
+    name: 'bib',
+    activate: api => api.addSlideRefine(bibRefinement),
   })
 
   const allPlugins: SlidesPlugin[] = [...(plugins ?? [])]

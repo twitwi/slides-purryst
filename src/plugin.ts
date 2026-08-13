@@ -1,4 +1,4 @@
-import type { SlidesPlugin, PluginAPI, Transformer, ChunkDef } from './types'
+import type { SlidesPlugin, PluginAPI, Transformer, ChunkDef, SlideRefinement } from './types'
 import type { KeymapSetupFn } from './keymap/types'
 import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
 import { registerAnimCommand, registerAnimActionType } from './animCommands'
@@ -16,7 +16,19 @@ export const registry = {
   _animCommands: [] as { name: string; handler: AnimCommandHandler }[],
   _animActionTypes: [] as { type: string; handler: ActionTypeHandler }[],
   _domTransforms: [] as Transformer[],
+  _slideRefinements: [] as SlideRefinement[],
   _teardowns: new Map<string, (() => void)[]>(),
+
+  // Apply every registered refinement to every `.sp-slide` inside `root`
+  // (defaults to the whole document). Refinements are idempotent, so this can
+  // safely run again on step/content changes.
+  refineAllSlides(root: ParentNode = document) {
+    for (const slideEl of root.querySelectorAll('.sp-slide')) {
+      for (const refinement of this._slideRefinements) {
+        if (refinement.appliesTo(slideEl)) refinement.apply(slideEl)
+      }
+    }
+  },
 
   async register(plugin: SlidesPlugin) {
     this._plugins.push(plugin)
@@ -30,6 +42,7 @@ export const registry = {
       injectStyle:       d.includes('style')      ? noop : injectStyle,
       addChunklet:       d.includes('chunklet')   ? noop : (def: ChunkDef) => spApi.chunkletDefs.push(def),
       addDomTransform:   d.includes('domTransform') ? noop : (fn: Transformer) => this._domTransforms.push(fn),
+      addSlideRefine:    d.includes('slideRefine') ? noop : (refinement: SlideRefinement) => this._slideRefinements.push(refinement),
     }
     const result = plugin.activate(api)
     const teardown = result instanceof Promise ? await result : result

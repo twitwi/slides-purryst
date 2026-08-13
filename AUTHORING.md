@@ -671,7 +671,7 @@ Renders the bibliography once. Then any slide that cites works:
 ```
 
 `#slide-bib()` includes the cached entry with class `sp-bib`; the runtime
-filter (`src/composables/useBibFilter.ts`) tags each entry and the block:
+refinement (the `bib` slide refinement) tags each entry and the block:
 
 - an entry `li` whose `id` is cited by a **currently step-visible** citation is
   shown;
@@ -682,10 +682,39 @@ filter (`src/composables/useBibFilter.ts`) tags each entry and the block:
 - the block gets `sp-bib-empty` and is hidden when nothing is cited.
 
 Typst's HTML export marks citations as `a[role="doc-biblioref"][href="#loc-…"]`
-and entries as `li#loc-…`, so filtering happens against the live DOM after
-compile. `#sp-bibliography(path("demo.bib"))` is sugar for `add-cache-entry`
-+ `#bibliography` — pass a `path()` so typst resolves it relative to the
-calling file.
+and entries as `li#loc-…`, so refinement runs against the live DOM after
+compile — for every rendered slide, in all modes (main, presenter, and
+`?print=slides` / `?print=steps`). `#sp-bibliography(path("demo.bib"))` is
+sugar for `add-cache-entry` + `#bibliography` — pass a `path()` so typst
+resolves it relative to the calling file.
+
+### Hand-written bibliographies (no typst)
+
+The runtime refinement is typst-agnostic: it reacts to the `sp-bib` block and
+citation markup, whoever wrote it. Mark the bibliography block with the
+`<sp-bib>` element (or the class `sp-bib` on any container) and tag citation
+links with `class="sp-bib-cite"`:
+
+```html
+<sp-slide>
+  <p>
+    Citing <a class="sp-bib-cite" href="#k01">PCA [1]</a> in
+    <a class="sp-bib-cite" href="#k02">another step</a>.
+  </p>
+  <sp-bib>
+    <h2>References</h2>
+    <ol>
+      <li id="k01">Pearson, 1901. <em>On lines and planes…</em></li>
+      <li id="k02">…</li>
+    </ol>
+  </sp-bib>
+</sp-slide>
+```
+
+`<sp-bib src="refs.html">` instead renders a cached include (like
+`<sp-include class="sp-bib" src="refs.html">`); the filter treats both the
+same. Entries must be `<li id="…">` and citations must point to them with
+`href="#id"`.
 
 ## 15. Vue components in slides
 
@@ -806,7 +835,7 @@ import { definePlugin } from 'slides-purryst'
 export default definePlugin({
   name: 'my-plugin',
   order: 0,                    // Lower runs first (so can be erased by higher)
-  disable: [],                 // Facets to skip: 'anim' | 'keymap' | 'style' | 'chunklet'
+  disable: [],                 // Facets to skip: 'anim' | 'keymap' | 'style' | 'chunklet' | 'slideRefine'
   activate: (api: PluginAPI) => {
     // Return a teardown function if needed
     return () => { /* cleanup */ }
@@ -825,6 +854,7 @@ export default definePlugin({
 | `api.injectStyle(css)` | Inject global CSS |
 | `api.addChunklet(def)` | Register a chunklet definition (§13) |
 | `api.addDomTransform(fn)` | Register a DOM transform applied after step processing |
+| `api.addSlideRefine(refinement)` | Register a runtime slide refinement (below) |
 
 ### 19.3 Keybindings
 
@@ -884,7 +914,31 @@ api.addDomTransform((root: Element) => {
 Transforms run after `processSlideHtml` converts step/animation markup to data
 attributes, just before the slide HTML is compiled into a Vue component.
 
-### 19.7 Inline `activate`
+### 19.7 Slide refinements
+
+While `addDomTransform` prepares a slide *once* at compile time, a **slide
+refinement** runs at runtime against the rendered slide and is re-applied
+whenever the slide re-renders or its step / async content changes:
+
+```ts
+api.addSlideRefine({
+  name: 'my-refinement',
+  // Cheap gate: skip slides that don't need this refinement.
+  appliesTo: (slideEl) => slideEl.querySelector('.my-marker') !== null,
+  // Idempotent DOM adjustment, e.g. tagging elements per current step.
+  apply: (slideEl) => {
+    slideEl.querySelectorAll('.my-marker').forEach(el => { /* … */ })
+  },
+})
+```
+
+The driver (`useSlideRefine`) re-runs every registered refinement against every
+rendered `.sp-slide` (main view, presenter, and `?print=slides` / `?print=steps`)
+after slide, step, or content changes. Refinements must be **idempotent** — they
+can be applied many times. The step-aware bibliography filter (§14) is the
+built-in refinement (`bib`), registered through this same API.
+
+### 19.8 Inline `activate`
 
 ```ts
 createSlidesPurryst({
@@ -931,6 +985,9 @@ src/
     SpOverview.vue       # Slide grid overview
     SpGoPrompt.vue       # Go-to slide dialog
     SpPrintView.vue      # ?print=slides / ?print=steps layout
+    SpBib.vue            # <sp-bib> wrapper — step-aware bibliography block
+  refinements/
+    bibFilter.ts         # `bib` slide refinement (step-aware bibliography)
   composables/
     useSteps.ts          # processSlideHtml(), useSteps() composable
     useSlides.ts         # Slide parsing from DOM
@@ -939,7 +996,7 @@ src/
     useNavigation.ts     # Keyboard + touch + hash navigation
     useStorage.ts        # localStorage config persistence
     useSlideTree.ts      # Heading extraction for TOC
-    useBibFilter.ts      # Step-aware bibliography filtering
+    useSlideRefine.ts    # Slide refinement driver (runtime passes)
     resolveIncludes.ts   # <sp-include> resolution with stack tracking
     includeCache.ts      # Text + binary include cache
     useChunklets.ts      # Chunklet parsing + placement
