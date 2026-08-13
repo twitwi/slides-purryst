@@ -9,9 +9,11 @@
   /* −−− Typically parametrizable −−− */
   --sp-theme-hue: 25;
   --sp-theme-secondary-hue: 55;
-  --sp-scale: 1; /* controlled by is-small etc */
+ 
+  --sp-ui-font-size: 24px; /* this one is for slides */
+  --sp-base-font-size: 64px; /* this one is for slides */
+  --sp-scale: 1; /* factor to the above controlled by is-small etc */
   --sp-shadow-scale: 1; /* for box-shadows opacity */
-  --sp-base-font-size: 64px;
   --sp-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
   --sp-font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
 

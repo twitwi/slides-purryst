@@ -1,6 +1,10 @@
+
+:root { font-size: var(--sp-ui-font-size);}
+
 .sp-slide {
     font-size: var(--sp-bem);
     font-family: var(--sp-font-sans);
+
     h1 { font-size: 1.444em; font-weight: 700; margin-bottom: 0.25em; line-height: 1.05; }
     h2 { font-size: 1.222em; font-weight: 700; margin-bottom: 0.3em;  line-height: 1.05; }
     h3 { font-size: 1.111em; font-weight: 600; margin-bottom: 0.3em;  line-height: 1.1; }

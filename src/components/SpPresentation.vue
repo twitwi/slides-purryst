@@ -52,8 +52,8 @@
           <div class="sp-global-bottom">
             <slot name="global-bottom">
               <footer class="sp-slide-footer">
+                <span>{{ spApi.config.speaker }}</span>
                 <span>{{ currentIndex + 1 }} / {{ effectiveTotal }}</span>
-                <span>{{ author }}</span>
               </footer>
             </slot>
           </div>

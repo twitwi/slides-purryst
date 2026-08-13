@@ -48,19 +48,19 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  padding: var(--sp-8) var(--sp-12) var(--sp-12);
+  padding: 32px 48px 48px;
   overflow: hidden;
 }
 
 .sp-slide-footer {
-  height: 36px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  height: 2.5em;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--sp-8);
-  font-size: 1rem;
+  padding: 1em;
   color: var(--sp-text-3);
-  border-top: var(--sp-px) solid var(--sp-border);
 }
 
 .sp-main-blackout {
