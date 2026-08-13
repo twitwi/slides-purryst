@@ -2,8 +2,25 @@
 # NEXT
 
 - [ ] rework list of todos
+- [ ] better footer in theme
+- [ ] sp-svg not caching anymore? (maybe the demo uses it also as img so threated both ways?
+- [ ] biblio not ok in the print view
+- [ ] fix print view dont showing svg anims
+- [ ] bug in theme for h3:has(h4)? it center vertically... ---> actually bibliography h2 causes the misfire, should guard agains sp-bib probably ... fixed and monkey patched, needs commit push release
+- [ ] typst option to add #slide-bib to all slides (it is hidden if empty anyway)
+- [ ] on live update keep the overview state
+- #anim("-#focus, #formula", at: "0") creates a js error (why? and why not resurfaced?)
+- on reload of the same withoout at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
+- [ ] doc consider adding adding "    "dev": "pnpm exec slides-purryst index.typ"    " to package json
+- [ ] drag ux, markers should go above (also an overly for mouse above) the rest
+- [ ] UX, add a class option (and id) to drag (and most wrappers too? and also a style maybe (string or dictionnary)
 
-# TODO rationalize parsing etc
+
+- [ ] might get some perf issues if all svg elements get class sp-anim-shown etc (have a way to not recururse?)
+- [ ] emoji fix should tag as emoji
+- [ ] toc shows empty in overview at first?
+
+# todo rationalize parsing etc
 
 - [ ] document and rationalize processing steps (typst preprocess, typst, html reformat, sp-content parsing, slide html parsing, more?)
 - [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
@@ -11,15 +28,28 @@
 - [ ] rationalize also the format (#sp-content, #sp-chunklets, [data-sp-cache-...], #sp-cache #sp-presentation)
 - [ ] sp-step and the more generic produced data-sp-step-from etc can be restrictive. If DOM tag kept, consider more generic alt like data-sp-visible-at="2,3,4,5,8,9" ... or a list of list ="[[3, 6], [8,10]]"
 - [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst
+- probably need to allow an open conf (authors... presenter... etc), probably ok as pure typst if to json handles all
+- title should propagate to tab name, also allow tab (for tab name, if provided)
+- propably distinguish config (really pure deck config like size etc) from metadata? e.g. presenter (mode) vs presenter (who presents)
+- consider having a res/ folder that is containing all the things than can be copied, this might include typst sources, and a minimal script that preproc/typst/postproc... and a command line --copy or --detach or something, that shows a miniinterface asking what to detach, with some small 1 line to say what they are
+- ^^^^ currently nunito.css is ugly (js packed)... maybe related but the bundle looks for ugly font paths also
+- [ ] if not the case plugins get a call for init, before anything has appened (same as typst js:""
+- [ ) typst should allow providing an activate and a list of plugins
+- [ ] plugin packs: a factory that produces a plugin that is a list of plugins from the built in ones (or others but how to lazy include in some way?)
+- [ ] (typst) add a "raw" that will dump html string as cache, and sp-include it
+- [ ] v-drag and #drag do some rounding (integer design pixel?)
+- [ ] #drag, handle at:"" too and maybe even missing no at: .... or at the opposite make it generic to just look for at: (maybe already doing that, so we can drag other thing?) 
 
-## TODO v2 (2.0.0) consolidate internals, potential breakage
+## todo v2 (2.0.0) consolidate internals, potential breakage
 
 - [ ] (demo(s)) check overflow (TOC mainly?)
 - [ ] Track useless recomputes (loopy + process html only once + overview+liveupate=memhog)
 - [ ] when updating, the symlink (slides-purryst) is not updated on run, causing issues, should automatically update (if symlink) and warn it did
+- [ ] same when adding a file (it is not seen...), typically the bib
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
+- [ ] (overview) put the slide number on the side/outside of the slide, or maybe ensure visible
 - [ ] (chunklets) show "no chunklet" instead of nothing when bar is shown
 - [ ] (typst) can we have a typst-based preview in tinymist etc... at least view all slides allow clicking etc (when?)
 - [ ] (typst) codeblock improve demo, wrap each line (show rule) to animate... actually suggest a @child(ul, 1) etc in anim
@@ -53,6 +83,8 @@
 - [ ] add a toc in the overview somewhat
 - [ ] plugin should be able to contribute to a shared state (like source in demo) or a shared saved (localstorage) state, check that the is properly reactive intially (pb with source in sp-after, has undefined value for transform at first template render, should not need a "set timer")
 - [ ] (typst) chunklets and cache actually as typst, not a preprocess?
+- [ ] video add a seek action
+
 
 ## TODO v3 (3.0.0) (better presenter and authoring features)
 
@@ -65,6 +97,8 @@
 - [ ] (live) have a mode where each text change (character) is sent as a text update to the client, so it can just replace the content... or maybe there is a notion of current slide (visible) and updates to this slide only are sent, with a very fast round trip update
 - [ ] chunklet/draggable demo: add some font-size varying things, like https://stackoverflow.com/questions/16056591/font-scaling-based-on-size-of-container could also have post-hoc controllable params in chunklets, maybe not too "componenty" so using data-param-size.1.100="..." (controlled by a slider or something) and used in the chuncklet style="font-size: calc(var(--param-size) * 1vw)" ... reimplementing components here? maybe directly work with components, orthogonal to chunklets: if a component has a v-conf="{size: [1, 100]}" then it gets a slider to control its value :size="42"... need to resurface up to typst also
 - [ ] have a configurable default, i.e. all <sp-drag> inherit a v-conf={x,y,w,h} etc
+- [ ] csl discuss + doc plugin https://editor.citationstyles.org/visualEditor/
+
 
 ## TODO typst syntax
 
@@ -111,7 +145,7 @@ src/composables/resolveIncludes.ts:101 — s.querySelectorAll(ofInterest).forEac
 - [ ] consider a sp-script to avoid closing </script> in the "template"... but do we want script...? when do they get run etc? maybe rather need a very generic anim that accepts code directly?
 - [ ] consider unocss stuff, can it be with a small footprint?
 - [ ] overview could insert separators when breaking a section (go from h3 to h2, have .sp-overview-leave-h3) to allow css styling (break flow of overview)
-- [ ] consider history management (think about when to push)
+- [ ] consider history management (think about when to push), typically must be able to do back when clicking a internal link (like in a toc), but not sure for every slide step though
 - [ ] rationalize/think the data-stuff put on sp-presentation, the options passed to create... and potentially some generic data-meta="{ ... }" on sp-presentation, maybe merge some...
 - [x] (typst) integrate show raw.line into the typst theme — codeblock uses `it.lines` in a `show raw` rule, emitting `span.cb-line` children (whole-text highlight, no JS)
 - [ ] (typst) show rule to map block onto a div, with explicit attributes (of block) transformed in style in div

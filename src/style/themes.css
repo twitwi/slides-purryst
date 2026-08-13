@@ -64,7 +64,7 @@ Theme authors can use the pattern used below, with:
     --sp-base-font-size: 3em; /*2.35em */;
     --sp-bg: var(--sp-auto-white);
     --sp-text: var(--sp-auto-black);
-    &:has(h1,h2) {
+    &:has(h1,h2:not(.sp-bib *)) {
         display: flex;
         justify-content: center;
         align-items: center;

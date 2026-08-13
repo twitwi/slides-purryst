@@ -26,6 +26,13 @@ You can use as `index.typ` the following content (or start from the "minimal" de
 ```typst
 #import "slides-purryst/lib.typ": *
 
+#sp-init(
+  config: (
+    title: "Amazing",
+    author: "You!",
+  )
+)
+
 #slide[
   #h1[SlidesPurr(yst)]
 ]
@@ -41,11 +48,22 @@ You can use as `index.typ` the following content (or start from the "minimal" de
 
 ```
 
+Typical `.gitignore`
+
+```
+AGENTS.md
+AUTHORING.md
+node_modules/
+### for typst only
+index.html
+,,sp-*/
+```
+
 
 
 ### Recommended for typst
 
-``bash
+```bash
 mkdir my-talk
 cd my-talk
 pnpm init
@@ -221,6 +239,9 @@ You can also create your own HTML in the `example/` folder.
 ---
 
 ## Version History
+
+Free latest with `'github:twitwi/slides-purryst#v1.0.0'
+
 
 **v1.0.0** (`latest`) — PDF Export (via browser), consolidate theme CSS, first version including typst (build script, live reload, bibliography, cetz, lilaq).
 **v0.1.0** — Core framework: slides, steps, animations, transitions, presenter mode, live reload, HTML authoring, plugins, chunklets, drag editing, CLI (`slides-purryst` and `sp-dev`), Vite-based dev server, zero-dependency bundle server.
