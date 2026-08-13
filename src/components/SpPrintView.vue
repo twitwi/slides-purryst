@@ -1,5 +1,5 @@
 <template>
-  <div class="sp-print">
+  <div class="sp-print" ref="printRootEl">
     <div class="sp-print-helper-container">
       <div class="sp-print-helper">
         <p>To export as PDF:</p>
@@ -31,20 +31,25 @@
 </template>
 
 <script setup lang="ts">
+import { computed, watch, nextTick, ref, onMounted } from 'vue'
 import type { SlideData } from '../types'
 import SpSlide from './SpSlide.vue'
 import { maybeProcessed } from '../composables/useSteps'
-import { SpStorageConfig } from '../composables/useStorage';
-import { computed, watch } from 'vue';
+import { SpStorageConfig } from '../composables/useStorage'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   steps: boolean
   components: Record<string, any>
   designWidth: number
   designHeight: number
   config: SpStorageConfig
   slides: SlideData[]
-}>()
+  currentIndex?: number
+  stepIndex?: number
+}>(), {
+  currentIndex: 0,
+  stepIndex: 0,
+})
 
 const processedHtml = computed(() => props.slides.map(s => maybeProcessed(s)!))
 const sized = computed(() => ({ width: `${props.designWidth}px`, height: `${props.designHeight}px` }))
@@ -53,10 +58,33 @@ const injectStyle = computed(() => `
   size: ${props.designWidth}px ${props.designHeight}px;
 }
 `)
+// Per-slide page counts in steps mode (each step is its own printable page).
+const stepCounts = computed(() =>
+  processedHtml.value.map(h => Math.max(1, Math.floor(h.steps)))
+)
+// First page index of each slide.
+const pageStarts = computed(() => {
+  const starts: number[] = []
+  let n = 0
+  for (const s of stepCounts.value) {
+    starts.push(n)
+    n += s
+  }
+  return starts
+})
+// Print page for the current navigation position (slide, step).
+const targetPage = computed(() => {
+  if (props.slides.length === 0) return 0
+  const i = Math.min(Math.max(props.currentIndex, 0), props.slides.length - 1)
+  if (!props.steps) return i
+  const s = Math.min(Math.max(props.stepIndex, 0), stepCounts.value[i] - 1)
+  return pageStarts.value[i] + s
+})
+
 const slidesToShow = computed(() => {
   if (props.steps) {
     return props.slides.flatMap((slide, slideI) => {
-      const nSteps = processedHtml.value[slideI].steps
+      const nSteps = stepCounts.value[slideI]
       return [...Array(nSteps).keys()].map((step) => ({
         step, slide, slideI,
         html: processedHtml.value[slideI].html,
@@ -71,10 +99,26 @@ const slidesToShow = computed(() => {
   }
 })
 
-watch(slidesToShow, () => {
-  console.log(slidesToShow.value.length, slidesToShow.value)
+const printRootEl = ref<HTMLElement | null>(null)
+const mounted = ref(false)
+
+function scrollToPage(page: number) {
+  printRootEl.value
+    ?.querySelectorAll<HTMLElement>('.sp-print-wrapper')
+    .item(page)
+    ?.scrollIntoView({ block: 'start' })
+}
+
+// Navigating (keyboard, hash, the shared goto prompt) changes
+// currentIndex/stepIndex → scroll the corresponding print page into view.
+watch(targetPage, (page, prev) => {
+  if (!mounted.value || page === prev) return
+  nextTick(() => scrollToPage(page))
 })
 
+onMounted(() => {
+  mounted.value = true
+})
 </script>
 
 <style>
@@ -85,7 +129,7 @@ body:has(.sp-print) {
     break-after: page;
   }
   .sp-print-helper-container {
-    z-index: 100000;
+    z-index: 900;
     position: absolute;
     left: 0;
     top: 0;
@@ -114,6 +158,7 @@ body:has(.sp-print) {
     }
   }
 }
+
 @media print {
   .sp-print-helper-container {
     display: none !important;

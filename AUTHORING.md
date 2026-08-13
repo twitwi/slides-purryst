@@ -773,6 +773,12 @@ and slide "pills". The 🔒 button locks the nav visible (`config.navLocked`).
 **URL**: `#slide/step` is kept in the hash; `?presenter` opens presenter
 mode; `?print` / `?print?steps` render a printable layout.
 
+In print layouts the view scrolls to the corresponding page when you navigate
+(arrow keys, `#slide/step` hash, or the usual goto prompt — `g` — which is
+shared with the main view). `?print` shows one page per slide (at its last
+step); `?print?steps` shows a page per step. The helper dialog and the goto
+prompt are excluded from the actual print output.
+
 ## 17. Presenter mode
 
 Open with `p` or `?presenter`. Shows the current slide, a preview of the

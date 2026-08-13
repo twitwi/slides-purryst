@@ -97,3 +97,9 @@
   color: var(--sp-text-3);
   padding: var(--sp-2) var(--sp-1);
 }
+
+@media print {
+  .sp-go-prompt {
+    display: none !important;
+  }
+}

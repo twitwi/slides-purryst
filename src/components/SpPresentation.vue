@@ -216,7 +216,9 @@
         :designWidth="props.designWidth"
         :designHeight="props.designHeight"
         :config="config"
-        :slides="slides"      
+        :slides="slides"
+        :currentIndex="currentIndex"
+        :stepIndex="stepIndex"
       />
     </template>
 
