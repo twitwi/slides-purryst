@@ -71,6 +71,85 @@ body {
   cursor: pointer;
 }
 
+/* Slide-level "quit edit mode" button, shown while a draggable is being
+   edited. Lives inside the scaled slide, so it anchors to the slide corner. */
+.sp-edit-quit-btn {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  z-index: 1100;
+  padding: 8px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  background: var(--sp-accent);
+  color: var(--sp-bg-2);
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sp-edit-quit-btn:hover {
+  background: var(--sp-accent-dark);
+}
+
+/* Discrete save-feedback chip: shows while a drag write is in flight
+   ("saving…" + spinner), when the refresh pipeline confirms it ("saved"), or on
+   a failed write ("save failed"). Sits below the quit button; never intercepts
+   clicks. */
+.sp-save-chip {
+  position: absolute;
+  top: 74px;
+  right: 32px;
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  animation: sp-save-chip-in 0.18s ease-out forwards;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: var(--sp-bg-2);
+  color: var(--sp-text-2);
+}
+
+.sp-save-chip.sp-save-saving {
+  color: var(--sp-accent);
+}
+
+.sp-save-chip.sp-save-saved {
+  color: #1a7f37;
+}
+
+.sp-save-chip.sp-save-error {
+  color: #d1242f;
+}
+
+.sp-save-spinner {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: sp-save-spin 0.8s linear infinite;
+}
+
+@keyframes sp-save-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sp-save-chip-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .sp-loading {
   position: fixed;
   inset: 0;

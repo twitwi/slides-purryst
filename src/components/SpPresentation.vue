@@ -74,6 +74,25 @@
             <div v-if="dragging" class="sp-chunklet-preview" :style="previewStyle"></div>
           </div>
 
+          <button
+            v-if="spApi.dragging"
+            class="sp-edit-quit-btn"
+            title="Quit edit mode (save and exit)"
+            @click.stop="quitDragEditing()"
+          >
+            quit edit mode
+          </button>
+          <div
+            v-if="spApi.dragging && dragSaveState !== 'idle'"
+            class="sp-save-chip"
+            :class="'sp-save-' + dragSaveState"
+            role="status"
+          >
+            <span v-if="dragSaveState === 'saving'" class="sp-save-spinner" aria-hidden="true"></span>
+            <template v-if="dragSaveState === 'saving'">saving…</template>
+            <template v-else-if="dragSaveState === 'saved'">saved</template>
+            <template v-else-if="dragSaveState === 'error'">save failed</template>
+          </div>
         </div>
       </div>
 
@@ -263,6 +282,7 @@ import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
 import { useStorage } from '../composables/useStorage'
 import { useSlideRefine } from '../composables/useSlideRefine'
+import { quitDragEditing, onDeckIndexChange, dragSaveState, consumeSavedFlash } from '../composables/dragEditing'
 import SpSlide from './SpSlide.vue'
 import SpDevPane from './SpDevPane.vue'
 import SpPresenterView from './SpPresenterView.vue'
@@ -384,6 +404,7 @@ watch(currentIndex, (n, o) => {
   if (n !== o) {
     direction.value = n > o ? 1 : -1
     shouldSwap.value = true
+    onDeckIndexChange()
   }
 })
 
@@ -536,6 +557,9 @@ function popLiveUpdateFlag() {
 }
 const showOverview = ref(popLiveUpdateFlag())
 watch(showOverview, (v) => { spApi.overview = v }, { immediate: true })
+// A full reload loses in-memory state; re-show the brief "saved" confirmation
+// when a drag write landed right before the refresh.
+consumeSavedFlash()
 const showDevPane = ref(false)
 const blackout = ref(false)
 const loading = ref(true)

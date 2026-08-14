@@ -1,4 +1,4 @@
-import { createApp, ref } from 'vue'
+import { createApp, ref, nextTick } from 'vue'
 import type { Component } from 'vue'
 import SpPresentation from './components/SpPresentation.vue'
 import { spApi, exportInitOptions, runtimeStyleEls } from './sp-api'
@@ -19,6 +19,7 @@ import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './composables/useSlides'
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache, getCachedInclude } from './composables/includeCache'
 import { fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from './composables/useSteps'
+import { dragSaveSettled } from './composables/dragEditing'
 import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunkletsFromText } from './composables/useChunklets'
 import { exportStandalone } from './export'
@@ -365,6 +366,8 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     let lastNonContentHash = parseInt(window.localStorage.getItem('sp-non-content-hash') ?? '0', 10)
     es.addEventListener('update', (event: MessageEvent) => {
       liveUpdatesCount.value++
+      // The dev server wrote the source file and is pushing the refresh.
+      // Confirmation is delayed until the new content actually lands.
       const filename = (event.data ?? '').trim()
       if (filename) invalidateByFilename(filename)
       else invalidateTextCache()
@@ -378,6 +381,8 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
           window.localStorage.setItem('sp-non-content-hash', nonContentHash.toString())
           // Hand the overview-open state to the next page load.
           try { sessionStorage.setItem('sp-live-overview', spApi.overview ? '1' : '0') } catch {}
+          // New DOM is about to load; the fresh page shows the "saved" chip.
+          dragSaveSettled(true)
           window.location.reload()
           return            
         }
@@ -389,12 +394,15 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
             clearGlobalErrorMessages()
             vm.updateSlides?.(resolvedHtml)
             reapplyGlobalStyles(resolvedHtml)
+            // The new DOM now reflects the write: show "saved".
+            await nextTick()
+            dragSaveSettled()
           })().catch(() => {})
         }
       })
       .catch(() => {})
     })
-    es.addEventListener('connected', () => {}, { once: true })
+    es.addEventListener('connected', () => { spApi.devServer = true }, { once: true })
     es.addEventListener('typst-error', (event: MessageEvent) => {
       clearGlobalErrorMessages()
       try {

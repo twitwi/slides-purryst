@@ -20,6 +20,9 @@ export const spApi = reactive({
   prevSlide: () => {},
   export: () => {},
   dragging: false,
+  // True when served by the dev server (SSE connected): the drag write
+  // endpoint exists, so gestures can auto-commit when they finish.
+  devServer: false,
   config: {} as Record<string, unknown>,
   _animCommands: {} as Record<string, AnimCommandHandler>,
   _animActionTypes: {} as Record<string, ActionTypeHandler>,

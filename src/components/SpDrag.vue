@@ -4,8 +4,7 @@
     class="sp-drag"
     :class="{ 'sp-drag-editing': editing }"
     :style="style"
-    @dblclick="toggleEdit"
-    @mousedown="startDrag"
+    @mousedown="onMouseDown"
     @touchstart="onTouchStart"
     :data-debug="editableIndex"
   >
@@ -23,9 +22,6 @@
       ></div>
       <div class="sp-drag-rotate-line"></div>
       <div class="sp-drag-rotate-handle" @mousedown.stop="startRotate" @touchstart.stop.prevent="startRotate"></div>
-      <button class="sp-drag-save-btn" :title="saveTooltip" @mousedown.stop @click.stop="saveToSource">
-        Save
-      </button>
     </div>
   </div>
 </template>
@@ -34,6 +30,7 @@
 import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
 import { spApi } from '../sp-api'
 import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes';
+import { registerDrag, unregisterDrag, selectDrag, exitDrag, isDragEditing, tryRestoreEditing, gestureStart, gestureEnd, dragSaveBegin, dragSaveFailed, type DragEntry } from '../composables/dragEditing'
 
 const slideIndex = inject('slideIndex', ref(0))
 
@@ -110,7 +107,13 @@ function syncFromProps() {
   iw.value = resolveProp('w')
   ih.value = resolveProp('h')
   ir.value = parseNumeric(resolveProp('rotate'))
+  lastSynced = attrString(true)
 }
+
+// The props-derived attribute snapshot we last loaded refs from. Re-entering
+// edit mode must not clobber committed/repositioned refs with stale props
+// (e.g. after a save where props weren't refreshed yet).
+let lastSynced = ''
 
 function onNudgeKeydown(e: KeyboardEvent) {
   if (!editing.value) return
@@ -124,30 +127,36 @@ function onNudgeKeydown(e: KeyboardEvent) {
 }
 
 function enterEditMode() {
-  syncFromProps()
+  if (attrString(true) !== lastSynced) syncFromProps()
   if (el.value) {
     if (iw.value === 'auto') iw.value = el.value.offsetWidth || 200
     if (ih.value === 'auto') ih.value = el.value.offsetHeight || 100
   }
   editing.value = true
-  spApi.dragging = true
   window.addEventListener('keydown', onNudgeKeydown)
 }
 
 function exitEditMode() {
   editing.value = false
-  spApi.dragging = false
   window.removeEventListener('keydown', onNudgeKeydown)
+  if (selfEntry.value) exitDrag(selfEntry.value)
 }
 
-function saveToSource() {
+// Attribute string of the last successful write, so a later save (e.g. the
+// remount's onUnmounted commit) can compare against what was actually written
+// instead of stale props and avoid re-posting the same change.
+let lastWritten: string | null = null
+
+function saveToSource(keepEditing = false) {
   const newAttrs = attrString()
-  const oldAttrs = attrString(true)
+  const oldAttrs = lastWritten ?? attrString(true)
 
   if (oldAttrs === newAttrs) {
-    exitEditMode()
+    if (!keepEditing) exitEditMode()
     return
   }
+
+  dragSaveBegin()
 
   const hasAt = !!props.at
   const dragId = el.value?.getAttribute('data-drag-id')
@@ -171,14 +180,34 @@ function saveToSource() {
       const data = await r.json()
       if (!r.ok || !data.ok) {
         console.error('SP edit failed:', r.status, data)
+        dragSaveFailed()
         fallbackCopy(newAttrs)
+      } else {
+        lastWritten = newAttrs
       }
     })
     .catch((err) => {
       console.error('SP edit error:', err)
+      dragSaveFailed()
       fallbackCopy(newAttrs)
     })
-    .finally(() => exitEditMode())
+    .finally(() => {
+      // Gesture-end autosaves keep editing so the handles/quit button never
+      // vanish during the SSE round trip; deselect/quit still exit.
+      if (!keepEditing) exitEditMode()
+    })
+}
+
+// Commit when a drag/resize/rotate gesture finishes. On the dev server only
+// (the write endpoint exists) the change is posted right away; a gesture that
+// returned to its start position (no net change) is ignored and edit mode
+// stays active.
+function commitGestureEnd() {
+  if (!spApi.devServer) return
+  if (attrString(true) === attrString()) return
+  // Autosave on gesture release but stay in edit mode: without `keepEditing`,
+  // saveToSource would quit, flashing the handles away until the remount.
+  saveToSource(true)
 }
 
 function attrString(useProps = false): string {
@@ -196,15 +225,6 @@ function fallbackCopy(attrs: string) {
   alert(
     `Could not auto-save to source.\n\nCopy this attribute and replace the existing sp-drag at attribute manually:\n\n${attrs}`
   )
-}
-
-const saveTooltip = computed(() => {
-  return `Save: x=${Math.round(ix.value)} y=${Math.round(iy.value)} w=${iw.value} h=${ih.value} rotate=${Math.round(ir.value * 10) / 10}`
-})
-
-function toggleEdit() {
-  if (editing.value) saveToSource()
-  else enterEditMode()
 }
 
 const px = (n: number | string) =>
@@ -226,7 +246,6 @@ let dragStartX = 0
 let dragStartY = 0
 let dragOrigX = 0
 let dragOrigY = 0
-let interacting = 0
 
 function eventXY(e: MouseEvent | TouchEvent): { clientX: number; clientY: number } {
   if ('touches' in e) {
@@ -238,19 +257,33 @@ function eventXY(e: MouseEvent | TouchEvent): { clientX: number; clientY: number
 let lastTapTime = 0
 
 function onTouchStart(e: TouchEvent) {
+  e.preventDefault()
+  // From edit mode, touching another draggable re-targets the handles to it.
+  if (isDragEditing() && !editing.value && selfEntry.value) selectDrag(selfEntry.value)
+  // Draggables are inert outside edit mode: only a double-tap may enter it.
   if (editing.value) {
-    e.preventDefault()
     startDrag(e)
     return
   }
   const now = Date.now()
   if (now - lastTapTime < 300) {
-    e.preventDefault()
-    toggleEdit()
+    if (selfEntry.value) selectDrag(selfEntry.value)
     lastTapTime = 0
     return
   }
   lastTapTime = now
+}
+
+// Draggables are inert outside edit mode — pressing one does nothing there.
+// Inside edit mode pressing moves it; pressing another draggable re-targets
+// the handles to it first. preventDefault stops the browser from starting a
+// text selection on the double-click that enters edit mode.
+function onMouseDown(e: MouseEvent) {
+  e.preventDefault()
+  // From edit mode, pressing any other draggable re-targets the handles to it.
+  if (isDragEditing() && !editing.value && selfEntry.value) selectDrag(selfEntry.value)
+  if (!editing.value) return
+  startDrag(e)
 }
 
 function stopDrag() {
@@ -260,14 +293,14 @@ function stopDrag() {
   document.removeEventListener('mouseup', stopDrag)
   document.removeEventListener('touchmove', onDrag)
   document.removeEventListener('touchend', stopDrag)
-  setTimeout(() => interacting--, 0)
+  gestureEnd()
+  commitGestureEnd()
 }
 
 function startDrag(e: MouseEvent | TouchEvent) {
-  if (!editing.value) return
   cleanup()
+  gestureStart()
   isDragging = true
-  interacting++
   const { clientX, clientY } = eventXY(e)
   dragStartX = clientX
   dragStartY = clientY
@@ -306,14 +339,15 @@ function stopResize() {
   document.removeEventListener('mouseup', stopResize)
   document.removeEventListener('touchmove', onResize)
   document.removeEventListener('touchend', stopResize)
-  setTimeout(() => interacting--, 0)
+  gestureEnd()
+  commitGestureEnd()
 }
 
 function startResize(e: MouseEvent | TouchEvent, dir: string) {
   if (!editing.value) return
   cleanup()
+  gestureStart()
   resizing = true
-  interacting++
   const { clientX, clientY } = eventXY(e)
   resizeDir = dir
   resizeStartX = clientX
@@ -400,14 +434,15 @@ function stopRotate() {
   document.removeEventListener('mouseup', stopRotate)
   document.removeEventListener('touchmove', onRotate)
   document.removeEventListener('touchend', stopRotate)
-  setTimeout(() => interacting--, 0)
+  gestureEnd()
+  commitGestureEnd()
 }
 
 function startRotate(e: MouseEvent | TouchEvent) {
   if (!editing.value) return
   cleanup()
+  gestureStart()
   rotating = true
-  interacting++
   const rect = el.value!.getBoundingClientRect()
   const { clientX, clientY } = eventXY(e)
   rotateCenterX = rect.left + rect.width / 2
@@ -437,32 +472,48 @@ function cleanup() {
 
 syncFromProps()
 
+const selfEntry = ref<DragEntry | null>(null)
+
 onMounted(() => {
-  document.addEventListener('click', handleOutsideClick)
+  if (!el.value) return
+  selfEntry.value = {
+    el: el.value,
+    index: props.editableIndex,
+    slide: slideIndex.value,
+    begin: enterEditMode,
+    saveAndEnd: saveToSource,
+  }
+  registerDrag(selfEntry.value)
+  // After a dev-server refresh that interrupted an editing session, re-enter
+  // edit mode on the same draggable.
+  tryRestoreEditing(selfEntry.value)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleOutsideClick)
+  // On refresh the unmount fires before props sync; compare against the last
+  // written attrs so an already-autosaved gesture isn't re-posted.
+  if (editing.value && (lastWritten ?? attrString(true)) !== attrString()) saveToSource()
+  if (selfEntry.value) unregisterDrag(selfEntry.value.el)
 })
-
-function handleOutsideClick(e: MouseEvent) {
-  if (!editing.value) return
-  if (interacting > 0) return
-  if (!el.value) return
-  if (el.value.contains(e.target as Node)) return
-  saveToSource()
-}
 </script>
 
 <style scoped>
 .sp-drag {
   z-index: 10;
+  user-select: none;
+}
+
+/* While editing, hovering another draggable signals it can be re-targeted. */
+.sp-editing-drag .sp-slide-current .sp-drag:not(.sp-drag-editing):hover {
+  outline: 2px dotted var(--sp-accent);
+  outline-offset: 3px;
 }
 
 .sp-drag-editing {
   cursor: move;
   user-select: none;
   opacity: 0.85;
+  z-index: 1000;
 }
 
 .sp-drag-content-blocked {
@@ -532,27 +583,5 @@ function handleOutsideClick(e: MouseEvent) {
   cursor: grab;
   pointer-events: auto;
   z-index: 2;
-}
-
-.sp-drag-save-btn {
-  position: absolute;
-  bottom: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 6px 18px;
-  font-size: 13px;
-  background: var(--sp-accent);
-  color: var(--sp-bg-2);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  pointer-events: auto;
-  z-index: 3;
-  white-space: nowrap;
-  line-height: 1.4;
-}
-
-.sp-drag-save-btn:hover {
-  background: var(--sp-accent-dark);
 }
 </style>
