@@ -302,7 +302,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   // userland plugins ordering after it.
   await registry.register({
     name: 'bib',
-    activate: api => api.addSlideRefine(bibRefinement),
+    activate: api => api.addSlideRefinement(bibRefinement),
   })
 
   const allPlugins: SlidesPlugin[] = [...(plugins ?? [])]

@@ -19,6 +19,7 @@
 # while rationalizing
 
 - [ ] can typst chunklets be generated without preprocess? same for cache? same for config? do we need to remove comments, do we risk loosing new lines like that?
+- [ ] due to duplication, the emoji are (probably) not replaced in an included file
 
 
 # todo rationalize parsing etc

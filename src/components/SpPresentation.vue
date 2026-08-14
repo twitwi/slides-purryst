@@ -281,7 +281,7 @@ import { useNavigation } from '../composables/useNavigation'
 import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
 import { useStorage } from '../composables/useStorage'
-import { useSlideRefine } from '../composables/useSlideRefine'
+import { useSlideRefinement } from '../composables/useSlideRefinement'
 import { quitDragEditing, onDeckIndexChange, dragSaveState, consumeSavedFlash, isDragEditing } from '../composables/dragEditing'
 import { reconcileOptimistic, lastResolvedTemplate, setOptimisticSnapshotSyncer, optimisticRawSlideSources } from '../composables/optimisticEdits'
 import SpSlide from './SpSlide.vue'
@@ -381,7 +381,7 @@ const rootEl = ref<HTMLElement | null>(null)
 
 // Run registered slide refinements (e.g. the `bib` refinement — step-aware
 // filtering of bibliography blocks) against every rendered `.sp-slide`.
-useSlideRefine({
+useSlideRefinement({
   currentIndex,
   stepIndex,
   contentVersion,

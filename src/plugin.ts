@@ -36,13 +36,13 @@ export const registry = {
     const d = plugin.disable ?? []
     const api: PluginAPI = {
       spApi,
-      addKeymapSetup:    d.includes('keymap')     ? noop : (fn: KeymapSetupFn) => this._keymapSetups.push(fn),
-      addAnimCommand:    d.includes('anim')       ? noop : (name: string, handler: AnimCommandHandler) => this._animCommands.push({ name, handler }),
-      addAnimActionType: d.includes('anim')       ? noop : (type: string, handler: ActionTypeHandler) => this._animActionTypes.push({ type, handler }),
-      injectStyle:       d.includes('style')      ? noop : injectStyle,
-      addChunklet:       d.includes('chunklet')   ? noop : (def: ChunkDef) => spApi.chunkletDefs.push(def),
-      addDomTransform:   d.includes('domTransform') ? noop : (fn: Transformer) => this._domTransforms.push(fn),
-      addSlideRefine:    d.includes('slideRefine') ? noop : (refinement: SlideRefinement) => this._slideRefinements.push(refinement),
+      addKeymapSetup:      d.includes('keymap')          ? noop : (fn: KeymapSetupFn) => this._keymapSetups.push(fn),
+      addAnimCommand:      d.includes('anim')            ? noop : (name: string, handler: AnimCommandHandler) => this._animCommands.push({ name, handler }),
+      addAnimActionType:   d.includes('anim')            ? noop : (type: string, handler: ActionTypeHandler) => this._animActionTypes.push({ type, handler }),
+      injectStyle:         d.includes('style')           ? noop : injectStyle,
+      addChunklet:         d.includes('chunklet')        ? noop : (def: ChunkDef) => spApi.chunkletDefs.push(def),
+      addDomTransform:     d.includes('domTransform')    ? noop : (fn: Transformer) => this._domTransforms.push(fn),
+      addSlideRefinement:  d.includes('slideRefinement') ? noop : (refinement: SlideRefinement) => this._slideRefinements.push(refinement),
     }
     const result = plugin.activate(api)
     const teardown = result instanceof Promise ? await result : result

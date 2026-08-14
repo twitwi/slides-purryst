@@ -841,7 +841,7 @@ import { definePlugin } from 'slides-purryst'
 export default definePlugin({
   name: 'my-plugin',
   order: 0,                    // Lower runs first (so can be erased by higher)
-  disable: [],                 // Facets to skip: 'anim' | 'keymap' | 'style' | 'chunklet' | 'slideRefine'
+  disable: [],                 // Facets to skip: 'anim' | 'keymap' | 'style' | 'chunklet' | 'slideRefinement'
   activate: (api: PluginAPI) => {
     // Return a teardown function if needed
     return () => { /* cleanup */ }
@@ -860,7 +860,7 @@ export default definePlugin({
 | `api.injectStyle(css)` | Inject global CSS |
 | `api.addChunklet(def)` | Register a chunklet definition (§13) |
 | `api.addDomTransform(fn)` | Register a DOM transform applied after step processing |
-| `api.addSlideRefine(refinement)` | Register a runtime slide refinement (below) |
+| `api.addSlideRefinement(refinement)` | Register a runtime slide refinement (below) |
 
 ### 19.3 Keybindings
 
@@ -927,7 +927,7 @@ refinement** runs at runtime against the rendered slide and is re-applied
 whenever the slide re-renders or its step / async content changes:
 
 ```ts
-api.addSlideRefine({
+api.addSlideRefinement({
   name: 'my-refinement',
   // Cheap gate: skip slides that don't need this refinement.
   appliesTo: (slideEl) => slideEl.querySelector('.my-marker') !== null,

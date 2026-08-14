@@ -3,7 +3,7 @@ import type { KeymapSetupFn } from './keymap/types'
 import type { AnimCommandHandler, ActionTypeHandler } from './animCommands'
 import type { SpApi } from './sp-api'
 
-export type FacetName = 'anim' | 'keymap' | 'style' | 'chunklet' | 'slideRefine' | (string & {})
+export type FacetName = 'anim' | 'keymap' | 'style' | 'chunklet' | 'slideRefinement' | (string & {})
 
 export interface SlidesPlugin {
   name: string
@@ -20,7 +20,7 @@ export interface PluginAPI {
   injectStyle: (css: string) => void
   addChunklet: (def: ChunkDef) => void
   addDomTransform: (fn: Transformer) => void
-  addSlideRefine: (refinement: SlideRefinement) => void
+  addSlideRefinement: (refinement: SlideRefinement) => void
 }
 
 export interface SlideData {
@@ -97,7 +97,7 @@ export type Transformer = (root: Element) => void
 // A runtime slide refinement: an idempotent, step- and content-aware DOM
 // adjustment applied to each rendered slide (the runtime counterpart of the
 // compile-time `Transformer`). `appliesTo` is a cheap gate; `apply` mutates
-// the slide element. Registered via `PluginAPI.addSlideRefine` and re-run by
+// the slide element. Registered via `PluginAPI.addSlideRefinement` and re-run by
 // the driver whenever the slide re-renders or its step/content changes.
 export interface SlideRefinement {
   name: string
