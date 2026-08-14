@@ -368,7 +368,8 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
       const filename = (event.data ?? '').trim()
       if (filename) invalidateByFilename(filename)
       else invalidateTextCache()
-      fetch(window.location.href + '?_=' + Date.now())
+      const loc = window.location.href.substring(0, window.location.href.length - window.location.hash.length)
+      fetch(loc + '?_=' + Date.now())
       .then(r => r.text())
       .then(html => {
         const nonContentHash = generateHash(html.replace(/<script\s+type="text\/html"\s+id="sp-content">[\s\S]*?<\/script>/, ''))

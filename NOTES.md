@@ -7,13 +7,18 @@
 - #anim("-#focus, #formula", at: "0") creates a js error (why? and why not resurfaced?)
 - on reload of the same withoout at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
 - [ ] doc consider adding adding "    "dev": "pnpm exec slides-purryst index.typ"    " to package json
-- [ ] drag ux, markers should go above (also an overly for mouse above) the rest
-- [ ] UX, add a class option (and id) to drag (and most wrappers too? and also a style maybe (string or dictionary)
+- [ ] UX, add a class option (and id) to drag (and most wrappers too? and also a style maybe (string or dictionary))
 
 
+- [ ] consider renaming at:"" for draggable, it conflicts (in the mind) with sp-step "at" etc, ... maybe pos:""
 - [ ] might get some perf issues if all svg elements get class sp-anim-shown etc (have a way to not recururse?)
 - [ ] emoji fix should tag as emoji
 - [ ] toc shows empty in overview at first?
+
+# while rationalizing
+
+- [ ] can typst chunklets be generated without preprocess? same for cache? same for config? do we need to remove comments, do we risk loosing new lines like that?
+
 
 # todo rationalize parsing etc
 
@@ -29,7 +34,7 @@
 - consider having a res/ folder that is containing all the things than can be copied, this might include typst sources, and a minimal script that preproc/typst/postproc... and a command line --copy or --detach or something, that shows a miniinterface asking what to detach, with some small 1 line to say what they are
 - ^^^^ currently nunito.css is ugly (js packed)... maybe related but the bundle looks for ugly font paths also
 - [ ] if not the case plugins get a call for init, before anything has appened (same as typst js:""
-- [ ) typst should allow providing an activate and a list of plugins
+- [ ] typst should allow providing an activate and a list of plugins
 - [ ] plugin packs: a factory that produces a plugin that is a list of plugins from the built in ones (or others but how to lazy include in some way?)
 - [ ] (typst) add a "raw" that will dump html string as cache, and sp-include it
 - [ ] v-drag and #drag do some rounding (integer design pixel?)
@@ -65,7 +70,6 @@
 - [ ] 'g' when typing a number, show the corresponding slide as preview + also search for the number in the slide title
 - [ ] sp-dev .typ should allow specifying the generated path (or maybe default to ,,sp-generated/${inputpathhash}/) -> done but need to try 2 entry points
 - [ ] @rewind or @pause(,rewind) (if not present) + show demo like "@pause(,rewind)|@play|@pause"
-- [ ] fix draggable "conflict" with text selection
 - [ ] html-export looses attributes on sp-slides (transitions)
 - [ ] add a cli command to "slides-purryst update" (to update if latest or if the tag moved) and "upgrade" to suggest a list of versions (with change log (from the github README.md) and allow to select one to upgrade to, incl. latest)
 - [ ] better ignore in vue config, because currently, unless using the dev files demo- or index.html.... the full refresh is triggered... should we ignore all as we watch explicitly the location of interest? or keep src etc?
