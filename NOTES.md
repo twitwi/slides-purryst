@@ -14,6 +14,7 @@
 - [ ] might get some perf issues if all svg elements get class sp-anim-shown etc (have a way to not recururse?)
 - [ ] emoji fix should tag as emoji
 - [ ] toc shows empty in overview at first?
+- [ ] to document: the fact that #svg can take a string or a typst path() (needed for non-html output)
 
 # while rationalizing
 
