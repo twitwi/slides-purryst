@@ -80,6 +80,7 @@ NB: this will create
 - `slides-purryst/` link so your presentation can `#import "slides-purryst/...",
 - `,,sp-preprocess/` folder with temporary build files,
 - `slides.html` the final compiled presentation as html (SlidesPurr sources).
+- you can add `"dev": "pnpm exec slides-purryst index.typ"` to the "script" section of `package.json` to have a `pnpm dev` shortcut. 
 
 
 

@@ -2,14 +2,16 @@
 # NEXT
 
 - [ ] rework list of todos
+- [ ] consider renaming at:"" for draggable, it conflicts (in the mind) with sp-step "at" etc, ... maybe pos:"" or rbox:"" (rotated box, ok if no need to type it)
+
+
+
 - [ ] typst option to add #slide-bib to all slides (it is hidden if empty anyway)
 - #anim("-#focus, #formula", at: "0") creates a js error (why? and why not resurfaced?)
 - on reload of the same without at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
-- [ ] doc consider adding adding "    "dev": "pnpm exec slides-purryst index.typ"    " to package json
 - [ ] UX, add a class option (and id) to drag (and most wrappers too? and also a style maybe (string or dictionary))
 
 
-- [ ] consider renaming at:"" for draggable, it conflicts (in the mind) with sp-step "at" etc, ... maybe pos:""
 - [ ] might get some perf issues if all svg elements get class sp-anim-shown etc (have a way to not recururse?)
 - [ ] emoji fix should tag as emoji
 - [ ] toc shows empty in overview at first?
