@@ -2,7 +2,6 @@
 # NEXT
 
 - [ ] rework list of todos
-- [ ] sp-svg not caching anymore? (maybe the demo uses it also as img so threated both ways?)
 - [ ] typst option to add #slide-bib to all slides (it is hidden if empty anyway)
 - #anim("-#focus, #formula", at: "0") creates a js error (why? and why not resurfaced?)
 - on reload of the same withoout at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
