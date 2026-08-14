@@ -4,7 +4,7 @@
 - [ ] rework list of todos
 - [ ] typst option to add #slide-bib to all slides (it is hidden if empty anyway)
 - #anim("-#focus, #formula", at: "0") creates a js error (why? and why not resurfaced?)
-- on reload of the same withoout at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
+- on reload of the same without at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
 - [ ] doc consider adding adding "    "dev": "pnpm exec slides-purryst index.typ"    " to package json
 - [ ] UX, add a class option (and id) to drag (and most wrappers too? and also a style maybe (string or dictionary))
 
@@ -14,6 +14,7 @@
 - [ ] emoji fix should tag as emoji
 - [ ] toc shows empty in overview at first?
 - [ ] to document: the fact that #svg can take a string or a typst path() (needed for non-html output)
+- [ ] perf: should parse html only once per slide, and for the overview, do render, capture as png (possible ?), do it slide by slide so we never have all slides rendered at once (need png cache busting if theme changes)
 
 # while rationalizing
 

@@ -282,7 +282,8 @@ import { usePresenter } from '../composables/usePresenter'
 import { useScale } from '../composables/useScale'
 import { useStorage } from '../composables/useStorage'
 import { useSlideRefine } from '../composables/useSlideRefine'
-import { quitDragEditing, onDeckIndexChange, dragSaveState, consumeSavedFlash } from '../composables/dragEditing'
+import { quitDragEditing, onDeckIndexChange, dragSaveState, consumeSavedFlash, isDragEditing } from '../composables/dragEditing'
+import { reconcileOptimistic, lastResolvedTemplate, setOptimisticSnapshotSyncer, optimisticRawSlideSources } from '../composables/optimisticEdits'
 import SpSlide from './SpSlide.vue'
 import SpDevPane from './SpDevPane.vue'
 import SpPresenterView from './SpPresenterView.vue'
@@ -395,6 +396,13 @@ provide('goTo', goTo)
 provide('sp-components', props.components)
 const rawSlideSources = ref<string[]>(props.rawSlideSources ?? slides.value.map(s => s.html))
 provide('rawSlideSources', rawSlideSources)
+// When a drag write confirms, re-derive the snapshot from the last known
+// template with pending writes applied, so source views stay coherent before
+// the refresh lands.
+setOptimisticSnapshotSyncer(() => {
+  if (!lastResolvedTemplate.value) return
+  rawSlideSources.value = optimisticRawSlideSources()
+})
 
 const direction = ref(1)
 const shouldSwap = ref(false)
@@ -1042,6 +1050,10 @@ function cancelChunkletPlacement() {
   dragging.value = false
 }
 
+// While a drag is being edited the deck is not rebuilt (see updateSlides): the
+// latest resolved template is stashed here and flushed once editing ends.
+const pendingUpdateRef = ref<string | null>(null)
+
 watch(() => spApi.chunkletMode, (on) => {
   if (on) {
     window.addEventListener('keydown', onChunkletKeydown)
@@ -1050,11 +1062,31 @@ watch(() => spApi.chunkletMode, (on) => {
   }
 })
 
+watch(() => spApi.dragging, (on) => {
+  if (!on && pendingUpdateRef.value != null) {
+    const t = pendingUpdateRef.value
+    pendingUpdateRef.value = null
+    updateSlides(t)
+  }
+})
+
 function onChunkletKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') cancelChunkletPlacement()
 }
 
 function updateSlides(templateHtml: string) {
+  // Defer the rebuild while a drag edit session is live so the deck doesn't
+  // remount under the cursor (which would break an immediate re-select/move).
+  // The latest template is flushed on exit via the spApi.dragging watcher.
+  if (isDragEditing() || spApi.dragging) {
+    pendingUpdateRef.value = templateHtml
+    return
+  }
+  pendingUpdateRef.value = null
+  // Reconcile pending optimistic writes against the authoritative payload:
+  // confirmed entries drop, raced ones are topped back up so nothing regresses.
+  templateHtml = reconcileOptimistic(templateHtml)
+  lastResolvedTemplate.value = templateHtml
   rawSlideSources.value = extractRawSlideSources(templateHtml)
   const fixedHtml = wrapEmojisInSvg(annotateEditableWithIndex(fixVoidElementsHtml(templateHtml)))
   const tmp = document.createElement('div')

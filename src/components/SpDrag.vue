@@ -30,6 +30,7 @@
 import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
 import { spApi } from '../sp-api'
 import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes';
+import { optimisticParseAt, noteOptimisticWrite, resolveOptimisticAt } from '../composables/optimisticEdits'
 import { registerDrag, unregisterDrag, selectDrag, exitDrag, isDragEditing, tryRestoreEditing, gestureStart, gestureEnd, dragSaveBegin, dragSaveFailed, type DragEntry } from '../composables/dragEditing'
 
 const slideIndex = inject('slideIndex', ref(0))
@@ -96,6 +97,8 @@ function getSlideScale(): number {
 }
 
 function resolveProp(name: 'x' | 'y' | 'w' | 'h' | 'rotate'): number | string {
+  const opt = optimisticParseAt(props.editableIndex)
+  if (opt) return opt[name]
   const p = parsedAt.value
   if (p) return p[name]
   return props[name]
@@ -142,14 +145,12 @@ function exitEditMode() {
   if (selfEntry.value) exitDrag(selfEntry.value)
 }
 
-// Attribute string of the last successful write, so a later save (e.g. the
-// remount's onUnmounted commit) can compare against what was actually written
-// instead of stale props and avoid re-posting the same change.
-let lastWritten: string | null = null
-
+// The committed baseline for save/commit comparisons comes from the optimistic
+// layer (mount-stable) via attrString(true), so a drag stays coherent through
+// rapid gestures and remounts before the refresh lands.
 function saveToSource(keepEditing = false) {
   const newAttrs = attrString()
-  const oldAttrs = lastWritten ?? attrString(true)
+  const oldAttrs = attrString(true)
 
   if (oldAttrs === newAttrs) {
     if (!keepEditing) exitEditMode()
@@ -158,7 +159,7 @@ function saveToSource(keepEditing = false) {
 
   dragSaveBegin()
 
-  const hasAt = !!props.at
+  const hasAt = !!props.at || resolveOptimisticAt(props.editableIndex) != null
   const dragId = el.value?.getAttribute('data-drag-id')
   const sourceLine = el.value?.getAttribute('data-source-line')
   const file = el.value?.getAttribute('data-source-file') || getSourceFileFromDOMLocation(el.value)
@@ -177,13 +178,16 @@ function saveToSource(keepEditing = false) {
     }),
   })
     .then(async r => {
-      const data = await r.json()
+      // Parse defensively: a non-JSON/empty body must not throw into `.catch`
+      // and masquerade as a write failure.
+      let data: any = {}
+      try { data = await r.json() } catch {}
       if (!r.ok || !data.ok) {
         console.error('SP edit failed:', r.status, data)
         dragSaveFailed()
         fallbackCopy(newAttrs)
       } else {
-        lastWritten = newAttrs
+        noteOptimisticWrite(props.editableIndex, newAttrs.replace(/^at="|"$/g, ''))
       }
     })
     .catch((err) => {
@@ -490,9 +494,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  // On refresh the unmount fires before props sync; compare against the last
-  // written attrs so an already-autosaved gesture isn't re-posted.
-  if (editing.value && (lastWritten ?? attrString(true)) !== attrString()) saveToSource()
+  // On refresh the unmount fires before props sync; attrString(true) reads the
+  // optimistic baseline, so an already-autosaved gesture isn't re-posted.
+  if (editing.value && attrString(true) !== attrString()) saveToSource()
   if (selfEntry.value) unregisterDrag(selfEntry.value.el)
 })
 </script>
@@ -563,20 +567,20 @@ onUnmounted(() => {
 
 .sp-drag-rotate-line {
   position: absolute;
-  top: -16px;
+  top: -34px;
   left: calc(50% - 1px);
   width: 2px;
-  height: 28px;
+  height: 46px;
   background: var(--sp-accent);
   pointer-events: none;
 }
 
 .sp-drag-rotate-handle {
   position: absolute;
-  top: -37px;
-  left: calc(50% - 8px);
-  width: 20px;
-  height: 20px;
+  top: -41px;
+  left: calc(50% - 14px);
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--sp-bg-2);
   border: 3px solid var(--sp-accent);

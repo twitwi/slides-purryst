@@ -20,6 +20,7 @@ import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './co
 import { preloadInclude, loadCache, preloadBinary, setCacheIgnore, invalidateByFilename, invalidateTextCache, getCachedInclude } from './composables/includeCache'
 import { fixVoidElementsHtml, annotateEditableWithIndex, wrapEmojisInSvg } from './composables/useSteps'
 import { dragSaveSettled } from './composables/dragEditing'
+import { lastResolvedTemplate } from './composables/optimisticEdits'
 import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunkletsFromText } from './composables/useChunklets'
 import { exportStandalone } from './export'
@@ -173,6 +174,7 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   if (scriptEl) {
     const rawHtml = scriptEl.textContent || ''
     const resolvedHtml = await resolveTopIncludes(rawHtml)
+    lastResolvedTemplate.value = resolvedHtml
     rawSlideSources.push(...extractRawSlideSources(resolvedHtml))
     const fixedHtml = wrapEmojisInSvg(annotateEditableWithIndex(fixVoidElementsHtml(resolvedHtml)))
     contentRoot = document.createElement('div')
