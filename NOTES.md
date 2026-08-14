@@ -1,7 +1,6 @@
 
 # NEXT
 
-- [ ] sp-drag and #drag do some rounding (integer design pixel?)
 - [ ] drag, check that if I create a empty drag, it can add the rbox="..." by itself, or if I provide just rbox="" too (both typst and html) 
 
 - [ ] revamp init script opbject section data-...

@@ -112,7 +112,7 @@
 #slide(no-toc: true)[
   = Notes and Disclaimer: welcome to
 
-  #drag(rbox: "1408|33|468.45|182.97|0")[
+  #drag(rbox: "1408|33|468|183|0")[
     #img(src: path("./slides-purryst-banner-sticker.svg"))
   ]
 
@@ -261,7 +261,7 @@
 
   #toc(start: "3", ctx: true)
 
-  #drag(rbox: "1202|62|524.59|961.42|0")[
+  #drag(rbox: "1202|62|525|961|0")[
     #component("div", attrs: (style: "font-size: 25px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; position: absolute; inset: 0; overflow: scroll;"), [
       = Full TOC
       #toc()
@@ -280,16 +280,16 @@
   - the changes are saved to the source
   - as a #component("code", [rbox="..."]) attribute
 
-  #drag(rbox: "638|595|1029.145325044631|516.9830995870791|0")[
-    #component("div", attrs: (style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background:lch(90 40 var(--eg-hue));"), [Draggable box (natural size)])
+  #drag(rbox: "1296|419|496|464|0")[
+    #component("div", attrs: (style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background: lch(60 40 var(--eg-hue));"), [Draggable box (natural size)])
   ]
 
   #pause
 
   #drag[#component("div", attrs: (style: "background: rgb(255 255 0 / 0.5);"), [stuff])]
 
-  #drag(rbox: "236|307|863.1494163200896|327.18649068423423|9.3")[
-    #component("div", attrs: (style: "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;--eg-hue:120;background:lch(90 40 var(--eg-hue));"), [One more box (fill and center+vcenter)])
+  #drag(rbox: "589|-10|890|549|-15")[
+    #component("div", attrs: (style: "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;--eg-hue:120;background:lch(60 40 var(--eg-hue));"), [One more box (fill and center+vcenter)])
   ]
 ]
 
@@ -298,11 +298,11 @@
 
   Same locations, should not blink, also should move the right one.
 
-  #drag(rbox: "1076|107|641.89|283.04|0")[
+  #drag(rbox: "1076|107|642|283|0")[
     #component("div", attrs: (style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background:lch(90 40 var(--eg-hue));"), [Draggable box (natural size)])
   ]
 
-  #drag(rbox: "953|515|891.99|184.07|23.8")[
+  #drag(rbox: "953|515|892|184|23.8")[
     #component("div", attrs: (style: "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;--eg-hue:120;background:lch(90 40 var(--eg-hue));"), [One more box (fill and center+vcenter)])
   ]
 ]
@@ -340,7 +340,7 @@
     svg #cat:hover #catfill { fill: yellow; }
   ")
 
-  #drag(rbox: "1219|187|707.23|287.70|33.2")[
+  #drag(rbox: "1219|187|707|288|33.2")[
     Draggable cat
     #svg(src: path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
   ]
@@ -896,7 +896,7 @@
 #slide[
   == anim — syntax reference
 
-  #drag(rbox: "144|122|1669.398390531129|879.3043729754388|0")[
+  #drag(rbox: "144|122|1669|879|0")[
     #table[
       #tr[#th[Syntax]#th[Meaning]]
       #tr[#td[selector]#td[Show element(s) by CSS selector]]

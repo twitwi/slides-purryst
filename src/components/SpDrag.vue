@@ -217,8 +217,8 @@ function commitGestureEnd() {
 function attrString(useProps = false): string {
   const x = useProps ? resolveProp('x') : Math.round(ix.value)
   const y = useProps ? resolveProp('y') : Math.round(iy.value)
-  const w = useProps ? resolveProp('w') : iw.value
-  const h = useProps ? resolveProp('h') : ih.value
+  const w = useProps ? resolveProp('w') : typeof iw.value === 'number' ? snapPx(iw.value) : iw.value
+  const h = useProps ? resolveProp('h') : typeof ih.value === 'number' ? snapPx(ih.value) : ih.value
   const r = useProps ? resolveProp('rotate') : Math.round(ir.value * 10) / 10
 
   return `rbox="${x}|${y}|${w}|${h}|${r}"`
@@ -233,6 +233,25 @@ function fallbackCopy(attrs: string) {
 
 const px = (n: number | string) =>
   typeof n === 'number' ? n + 'px' : /^\d+(\.\d+)?$/.test(n) ? n + 'px' : n
+
+// Snap helpers: geometry is stored/committed in whole design pixels (integer
+// 1920x1080 space); snapping live keeps every gesture from rendering subpixel.
+const snapPx = (n: number) => Math.round(n)
+const snap20 = (n: number) => Math.round(n / 20) * 20
+
+// Which fields an `e.shiftKey` resize forces onto the 20px grid. Only the
+// values a direction actually mutates may snap — snapping the anchored corner
+// would migrate the whole box.
+const DIR_CHANGES: Record<string, Array<'x' | 'y' | 'w' | 'h'>> = {
+  e: ['w'],
+  s: ['h'],
+  w: ['x', 'w'],
+  n: ['y', 'h'],
+  ne: ['y', 'h', 'w'],
+  nw: ['x', 'y', 'w', 'h'],
+  se: ['w', 'h'],
+  sw: ['x', 'w', 'h'],
+}
 
 const style = computed(() => {
   return {
@@ -323,8 +342,8 @@ function onDrag(e: MouseEvent | TouchEvent) {
   const { clientX, clientY } = eventXY(e)
   const dx = (clientX - dragStartX) / scale
   const dy = (clientY - dragStartY) / scale
-  ix.value = dragOrigX + dx
-  iy.value = dragOrigY + dy
+  ix.value = snapPx(dragOrigX + dx)
+  iy.value = snapPx(dragOrigY + dy)
 }
 
 let resizing = false
@@ -419,10 +438,19 @@ function onResize(e: MouseEvent | TouchEvent) {
   if (w < 10) w = 10
   if (h < 10) h = 10
 
-  ix.value = x
-  iy.value = y
-  iw.value = w
-  ih.value = h
+  if (e.shiftKey) {
+    for (const k of DIR_CHANGES[resizeDir]) {
+      if (k === 'x') x = snap20(x)
+      else if (k === 'y') y = snap20(y)
+      else if (k === 'w') w = snap20(w)
+      else h = snap20(h)
+    }
+  }
+
+  ix.value = snapPx(x)
+  iy.value = snapPx(y)
+  iw.value = snapPx(w)
+  ih.value = snapPx(h)
 }
 
 let rotating = false
@@ -464,8 +492,10 @@ function onRotate(e: MouseEvent | TouchEvent) {
   e.preventDefault()
   const { clientX, clientY } = eventXY(e)
   const angle = Math.atan2(clientY - rotateCenterY, clientX - rotateCenterX)
-  let delta = angle - rotateStartAngle
-  ir.value = rotateOrigR + delta * (180 / Math.PI)
+  const delta = angle - rotateStartAngle
+  let deg = rotateOrigR + delta * (180 / Math.PI)
+  if (e.shiftKey) deg = Math.round(deg / 15) * 15
+  ir.value = Math.round(deg * 10) / 10
 }
 
 function cleanup() {
