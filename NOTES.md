@@ -1,15 +1,28 @@
 
 # NEXT
 
-- [ ] rework list of todos
+- [ ] drag disambiguation
 - [ ] consider renaming at:"" for draggable, it conflicts (in the mind) with sp-step "at" etc, ... maybe pos:"" or rbox:"" (rotated box, ok if no need to type it)
+- [ ] #drag, handle at:"" too and maybe even missing no at: .... or at the opposite make it generic to just look for at: (maybe already doing that, so we can drag other thing?) 
+- [ ] v-drag and #drag do some rounding (integer design pixel?)
 
+- [ ] revamp init script opbject section data-...
+- [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst
+- probably need to allow an open conf (authors... presenter... etc), probably ok as pure typst if to json handles all
+- title should propagate to tab name, also allow tab (for tab name, if provided)
+- propably distinguish config (really pure deck config like size etc) from metadata? e.g. presenter (mode) vs presenter (who presents)
+
+- [ ] (integrate) bib shortener + bib ellipsis (optional) + bib highlight (maybe even on hover... is label :hover working prob not, so js needed but ok)
+- [ ] (integrate) default svg dark mode helpers .{fill,stroke}-{fg,bg}
+- [ ] (integrate) theme fix h4+h4 spacing
+- [ ] (integrate) (maybe) some pre-unocss stuff, like my dnone
+- [ ] (integrate) (think) better UX for drag(svg), should work out of the box no? :has(>*:first-child:last-child ... but then need some <span> if we want img + text) or have a class we can put on the svg or any content or a MARK? maybe also the fill natural etc from the demo
 
 
 - [ ] typst option to add #slide-bib to all slides (it is hidden if empty anyway)
 - #anim("-#focus, #formula", at: "0") creates a js error (why? and why not resurfaced?)
 - on reload of the same without at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
-- [ ] UX, add a class option (and id) to drag (and most wrappers too? and also a style maybe (string or dictionary))
+- [ ] (typst) UX, add a class option (and id) to drag (and most wrappers too? and also a style maybe (string or dictionary))
 
 
 - [ ] might get some perf issues if all svg elements get class sp-anim-shown etc (have a way to not recururse?)
@@ -26,23 +39,17 @@
 
 # todo rationalize parsing etc
 
-- [ ] document and rationalize processing steps (typst preprocess, typst, html reformat, sp-content parsing, slide html parsing, more?)
+- [ ] rationalize processing steps (typst preprocess, typst, html reformat, sp-content parsing, slide html parsing, more?)
 - [ ] check the use of wrapPage because this might be duplicate? one might want to have a custom main.typ like and keep its stuff...
 - [ ] consider moving #A as post processing 
 - [ ] rationalize also the format (#sp-content, #sp-chunklets, [data-sp-cache-...], #sp-cache #sp-presentation)
 - [ ] sp-step and the more generic produced data-sp-step-from etc can be restrictive. If DOM tag kept, consider more generic alt like data-sp-visible-at="2,3,4,5,8,9" ... or a list of list ="[[3, 6], [8,10]]"
-- [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst
-- probably need to allow an open conf (authors... presenter... etc), probably ok as pure typst if to json handles all
-- title should propagate to tab name, also allow tab (for tab name, if provided)
-- propably distinguish config (really pure deck config like size etc) from metadata? e.g. presenter (mode) vs presenter (who presents)
 - consider having a res/ folder that is containing all the things than can be copied, this might include typst sources, and a minimal script that preproc/typst/postproc... and a command line --copy or --detach or something, that shows a miniinterface asking what to detach, with some small 1 line to say what they are
 - ^^^^ currently nunito.css is ugly (js packed)... maybe related but the bundle looks for ugly font paths also
-- [ ] if not the case plugins get a call for init, before anything has appened (same as typst js:""
+- [ ] if not the case plugins get a call for init, before anything has appened (same as typst js:"")
 - [ ] typst should allow providing an activate and a list of plugins
 - [ ] plugin packs: a factory that produces a plugin that is a list of plugins from the built in ones (or others but how to lazy include in some way?)
 - [ ] (typst) add a "raw" that will dump html string as cache, and sp-include it
-- [ ] v-drag and #drag do some rounding (integer design pixel?)
-- [ ] #drag, handle at:"" too and maybe even missing no at: .... or at the opposite make it generic to just look for at: (maybe already doing that, so we can drag other thing?) 
 
 ## todo v2 (2.0.0) consolidate internals, potential breakage
 
