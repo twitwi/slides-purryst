@@ -96,12 +96,39 @@ function getSlideScale(): number {
   return 1
 }
 
+// A drag authored without (or with an empty) `rbox` has no committed geometry:
+// render it as a centered box inset a quarter on every side of the design
+// space until the first gesture writes a real `rbox`.
+const DEFAULT_INSET = 0.25
+
+function designSize(): { width: number; height: number } {
+  const host = el.value?.closest('#sp-presentation') as HTMLElement | null
+  const cs = host ? getComputedStyle(host) : null
+  const w = parseFloat(cs?.getPropertyValue('--sp-design-width') ?? '')
+  const h = parseFloat(cs?.getPropertyValue('--sp-design-height') ?? '')
+  return {
+    width: Number.isFinite(w) ? w : 1920,
+    height: Number.isFinite(h) ? h : 1080,
+  }
+}
+
+function defaultGeom(): { x: number; y: number; w: number; h: number; rotate: number } {
+  const { width, height } = designSize()
+  return {
+    x: width * DEFAULT_INSET,
+    y: height * DEFAULT_INSET,
+    w: width * (1 - 2 * DEFAULT_INSET),
+    h: height * (1 - 2 * DEFAULT_INSET),
+    rotate: 0,
+  }
+}
+
 function resolveProp(name: 'x' | 'y' | 'w' | 'h' | 'rotate'): number | string {
   const opt = optimisticParseAt(props.editableIndex)
   if (opt) return opt[name]
   const p = parsedAt.value
   if (p) return p[name]
-  return props[name]
+  return props.rbox ? props[name] : defaultGeom()[name]
 }
 
 function syncFromProps() {
@@ -518,6 +545,10 @@ onMounted(() => {
     saveAndEnd: saveToSource,
   }
   registerDrag(selfEntry.value)
+  // The setup-time geometry ran before the DOM carried the presentation's
+  // design-size CSS vars; re-sync an unresolved drag so its inset-25% default
+  // matches the real design space.
+  if (!props.rbox && resolveOptimisticAt(props.editableIndex) == null) syncFromProps()
   // After a dev-server refresh that interrupted an editing session, re-enter
   // edit mode on the same draggable.
   tryRestoreEditing(selfEntry.value)

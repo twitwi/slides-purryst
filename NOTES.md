@@ -1,7 +1,6 @@
 
 # NEXT
 
-- [ ] drag, check that if I create a empty drag, it can add the rbox="..." by itself, or if I provide just rbox="" too (both typst and html) 
 
 - [ ] revamp init script opbject section data-...
 - [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst

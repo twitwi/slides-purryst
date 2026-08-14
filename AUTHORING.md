@@ -516,22 +516,37 @@ in every mode (dev, export, `file://`).
 ## 9. Draggable elements
 
 ```html
-<sp-drag at="100|200|300|250|0">
+<sp-drag rbox="100|200|300|250|0">
   <div style="background: var(--sp-accent-soft); padding: 1em;">
     Drag me
   </div>
 </sp-drag>
 ```
 
-`at="x|y|width|height|rotate"`. **Double-click** to enter edit mode — drag to
-move, corner handles to resize, top handle to rotate, arrow keys to nudge
-(`Shift` = 10px). **Save** writes the new position back to source via
-`POST /__sp_edit` (falls back to the clipboard with an alert).
+`rbox="x|y|width|height|rotate"`. Geometry is snapped to whole design
+pixels (the 1920×1080 design space) as you drag, so committed values stay
+clean. Holding `Shift` while resizing snaps to the 20px grid, and while
+rotating snaps to 15°. A drag with no `rbox` (or an empty one,
+`rbox=""` / `#drag(rbox: "")`) renders as a centered box inset 25% on each
+side of the slide until its first gesture adds a real `rbox` to the source.
+Draggables work directly: pressing one moves
+it immediately, committing on release. Out of edit mode they carry no hover
+chrome, no selection and no overlay. **Double-click** a draggable to enter an
+explicit **edit mode** on the topmost one under the cursor: corner handles to
+resize, the top handle to rotate and arrow keys to nudge (`Shift` = 10px).
+While editing, the selected draggable lifts to the top. Its changes are
+written on **deselect** — selecting another draggable (or double-clicking it)
+commits the previous one first, and clicking empty slide space commits and
+leaves edit mode — or via the slide-level **quit edit mode** button
+(top-right of the slide). Double-clicking the edited draggable again simply
+keeps editing; single-clicking another draggable re-targets the handles to
+it. Saving writes the new position back to source via `POST /__sp_edit`
+(falls back to the clipboard with an alert).
 
 **Typst:**
 
 ```typst
-#drag(at: "100|200|300|250|0")[
+#drag(rbox: "100|200|300|250|0")[
   Drag me
 ]
 ```
@@ -613,7 +628,7 @@ Definitions live in a `<script type="text/html" id="sp-chunklets">` element:
 ```html
 <script type="text/html" id="sp-chunklets">
   <sp-chunk name="box" params="x,y,w,h">
-    <sp-drag at="$x|$y|$w|$h|0">
+    <sp-drag rbox="$x|$y|$w|$h|0">
       <div style="background: var(--sp-accent-soft); padding: 1em;"></div>
     </sp-drag>
   </sp-chunk>
@@ -631,7 +646,7 @@ Toggle the bar with `c`, select a chunklet, then click/drag on the slide.
 
 ```typst
 #chunklet("box", params: "x,y,w,h")[
-  #drag(at: "$x|$y|$w|$h|0")[
+  #drag(rbox: "$x|$y|$w|$h|0")[
     Drag me
   ]
 ]
