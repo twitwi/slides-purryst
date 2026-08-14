@@ -534,13 +534,18 @@ it immediately, committing on release. Out of edit mode they carry no hover
 chrome, no selection and no overlay. **Double-click** a draggable to enter an
 explicit **edit mode** on the topmost one under the cursor: corner handles to
 resize, the top handle to rotate and arrow keys to nudge (`Shift` = 10px).
-While editing, the selected draggable lifts to the top. Its changes are
+Hit-testing respects the draggable's real rotated shape (not its bounding
+box) — handy for stacked overlaps, where **double-clicking the edited
+draggable steps to the one behind it** (one double-click per step, wrapping
+after the bottom-most) to reach a buried draggable. While editing, the
+selected draggable lifts to the top. Its changes are
 written on **deselect** — selecting another draggable (or double-clicking it)
 commits the previous one first, and clicking empty slide space commits and
 leaves edit mode — or via the slide-level **quit edit mode** button
-(top-right of the slide). Double-clicking the edited draggable again simply
-keeps editing; single-clicking another draggable re-targets the handles to
-it. Saving writes the new position back to source via `POST /__sp_edit`
+(top-right of the slide). Double-clicking the edited draggable again steps to
+the one behind it (or simply keeps editing when it is the only one);
+single-clicking another draggable re-targets the handles to it. Saving writes
+the new position back to source via `POST /__sp_edit`
 (falls back to the clipboard with an alert).
 
 **Typst:**

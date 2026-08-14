@@ -31,7 +31,7 @@ import { computed, ref, inject, onMounted, onUnmounted } from 'vue'
 import { spApi } from '../sp-api'
 import { getSourceFileFromDOMLocation } from '../composables/resolveIncludes';
 import { optimisticParseAt, noteOptimisticWrite, resolveOptimisticAt } from '../composables/optimisticEdits'
-import { registerDrag, unregisterDrag, selectDrag, exitDrag, isDragEditing, tryRestoreEditing, gestureStart, gestureEnd, dragSaveBegin, dragSaveFailed, type DragEntry } from '../composables/dragEditing'
+import { registerDrag, unregisterDrag, selectDrag, exitDrag, isDragEditing, tryRestoreEditing, gestureStart, gestureEnd, dragSaveBegin, dragSaveFailed, noteRetarget, type DragEntry } from '../composables/dragEditing'
 
 const slideIndex = inject('slideIndex', ref(0))
 
@@ -309,7 +309,10 @@ let lastTapTime = 0
 function onTouchStart(e: TouchEvent) {
   e.preventDefault()
   // From edit mode, touching another draggable re-targets the handles to it.
-  if (isDragEditing() && !editing.value && selfEntry.value) selectDrag(selfEntry.value)
+  if (isDragEditing() && !editing.value && selfEntry.value) {
+    selectDrag(selfEntry.value)
+    noteRetarget()
+  }
   // Draggables are inert outside edit mode: only a double-tap may enter it.
   if (editing.value) {
     startDrag(e)
@@ -331,7 +334,10 @@ function onTouchStart(e: TouchEvent) {
 function onMouseDown(e: MouseEvent) {
   e.preventDefault()
   // From edit mode, pressing any other draggable re-targets the handles to it.
-  if (isDragEditing() && !editing.value && selfEntry.value) selectDrag(selfEntry.value)
+  if (isDragEditing() && !editing.value && selfEntry.value) {
+    selectDrag(selfEntry.value)
+    noteRetarget()
+  }
   if (!editing.value) return
   startDrag(e)
 }

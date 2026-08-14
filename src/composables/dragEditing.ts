@@ -2,10 +2,14 @@
 //
 // Draggables are inert outside edit mode: pressing one does nothing, and there
 // is no hover chrome, no selection and no overlay. Double-clicking enters an
-// explicit *edit mode* on the topmost draggable under the cursor — where you
-// can move/resize/rotate/nudge, with a slide-level "quit edit mode" button and
-// a dotted hover outline on other draggables (they can be re-targeted). Changes
-// are written on **deselect**: selecting or double-clicking another draggable
+// explicit *edit mode* — hit-testing the draggable's real shape (a rotated box
+// is not its bounding rectangle), on the topmost draggable under the cursor —
+// where you can move/resize/rotate/nudge, with a slide-level "quit edit mode"
+// button and a dotted hover outline on other draggables (they can be
+// re-targeted). A double-click on the draggable currently being edited steps to
+// the one *behind* it — one double-click per step, wrapping back after the
+// bottom-most. Changes are
+// written on **deselect**: selecting or double-clicking another draggable
 // commits the previous one, a click on empty slide space commits the selected
 // one and leaves edit mode, and the quit button does the same. Double-clicking
 // the edited draggable again simply keeps editing.
@@ -15,6 +19,7 @@
 
 import { ref } from 'vue'
 import { spApi } from '../sp-api'
+import { getSlideScale } from './useChunklets'
 
 // Discrete save-feedback state shared across the deck. Driven by the drag
 // write path (`saveBegin`/`saveSettled`) and the dev-server SSE "update" that
@@ -148,8 +153,7 @@ function stackAt(x: number, y: number): DragEntry[] {
   const stack: DragEntry[] = []
   for (const entry of entries.values()) {
     if (!isActive(entry)) continue
-    const r = entry.el.getBoundingClientRect()
-    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) stack.push(entry)
+    if (hitTest(entry.el, x, y)) stack.push(entry)
   }
   return stack.sort((a, b) => {
     const za = zIndex(a)
@@ -162,11 +166,78 @@ function stackAt(x: number, y: number): DragEntry[] {
   })
 }
 
+// Real-box hit-test. The bounding rect is the axis-aligned envelope of the
+// (uniformly scaled, rotated) box, so on its own it would over-include the
+// corner triangles of a rotated drag. Instead, rotate the cursor back into the
+// element's local frame around its center and compare against the untransformed
+// layout size scaled into client space. Rotation is about the element's own
+// center (.sp-drag keeps the default transform-origin) and the slide scale is
+// uniform, so the bounding-rect center equals the transformed center.
+function hitTest(el: HTMLElement, x: number, y: number): boolean {
+  const r = el.getBoundingClientRect()
+  if (x < r.left || x > r.right || y < r.top || y > r.bottom) return false
+  let theta = 0
+  const t = window.getComputedStyle(el).transform
+  if (t && t !== 'none') {
+    const m = t.match(/matrix\(([^)]+)\)/) || t.match(/matrix3d\(([^)]+)\)/)
+    if (m) {
+      const parts = m[1].split(',').map((s) => parseFloat(s.trim()))
+      theta = Math.atan2(parts[1], parts[0])
+    }
+  }
+  const scale = getSlideScale()
+  const dx = x - (r.left + r.width / 2)
+  const dy = y - (r.top + r.height / 2)
+  const cos = Math.cos(theta)
+  const sin = Math.sin(theta)
+  const lx = dx * cos + dy * sin
+  const ly = -dx * sin + dy * cos
+  // Small slack keeps nearby clicks forgiving; for an unrotated box this
+  // degenerates to the exact bounding-rect test.
+  const EPS = 0.5
+  return (
+    Math.abs(lx) <= (scale * el.offsetWidth) / 2 + EPS &&
+    Math.abs(ly) <= (scale * el.offsetHeight) / 2 + EPS
+  )
+}
+
+// Stable depth order for cycle-to-behind. Captured on each (re)selection so the
+// cycle keeps stepping deeper through the overlap even while the edited drag is
+// lifted by its z-index (which would otherwise reorder the computed stack).
+let cycleStack: DragEntry[] = []
+
+// Set by the drag mousedown/touchstart re-target path right before the dblclick
+// it is part of, so a double-click on a *different* drag is treated as a fresh
+// target instead of an advance of the previous cycle.
+let retargeted = false
+
+export function noteRetarget() {
+  retargeted = true
+}
+
 function onDblClickDocument(e: MouseEvent) {
   const stack = stackAt(e.clientX, e.clientY)
-  if (stack.length === 0) return
-  // Double-click enters edit mode on the topmost drag under the cursor.
-  // Double-clicking an edited drag again simply keeps it selected; the quit
+  if (stack.length === 0) {
+    cycleStack = []
+    retargeted = false
+    return
+  }
+  const cur = current && isActive(current) ? current : null
+  // A double-click on the drag that is currently being edited steps straight to
+  // the one behind it (wrapping after the bottom-most) — one double-click per
+  // step, wherever the cursor sits. A fresh retarget (the mousedown of this very
+  // double-click landed on a different drag) instead resets to that drag.
+  if (!retargeted && cur && stack.includes(cur)) {
+    const i = cycleStack.indexOf(cur)
+    if (i !== -1) {
+      retargeted = false
+      selectDrag(cycleStack[(i + 1) % cycleStack.length])
+      return
+    }
+  }
+  retargeted = false
+  cycleStack = stack.slice()
+  // Double-click enters edit mode on the topmost drag under the cursor; the quit
   // button, an empty-space click, or selecting another drag commits.
   selectDrag(stack[0])
 }
