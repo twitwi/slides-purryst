@@ -36,7 +36,7 @@ import { registerDrag, unregisterDrag, selectDrag, exitDrag, isDragEditing, tryR
 const slideIndex = inject('slideIndex', ref(0))
 
 const props = withDefaults(defineProps<{
-  at?: string
+  rbox?: string
   x?: number | string
   y?: number | string
   w?: number | string
@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<{
   rotate?: number | string
   editableIndex?: number
 }>(), {
-  at: '',
+  rbox: '',
   x: 0,
   y: 0,
   w: 'auto',
@@ -54,8 +54,8 @@ const props = withDefaults(defineProps<{
 })
 
 const parsedAt = computed(() => {
-  if (!props.at) return null
-  const parts = props.at.split('|')
+  if (!props.rbox) return null
+  const parts = props.rbox.split('|')
   if (parts.length < 5) return null
   return {
     x: parseFloat(parts[0]),
@@ -159,7 +159,7 @@ function saveToSource(keepEditing = false) {
 
   dragSaveBegin()
 
-  const hasAt = !!props.at || resolveOptimisticAt(props.editableIndex) != null
+  const hasAt = !!props.rbox || resolveOptimisticAt(props.editableIndex) != null
   const dragId = el.value?.getAttribute('data-drag-id')
   const sourceLine = el.value?.getAttribute('data-source-line')
   const file = el.value?.getAttribute('data-source-file') || getSourceFileFromDOMLocation(el.value)
@@ -187,7 +187,7 @@ function saveToSource(keepEditing = false) {
         dragSaveFailed()
         fallbackCopy(newAttrs)
       } else {
-        noteOptimisticWrite(props.editableIndex, newAttrs.replace(/^at="|"$/g, ''))
+        noteOptimisticWrite(props.editableIndex, newAttrs.replace(/^rbox="|"$/g, ''))
       }
     })
     .catch((err) => {
@@ -221,13 +221,13 @@ function attrString(useProps = false): string {
   const h = useProps ? resolveProp('h') : ih.value
   const r = useProps ? resolveProp('rotate') : Math.round(ir.value * 10) / 10
 
-  return `at="${x}|${y}|${w}|${h}|${r}"`
+  return `rbox="${x}|${y}|${w}|${h}|${r}"`
 }
 
 function fallbackCopy(attrs: string) {
   navigator.clipboard?.writeText(attrs).catch(() => {})
   alert(
-    `Could not auto-save to source.\n\nCopy this attribute and replace the existing sp-drag at attribute manually:\n\n${attrs}`
+    `Could not auto-save to source.\n\nCopy this attribute and replace the existing sp-drag rbox attribute manually:\n\n${attrs}`
   )
 }
 

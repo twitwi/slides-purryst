@@ -1,8 +1,8 @@
 // Optimistic patch layer for drag edits.
 //
 // When a drag write POSTs successfully, the source file on disk already holds
-// the new `at` value, but the browser only learns about it once the dev-server
-// SSE refresh lands. Between those two moments the in-app "source snapshot"
+// the new `rbox` value, but the browser only learns about it once the
+// dev-server SSE refresh lands. Between those two moments the in-app "source snapshot"
 // (rawSlideSources, the template we parse slides from, and every drag baseline
 // that reads props) is stale. This module records those committed-but-unseen
 // writes and re-applies them on top of any content, so the app stays coherent
@@ -12,10 +12,10 @@
 import { ref } from 'vue'
 import { extractRawSlideSources } from './useSlides'
 
-// editableIndex -> committed `at="x|y|w|h|r"` string of the latest POSTed
+// editableIndex -> committed `rbox="x|y|w|h|r"` string of the latest POSTed
 // write that has not yet been confirmed by a refresh payload. The editable
 // index is globally unique (annotateEditableWithIndex counts sp-drag|sp-slide
-// across the deck) and stable across per-drag `at` edits.
+// across the deck) and stable across per-drag `rbox` edits.
 const pending = new Map<number, string>()
 
 // The most recent resolved full-deck template (the form the refresh will
@@ -48,13 +48,13 @@ export interface OptimisticDragAttrs {
   rotate: number
 }
 
-// Normalize a stored `at` value that may be bare (`x|y|w|h|r`) or wrapped in
-// `at="..."` (legacy/defensive) into its bare form before parsing/comparing.
+// Normalize a stored `rbox` value that may be bare (`x|y|w|h|r`) or wrapped in
+// `rbox="..."` (legacy/defensive) into its bare form before parsing/comparing.
 function stripAtWrap(s: string): string {
-  return s.replace(/^at="|"$/g, '')
+  return s.replace(/^rbox="|"$/g, '')
 }
 
-/** The committed optimistic `at` parsed into fields, or null if not pending. */
+/** The committed optimistic `rbox` parsed into fields, or null if not pending. */
 export function optimisticParseAt(index: number): OptimisticDragAttrs | null {
   const at = pending.get(index)
   if (!at) return null
@@ -94,11 +94,11 @@ function findDragBlock(source: string, editableIndex: number): { start: number; 
 function currentAtOf(source: string, editableIndex: number): string | null {
   const block = findDragBlock(source, editableIndex)
   if (!block) return null
-  const m = block.slice.match(/(?:^|\s)at="([^"]*)"/)
+  const m = block.slice.match(/(?:^|\s)rbox="([^"]*)"/)
   return m ? m[1] : ''
 }
 
-// Set the `at` of the editableIndex-th sp-drag to `newAt`, mirroring the
+// Set the `rbox` of the editableIndex-th sp-drag to `newAt`, mirroring the
 // string op edit-handler.mjs does server-side. Returns the original source
 // unchanged when the block can't be located or is already correct.
 function patchAt(source: string, editableIndex: number, newAt: string): string {
@@ -106,8 +106,8 @@ function patchAt(source: string, editableIndex: number, newAt: string): string {
   if (!block) return source
   const cleanAt = stripAtWrap(newAt)
   let updated: string
-  if (/ at=/.test(block.slice)) {
-    const atRe = /(<sp-drag\s[^>]*?\bat=)"[^"]*"/i
+  if (/ rbox=/.test(block.slice)) {
+    const atRe = /(<sp-drag\s[^>]*?\brbox=)"[^"]*"/i
     const m = atRe.exec(block.slice)
     if (!m) return source
     updated = block.slice.replace(m[0], `${m[1]}"${cleanAt}"`)
@@ -115,7 +115,7 @@ function patchAt(source: string, editableIndex: number, newAt: string): string {
     const openRe = /<sp-drag\b([^>]*?)(\/?\s*>)/i
     const m = openRe.exec(block.slice)
     if (!m) return source
-    updated = block.slice.replace(openRe, `<sp-drag${m[1]} at="${cleanAt}"${m[2]}`)
+    updated = block.slice.replace(openRe, `<sp-drag${m[1]} rbox="${cleanAt}"${m[2]}`)
   }
   if (updated === block.slice) return source
   return source.slice(0, block.start) + updated + source.slice(block.end)
@@ -132,7 +132,7 @@ export function applyOptimistic(source: string): string {
 }
 
 // The incoming refresh payload is authoritative. Entries whose drag block
-// already carries the committed `at` are confirmed and dropped; the rest are
+// already carries the committed `rbox` are confirmed and dropped; the rest are
 // kept and topped back up so the snapshot never regresses below committed
 // values when the payload raced ahead of a write.
 export function reconcileOptimistic(source: string): string {

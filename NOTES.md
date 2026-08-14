@@ -1,10 +1,8 @@
 
 # NEXT
 
-- [ ] drag disambiguation
-- [ ] consider renaming at:"" for draggable, it conflicts (in the mind) with sp-step "at" etc, ... maybe pos:"" or rbox:"" (rotated box, ok if no need to type it)
-- [ ] #drag, handle at:"" too and maybe even missing no at: .... or at the opposite make it generic to just look for at: (maybe already doing that, so we can drag other thing?) 
-- [ ] v-drag and #drag do some rounding (integer design pixel?)
+- [ ] sp-drag and #drag do some rounding (integer design pixel?)
+- [ ] drag, check that if I create a empty drag, it can add the rbox="..." by itself, or if I provide just rbox="" too (both typst and html) 
 
 - [ ] revamp init script opbject section data-...
 - [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst

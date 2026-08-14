@@ -2,14 +2,14 @@
 
 #let drag-counter = counter("sp-drag-id")
 #let drag(
-  at: "",
+  rbox: "",
   body,
 ) = context {
   if target() == "html" {
     let dragId = drag-counter.get().at(0)
     drag-counter.step()
     let attrs = ("data-drag-id": str(dragId))
-    if at != "" { attrs.insert("at", at) }
+    if rbox != "" { attrs.insert("rbox", rbox) }
     let s = sp-source-state.get()
     if s.file != none {
       attrs.insert("data-source-file", s.file)

@@ -19,7 +19,7 @@
 
   <sp-slide no-toc>
     <h2>Notes and Disclaimer: welcome to</h2>
-    <sp-drag at="1408|33|468.4521011768494|182.97444578952522|0">
+    <sp-drag rbox="1408|33|468.4521011768494|182.97444578952522|0">
       <sp-img src="./slides-purryst-banner-sticker.svg" />
     </sp-drag>
     <ul>
@@ -126,7 +126,7 @@
       <li><kbd>F</kbd>: Toggle fullscreen</li>
       <li><kbd>B</kbd>: Trigger blackout</li>
     </ul>
-    <sp-drag at="922|753|828|204|0">
+    <sp-drag rbox="922|753|828|204|0">
       <div class="eg-small">
         In this presentation
         <ul>
@@ -162,7 +162,7 @@
     <h3>A Table of Content</h3>
     <p>One can have "local" TOC</p>
     <sp-toc start="3" context />
-    <sp-drag at="1202|62|524.5879060720367|961.4244706670144|0">
+    <sp-drag rbox="1202|62|524.5879060720367|961.4244706670144|0">
       <div style="font-size: 25px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; position: absolute; inset: 0; overflow: scroll;">
         Or a full TOC
         <sp-toc />
@@ -174,7 +174,7 @@
     <h3>Custom Vue Components</h3>
     <p>Custom components work inside slides.</p>
     <my-counter :count="5"></my-counter>
-    <sp-drag at="1334|375|549.7021037795132|559.4658884977841|0" style="font-size: 35px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; overflow: scroll;">
+    <sp-drag rbox="1334|375|549.7021037795132|559.4658884977841|0" style="font-size: 35px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; overflow: scroll;">
       <sp-toc start="3"/>
     </sp-drag>
   </sp-slide>
@@ -182,7 +182,7 @@
   <sp-slide class="eg-draggables">
     <h3>Draggable Elements</h3>
     <p><code>&amp;lt;sp-drag>stuff&amp;lt;/sp-drag></code> creates a <span style="opacity: 0.2;">draggable box</span></p>
-    <sp-drag at="938|353|587.7729750515967|327.7726886880253|0">
+    <sp-drag rbox="938|353|587.7729750515967|327.7726886880253|0">
       <div style="font-size: 0.65em;">HTML and CSS layout are nice and clean but sometimes manual placement is simpler</div>
     </sp-drag>
     <p>In dev mode:</p>
@@ -191,14 +191,14 @@
       <li>move and resize</li>
       <li>validate by deselecting</li>
       <li>⇒ the changes are saved to the source</li>
-      <li>…… as a <code>at="..."</code> attribute</li>
+      <li>…… as a <code>rbox="..."</code> attribute</li>
     </ul>
-    <sp-drag at="1076|107|641.887633341839|283.0415048145767|0">
+    <sp-drag rbox="1076|107|641.887633341839|283.0415048145767|0">
       <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
     <sp-pause />
-    <sp-drag style="background: rgb(255 255 0 / 0.5);" title="like in the example, at is added on first move">stuff</sp-drag>
-    <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
+    <sp-drag style="background: rgb(255 255 0 / 0.5);" title="like in the example, rbox is added on first move">stuff</sp-drag>
+    <sp-drag rbox="953|515|891.9896580375619|184.07442507755945|23.8">
       <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
   </sp-slide>
@@ -227,10 +227,10 @@
 
   <sp-slide class="eg-draggables">
    <h3 title="Exact same locations, should not blink, also should move the right one.">Draggable 2 (test)</h3>
-    <sp-drag at="1076|107|641.887633341839|283.0415048145767|0">
+    <sp-drag rbox="1076|107|641.887633341839|283.0415048145767|0">
       <div class="eg-natural eg-textcenter" style="--eg-hue: 270; ">Draggable box <br/>(natural size)</div>
     </sp-drag>
-    <sp-drag at="953|515|891.9896580375619|184.07442507755945|23.8">
+    <sp-drag rbox="953|515|891.9896580375619|184.07442507755945|23.8">
       <div class="eg-fill eg-center eg-textcenter" style="--eg-hue: 120;">One more box <br/>(fill and center+vcenter)</div>
     </sp-drag>
   </sp-slide>
@@ -256,7 +256,7 @@
     <p>(use <code>sp-style</code> in a slide or global)</p><!-- + -->
     <sp-svg src="./slides-purryst-banner-sticker.svg" width="100%" height="200"></sp-svg>
 
-    <sp-drag at="1279|278|707.2299359907619|287.7049303965147|33.2">
+    <sp-drag rbox="1279|278|707.2299359907619|287.7049303965147|33.2">
       Draggable cat
       <sp-svg src="./slides-purryst-banner-sticker.svg" wrap class="smallcat"></sp-svg>
     </sp-drag>
@@ -292,7 +292,7 @@ await createSlidesPurryst({
     <p>Before include</p>
     <sp-include src="./demo-fragment.html" />
     <p>After include</p>
-    <sp-drag at="521|663|864.3488360415503|181.24843314556188|33.1">
+    <sp-drag rbox="521|663|864.3488360415503|181.24843314556188|33.1">
       <div class="eg-fill eg-center" style="background: var(--sp-gray-50);">
         Draggable in slide 
       </div>
@@ -1134,13 +1134,13 @@ await createSlidesPurryst({
 
 <script type="text/html" id="sp-chunklets">
   <sp-chunk name="greybox" params="x,y,w,h">
-    <sp-drag at="$x|$y|$w|$h|0">
+    <sp-drag rbox="$x|$y|$w|$h|0">
       <div class="eg-fill" style="background: rgba(128,128,128,0.6); border: 1px solid grey;">
       </div>
     </sp-drag>
   </sp-chunk>
   <sp-chunk name="note" params="x,y">
-    <sp-drag at="$x|$y|auto|auto|0">
+    <sp-drag rbox="$x|$y|auto|auto|0">
       <div style="background: var(--sp-bg-2); padding: 0.5em 1em; border-radius: 4px; font-size: 0.85em;">
         Note
       </div>
@@ -1268,7 +1268,7 @@ await SlidesPurryst.createSlidesPurryst({
       name: 'patch',
       params: 'x,y,w,h',
       html: `
-      <sp-drag at="$x|$y|$w|$h|0">
+      <sp-drag rbox="$x|$y|$w|$h|0">
         <div class="eg-fill eg-patch">
         </div>
       </sp-drag>
