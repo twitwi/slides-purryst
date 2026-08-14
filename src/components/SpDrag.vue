@@ -568,7 +568,7 @@ onUnmounted(() => {
 .sp-drag-rotate-line {
   position: absolute;
   top: -34px;
-  left: calc(50% - 1px);
+  left: calc(75% - 1px);
   width: 2px;
   height: 46px;
   background: var(--sp-accent);
@@ -578,7 +578,7 @@ onUnmounted(() => {
 .sp-drag-rotate-handle {
   position: absolute;
   top: -41px;
-  left: calc(50% - 14px);
+  left: calc(75% - 14px);
   width: 28px;
   height: 28px;
   border-radius: 50%;
