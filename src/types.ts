@@ -67,6 +67,7 @@ export interface SPSlidesOptions {
   author?: string
   presenter?: boolean
   theme?: string
+  variants?: string[] | string // space separated
   components?: Record<string, Component>
   seed?: number
   cacheIgnore?: string[]

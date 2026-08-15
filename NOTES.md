@@ -8,7 +8,7 @@
 - title should propagate to tab name, also allow tab (for tab name, if provided)
 - propably distinguish config (really pure deck config like size etc) from metadata? e.g. presenter (mode) vs presenter (who presents)
 
-- [ ] (integrate) bib shortener + bib ellipsis (optional) + bib highlight (maybe even on hover... is label :hover working prob not, so js needed but ok)
+- [ ] (integrate) bib shortener + maybe bib highlight (on hover... as label :hover working it seems but maybe just for inputs)
 - [ ] (integrate) (think) better UX for drag(svg()), should work out of the box no? :has(>*:first-child:last-child ... but then need some <span> if we want img + text) or have a class we can put on the svg or any content or a MARK? maybe also the fill natural etc from the demo
 
 

@@ -109,6 +109,10 @@ function applyThemeClass(name: string) {
     .forEach(c => el.classList.remove(c))
   el.classList.add('theme-' + name.replace(/[^a-zA-Z0-9_-]/g, ''))
 }
+function applyThemeVariants(classes: string[]) {
+  const el = document.documentElement
+  classes.forEach((c) => c.startsWith('!') ? el.classList.remove(c.substring(1)) : el.classList.add(c))
+}
 
 // Read the "page author" layer of init params off `#sp-presentation`:
 // individual `data-*` scalars, then a `data-sp-init` JSON blob (wins).
@@ -160,10 +164,11 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   const pageParams = { ...readPresentationParams(), ...(init.config ?? {}) }
   const resolved = { ...pageParams, ...options }
-  const { el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, plugins, activate, theme, presenter } = resolved
+  const { el, transition, transitionDuration, designWidth, designHeight, author, components, seed, cacheIgnore, plugins, activate, theme, variants, presenter } = resolved
   let slides = resolved.slides
 
   if (theme) applyThemeClass(String(theme))
+  if (variants) applyThemeVariants(typeof variants === 'string' ? variants.split(' ') : variants)
 
   const scriptEl = document.getElementById('sp-content') as HTMLScriptElement | null
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
