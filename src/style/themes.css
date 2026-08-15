@@ -47,6 +47,17 @@ Theme authors can use the pattern used below, with:
         background: url("data:image/svg+xml;utf8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 1920 1920%22%3E%3Cdefs%3E%3Cfilter id%3D%22noise%22 x%3D%220%25%22 y%3D%220%25%22 width%3D%22100%25%22 height%3D%22100%25%22%3E%3CfeTurbulence type%3D%22fractalNoise%22 baseFrequency%3D%220.98%22 numOctaves%3D%221%22 seed%3D%22191518%22 stitchTiles%3D%22stitch%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%222.2 0 0 0 -0.55  0 2.2 0 0 -0.55  0 0 2.2 0 -0.55  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%22-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0%22%2F%3E%3CfeColorMatrix type%3D%22matrix%22 values%3D%220 1 0 0 0  0 1 0 0 0  0 0 1 0 0  0.33 0.33 0.34 0 0%22%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Crect width%3D%221920%22 height%3D%221920%22 fill%3D%22%23000000%22%2F%3E%3Crect width%3D%221920%22 height%3D%221920%22 filter%3D%22url(%23noise)blur(1px)%22 opacity%3D%220.350%22%2F%3E%3C%2Fsvg%3E");
     }
 }}
+/* on by default */
+:not(.isnt-helpers) { :root& .sp-slide:not(.nogt), .sp-slide& {
+  .dnone { display: none !important; }
+
+  svg .fill-fg { &,* {fill: var(--sp-auto-black) !important; }}
+  svg .stroke-fg { &,* {stroke: var(--sp-auto-black) !important; }}
+  svg .color-fg { &,* {color: var(--sp-auto-black) !important; }}
+  svg .fill-bg { &,* {fill: var(--sp-auto-white) !important; }}
+  svg .stroke-bg { &,* {stroke: var(--sp-auto-white) !important; }}
+  svg .color-bg { &,* {color: var(--sp-auto-white) !important; }}
+}}
 
 
 
