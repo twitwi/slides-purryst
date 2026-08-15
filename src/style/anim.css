@@ -4,7 +4,7 @@
 .sp-steps-no-tag { display: contents; }
 .sp-anim-ghost { display: none; animation: none !important; }
 
-.sp-anim-hidden { opacity: 0; pointer-events: none; transition: opacity 300ms ease; }
+.sp-anim-hidden { opacity: 0 !important; pointer-events: none; transition: opacity 300ms ease; }
 .sp-anim-hidden.sp-hidden-is-empty { display: none; }
 .sp-anim-shown { opacity: 1; pointer-events: auto; transition: opacity 300ms ease; }
 

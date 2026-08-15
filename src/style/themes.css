@@ -64,57 +64,60 @@ Theme authors can use the pattern used below, with:
     --sp-base-font-size: 3em; /*2.35em */;
     --sp-bg: var(--sp-auto-white);
     --sp-text: var(--sp-auto-black);
+
+    /* theme overridable variables (reuse the above selector to do so) */
+    --h1-em: 1.8;
+    --h2-em: 2;
+    --h3-em: 1.55;
+    /* theme utily variables */
+    --margin-factor: 1;
+
     &:has(h1,h2:not(.sp-bib *)) {
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    h1 {
-        font-size: 1.8em;
-        &:has(+ h4) {
-            margin-bottom: 0em;
-            + h4 {
-                opacity: 0.8;
-                color: var(--sp-text);
-            }
-        }
-        &:not(:has(+ h4)), & + h4 { margin-bottom: 0.8em; }
+    h1, h2, h3 {
+        &:has(+ h4),
+        ~ h4:has(+ h4) { margin-bottom: 0em; }
     }
-    /*h2, h4, p {    outline: 1px solid blue;}*/
+    h1 {
+        font-size: calc(1em * var(--h1-em));
+        &, ~ h4 {
+            margin-bottom: calc(0.8em * var(--margin-factor));
+        }
+        ~ h4 {
+            --margin-factor: var(--h1-em);
+            color: var(--sp-text);
+            opacity: 0.8;
+        }
+    }
     h2 {
-        font-size: 2em; /*1.65em for 3.75em*/
+        font-size: calc(1em * var(--h2-em));
         color: var(--sp-auto-black);
         text-align: center;
         background: hsl(0 0% calc(100% - 100% * var(--sp-darkness)) / 0.75);
-        line-height: 1.25;
-        --margin-factor: 1;
-        &:has(+ h4) {
-            margin-bottom: -.1em;
-            + h4 {
-                --margin-factor: 0.5;
-                text-align: center;
-                opacity: 0.8;
-                color: var(--sp-text);
-            }
+        &, ~ h4 {
+            margin-bottom: calc(0.3em * var(--margin-factor));
         }
-        &:not(:has(+ h4)), & + h4 { margin-bottom: calc(0.3em / var(--margin-factor)); }
+        ~ h4 {
+            --margin-factor: var(--h2-em);
+            color: var(--sp-text);
+            text-align: center;
+            opacity: 0.8;
+        }
     }
-    --h3-font-size: 1.55em; /*1.25em for 3.75em*/
     h3 {
-        font-size: var(--h3-font-size);
+        font-size: calc(1em * var(--h3-em));
         color: var(--sp-accent);
         text-align: center;
         font-weight: 700;
-        --margin-factor: 1;
-        &:has(+ h4) {
-            margin-bottom: 0em;
-            + h4 {
-                --margin-factor: 0.65;
-                opacity: 0.8;
-                color: var(--sp-text);
-            }
+        &, ~ h4 {
+            margin-bottom: calc(0.3em * var(--margin-factor));
         }
-        &:not(:has(+ h4)), & + h4 { margin-bottom: calc(0.3em / var(--margin-factor)); }
+        ~ h4 {
+            --margin-factor: var(--h3-em);
+        }
     }
 }}
 
