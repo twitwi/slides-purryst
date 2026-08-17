@@ -1,4 +1,5 @@
 #import "utils.typ": path-to-text
+#import "component.typ": component
 
 #let svg(
   src: none,
@@ -15,7 +16,7 @@
     if height != none { attrs.insert("height", str(height)) }
     if wrap { attrs.insert("wrap", "") }
     if class != none { attrs.insert("class", class) }
-    html.elem("sp-svg", attrs: attrs)
+    component("sp-svg", attrs: attrs)
   } else {
     image(src, width: 30%)
     [((IMG: #path-to-text(src)))]

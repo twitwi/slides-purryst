@@ -44,12 +44,15 @@
 
 // pending annotation: applies to the next html element (components,
 // native lists/enums, headings) in document order
-#let anno(sel) = {
+#let anno(sel, ..maybe-body) = {
   let parsed = parse-sel(sel)
   let attrs = (:)
   if parsed.id != none { attrs.insert("id", parsed.id) }
   if parsed.classes.len() > 0 { attrs.insert("class", parsed.classes.join(" ")) }
-  pending-anno.update(attrs)
+  [#pending-anno.update(it => attrs)]
+  for b in maybe-body.pos() {
+    b
+  }
 }
 
 #let anno-list-like(tag) = (it) => context {
@@ -79,19 +82,19 @@
 
 // wrap base HTML elements
 
-#let h1(body, attrs: (:)) = component("h1", attrs: attrs, body)
-#let h2(body, attrs: (:)) = component("h2", attrs: attrs, body)
-#let h3(body, attrs: (:)) = component("h3", attrs: attrs, body)
+#let h1(attrs: (:), ..rest)    = component("h1", attrs: attrs, ..rest)
+#let h2(attrs: (:), ..rest)    = component("h2", attrs: attrs, ..rest)
+#let h3(attrs: (:), ..rest)    = component("h3", attrs: attrs, ..rest)
 
-#let p(body, attrs: (:)) = component("p", attrs: attrs, body)
-#let span(body, attrs: (:)) = component("span", attrs: attrs, body)
-#let div(body, attrs: (:)) = component("div", attrs: attrs, body)
+#let p(attrs: (:), ..rest)     = component("p", attrs: attrs, ..rest)
+#let span(attrs: (:), ..rest)  = component("span", attrs: attrs, ..rest)
+#let div(attrs: (:), ..rest)   = component("div", attrs: attrs, ..rest)
 
-#let ul(body, attrs: (:)) = component("ul", attrs: attrs, body)
-#let ol(body, attrs: (:)) = component("ol", attrs: attrs, body)
-#let li(body, attrs: (:)) = component("li", attrs: attrs, body)
+#let ul(attrs: (:), ..rest)    = component("ul", attrs: attrs, ..rest)
+#let ol(attrs: (:), ..rest)    = component("ol", attrs: attrs, ..rest)
+#let li(attrs: (:), ..rest)    = component("li", attrs: attrs, ..rest)
 
-#let table(body, attrs: (:)) = component("table", attrs: attrs, body)
-#let tr(body, attrs: (:)) = component("tr", attrs: attrs, body)
-#let td(body, attrs: (:)) = component("td", attrs: attrs, body)
-#let th(body, attrs: (:)) = component("th", attrs: attrs, body)
+#let table(attrs: (:), ..rest) = component("table", attrs: attrs, ..rest)
+#let tr(attrs: (:), ..rest)    = component("tr", attrs: attrs, ..rest)
+#let td(attrs: (:), ..rest)    = component("td", attrs: attrs, ..rest)
+#let th(attrs: (:), ..rest)    = component("th", attrs: attrs, ..rest)

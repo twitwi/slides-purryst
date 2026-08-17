@@ -70,15 +70,36 @@ Theme authors can use the pattern used below, with:
     }
 }}
 /* on by default */
-:not(.isnt-helpers) { :root& .sp-slide:not(.nogt), .sp-slide& {
-  .dnone { display: none !important; }
-
-  svg .fill-fg { &,* {fill: var(--sp-auto-black) !important; }}
-  svg .stroke-fg { &,* {stroke: var(--sp-auto-black) !important; }}
-  svg .color-fg { &,* {color: var(--sp-auto-black) !important; }}
-  svg .fill-bg { &,* {fill: var(--sp-auto-white) !important; }}
-  svg .stroke-bg { &,* {stroke: var(--sp-auto-white) !important; }}
-  svg .color-bg { &,* {color: var(--sp-auto-white) !important; }}
+:not(.isnt-helpers-01) { :root& .sp-slide:not(.nogt), .sp-slide& {
+    .dnone { display: none !important; }
+}}
+:not(.isnt-helpers-02) { :root& .sp-slide:not(.nogt), .sp-slide& {
+    .sp-drag-content {
+        & > :first-child:last-child,
+        & > [data-source-file-push]:first-child + :has(+ [data-source-file-pop]:last-child),
+        & > [data-source-file-push]:first-child + :has(+ [data-source-file-pop]:last-child) svg
+        {
+            svg {
+                position: absolute;
+                width: 100%;
+                height: auto;
+                .fit-h & {
+                    height: 100%;
+                    width: auto;
+                }
+            }
+        }
+    }
+}}
+:not(.isnt-helpers-03) { :root& .sp-slide:not(.nogt), .sp-slide& {
+    svg .fill-fg { &,* {fill: var(--sp-auto-black) !important; }}
+    svg .stroke-fg { &,* {stroke: var(--sp-auto-black) !important; }}
+    svg .color-fg { &,* {color: var(--sp-auto-black) !important; }}
+    svg .fill-bg { &,* {fill: var(--sp-auto-white) !important; }}
+    svg .stroke-bg { &,* {stroke: var(--sp-auto-white) !important; }}
+    svg .color-bg { &,* {color: var(--sp-auto-white) !important; }}
+}}
+:not(.isnt-helpers-04) { :root& .sp-slide:not(.nogt), .sp-slide& {
 }}
 
 

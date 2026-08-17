@@ -35,9 +35,9 @@ const transformers = computed<Transformer[]>(() => {
 
 <template>
   <div v-if="wrap" v-bind="$attrs" class="sp-svg-wrap">
-    <SpInclude :src="src" :path="path" :transformers="transformers" no-fix-void no-component />
+    <SpInclude :src="src" :path="path" :transformers="transformers" no-fix-void no-component no-wrap />
   </div>
-  <SpInclude v-else v-bind="$attrs" :src="src" :path="path" :transformers="transformers" no-fix-void no-component />
+  <SpInclude v-else v-bind="$attrs" :src="src" :path="path" :transformers="transformers" no-fix-void no-component no-wrap />
 </template>
 
 <style scoped>

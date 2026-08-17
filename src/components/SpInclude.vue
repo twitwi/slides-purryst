@@ -25,11 +25,13 @@ const props = withDefaults(defineProps<{
   transformers?: Transformer[]
   noFixVoid?: boolean
   noComponent?: boolean
+  noWrap?: boolean
 }>(), {
   path: '',
   transformers: () => [],
   noFixVoid: false,
   noComponent: false,
+  noWrap: false,
 })
 
 const error = ref('')
@@ -64,7 +66,7 @@ function buildComponent(html: string) {
     return
   }
   comp.value = defineComponent({
-    template: `<div class="sp-include">${html}</div>`,
+    template: props.noWrap ? `${html}` : `<div class="sp-include">${html}</div>`,
     components: {
       'sp-alternatives': SpAlternatives,
       'sp-anim': SpAnim,

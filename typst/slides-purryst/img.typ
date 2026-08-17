@@ -1,5 +1,7 @@
 #import "utils.typ": path-to-text
 
+#import "component.typ": component
+
 #let img(
   src: none,
   alt: "",
@@ -15,7 +17,7 @@
     if width != none { attrs.insert("width", str(width)) }
     if height != none { attrs.insert("height", str(height)) }
     if style != none { attrs.insert("style", style) }
-    html.elem("sp-img", attrs: attrs)
+    component("sp-img", attrs: attrs)
   } else {
     image(src, width: 30%)
     [((IMG: #path-to-text(src)))]
