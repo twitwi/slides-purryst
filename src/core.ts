@@ -13,7 +13,6 @@ import SpToc from './components/SpToc.vue'
 import SpImg from './components/SpImg.vue'
 import SpSlideSource from './components/SpSlideSource.vue'
 import SpBib from './components/SpBib.vue'
-import { bibRefinement } from './refinements/bibFilter'
 import type { SPSlidesOptions, SlideData, SlidesPlugin, SpInitPayload } from './types'
 import { registry } from './plugin'
 import { parseElementToSlides, parseRawInto, extractRawSlideSources } from './composables/useSlides'
@@ -25,7 +24,8 @@ import { resolveTopIncludes } from './composables/resolveIncludes'
 import { parseChunkletsFromText } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
-import { addGlobalErrorMessage, clearGlobalErrorMessages } from './composables/globalErrorMessages.js'
+import { addGlobalErrorMessage, clearGlobalErrorMessages } from './composables/globalErrorMessages'
+import { createPluginPack, createPlugins } from './plugins/plugins'
 
 const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,
@@ -305,12 +305,12 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   // Default: step-aware bibliography filtering. Registered through the public
   // plugin API (a slide refinement), so it can be overridden or removed by
   // userland plugins ordering after it.
-  await registry.register({
-    name: 'bib',
-    activate: api => api.addSlideRefinement(bibRefinement),
-  })
 
-  const allPlugins: SlidesPlugin[] = [...(plugins ?? [])]
+  // TODO a addDOMTransform to make the abbreviation thing
+  // and move all these to builtin plugins file
+
+
+  const allPlugins: SlidesPlugin[] = [...(plugins ?? createPluginPack('default'))]
   if (activate) {
     allPlugins.unshift({ name: '__user__', order: 100, activate })
   }

@@ -104,3 +104,11 @@ Here are the steps and the rationale of having them:
         - This can be seen as a helper postStepManager hook.
     - Extension point
         - one can addSlideRefinement to add a refinement that is applied after each step change (or content change) of a slide. 
+
+
+
+### Other extension points
+
+- keymaps
+- style
+- chunklets

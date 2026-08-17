@@ -2,15 +2,17 @@
 # NEXT
 
 
-- [ ] revamp init script opbject section data-...
+- [ ] revamp init script object section data-...
 - [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst
 - probably need to allow an open conf (authors... presenter... etc), probably ok as pure typst if to json handles all
 - title should propagate to tab name, also allow tab (for tab name, if provided)
 - propably distinguish config (really pure deck config like size etc) from metadata? e.g. presenter (mode) vs presenter (who presents)
 
-- [ ] (integrate) bib shortener + maybe bib highlight (on hover... as label :hover working it seems but maybe just for inputs)
 - [ ] (integrate) (think) better UX for drag(svg()), should work out of the box no? :has(>*:first-child:last-child ... but then need some <span> if we want img + text) or have a class we can put on the svg or any content or a MARK? maybe also the fill natural etc from the demo
 
+- [ ] refactor: distinguish components (to be used by slide authors) from internal components
+
+- [ ] emoji combinator
 
 - [ ] typst option to add #slide-bib to all slides (it is hidden if empty anyway)
 - #anim("-#focus, #formula", at: "0") creates a js error (why? and why not resurfaced?)
@@ -39,9 +41,7 @@
 - [ ] sp-step and the more generic produced data-sp-step-from etc can be restrictive. If DOM tag kept, consider more generic alt like data-sp-visible-at="2,3,4,5,8,9" ... or a list of list ="[[3, 6], [8,10]]"
 - consider having a res/ folder that is containing all the things than can be copied, this might include typst sources, and a minimal script that preproc/typst/postproc... and a command line --copy or --detach or something, that shows a miniinterface asking what to detach, with some small 1 line to say what they are
 - ^^^^ currently nunito.css is ugly (js packed)... maybe related but the bundle looks for ugly font paths also
-- [ ] if not the case plugins get a call for init, before anything has appened (same as typst js:"")
 - [ ] typst should allow providing an activate and a list of plugins
-- [ ] plugin packs: a factory that produces a plugin that is a list of plugins from the built in ones (or others but how to lazy include in some way?)
 - [ ] (typst) add a "raw" that will dump html string as cache, and sp-include it
 
 ## todo v2 (2.0.0) consolidate internals, potential breakage

@@ -101,7 +101,6 @@ export type Transformer = (root: Element) => void
 // the slide element. Registered via `PluginAPI.addSlideRefinement` and re-run by
 // the driver whenever the slide re-renders or its step/content changes.
 export interface SlideRefinement {
-  name: string
   appliesTo: (slideEl: Element) => boolean
   apply: (slideEl: Element) => void
 }
