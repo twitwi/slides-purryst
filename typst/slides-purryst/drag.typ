@@ -1,5 +1,7 @@
 #import "source.typ": sp-source-state
 
+#import "component.typ": component
+
 #let drag-counter = counter("sp-drag-id")
 #let drag(
   rbox: "",
@@ -15,7 +17,7 @@
       attrs.insert("data-source-file", s.file)
       attrs.insert("data-source-line", str(s.line))
     }
-    html.elem("sp-drag", attrs: attrs)[#body]
+    component("sp-drag", attrs: attrs)[#body]
   } else {
     [((DRAG: #body))]
   }
