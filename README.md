@@ -241,10 +241,10 @@ You can also create your own HTML in the `example/` folder.
 
 ## Version History
 
-Free latest with `'github:twitwi/slides-purryst#v1.0.0'
+Freeze at current latest with `'github:twitwi/slides-purryst#v2.0.0'
 
-
-**v1.0.0** (`latest`) — PDF Export (via browser), consolidate theme CSS, first version including typst (build script, live reload, bibliography, cetz, lilaq).
+**v2.0.0** (`latest`) — Consolidate theme, draggable, typst helpers, bib handling.
+**v1.0.0** — PDF Export (via browser), consolidate theme CSS, first version including typst (build script, live reload, bibliography, cetz, lilaq).
 **v0.1.0** — Core framework: slides, steps, animations, transitions, presenter mode, live reload, HTML authoring, plugins, chunklets, drag editing, CLI (`slides-purryst` and `sp-dev`), Vite-based dev server, zero-dependency bundle server.
 
 
