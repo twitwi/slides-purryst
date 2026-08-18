@@ -1,24 +1,5 @@
-
-#import "component.typ": component, anno, parse-sel, pending-anno
-
-
-// User-oriented function to produce any element, with optional annotation.
-#let c(name, ..rest) = {
-  let nbpos = rest.pos().len()
-  if nbpos == 0 {
-    component(name, attrs: rest.named())
-  } else {
-    let first = rest.pos().at(0)
-    let with-anno = type(first) == str and (first.starts-with(".") or first.starts-with("#"))
-    if with-anno {
-      anno(rest.pos().at(0))
-      component(name, attrs: rest.named(), ..rest.pos().slice(1))
-    } else {
-      component(name, attrs: rest.named(), ..rest.pos())
-    }
-  }
-}
-
+#import "utils.typ": path-to-text
+#import "component.typ": component, anno, parse-sel, is-sel, c, c1, pending-anno
 
 
 // wrap usual base HTML elements
@@ -54,6 +35,47 @@
 #let ccode = c.with("code")
 #let clabel = c.with("label")
 
+// one param (with path-to-text) and optional annotation
+#let img = c1.with("img", "sp-img", "src")
+// like img but converting the possible wrap param
+#let svg(..rest) = {
+  let name = "svg"
+  let key = "src"
+  let tagname = "sp-svg"
+  let pos = rest.pos()
+  let named = rest.named()
+  assert(pos.len() >= 1, message: "svg: src is required")
+  if named.at("wrap", default: false) {
+    named.insert("wrap", "")
+  }
+  let v1 = pos.at(0)
+  let sel = none
+  if is-sel(v1) {
+    assert(pos.len() >= 2, message: name + ": " + key + " is required")
+    let sel = v1
+    v1 = pos.at(1)
+    pos = pos.slice(2)
+  } else {
+    pos = pos.slice(1)
+  }
+  named.insert(key, path-to-text(v1))
+  if sel != none {
+    c(tagname, sel, ..pos, ..named)
+  } else {
+    c(tagname, ..pos, ..named)
+  }
+  /*
+  if is-sel(pos.at(0)) {
+    assert(pos.len() >= 2, message: "svg: src is required")
+    let sel = pos.at(0)
+    let src = path-to-text(pos.at(1))
+    c("sp-svg", sel, src: src, ..pos.slice(2), ..named)
+  } else {
+    let src = path-to-text(pos.at(0))
+    c("sp-svg", src: src, ..pos.slice(1), ..named)
+  }
+  */
+}
 
 
 // to be typically used with something like """  - hello #mark(".no-bullet") """

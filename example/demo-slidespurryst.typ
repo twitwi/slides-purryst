@@ -118,7 +118,7 @@
   = Notes and Disclaimer: welcome to
 
   #drag(rbox: "1408|33|468|183|0")[
-    #img(src: path("./slides-purryst-banner-sticker.svg"))
+    #img(path("./slides-purryst-banner-sticker.svg"))
   ]
 
   - This presentation acts as
@@ -149,15 +149,15 @@
 
 
   #drag(rbox: "865|631|272|172|-42.3",
-  [#anno(".fit-h")#svg(src: path("./slides-purryst-banner.svg"))]
+  [#anno(".fit-h")#svg(path("./slides-purryst-banner.svg"))]
   )
 
   #drag(rbox: "565|631|272|172|-42.3",
-  anno(".fit-h2", svg(src: path("./slides-purryst-banner.svg")))
+  anno(".fit-h2", svg(path("./slides-purryst-banner.svg")))
   )
 
   #drag(rbox: "265|631|272|172|-42.3",
-  [#anno(".fit-h", svg(src: path("./slides-purryst-banner.svg")))]
+  [#anno(".fit-h", svg(path("./slides-purryst-banner.svg")))]
   )
 
   #toc(end: "2")
@@ -195,7 +195,7 @@
 #slide(transition: "fade")[
   == This one is "fade"
 
-  #img(src: path("./slides-purryst-banner.svg"))
+  #img(path("./slides-purryst-banner.svg"))
 
   Next is "slide-up".
 ]
@@ -203,7 +203,7 @@
 #slide(transition: "slide-up")[
   == This one is "slide-up"
 
-  #img(src: path("./slides-purryst-banner.svg"), style: "transform: scale(-1,1)")
+  #img(path("./slides-purryst-banner.svg"), style: "transform: scale(-1,1)")
 
   Next is "zoom" (with 600ms, i.e. longer animation).
 ]
@@ -211,7 +211,7 @@
 #slide(transition: "zoom", transitionDuration: "600")[
   == This one is "zoom" (with 600ms)
 
-  #img(src: path("./slides-purryst-banner.svg"))
+  #img(path("./slides-purryst-banner.svg"))
 
   Next is "fade" (with 100ms).
 ]
@@ -219,7 +219,7 @@
 #slide(transition: "fade", transitionDuration: "100")[
   == This one is "fade" (with 100ms)
 
-  #img(src: path("./slides-purryst-banner.svg"), style: "transform: scale(-1,1)")
+  #img(path("./slides-purryst-banner.svg"), style: "transform: scale(-1,1)")
 ]
 
 // ============================================================
@@ -308,7 +308,7 @@
     #div(style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background: lch(60 40 var(--eg-hue));")[Draggable box (natural size)]
   ]
 
-  #drag(rbox: "", svg(src: path("./unrolled-sindy-a.svg"), width: "100%", height: "auto"))
+  #drag(rbox: "", svg(path("./unrolled-sindy-a.svg"), width: "100%", height: "auto"))
   #pause
 
   #drag[#div(style: "background: rgb(255 255 0 / 0.5);")[stuff]]
@@ -360,7 +360,7 @@
 
   Move your mouse on the cat.
 
-  #svg(src: path("./slides-purryst-banner-sticker.svg"), height: "400px")
+  #svg(path("./slides-purryst-banner-sticker.svg"), height: "400px")
 
   #style("
     svg #cat:not(:hover) { filter: blur(5px); }
@@ -369,7 +369,7 @@
 
   #drag(rbox: "1176|227|707|288|33.2")[
     Draggable cat
-    #svg(src: path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
+    #svg(path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
   ]
 ]
 
@@ -819,7 +819,7 @@
     ])
   ])
 
-  #svg(src: path("./slides-purryst-banner-sticker.svg"), width: "50%")
+  #svg(path("./slides-purryst-banner-sticker.svg"), width: "50%")
 
   #anim("@add(glow, #catfill) | 2s @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)")
 

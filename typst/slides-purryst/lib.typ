@@ -3,8 +3,6 @@
 #import "jump.typ": jump, meanwhile, pause
 #import "alternatives.typ": alternatives
 #import "include.typ": include-fragment
-#import "img.typ": img
-#import "svg.typ": svg
 #import "drag.typ": drag
 #import "anim.typ": anim
 #import "notes.typ": notes

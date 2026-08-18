@@ -498,7 +498,7 @@ Fetches an SVG, auto-adds `viewBox`, rewrites `xlink:href` → `href`, dedups
 IDs, moves inline styles to attributes. Props: `src`, `path` (default `svg`),
 `wrap`, `width`, `height`, `class`.
 
-**Typst:** `#svg(src: "diagram.svg", width: 40%, wrap: true)`.
+**Typst:** `#svg("diagram.svg", width: 40%, wrap: true)`.
 
 ### `<sp-img src="photo.png">`
 
