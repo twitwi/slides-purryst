@@ -116,7 +116,6 @@ Theme authors can use the pattern used below, with:
 /* apply style to slides */
 .theme-conference { :root& .sp-slide:not(.nogt), .sp-slide& {
     --sp-font-sans: 'Nunito', sans-serif;
-    --sp-base-font-size: 3em; /*2.35em */;
     --sp-bg: var(--sp-auto-white);
     --sp-text: var(--sp-auto-black);
 

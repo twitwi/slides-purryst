@@ -59,10 +59,7 @@
 // to be typically used with something like """  - hello #mark(".no-bullet") """
 // and a custom css like ":has(> .no-bullet) {...}" (existing in themes.css)
 #let mark(sel) = {
-  let (id, classes) = parse-sel(sel)
-  let attrs = (class: classes.join(" "))
-  if id != none { attrs.insert("id", id) }
-  return component("span", none, attrs: attrs)
+  c("span", sel, "")
 }
 
 // used in show rules

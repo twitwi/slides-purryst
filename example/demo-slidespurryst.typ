@@ -135,10 +135,10 @@
   ]
 
   #anno(".eg-small")
-  - in the source typst file #mark(".no-square")
+  - in the source typst file #mark(".bullet-square")
   - for individual slides, by pressing #component("kbd", [S])
 
-  #style(":has(>.no-square) { list-style: square; }")
+  #style(":has(>.bullet-square) { list-style: square; }")
 ]
 
 // ============================================================

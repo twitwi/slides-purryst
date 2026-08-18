@@ -75,7 +75,6 @@
 }
 
 .sp-nav-pill.active {
-  background: var(--sp-accent);
   box-shadow: 0 0 0 2px var(--sp-bg-2), 0 0 0 3.5px var(--sp-text);
 }
 
