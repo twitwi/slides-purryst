@@ -4,6 +4,7 @@ set -euo pipefail
 # --- Parse args ---
 no_latest=false
 only_latest=false
+only_delete_test=false
 only_test=false
 version=""
 
@@ -12,10 +13,17 @@ for arg in "$@"; do
     --no-latest) no_latest=true ;;
     --only-latest) only_latest=true ;;
     --only-test) only_test=true ;;
+    --delete-test) only_delete_test=true ;;
     -*) echo "Unknown option: $arg"; exit 1 ;;
     *) version="$arg" ;;
   esac
 done
+
+if [ "$only_delete_test" = true ]; then
+    git tag -d test
+    git push origin --delete test
+    exit 1
+fi
 
 if [ -z "$version" ] && [ "$only_latest" = false ]; then
   echo "usage: release.sh [--no-latest|--only-latest|--only-test] v0.1.0"

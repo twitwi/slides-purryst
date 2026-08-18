@@ -8,6 +8,7 @@
 - propably distinguish config (really pure deck config like size etc) from metadata? e.g. presenter (mode) vs presenter (who presents)
 
 
+- [ ] (typst) make svg/img work even with a single unnamed parameter
 
 - [ ] bib could maybe inject hidden inputs? + labels + :has(> :hover) to have mouse hover focusing like :target
 
