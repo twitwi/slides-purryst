@@ -90,9 +90,7 @@
   let sel = none
   if is-sel(v1) {
     assert(pos.len() >= 2, message: name + ": " + key + " is required")
-    let sel = v1
-    v1 = pos.at(1)
-    pos = pos.slice(2)
+    (sel, v1, ..pos) = pos
   } else {
     pos = pos.slice(1)
   }
