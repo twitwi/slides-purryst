@@ -106,7 +106,7 @@
 
   Where Typst meets Vue in purr-fect harmony.
 
-  #p(attrs: (style: "color:#64748b;font-size:0.9em"))[Arrow keys or Space to navigate]
+  #p(style: "color:#64748b;font-size:0.9em")[Arrow keys or Space to navigate]
 
   NB: this demo file is using Typst
 ]
@@ -130,12 +130,12 @@
     - a showcase of the typst version (it is Typst)
     - meant to be visually polished (it illustrates features)
 
-  #p(attrs: (class: "eg-small"))[
+  #p(class: "eg-small")[
     NB: You can see the source code
   ]
 
   #anno(".eg-small")
-  - in the source typst file #MARK(".no-square")
+  - in the source typst file #mark(".no-square")
   - for individual slides, by pressing #component("kbd", [S])
 
   #style(":has(>.no-square) { list-style: square; }")
@@ -147,7 +147,25 @@
 #slide(no-toc: true)[
   = Here is TOC (table of contents)
 
+
+  #drag(rbox: "865|631|272|172|-42.3",
+  [#anno(".fit-h")#svg(src: path("./slides-purryst-banner.svg"))]
+  )
+
+  #drag(rbox: "565|631|272|172|-42.3",
+  anno(".fit-h2", svg(src: path("./slides-purryst-banner.svg")))
+  )
+
+  #drag(rbox: "265|631|272|172|-42.3",
+  [#anno(".fit-h", svg(src: path("./slides-purryst-banner.svg")))]
+  )
+
   #toc(end: "2")
+
+#style("
+.sp-include.fit-h svg, .fit-h { background: chartreuse; }
+.sp-drag.fit-h, .sp-drag-content.fit-h { outline: 10px solid red; }
+")
 ]
 
 // ============================================================
@@ -156,7 +174,7 @@
 #slide[
   = Slide Transitions
 
-  #component("div", attrs: (class: "eg-center"), [Do not overuse...])
+  #div(class: "eg-center", [Do not overuse...])
 
   Transitions don't necessarily improve the presentation, they are possible but should be used sparingly, only when they add value to the content.
 ]
@@ -166,13 +184,12 @@
 
   Per-slide transitions via `transition` parameter.
 
-  - `code`
-  - #component("code", [none]) — default
-  - #component("code", [fade]) — opacity fading
-  - #component("code", [slide-up]) — vertical slide
-  - #component("code", [zoom]) — scale in/out
+  - `none` — default
+  - `fade` — opacity fading
+  - `slide-up` — vertical slide
+  - `zoom` — scale in/out
 
-  A \'#component("code", [transition])\' option to #component("code", [slides-theme]) serves as default.
+  A `transition` option to `createSlidesPurryst` serves as default.
 ]
 
 #slide(transition: "fade")[
@@ -215,23 +232,25 @@
 #slide[
   == Keyboard Navigation #step(from: "1")[(please try)]
 
-  - #component("kbd", [→]) / #component("kbd", [Spc]) / swipe: advance the presentation
-  - #component("kbd", [←]): backward
-  - #component("kbd", [↓]) (next) / #component("kbd", [↑]) (previous) slide (skip steps)
-  - #component("kbd", [A]) / #component("kbd", [Z]): prev/next slide's end
-  - #component("kbd", [G]): Open goto popup (number, header content)
-  - #component("kbd", [O]): Toggle overview
+  #let kbd = c.with("kbd")
+
+  - #kbd([→]) / #kbd([Spc]) / swipe: advance the presentation
+  - #kbd([←]): backward
+  - #kbd([↓]) (next) / #kbd([↑]) (previous) slide (skip steps)
+  - #kbd([A]) / #kbd([Z]): prev/next slide's end
+  - #kbd([G]): Open goto popup (number, header content)
+  - #kbd([O]): Toggle overview
 
   More shortcuts
 
-  - #component("kbd", [F]): Toggle fullscreen
-  - #component("kbd", [B]): Trigger blackout
+  - #kbd([F]): Toggle fullscreen
+  - #kbd([B]): Trigger blackout
 
   #drag(rbox: "956|672|828|204|0")[
-    #component("div", attrs: (class: "eg-small"), [
+    #div(class: "eg-small", [
       In this presentation
-      - #component("kbd", [T]): Toggle theme (TODO)
-      - #component("kbd", [S]): Toggle slide source view (TODO)
+      - #kbd([T]): Toggle theme (TODO)
+      - #kbd([S]): Toggle slide source view (TODO)
     ])
   ]
 ]
@@ -239,9 +258,9 @@
 #slide[
   == Presenter View and Slide Notes
 
-  Use #component("code", [sp-notes]) to add notes to a slide.
+  Use `sp-notes` to add notes to a slide.
 
-  Use key #component("code", [p]) (or the toolbar at the bottom) to toggle presenter view.
+  Use key #c("kbd", "p") (or the toolbar at the bottom) to toggle presenter view.
 
   #notes[
     = Notes for this slide
@@ -267,8 +286,8 @@
   #toc(start: "3", ctx: true)
 
   #drag(rbox: "1202|62|525|961|0")[
-    #component("div", attrs: (style: "font-size: 25px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; position: absolute; inset: 0; overflow: scroll;"), [
-      = Full TOC
+    #div(style: "font-size: 25px; border: 5px solid gray; background: var(--sp-bg-2); padding: 10px; position: absolute; inset: 0; overflow: scroll;", [
+      #h4[Full TOC]
       #toc()
     ])
   ]
@@ -285,16 +304,17 @@
   - the changes are saved to the source
   - as a #component("code", [rbox="..."]) attribute
 
-  #drag(rbox: "1296|419|496|464|0")[
-    #component("div", attrs: (style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background: lch(60 40 var(--eg-hue));"), [Draggable box (natural size)])
+  #drag(rbox: "1263|393|496|464|31.9")[
+    #div(style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background: lch(60 40 var(--eg-hue));")[Draggable box (natural size)]
   ]
 
+  #drag(rbox: "", svg(src: path("./unrolled-sindy-a.svg"), width: "100%", height: "auto"))
   #pause
 
-  #drag[#component("div", attrs: (style: "background: rgb(255 255 0 / 0.5);"), [stuff])]
+  #drag[#div(style: "background: rgb(255 255 0 / 0.5);")[stuff]]
 
-  #drag(rbox: "589|-10|890|549|-15")[
-    #component("div", attrs: (style: "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;--eg-hue:120;background:lch(60 40 var(--eg-hue));"), [One more box (fill and center+vcenter)])
+  #drag(rbox: "862|609|683|354|-15")[
+    #div(style: "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;--eg-hue:120;background:lch(60 40 var(--eg-hue));")[One more box (fill and center+vcenter)]
   ]
 ]
 
@@ -303,25 +323,26 @@
 
   Same locations, should not blink, also should move the right one.
 
-  #drag(rbox: "1076|107|642|283|0")[
-    #component("div", attrs: (style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background:lch(90 40 var(--eg-hue));"), [Draggable box (natural size)])
+  #drag(rbox: "887|284|642|283|0")[
+    #div(style: "display:inline-block;text-align:center;--eg-hue:270;padding:0.5em 1em;border-radius:6px;background:lch(90 40 var(--eg-hue));")[Draggable box (natural size)]
   ]
 
   #drag(rbox: "953|515|892|184|23.8")[
-    #component("div", attrs: (style: "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;--eg-hue:120;background:lch(90 40 var(--eg-hue));"), [One more box (fill and center+vcenter)])
+    #div(style: "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;--eg-hue:120;background:lch(90 40 var(--eg-hue));")[One more box (fill and center+vcenter)]
   ]
+
 ]
 
 // ============================================================
 // Chunklets (definitions) (bodies are Typst markup, captured raw)
 // ============================================================
 #chunklet("X-mark", params: "x,y")[
-  #div(attrs: (style: "position:absolute; left:calc($x * 1px - 1em); top: calc($y * 1px - 1em); width: 2em; height: 2em; color:var(--sp-accent); font-size:0.8em; display:flex; align-items:center; justify-content:center;"))[X]
+  #div(style: "position:absolute; left:calc($x * 1px - 1em); top: calc($y * 1px - 1em); width: 2em; height: 2em; color:var(--sp-accent); font-size:0.8em; display:flex; align-items:center; justify-content:center;")[X]
 ]
 
 #chunklet("Draggable Box", params: "x,y,w,h")[
   #drag(rbox: "$x|$y|$w|$h|0")[
-    #div(attrs: (style: "position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--sp-bg-2); border-radius:0.25em; border: 5px solid var(--sp-border)"))[Drag me]
+    #div(style: "position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--sp-bg-2); border-radius:0.25em; border: 5px solid var(--sp-border)")[Drag me]
   ]
 ]
 
@@ -331,6 +352,7 @@
   Press #component("kbd", [C]) to toggle the chunklet toolbar, then click a chunklet and click or drag on the slide to insert it.
 
   Chunklet bodies are Typst markup: the preprocessor captures them verbatim, and placing one writes the snippet back into the source.
+
 ]
 
 #slide[
@@ -345,7 +367,7 @@
     svg #cat:hover #catfill { fill: yellow; }
   ")
 
-  #drag(rbox: "1219|187|707|288|33.2")[
+  #drag(rbox: "1176|227|707|288|33.2")[
     Draggable cat
     #svg(src: path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
   ]
@@ -395,7 +417,7 @@
 #slide[
   == Explicit step
 
-  #component("code", [step]) declares when its content appears.
+  `step` declares when its content appears.
 
   Always visible.
 
@@ -407,7 +429,7 @@
 
   #step(from: "3")[#stepbox(hue: 0)[Step 3 too.]]
 
-  #component("p", attrs: (class: "eg-small"), [NB: step only handles its content, independently of other concepts.])
+  #p(class: "eg-small")[NB: step only handles its content, independently of other concepts.]
 ]
 
 #slide[
@@ -421,7 +443,7 @@
   #step(from: "3", animation: "left")[#dbox([Slide left], hue: 0)]
   #step(from: "4", animation: "scale")[#dbox([Scale in], hue: 180)]
 
-  #component("p", attrs: (class: "eg-small"), [Presets: fade, up, down, left, right, scale, none.])
+  #p(class: "eg-small")[Presets: fade, up, down, left, right, scale, none.]
 ]
 
 #slide[
@@ -432,10 +454,10 @@
   #step(from: "1")[#dbox([Step 1 (first)], hue: 240)]
   #step(also: true)[#dbox([Step 1 (same timing)], hue: 240)]
 
-  #component("div", attrs: (style: "display: flex; gap: 1em;"), [
+  #div(style: "display: flex; gap: 1em;")[
     #step(from: "2")[#dbox([Step 2], hue: 120)]
     #step(also: true)[#dbox([... also Step 2], hue: 120)]
-  ])
+  ]
 
   This avoids repeating the same timing for multiple elements.
 ]
@@ -450,13 +472,13 @@
   #step(from: "0", to: "1")[#dbox([Visible at steps 0-1 (to=1)], hue: 60)]
   #step(from: "0", until: "2")[#dbox([Visible at steps 0-1 (until=2)], hue: 60)]
 
-  #component("p", attrs: (class: "eg-small"), [\#step from/to use inclusive ranges; \#step from/until use exclusive end.])
+  #p(class: "eg-small")[#step from/to use inclusive ranges; #step from/until use exclusive end.]
 ]
 
 #slide[
   == steps — children one by one
 
-  #component("code", [steps]) is like wrapping every child with #component("code", [step]), sequentially appearing:
+  `steps` is like wrapping every child with `step`, sequentially appearing:
 
   #steps[
     #dbox([Item 1 (S.1)], hue: 240)
@@ -464,7 +486,7 @@
     #dbox([Item 3 (S.3)], hue: 0)
   ]
 
-  Enter animation via #component("code", [animation: "fade"]):
+  Enter animation via `animation: "fade"`:
 
   #steps(animation: "fade")[
     #dbox([Fades in (S.4)], hue: 180, class: "d4 inline")
@@ -477,7 +499,7 @@
 #slide[
   == steps with options
 
-  With #component("code", [every: "2"]) and #component("code", [at: "1"]):
+  With `every: "2"` and `at: "1"`:
 
   #steps(every: "2", at: "1")[
     #dbox([Items 1 (step 1)], hue: 240)
@@ -491,13 +513,13 @@
 #slide[
   == alternatives — Swap content
 
-  #component("code", [alternatives]) shows children one by one (or cycles if #component("code", [cycle])):
+  `alternatives` shows children one by one (or cycles if `cycle: true`):
   #alternatives(at: "0", [cycle: 🌕], [cycle: 🌑])#alternatives(at: "0", cycle: true, [; no cycle: 🌕], [; no cycle: 🌑])
 
   #alternatives(cycle: true)[
-    #component("div", attrs: (style: "background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px"), [Alternative 1 (step 0, 3, ...)])
-    #component("div", attrs: (style: "background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px"), [Alternative 2 (step 1, 4, ...)])
-    #component("div", attrs: (style: "background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px"), [Alternative 3 (step 2, 5, ...)])
+    #div(style: "background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px")[Alternative 1 (step 0, 3, ...)]
+    #div(style: "background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px")[Alternative 2 (step 1, 4, ...)]
+    #div(style: "background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px")[Alternative 3 (step 2, 5, ...)]
   ]
 
   #jump("0")
@@ -505,9 +527,9 @@
   It can start delayed (with e.g. #component("code", [at: "2"])).
 
   #alternatives(at: "2")[
-    #component("span", attrs: (style: "background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px"), [Alt 1 (step 2)])
-    #component("span", attrs: (style: "background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px"), [Alt 2 (step 3)])
-    #component("span", attrs: (style: "background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px"), [Alt 3 (step 4)])
+    #span(style: "background:#dbeafe;color:#1e40af;padding:0.5em;border-radius:6px")[Alt 1 (step 2)]
+    #span(style: "background:#dcfce7;color:#166534;padding:0.5em;border-radius:6px")[Alt 2 (step 3)]
+    #span(style: "background:#fef9c3;color:#653416;padding:0.5em;border-radius:6px")[Alt 3 (step 4)]
   ]
 ]
 
@@ -518,27 +540,29 @@
   = Animations: 3. Animate like Touying
 
   Touying is a Typst presentation framework, which has a different approach to animations than Slidev.
-  It is based on the concepts of #component("code", [pause]), #component("code", [meanwhile]) and #component("code", [jump]).
+  It is based on the concepts of `pause`, `meanwhile` and `jump`.
 ]
+
+#let badge = c.with("code", ".sp-badge")
 
 #slide[
   == pause — structural step separator
 
   #style("h3 ~ div { display: inline-block; }")
 
-  Each #component("code", [pause]) marks a visgroup boundary:
+  Each `pause` marks a visgroup boundary:
 
   #dbox(hue: 300)[First — always visible]
 
-  #component("code", attrs: (class: "sp-badge"), [pause]) #pause
+  #badge("pause") #pause
 
   #dbox(hue: 240)[Second — after 1st pause]
 
-  #component("code", attrs: (class: "sp-badge"), [pause]) #pause
+  #badge("pause") #pause
 
   #dbox(hue: 120)[Third — after 2nd pause]
 
-  #component("code", attrs: (class: "sp-badge"), [pause]) #pause
+  #badge("pause") #pause
 
   #dbox(hue: 0)[Fourth — after 3rd pause]
 ]
@@ -546,20 +570,20 @@
 #slide[
   == meanwhile — parallel tracks
 
-  Content after #component("code", [meanwhile]) shows as if there were no pause before.
+  Content after `meanwhile` shows as if there were no pause before.
 
-  #div(attrs: (class: "two-cols"), {
+  #div(class: "two-cols", {
     dbox(hue: 300)[Always]
-    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    pause ; badge("pause")
     dbox(hue: 240)[Step 1]
-    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    pause ; badge("pause")
     dbox(hue: 120)[Step 2]
     component("br", [])
-    meanwhile ; component("code", attrs: (class: "sp-badge"), [meanwhile])
+    meanwhile ; badge("meanwhile")
     dbox(hue: 300)[Always]
-    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    pause ; badge("pause")
     dbox(hue: 240)[Also step 1]
-    pause ; component("code", attrs: (class: "sp-badge"), [pause])
+    pause ; badge("pause")
     dbox(hue: 120)[and step 2]
     style(".two-cols { columns: 2}")
   })
@@ -569,40 +593,40 @@
 #slide[
   == jump — flexible grouping (visgroups)
 
-  Can be relative: #component("code", [at: "+N"]) forward, #component("code", [at: "-N"]) backward.
-  Can be absolute: #component("code", [at: "N"]).
+  Can be relative: `at: "+N"` forward, `at: "-N"` backward.
+  Can be absolute: `at: "N"`.
 
   #dbox(hue: 300)[Always]
 
-  #jump("+1") #component("code", attrs: (class: "sp-badge"), [jump +1])
+  #jump("+1") #badge("jump +1")
 
   #dbox(hue: 240)[Step 1]
 
-  #jump("+1") #component("code", attrs: (class: "sp-badge"), [jump +1])
+  #jump("+1") #badge("jump +1")
 
   #dbox(hue: 120)[Step 2]
 
-  #jump("-2") #component("code", attrs: (class: "sp-badge"), [jump -2])
+  #jump("-2") #badge("jump -2")
 
   #dbox(hue: 300)[Also always (via -2)]
 
-  #jump("+1") #component("code", attrs: (class: "sp-badge"), [jump +1])
+  #jump("+1") #badge("jump +1")
 
   #dbox(hue: 240)[Step 1]
 
-  #jump("0") #component("code", attrs: (class: "sp-badge"), [jump 0])
+  #jump("0") #badge("jump 0")
 
   #dbox(hue: 300)[Again always (via 0)]
 
-  #jump("+3") #component("code", attrs: (class: "sp-badge"), [jump +3])
+  #jump("+3") #badge("jump +3")
 
   #dbox(hue: 0)[Step 3]
 
-  #jump("2") #component("code", attrs: (class: "sp-badge"), [jump 2])
+  #jump("2") #badge("jump 2")
 
   #dbox(hue: 120)[Step 2]
 
-  #jump("+1") #component("code", attrs: (class: "sp-badge"), [jump +1])
+  #jump("+1") #badge("jump +1")
 
   #dbox(hue: 0)[Step 3]
 ]
@@ -612,24 +636,24 @@
 // ============================================================
 #slide[
   = Animations: 4. Animate like "never before"
-
+  
   The previous approaches are good for many use cases, but sometimes we want more control.
-  #component("code", [anim]) defines animations with a CSS selector syntax — a #component("b", [storyboard]).
+  `anim` defines animations with a CSS selector syntax — a *storyboard*.
 ]
 
 #slide[
   == anim — the spec language
 
-  Think of #component("code", [anim]) as a #component("b", [storyboard]): you write a script of what appears at each click.
+  Think of `anim` as a *storyboard*: you write a script of what appears at each click.
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
-    #component("code", attrs: (style: "font-size:0.7em"), [`spec=".d1 | .d2 | .d3 | .d4 | .d5 | .d6"`])
+  #div(style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px", [
+    #ccode(style: "font-size:0.7em", [`spec=".d1 | .d2 | .d3 | .d4 | .d5 | .d6"`])
   ])
 
-  - #component("code", [|]) — next #component("b", [frame/visgroup])
-  - #component("code", [^]) — #component("b", [parallel]) actions within one frame
-  - Default action: #component("b", [show]) matching elements
-  - #component("code", [`@command(args)`]) — built-in actions
+  - `|` — next *frame/visgroup*
+  - `^` — *parallel* actions within one frame
+  - Default action: *show* matching elements
+  - `@command(args)` — built-in actions
 
   #stepbox(hue: 240)[Step through] #stepbox(hue: 120)[S2] #stepbox(hue: 0)[S3] #stepbox(hue: 180)[S4] #stepbox(hue: 60)[S5] #stepbox(hue: 300)[S6]
 
@@ -640,10 +664,10 @@
 #slide[
   == anim — sequential reveal (`|`)
 
-  Each #component("code", [|])-separated part is a CSS selector. Elements are revealed one group per step:
+  Each `|`-separated part is a CSS selector. Elements are revealed one group per step:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
-    #component("code", attrs: (style: "font-size:0.7em"), [`spec=".first | .second | .second + *"`])
+  #div(style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px", [
+    #ccode(style: "font-size:0.7em", [`spec=".first | .second | .second + *"`])
   ])
 
   #dbox([First (class=first)], hue: 240, class: "first")
@@ -656,9 +680,9 @@
 #slide[
   == anim — show, hide, and revisit
 
-  #component("code", [sp-anim]) isn't just for revealing — you can #component("b", [hide]) elements and even make them reappear. Prefix a selector with #component("code", [-]) to hide:
+  `sp-anim` isn't just for revealing — you can *hide* elements and even make them reappear. Prefix a selector with `-` to hide:
 
-  #component("div", attrs: (class: "eg-spec"), [`spec=".box | -.box | .box"`])
+  #div(class: "eg-spec", [`spec=".box | -.box | .box"`])
 
   Step 1: box appears | Step 2: hides | Step 3: reappears.
 
@@ -668,19 +692,19 @@
 
   #jump("0")
 
-  #component("p", attrs: (style: "margin-top: 1em;"), [The #component("code", [spec]) describes a #component("b", [timeline of actions]).])
+  #p(style: "margin-top: 1em;", [The `spec` describes a *timeline of actions*.])
 
-  - #component("code", [selector]) — reveal (adds #component("code", [sp-anim-shown]) class)
-  - #component("code", [-selector]) — hide (adds #component("code", [sp-anim-hidden]) class)
+  - `selector` — reveal (adds `sp-anim-shown` class)
+  - `-selector` — hide (adds `sp-anim-hidden` class)
 ]
 
 #slide[
   == anim — parallel actions (^)
 
-  #component("code", [|]) = then. #component("code", [^]) = at the same time:
+  `|` = then. `^` = at the same time:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
-    #component("code", attrs: (style: "font-size:0.7em"), [`spec=".a | .b ^ .c"`])
+  #div(style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px", [
+    #ccode(style: "font-size:0.7em", [`spec=".a | .b ^ .c"`])
   ])
 
   Step 1: A appears | Step 2: B and C appear together.
@@ -693,15 +717,15 @@
 #slide[
   == anim — `@add` / `@remove` CSS classes
 
-  #component("code", [`@add(class, sel)`]) and #component("code", [`@remove(class, sel)`]) control CSS classes:
+  `@add(class, sel)` and `@remove(class, sel)` control CSS classes:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px;font-size:0.7em"), [
-    #component("code", [`@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)`])
+  #div(style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px;font-size:0.7em", [
+    #ccode([`@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)`])
   ])
 
-  #component("span", attrs: (class: "a", style: "box-sizing:border-box;border:5px solid transparent;"), [A])
-  #component("span", attrs: (class: "b", style: "box-sizing:border-box;border:5px solid transparent;"), [B])
-  #component("span", attrs: (class: "c", style: "box-sizing:border-box;border:5px solid transparent;"), [C])
+  #span(class: "a", style: "box-sizing:border-box;border:5px solid transparent;", [A])
+  #span(class: "b", style: "box-sizing:border-box;border:5px solid transparent;", [B])
+  #span(class: "c", style: "box-sizing:border-box;border:5px solid transparent;", [C])
 
   #anim("@add(hi, .a) | @remove(hi, .a) ^ @add(hi, .b) | @add(hi, .c)")
 
@@ -719,20 +743,20 @@
 
   Prefix an action with a duration to delay it:
 
-  #component("div", attrs: (class: "eg-spec"), [
-    #component("code", [
+  #div(class: "eg-spec", [
+    #ccode([
       `@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 1s .d2 span | 1s -.d1`
     ])
   ])
 
   #dbox([Step 1], hue: 240, class: "d1")
 
-  #dbox([Step 2 #component("span")[after 1s]], hue: 120, class: "d2")
+  #dbox([Step 2 #span[after 1s]], hue: 120, class: "d2")
 
   #anim("@add(hi, .d1) | .d2 ^ 750ms @add(hi, .d2) ^ 1s .d2 span | 1s -.d1")
 
-  - Prefix #component("code", [«duration»]) to delay the action
-  - CSS transitions: override #component("code", [.sp-anim-hidden]) / #component("code", [.sp-anim-shown]) to change feel
+  - Prefix `duration` to delay the action
+  - CSS transitions: override `.sp-anim-hidden` / `.sp-anim-shown` to change feel
 
   #style("
     .d1, .d2 { box-sizing: border-box; border: 20px solid transparent; }
@@ -743,10 +767,10 @@
 #slide[
   == anim — `@children` (reveal children one by one)
 
-  #component("code", [`@children(sel)`]) reveals children of a container one per step:
+  `@children(sel)` reveals children of a container one per step:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
-    #component("code", attrs: (style: "font-size:0.7em"), [`spec="@children(ul) | @children(ol)"`])
+  #div(style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px", [
+    #ccode(style: "font-size:0.7em", [`spec="@children(ul) | @children(ol)"`])
   ])
 
   - Child A
@@ -754,24 +778,24 @@
   - Child C
   - Child D
 
-  #component("ol", attrs: (style: "list-style:decimal;"), [
-    #component("li")[Item]
-    #component("li")[Item]
-    #component("li")[Item]
+  #ol(style: "list-style:decimal;", [
+    #li[Item]
+    #li[Item]
+    #li[Item]
   ])
 
   #anim("@children(ul) | @children(ol)")
 
-  Works on any container. Similar to #component("code", [steps]) but in an #component("code", [anim]) context.
+  Works on any container. Similar to `steps` but in an `anim` context.
 ]
 
 #slide[
   == anim — `@child` (reveal specific children)
 
-  #component("code", [`@child(sel, n)`]) reveals one child, #component("code", [`@child(sel, a, b)`]) reveals a range — both in a single step:
+  `@child(sel, n)` reveals one child, `@child(sel, a, b)` reveals a range — both in a single step:
 
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px"), [
-    #component("code", attrs: (style: "font-size:0.7em"), [`spec="@child(ul, 2) | @child(ul, 1, 3) | @child(ul, 1, 4)"`])
+  #div(style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px", [
+    #ccode(style: "font-size:0.7em", [`spec="@child(ul, 2) | @child(ul, 1, 3) | @child(ul, 1, 4)"`])
   ])
 
   - Child A
@@ -781,16 +805,16 @@
 
   #anim("@child(ul, 2) | @child(ul, 1, 3) | @child(ul, 1, 4)")
 
-  #component("code", [`@child(sel, n)`]) is an alias for #component("code", [`+sel > :nth-child(n)`]); the range form maps to a double #component("code", [`:nth-child(n+a):nth-child(-n+b)`]).
+  `@child(sel, n)` is an alias for `+sel > :nth-child(n)`; the range form maps to a double `:nth-child(n+a):nth-child(-n+b)`.
 ]
 
 #slide[
   == anim — custom `@command`
 
-  Toggle CSS classes via #component("code", [`@add`]) and #component("code", [`@remove`]):
+  Toggle CSS classes via `@add` and `@remove`:
 
-  #component("div", attrs: (class: "eg-spec"), [
-    #component("code", [
+  #div(class: "eg-spec", [
+    #ccode([
       `@add(glow, #catfill) | 2s @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)`
     ])
   ])
@@ -799,9 +823,9 @@
 
   #anim("@add(glow, #catfill) | 2s @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)")
 
-  - #component("code")[`@add(glow, #catfill)`] — cat fill glows
-  - #component("code")[`2s @remove(glow, #catfill) ^ @add(pulse, #catTongue)`] — fill glow off, tongue pulses
-  - #component("code")[`@add(dim, #cat)`] — whole cat dims
+  - `@add(glow, #catfill)` — cat fill glows
+  - `2s @remove(glow, #catfill) ^ @add(pulse, #catTongue)` — fill glow off, tongue pulses
+  - `@add(dim, #cat)` — whole cat dims
 
   #style("
     #catTongue { fill: red; }
@@ -820,20 +844,21 @@
 
   Control video playback through steps:
 
-  #component("div", attrs: (class: "eg-spec"), [
-    #component("code", [
+  #div(class: "eg-spec", [
+    #ccode([
       `@play(#myvideo) | @pause(video) | 2s @pause ^ @play | @play(,rewind) | @pause`
     ])
   ])
 
-  #component("video", attrs: (src: "https://www.pexels.com/fr-fr/download/video/35332556/", width: "300", id: "myvideo", style: "float:right"), [])
+  #c("video", src: "https://www.pexels.com/fr-fr/download/video/35332556/", width: "300", id: "myvideo", style: "float:right")
 
   #anim("@play(#myvideo) | @pause(video) | 2s @pause ^ @play | @play(,rewind) | @pause")
 
-  Pass a selector, defaulting to #component("code", [video]). #component("code", [rewind]) restarts from beginning.
+  Pass a selector, defaulting to `video`. `rewind` restarts from beginning.
 
-  #component("div", attrs: (style: "font-size: .5em; position: absolute; right: 0; bottom: 50px;"), [
-    #component("code")[https://www.pexels.com/video/35332556/]
+  #div(style: "font-size: .5em; position: absolute; right: 0; bottom: 50px;", [
+
+    #ccode[https://www.pexels.com/video/35332556/]
   ])
 ]
 
@@ -872,10 +897,10 @@
   - Child A (S3)
   - Child B (S4)
 
-  #component("ol", attrs: (style: "list-style:decimal;"), [
-    #component("li")[Child C (S5)]
-    #component("li")[Child D (S6)]
-    #component("li")[Child E (S7)]
+  #ol(style: "list-style:decimal;", [
+    #li[Child C (S5)]
+    #li[Child D (S6)]
+    #li[Child E (S7)]
   ])
 
   #anim(".d240 | .d120 | @children(ul)")
@@ -885,10 +910,10 @@
 #slide[
   == anim — at offset & no-jump
 
-  Start animations at a specific step with #component("code", [at: "2"]):
+  Start animations at a specific step with `at: "2"`:
   
-  #component("div", attrs: (style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px;font-size:0.7em"), [
-    #component("code", [`spec=".d240 | .d120 | .d0" at="2"`])
+  #div(style: "display:flex;gap:1em;margin:0.5em 0;font-family:var(--sp-font-mono);background:var(--sp-bg-3);padding:0.5em;border-radius:6px;font-size:0.7em", [
+    #ccode([`spec=".d240 | .d120 | .d0" at="2"`])
   ])
 
   - This appears at step 2
@@ -940,7 +965,7 @@
 #slide[
   == Code Highlighting — Native, "No Shiki"
 
-  Typst's #component("code", [raw]) provides syntax highlighting at compile time — no Shiki bundle needed.
+  Typst's `raw` provides syntax highlighting at compile time — no Shiki bundle needed.
 
   #codeblock("fn main() {
     println!(\"Hello Typst!\");
@@ -1083,6 +1108,50 @@
   }
 ]
 
+#slide[
+  == Demo/Test of adding classes and id
+
+    #anno(".bordered")
+  ==== TEST 
+
+  ---
+  #c("strong")[Test1]
+  ---
+  #c("em", ".nice")[Test2]
+  ---
+  #c("em", [Test2bis])
+  ---
+  #c("em", ".nice", [Test2ter])
+  ---
+//  #c("em", "Test2err")
+  ---
+  #c("em", ".nice", "hohoho")
+  ---
+  #c("strong")[Test3]
+  ---
+  #c("strong", [Test], [3b])
+  ---
+  #c("strong", "Test", "3c")
+  ---
+  #c("strong", ".nice", "3d")
+  ---
+  #c("strong", ".nice", "Test", "3e")
+  ---
+  #c("strong", class: "nice", style: "border: 5px solid var(--sp-accent);", "Test", "3f")
+  ---
+  #c("strong")[Test4]
+  ---
+
+  #anno(".bordered")
+  - anno(".bordered")
+    - da
+    - plip
+  - plop
+
+  #style(".nice { color: var(--sp-accent); font-size: 1.5em; } .bordered { border: 5px solid var(--sp-accent); }")
+
+]
+
 
 // The bibliography is rendered once and registered as a cache entry via
 // `#sp-bibliography` (the bib path is wrapped in `path()` so it resolves
@@ -1136,7 +1205,7 @@
 #slide(no-toc: true, fake-end: true)[
   #h1[The END]
 
-  The end? ... Illustrating the #component("code", [fake-end])... look at slide numbers and move forward.
+  The end? ... Illustrating the `fake-end`... look at slide numbers and move forward.
 ]
 
 #slide[

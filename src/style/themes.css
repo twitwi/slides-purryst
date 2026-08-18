@@ -72,6 +72,7 @@ Theme authors can use the pattern used below, with:
 /* on by default */
 :not(.isnt-helpers-01) { :root& .sp-slide:not(.nogt), .sp-slide& {
     .dnone { display: none !important; }
+    li.no-bullet, li:has(> .no-bullet) { list-style-type: none !important; }
 }}
 :not(.isnt-helpers-02) { :root& .sp-slide:not(.nogt), .sp-slide& {
     .sp-drag-content {

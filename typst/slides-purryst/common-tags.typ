@@ -1,100 +1,89 @@
 
-#import "component.typ": component, pending-anno
+#import "component.typ": component, anno, parse-sel, pending-anno
 
-// parse "#id.a.b" into (id: "id", classes: ("a", "b"))
-#let parse-sel(sel) = {
-  let id = none
-  let classes = ()
-  for part in sel.split(".") {
-    if part == "" { continue }
-    if part.starts-with("#") {
-      if id == none { id = part.slice(1) }
+
+// User-oriented function to produce any element, with optional annotation.
+#let c(name, ..rest) = {
+  let nbpos = rest.pos().len()
+  if nbpos == 0 {
+    component(name, attrs: rest.named())
+  } else {
+    let first = rest.pos().at(0)
+    let with-anno = type(first) == str and (first.starts-with(".") or first.starts-with("#"))
+    if with-anno {
+      anno(rest.pos().at(0))
+      component(name, attrs: rest.named(), ..rest.pos().slice(1))
     } else {
-      classes.push(part)
+      component(name, attrs: rest.named(), ..rest.pos())
     }
   }
-  (id: id, classes: classes)
 }
 
-#let component-auto(tag) = (..args, body) => {
-  assert(args.pos().len() <= 1, message: "Only 1 or 2 positional")
-  let sel = args.pos().at(1, default: "")
-  if sel == "" { return component(tag, body, ..args) }
-  let attrs = args.named().at("attrs", default: (:))
-  let parsed = parse-sel(sel)
-  if parsed.id != none and attrs.at("id", none) == none {
-    attrs.insert("id", parsed.id)
-  }
-  if parsed.classes.len() > 0 {
-    let cls = (attrs.at("class", default:"") + " " + parsed.classes.join(" ")).trim()
-    attrs.insert("class", cls)
-  }
-  let named = args.named().del("attrs")
-  return component(tag, attrs: attrs, body, ..named)
-}
 
-// to be typically used with something like sel: ".no-bullet"
-// and a custom css like ":has(> .no-bullet) {...}"
-#let MARK(sel) = {
+
+// wrap usual base HTML elements
+
+#let h1 = c.with("h1")
+#let h2 = c.with("h2")
+#let h3 = c.with("h3")
+#let h4 = c.with("h4")
+#let h5 = c.with("h5")
+#let h6 = c.with("h6")
+
+#let p     = c.with("p")
+#let a     = c.with("a")
+#let div   = c.with("div")
+#let span  = c.with("span")
+#let input = c.with("input")
+
+#let ul = c.with("ul")
+#let ol = c.with("ol")
+#let li = c.with("li")
+#let dl = c.with("dl")
+
+#let table = c.with("table")
+#let thead = c.with("thead")
+#let tbody = c.with("tbody")
+#let tr = c.with("tr")
+#let td = c.with("td")
+#let th = c.with("th")
+
+// prevent shadowing of Typst's native elements
+//#let code = c.with("code")
+//#let label = c.with("label")
+#let ccode = c.with("code")
+#let clabel = c.with("label")
+
+
+
+// to be typically used with something like """  - hello #mark(".no-bullet") """
+// and a custom css like ":has(> .no-bullet) {...}" (existing in themes.css)
+#let mark(sel) = {
   let (id, classes) = parse-sel(sel)
   let attrs = (class: classes.join(" "))
   if id != none { attrs.insert("id", id) }
   return component("span", none, attrs: attrs)
 }
 
-// pending annotation: applies to the next html element (components,
-// native lists/enums, headings) in document order
-#let anno(sel, ..maybe-body) = {
-  let parsed = parse-sel(sel)
-  let attrs = (:)
-  if parsed.id != none { attrs.insert("id", parsed.id) }
-  if parsed.classes.len() > 0 { attrs.insert("class", parsed.classes.join(" ")) }
-  [#pending-anno.update(it => attrs)]
-  for b in maybe-body.pos() {
-    b
-  }
-}
-
+// used in show rules
 #let anno-list-like(tag) = (it) => context {
   let pending = pending-anno.get()
+  pending-anno.update(none)
   if target() == "html" and pending != none {
-    pending-anno.update(none)
-    html.elem(tag, attrs: pending)[
-      #for c in it.children [
-        #html.elem("li", c.body)
-      ]
-    ]
+    html.elem(tag, attrs: pending, {
+      for ch in it.children {
+        html.elem("li", ch.body)
+      }
+    })
   } else {
     it
   }
 }
 
 // Typst's HTML export maps heading level N to <h{N+1}>, keep that consistent
-#let anno-heading(it) = context {
-  let pending = pending-anno.get()
-  if target() == "html" and pending != none {
-    pending-anno.update(none)
-    html.elem("h" + str(it.level + 1), attrs: pending, it.body)
-  } else {
-    it
-  }
+
+// used in show rules
+// Typst's HTML-export maps heading level N to <h{N+1}>, keep that consistent
+#let anno-heading(it) = {
+  c("h" + str(it.level + 1), it.body)
 }
-
-// wrap base HTML elements
-
-#let h1(attrs: (:), ..rest)    = component("h1", attrs: attrs, ..rest)
-#let h2(attrs: (:), ..rest)    = component("h2", attrs: attrs, ..rest)
-#let h3(attrs: (:), ..rest)    = component("h3", attrs: attrs, ..rest)
-
-#let p(attrs: (:), ..rest)     = component("p", attrs: attrs, ..rest)
-#let span(attrs: (:), ..rest)  = component("span", attrs: attrs, ..rest)
-#let div(attrs: (:), ..rest)   = component("div", attrs: attrs, ..rest)
-
-#let ul(attrs: (:), ..rest)    = component("ul", attrs: attrs, ..rest)
-#let ol(attrs: (:), ..rest)    = component("ol", attrs: attrs, ..rest)
-#let li(attrs: (:), ..rest)    = component("li", attrs: attrs, ..rest)
-
-#let table(attrs: (:), ..rest) = component("table", attrs: attrs, ..rest)
-#let tr(attrs: (:), ..rest)    = component("tr", attrs: attrs, ..rest)
-#let td(attrs: (:), ..rest)    = component("td", attrs: attrs, ..rest)
-#let th(attrs: (:), ..rest)    = component("th", attrs: attrs, ..rest)
