@@ -8,8 +8,13 @@
 // Emitted as a <script id="sp-init"> payload;
 // #sp-init-defs() is auto-appended by the preprocessor.
 // ============================================================
+#let cfg = (
+  //theme: "conference",
+  variants: "is-bib-accent is-bib-ellipsis",
+  speaker: "Bob Cat",
+)
 #sp-init(
-  config: (:), // (theme: "conference")
+  config: cfg,
   css: "html.theme-simple { --sp-scale: .97; }",
   js: "console.log('Will init SlidesPyrryst')",
   js-mounted: "console.log('SlidesPurryst mounted with', window.__sp__.total, 'slides')",
@@ -255,7 +260,7 @@
 ]
 
 #slide[
-  == A Table of Content
+  == A Table of Contents
 
   One can have a "local" TOC showing only a section context.
 
@@ -1083,8 +1088,10 @@
 // `#sp-bibliography` (the bib path is wrapped in `path()` so it resolves
 // against this file). `#slide-bib()` then includes it per slide, filtered at
 // runtime to the references cited on the current slide.
-#sp-bibliography(path("demo.bib"))
-//#bibliography("demo.bib")
+#sp-bibliography(path("demo.bib"),
+  style: path("compact.csl"),
+  title: "")
+//#sp-bibliography(path("demo.bib"))
 
 #slide[
   == Bibliography
