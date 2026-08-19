@@ -1,0 +1,53 @@
+import { SlideData } from '../types';
+export declare function parseRawInto(root: ParentNode, res: Record<'before' | 'after', string>): void;
+export declare function parseElementToSlides(root: ParentNode): SlideData[];
+export declare function extractRawSlideSources(fullHtml: string): string[];
+export declare function useSlides(initial?: SlideData[]): {
+    slides: import('../../vue/dist/vue.esm-browser.js').Ref<{
+        html: string;
+        editableIndex: number;
+        num: number;
+        steps: number;
+        transition: string;
+        class?: string | undefined;
+        noToc?: boolean | undefined;
+        notes?: string | undefined;
+        transitionDuration?: number | undefined;
+        fakeEnd?: boolean | undefined;
+        sourceFile?: string | undefined;
+        sourceLine?: number | undefined;
+    }[], SlideData[] | {
+        html: string;
+        editableIndex: number;
+        num: number;
+        steps: number;
+        transition: string;
+        class?: string | undefined;
+        noToc?: boolean | undefined;
+        notes?: string | undefined;
+        transitionDuration?: number | undefined;
+        fakeEnd?: boolean | undefined;
+        sourceFile?: string | undefined;
+        sourceLine?: number | undefined;
+    }[]>;
+    currentIndex: import('../../vue/dist/vue.esm-browser.js').Ref<number, number>;
+    current: import('../../vue/dist/vue.esm-browser.js').ComputedRef<{
+        html: string;
+        editableIndex: number;
+        num: number;
+        steps: number;
+        transition: string;
+        class?: string | undefined;
+        noToc?: boolean | undefined;
+        notes?: string | undefined;
+        transitionDuration?: number | undefined;
+        fakeEnd?: boolean | undefined;
+        sourceFile?: string | undefined;
+        sourceLine?: number | undefined;
+    }>;
+    total: import('../../vue/dist/vue.esm-browser.js').ComputedRef<number>;
+    goTo: (index: number) => void;
+    nextSlide: () => void;
+    prevSlide: () => void;
+    setSlides: (s: SlideData[]) => void;
+};
