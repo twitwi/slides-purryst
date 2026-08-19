@@ -80,7 +80,7 @@ pnpm slides-purryst index.typ
 ```
 
 NB: this will create
-- `slides-purryst/` link so your presentation can `#import "slides-purryst/...",
+- `slides-purryst/` link so your presentation can `#import "slides-purryst/..."`,
 - `,,sp-preprocess/` folder with temporary build files,
 - `slides.html` the final compiled presentation as html (SlidesPurr sources).
 - you can add `"dev": "pnpm exec slides-purryst index.typ"` to the "script" section of `package.json` to have a `pnpm dev` shortcut. 
@@ -244,7 +244,7 @@ You can also create your own HTML in the `example/` folder.
 
 ## Version History
 
-Freeze at current latest with `'github:twitwi/slides-purryst#v2.0.0'
+Freeze at current latest with `github:twitwi/slides-purryst#v2.0.0`
 
 - **v2.0.0** (`latest`) — Consolidate theme, draggable, typst helpers, bib handling.
 - **v1.0.0** — PDF Export (via browser), consolidate theme CSS, first version including typst (build script, live reload, bibliography, cetz, lilaq).
