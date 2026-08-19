@@ -76,6 +76,57 @@
   <macro name="title">
     <text variable="title" font-weight="bold" suffix=","/>
   </macro>
+  <macro name="access">
+    <choose>
+      <if type="webpage post post-weblog" match="any">
+        <choose>
+          <if variable="URL">
+            <group delimiter=". " prefix=" ">
+              <group delimiter=": ">
+                <text term="accessed" text-case="capitalize-first"/>
+                <date variable="accessed" form="text"/>
+              </group>
+              <text term="online" prefix="[" suffix="]" text-case="capitalize-first"/>
+              <group delimiter=": ">
+                <text term="available at" text-case="capitalize-first"/>
+                <text variable="URL"/>
+              </group>
+            </group>
+          </if>
+        </choose>
+      </if>
+      <else-if match="any" variable="DOI">
+        <text variable="DOI" prefix=" doi: " suffix="."/>
+      </else-if>
+      <else-if variable="URL">
+        <group delimiter=". " prefix=" " suffix=". ">
+          <group delimiter=": ">
+            <text term="accessed" text-case="capitalize-first"/>
+            <date variable="accessed" form="text"/>
+          </group>
+          <group prefix="[" suffix="]" delimiter=" ">
+            <choose>
+              <if variable="medium" match="any">
+                <text variable="medium" text-case="capitalize-first"/>
+              </if>
+              <else>
+                <text term="online" text-case="capitalize-first"/>
+                <choose>
+                  <if type="motion_picture">
+                    <text term="video" text-case="capitalize-first"/>
+                  </if>
+                </choose>
+              </else>
+            </choose>
+          </group>
+        </group>
+        <group delimiter=": " prefix=" ">
+          <text term="available at" text-case="capitalize-first"/>
+          <text variable="URL"/>
+        </group>
+      </else-if>
+    </choose>
+  </macro>
   <citation collapse="citation-number">
     <sort>
       <key variable="citation-number"/>
@@ -90,63 +141,20 @@
       <text macro="title" suffix=" "/>
       <text macro="author" suffix=", "/>
       <choose>
-        <if type="bill book graphic legal_case legislation motion_picture report song" match="any">
-          <group delimiter=" ">
-            <group delimiter=", ">
-              <text macro="edition"/>
-            </group>
-            <group delimiter=", ">
-              <text macro="publisher"/>
-              <group delimiter=" ">
-                <label variable="page" form="short"/>
-                <text variable="page"/>
-              </group>
-            </group>
-          </group>
-        </if>
-        <else-if type="chapter paper-conference" match="any">
-          <group delimiter=" ">
-            <text term="in"/>
-            <group delimiter=", ">
-              <text variable="container-title" form="short" text-case="title"/>
-              <text macro="editor"/>
-              <text macro="edition"/>
-            </group>
-            <group delimiter=", ">
-              <text macro="publisher"/>
-              <group delimiter=" ">
-                <label variable="page" form="short"/>
-                <text variable="page"/>
-              </group>
-            </group>
-          </group>
-        </else-if>
-        <else-if type="patent">
-          <group delimiter=" ">
-            <text variable="number"/>
-            <text macro="day-date" prefix="(" suffix=")"/>
-          </group>
-        </else-if>
-        <else-if type="thesis">
-          <group delimiter=", ">
-            <text variable="title" text-case="title" quotes="true"/>
-            <text variable="genre"/>
-            <text variable="publisher"/>
-            <text macro="year-date"/>
-          </group>
-        </else-if>
-        <else-if type="webpage post-weblog post" match="any">
+        <if type="webpage post-weblog post" match="any">
           <group delimiter=", " suffix=".">
             <text macro="title"/>
             <text variable="container-title"/>
           </group>
-        </else-if>
+          <text macro="access"/>
+        </if>
         <else>
           <group delimiter=" ">
             <text variable="container-title" form="short" text-case="title"/>
           </group>
         </else>
       </choose>
+      <text macro="year-date" prefix=" (" suffix=")"/>
     </layout>
   </bibliography>
 </style>
