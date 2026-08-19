@@ -8,6 +8,8 @@
 - propably distinguish config (really pure deck config like size etc) from metadata? e.g. presenter (mode) vs presenter (who presents)
 
 
+- [ ] drag should accept typical "sel", so that we can tag it (in addition to the default tagging already done)
+
 - [ ] bib could maybe inject hidden inputs? + labels + :has(> :hover) to have mouse hover focusing like :target
 
 

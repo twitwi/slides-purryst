@@ -170,6 +170,17 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   if (theme) applyThemeClass(String(theme))
   if (variants) applyThemeVariants(typeof variants === 'string' ? variants.split(' ') : variants)
 
+
+  const allPlugins: SlidesPlugin[] = [...(plugins ?? createPluginPack('default'))]
+  if (activate) {
+    allPlugins.unshift({ name: '__user__', order: 100, activate })
+  }
+  const sorted = allPlugins.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  for (const plugin of sorted) {
+    await registry.register(plugin)
+  }
+  // TODO lifecycle: probably add a initPlugin (or onConfigParsed, cleaner than doing it in activate()) call + later onWillCreateApp?
+
   const scriptEl = document.getElementById('sp-content') as HTMLScriptElement | null
   const cacheTemplate = document.getElementById('sp-cache') as HTMLTemplateElement | null
   const raw = {} as Record<'before'|'after',string>
@@ -301,23 +312,6 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     raw,
     el: '#app',
   })
-
-  // Default: step-aware bibliography filtering. Registered through the public
-  // plugin API (a slide refinement), so it can be overridden or removed by
-  // userland plugins ordering after it.
-
-  // TODO a addDOMTransform to make the abbreviation thing
-  // and move all these to builtin plugins file
-
-
-  const allPlugins: SlidesPlugin[] = [...(plugins ?? createPluginPack('default'))]
-  if (activate) {
-    allPlugins.unshift({ name: '__user__', order: 100, activate })
-  }
-  const sorted = allPlugins.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-  for (const plugin of sorted) {
-    await registry.register(plugin)
-  }
 
   // TODO: fuse use of window.location (see other window.location.search)
   function has(q: string) {

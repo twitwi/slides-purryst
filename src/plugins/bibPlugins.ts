@@ -36,14 +36,14 @@ export function bibCompactor(override: Partial<BibCompactorOptions> = {}): Slide
     activate(api) {
       const replacements = [...builtinReplacements]
       options.patch(replacements as [string | RegExp, string, string][])
-      document.querySelectorAll<HTMLTemplateElement>('template[data-sp-cache=\"biblio.html\"]').forEach((el) => {
+      document.querySelectorAll<HTMLTemplateElement>('template[data-sp-cache="biblio.html"]').forEach((el) => {
         const titles = Array.from(el.content.children[0].querySelectorAll('li')).map((el) => el.textContent)
         let v = el.innerHTML
         for  (const [from, to] of replacements) {
           if (typeof from === 'string') {
-            v = v.replaceAll(new RegExp(from + `([ ,.])`, 'g'), to + '$1')
+            v = v.replace(new RegExp(from + `([ ,.])`, 'g'), to + '$1')
           } else {
-            v = v.replaceAll(from, to)
+            v = v.replace(from, to)
           }
         }
         el.innerHTML = v
