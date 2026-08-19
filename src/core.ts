@@ -25,7 +25,7 @@ import { parseChunkletsFromText } from './composables/useChunklets'
 import { exportStandalone } from './export'
 import './style.css'
 import { addGlobalErrorMessage, clearGlobalErrorMessages } from './composables/globalErrorMessages'
-import { createPluginPack, createPlugins } from './plugins/plugins'
+import { createPluginPack } from './plugins/plugins'
 
 const builtins: Record<string, Component> = {
   'sp-alternatives': SpAlternatives,

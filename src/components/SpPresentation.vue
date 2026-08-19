@@ -523,7 +523,7 @@ const preloadPrevSlideData = computed(() => {
 })
 const preloadPrevProcessed = computed(() => maybeProcessed(preloadPrevSlideData.value))
 const preloadPrevHtml = computed(() => preloadPrevProcessed?.value?.html ?? '')
-const preloadPrevSteps = computed(() => preloadPrevProcessed?.value?.steps ?? '')
+const preloadPrevSteps = computed(() => preloadPrevProcessed?.value?.steps ?? 0)
 
 const preloadNextSlideData = computed(() => {
   if (currentIndex.value >= total.value - 1) return null
