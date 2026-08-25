@@ -173,7 +173,11 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
 
   const allPlugins: SlidesPlugin[] = [...(plugins ?? createPluginPack('default'))]
   if (activate) {
-    allPlugins.unshift({ name: '__user__', order: 100, activate })
+    let activateFn = activate as any
+    if (typeof activate === 'string') {
+      activateFn = new Function('api', activate)
+    }
+    allPlugins.unshift({ name: '__user__', order: 100, activate: activateFn })
   }
   const sorted = allPlugins.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
   for (const plugin of sorted) {
