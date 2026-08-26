@@ -1,7 +1,8 @@
 
 # NEXT
 
-
+- [ ] fix race on init svg bookmark at a specific substep (or ?print?steps too)
+- [ ] chunklet have a simple "spacer" chunklet / editable that can be used to tune a left margin or vertically too (typically to offset some math equation with adding "    ")
 - [ ] revamp init script object section data-...
 - [ ] if sp-init found, maybe the include can automatically createSlidesPurryst()  (guard it still, allow setting a thing to disable).... or can the typst generate the proper call to createSlidesPurryst
 - probably need to allow an open conf (authors... presenter... etc), probably ok as pure typst if to json handles all
