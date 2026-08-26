@@ -1,6 +1,8 @@
 
 # NEXT
 
+- [ ] if animactiontype not found, should feedback
+- [ ] integrate anims + typst etc from bagging
 - [ ] dev:typst etc, consider delaying/replaying the print of the url after the first compile
 - [ ] chunklet have a simple "spacer" chunklet / editable that can be used to tune a left margin or vertically too (typically to offset some math equation with adding "    ")
 - [ ] revamp init script object section data-...

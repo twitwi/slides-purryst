@@ -158,7 +158,7 @@ function syncToStep(step: number, fast: boolean) {
   if (step === previousStep) return
   if (step > previousStep) {
     for (let s = previousStep + 1; s <= step; s++) {
-      applyStep(s, fast)
+      applyStep(s, fast) // TODO maybe fast || s < step
     }
   } else {
     for (let s = previousStep; s > step; s--) {
