@@ -60,12 +60,15 @@ function applyStep(step: number) {
   })
 }
 
-function applyStepWithAnims(step: number, fast: boolean) {
+function applyStepWithAnims(step: number, fast: boolean, forceRefresh = false) {
   const container = getContainer()
   if (!container) return
   applyStep(step)
   for (const anim of animInstances) {
     anim.syncToStep(step, fast)
+    if (forceRefresh) {
+      anim.refresh(fast)
+    }
   }
   if (fast) {
     for (const anim of container.getAnimations({ subtree: true })) {
@@ -102,6 +105,6 @@ watch(globalStepIndex, (curr) => {
 
 watch(contentVersion, () => {
   previousStep = -1
-  nextTick(() => applyStepWithAnims(getTargetStep(), true))
+  nextTick(() => applyStepWithAnims(getTargetStep(), true, true))
 })
 </script>
