@@ -420,6 +420,13 @@ animations are finished/cancelled, and `setTimeout` delays are skipped. Fast
 mode is coordinated by the per-slide `SpStepManager` across all animations on
 the slide.
 
+Stepping backward **rebuilds** the animation from its baseline: every action's
+`init()` (its reset, see §19.5) runs again, then `apply()` is re-run for every
+step up to the target. The state is therefore always the plain "script"
+result of steps `1..target`, regardless of how that step was reached; pending
+`setTimeout` delays scheduled by a step you left are cancelled so they can't
+fire on a stale step.
+
 ## 6. Animations
 
 `<sp-anim>` runs spec-based actions at each step. It does not move DOM — it
@@ -923,9 +930,21 @@ api.addAnimActionType('myClass', {
     })
   },
   reverse: (container, action) => { /* undo */ },
-  init: (container, action) => { /* setup for first render */ },
+  init: (container, action) => { /* reset to the step-0 baseline */ },
 })
 ```
+
+`init` is the **baseline reset**: it is called on first render and again on
+every backward **rebuild** (see §5.5), so it must be a true reset — e.g. an
+`addClass` init removes the class, a `removeClass` init restores it, `play`
+init rewinds and pauses. `apply` runs once when a step is entered going
+forward, and `init`+`apply*` re-establish the state when stepping backward.
+Since the step-0 baseline is the state the *script* implies before it starts,
+the rebuild's init pass runs the actions in **reverse spec order**: the first
+action that targets an element/class wins its baseline (so `@add … @remove` of
+the same class starts from "class absent"). `reverse` is kept in the API for
+programmatic/unplugin use but the runtime backward path rebuilds from `init`
+instead of calling it.
 
 ### 19.6 DOM transforms
 

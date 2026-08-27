@@ -15,7 +15,7 @@
 )
 #sp-init(
   config: cfg,
-  css: "html.theme-simple { --sp-scale: .97; }",
+  css: "html.theme-simple { --sp-scale: .9; }",
   js: "console.log('Will init SlidesPyrryst')",
   js-mounted: "console.log('SlidesPurryst mounted with', window.__sp__.total, 'slides')",
 )
@@ -118,7 +118,7 @@
   = Notes and Disclaimer: welcome to
 
   #drag(rbox: "1408|33|468|183|0")[
-    #img(path("./slides-purryst-banner-sticker.svg"))
+    #img(path("slides-purryst-banner-sticker.svg"))
   ]
 
   - This presentation acts as
@@ -360,7 +360,7 @@
 
   Move your mouse on the cat.
 
-  #svg(path("./slides-purryst-banner-sticker.svg"), height: "400px")
+  #svg(path("slides-purryst-banner-sticker.svg"), height: "400px")
 
   #style("
     svg #cat:not(:hover) { filter: blur(5px); }
@@ -834,8 +834,9 @@
     #cat { filter: none !important; }
     .dim { opacity: 0.3; transition: opacity 0.3s; }
   ")
-  #style("
+  #style("} /* hack to unscope */
     @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1, .1); } }
+    .whatev {
   ")
 ]
 

@@ -116,6 +116,7 @@ const builtinActionTypes: Record<string, ActionTypeHandler> = {
       if (!action.className) return
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.setAttribute('data-sp-animated', 'true')
+        el.classList.remove(action.className)
       }
     },
   },
@@ -136,6 +137,7 @@ const builtinActionTypes: Record<string, ActionTypeHandler> = {
       if (!action.className) return
       for (const el of container.querySelectorAll<HTMLElement>(action.selector)) {
         el.setAttribute('data-sp-animated', 'true')
+        el.classList.add(action.className)
       }
     },
   },

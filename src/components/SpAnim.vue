@@ -110,6 +110,18 @@ function getContainer(): Element {
 
 let previousStep = -1
 
+// Pending `setTimeout`s scheduled by delayed (`100ms …`) actions, grouped by
+// step. Any rebuild / step undo must clear them so a stale delayed apply can't
+// fire after we stepped away from the step that scheduled it.
+const stepTimeouts = new Map<number, number[]>()
+
+function clearPendingTimeouts() {
+  for (const ids of stepTimeouts.values()) {
+    for (const id of ids) clearTimeout(id)
+  }
+  stepTimeouts.clear()
+}
+
 function applyStep(step: number, fast = false) {
   const atOffset = getAtOffset()
   const actions = stepActions.value[step - atOffset - 1]
@@ -118,41 +130,61 @@ function applyStep(step: number, fast = false) {
   const sorted = [...actions].sort((a, b) => (a.delayedBy ?? 0) - (b.delayedBy ?? 0))
   for (const a of sorted) {
     const handler = spApi._animActionTypes[a.type]
-    if (handler) {
-      if (a.delayedBy && !fast) {
-        setTimeout(() => {
-          try {
-            handler.apply(container, a)
-          } catch (e) {
-            console.error('(Caught) Error applying anim action:', e)
-            addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
-          }
-        }, a.delayedBy)
-      } else {
+    if (!handler) continue
+    if (a.delayedBy && !fast) {
+      const id = setTimeout(() => {
         try {
           handler.apply(container, a)
         } catch (e) {
           console.error('(Caught) Error applying anim action:', e)
           addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
         }
+      }, a.delayedBy)
+      const existing = stepTimeouts.get(step) ?? []
+      existing.push(id)
+      stepTimeouts.set(step, existing)
+    } else {
+      try {
+        handler.apply(container, a)
+      } catch (e) {
+        console.error('(Caught) Error applying anim action:', e)
+        addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
       }
     }
   }
 }
 
-function reverseStep(step: number) {
-  const atOffset = getAtOffset()
-  const actions = stepActions.value[step - atOffset - 1]
-  if (!actions) return
-  const container = getContainer()
-  for (const a of actions) {
-    const handler = spApi._animActionTypes[a.type]
-    if (handler) {
-      handler.reverse(container, a)
+function initAll(container: Element) {
+  // Flat list of every action, in spec order. The init pass runs it in REVERSE:
+  // each built-in init is an absolute state setter, so the last one invoked wins
+  // — which makes the spec's FIRST action targeting an element/class decide its
+  // step-0 baseline (e.g. `@add…@remove` on a class ⇒ baseline "class absent").
+  const all: AnimAction[] = []
+  for (const actions of stepActions.value) {
+    all.push(...actions)
+  }
+  for (const action of all.reverse()) {
+    try {
+      const handler = spApi._animActionTypes[action.type]
+      handler?.init?.(container, action)
+    } catch (e) {
+      console.error('(Caught) Error initializing anim action:', e)
+      addGlobalErrorMessage(`Error initializing anim action: ${e}`)
     }
   }
 }
 
+// Full state rebuild: resets the baseline (init), then re-applies every step up
+// to `step`. Guarantees a deterministic "script" state regardless of the
+// navigation path taken to reach it.
+function rebuildTo(step: number, fast: boolean) {
+  const container = getContainer()
+  clearPendingTimeouts()
+  initAll(container)
+  for (let s = 1; s <= step; s++) {
+    applyStep(s, fast)
+  }
+}
 
 function syncToStep(step: number, fast: boolean) {
   if (step === previousStep) return
@@ -161,40 +193,14 @@ function syncToStep(step: number, fast: boolean) {
       applyStep(s, fast) // TODO maybe fast || s < step
     }
   } else {
-    for (let s = previousStep; s > step; s--) {
-      reverseStep(s)
-    }
-    for (let s = 1; s <= step; s++) {
-      applyStep(s, true)
-    }
+    rebuildTo(step, true)
   }
   previousStep = step
 }
 
 function refresh(fast = true) {
-  const container = getContainer()
-  for (const actions of stepActions.value) {
-    for (const action of actions) {
-      try {
-        const handler = spApi._animActionTypes[action.type]
-        handler?.init?.(container, action)
-      } catch (e) {
-        console.error('(Caught) Error initializing anim action:', e)
-        addGlobalErrorMessage(`Error initializing anim action: ${e}`)
-      }
-    }
-  }
   const curr = getTargetStep()
-  previousStep = 0
-  if (fast) {
-    for (let s = 1; s <= curr; s++) {
-      applyStep(s, true)
-    }
-  } else {
-    for (let s = 1; s <= curr; s++) {
-      applyStep(s, false)
-    }
-  }
+  rebuildTo(curr, fast)
   previousStep = curr
 }
 
@@ -202,6 +208,9 @@ onMounted(() => {
   const handle: AnimHandle = { syncToStep, refresh }
   animInstances.add(handle)
   refresh()
-  onUnmounted(() => { animInstances.delete(handle) })
+  onUnmounted(() => {
+    clearPendingTimeouts()
+    animInstances.delete(handle)
+  })
 })
 </script>

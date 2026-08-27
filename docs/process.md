@@ -95,8 +95,8 @@ Here are the steps and the rationale of having them:
         - In practice each rendered slide contains an SpStepManager component that handles this process.
         - One could rely on a virtual DOM implementation e.g. to count the children to animate but this blurs the boundary between content generation and animation (e.g. what happens if you want to show bullet points one by one but their number is actually changing while animating). While the current implementation does not remove such questions, the guideline of having vue generate the DOM (to be animated) suggests some principle to use.
     - Extension point
-        - Custom anim commands (like `@children`) can be defined, they produce arbitrary "anim types" (e.g., adding a class to ).
-        - Custom anim types can be defined, with what should happen when the anim is played, ended and reversed.
+        - Custom anim commands (like `@children`) can be defined, they produce arbitrary "anim types" (e.g., adding a class to).
+        - Custom anim types can be defined, with what should happen when the anim is played and reset.
 
 - DOM refinement after each step
     - Rationale
