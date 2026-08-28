@@ -1,10 +1,16 @@
 
 // relative path from the typ root dir to the input file dir
 #let dir = if "slides-purryst-typfile-dir" in sys.inputs {
-      "/" + sys.inputs.at("slides-purryst-typfile-dir") + "/"
+  let d = sys.inputs.at("slides-purryst-typfile-dir")
+  if d == "." {
+    "/"
+  } else {
+    "/" + d + "/"
+  }
 } else {
-      "/"
+  "/"
 }
+
 
 #let path-to-text(p) = {
   let c = [#p].at("text")
