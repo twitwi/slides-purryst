@@ -1,6 +1,8 @@
 
 # NEXT
 
+- [ ] better sp-anim-shown tagging to avoid squared opacity triggers
+- [ ] cleanup reverse() if not used anymore, yes
 - [ ] if animactiontype not found, should feedback
 - [ ] integrate anims + typst etc from bagging
 - [ ] dev:typst etc, consider delaying/replaying the print of the url after the first compile

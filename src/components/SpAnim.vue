@@ -134,7 +134,7 @@ function applyStep(step: number, fast = false) {
     if (a.delayedBy && !fast) {
       const id = setTimeout(() => {
         try {
-          handler.apply(container, a)
+          handler.apply(container, a, fast)
         } catch (e) {
           console.error('(Caught) Error applying anim action:', e)
           addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
@@ -145,7 +145,7 @@ function applyStep(step: number, fast = false) {
       stepTimeouts.set(step, existing)
     } else {
       try {
-        handler.apply(container, a)
+        handler.apply(container, a, fast)
       } catch (e) {
         console.error('(Caught) Error applying anim action:', e)
         addGlobalErrorMessage(`Error applying anim action at step ${step}: ${e}`)
@@ -190,7 +190,7 @@ function syncToStep(step: number, fast: boolean) {
   if (step === previousStep) return
   if (step > previousStep) {
     for (let s = previousStep + 1; s <= step; s++) {
-      applyStep(s, fast) // TODO maybe fast || s < step
+      applyStep(s, fast || s < step)
     }
   } else {
     rebuildTo(step, true)

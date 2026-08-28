@@ -24,7 +24,8 @@ export interface AnimCommandHandler {
 }
 
 export interface ActionTypeHandler {
-  apply(container: Element, action: AnimAction): void
+  apply(container: Element, action: AnimAction, fast?: boolean): void
+  //TODO REMOVE REVERSE
   reverse(container: Element, action: AnimAction): void
   init?(container: Element, action: AnimAction): void
 }

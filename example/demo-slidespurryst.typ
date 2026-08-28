@@ -823,9 +823,11 @@
 
   #anim("@add(glow, #catfill) | 2s @remove(glow, #catfill) ^ @add(pulse, #catTongue) | @add(dim, #cat)")
 
+  #drag(rbox: "959|461|960|540|0")[
   - `@add(glow, #catfill)` — cat fill glows
   - `2s @remove(glow, #catfill) ^ @add(pulse, #catTongue)` — fill glow off, tongue pulses
   - `@add(dim, #cat)` — whole cat dims
+  ]
 
   #style("
     #catTongue { fill: red; }
