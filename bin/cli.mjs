@@ -23,6 +23,7 @@ let copyAgents = false
 let copyFonts = false
 let autoOpen = true
 let linkTypst = false
+let compileOnly = false
 
 for (let i = 2; i < process.argv.length; i++) {
   const arg = process.argv[i]
@@ -54,6 +55,8 @@ for (let i = 2; i < process.argv.length; i++) {
     autoOpen = true
   } else if (arg === '--link-typst') {
     linkTypst = true
+  } else if (arg === '--compile') {
+    compileOnly = true
   } else if (!arg.startsWith('-')) {
     specifiedFiles.push(arg)
   }
@@ -210,6 +213,37 @@ if (typFiles.length) {
       }
     } catch {}
   }
+}
+
+// --- One-shot compile (--compile): compile each .typ entry once and exit. ---
+if (compileOnly) {
+  if (staleBundleWarning) console.log(staleBundleWarning)
+  let ok = true
+  for (const f of typFiles) {
+    const htmlRel = f.replace(/\.typ$/, '.html')
+    const depth = htmlRel.split('/').length - 1
+    const jsPath = (depth ? '../'.repeat(depth) : './') + 'slides-purryst.bundle.js?v=' + bundleHash
+    try {
+      const { initialOk } = startTypstDev({
+        pkgDir,
+        rootDir: root,
+        fileArg: f,
+        errorKey: f,
+        jsPath,
+        useModule: false,
+        watch: false,
+        wrapOutput: (raw) => wrapPage(extractBody(raw), { title: 'SlidesPurryst', author: '', jsPath, useModule: false, designWidth: 1920, designHeight: 1080, filepath: f }),
+      })
+      if (!initialOk) ok = false
+    } catch (e) {
+      console.error(`\n${e.message}\n`)
+      ok = false
+    }
+  }
+  process.exit(ok ? 0 : 1)
+}
+
+if (typFiles.length) {
   for (const f of typFiles) {
     const htmlRel = f.replace(/\.typ$/, '.html')
     const depth = htmlRel.split('/').length - 1
