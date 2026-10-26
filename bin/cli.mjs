@@ -193,7 +193,23 @@ function resolveFilePath(urlPath) {
 // Each .typ entry point gets its own isolated startTypstDev pipeline.
 const typFiles = specifiedFiles.filter(f => f.endsWith('.typ'))
 const typstStops = []
+// Warn (non-fatally) if a local slides-purryst.bundle.js is present but stale:
+// the generated HTML loads that local copy, so a mismatch means the browser
+// would run an old engine even though the packaged bundle was rebuilt. Printed
+// after the URL banner (below) so it stays visible at the bottom.
+let staleBundleWarning = null
 if (typFiles.length) {
+  const localBundle = path.join(root, 'slides-purryst.bundle.js')
+  if (fs.existsSync(localBundle)) {
+    try {
+      const local = fs.readFileSync(localBundle)
+      const packaged = fs.readFileSync(bundleFile)
+      if (!local.equals(packaged)) {
+        staleBundleWarning = `\n  ⚠ Local slides-purryst.bundle.js is out of date (differs from the bundled version).\n` +
+          `    The generated HTML will load this stale copy. Re-copy it with:  slides-purryst --copy-bundle .`
+      }
+    } catch {}
+  }
   for (const f of typFiles) {
     const htmlRel = f.replace(/\.typ$/, '.html')
     const depth = htmlRel.split('/').length - 1
@@ -256,6 +272,7 @@ server.listen(port, host, () => {
     const urls = specifiedFiles.map(f => `${addr}/${f.replace(/\.typ$/, '.html')}`)
     const openUrl = urls[0] || addr
     urls.forEach(u => console.log(`  🚀 URL: ${u}`))
+    if (staleBundleWarning) console.log(staleBundleWarning)
     if (autoOpen) {
       const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
       import('child_process').then(({ spawn }) => {
