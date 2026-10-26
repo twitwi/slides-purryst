@@ -1,6 +1,13 @@
 
 # NEXT
 
+- [ ] have a sidecar/sidekick view plugin, some small window or embedded view (choice) in which we can persist information (typically notations, overview, whatever, that are not totally mandatory but nice to have in case of screen space
+- [ ] see slidev studio and some components like slidev/vue bubble (see discord)
+- [ ] allow setting tab title from the config
+- [ ] have a simple build of typst, no watch etc, for export scripts
+- [ ] drag edit, have a "force to remain on one (or N) line" that during edit will scale the font size to ensure it fits (not live at "runtime", just at edit time)
+- [ ] drag edit, allow ctrl, shift etc modifiers to snap etc (use inkscape convention)
+- [ ] check theme size (top level seem too big compared to bullets and second level bullets somewhare are too small
 - [ ] better sp-anim-shown tagging to avoid squared opacity triggers
 - [ ] cleanup reverse() if not used anymore, yes
 - [ ] if animactiontype not found, should feedback
@@ -30,7 +37,7 @@
 - on reload of the same without at, Uncaught SyntaxError: missing variable name, got string literal _S http://127.0.0.1:9999/slides-purryst.bundle.js:62 xS http://127.0.0.1:9999/slides-purryst.bundle.js:62 <anonymous> http://127.0.0.1:9999/index.html#8/1:667
 
 
-- [ ] might get some perf issues if all svg elements get class sp-anim-shown etc (have a way to not recururse?)
+- [ ] might get some perf issues if all svg elements get class sp-anim-shown etc (have a way to not recurse?)
 - [ ] emoji fix should tag as emoji
 - [ ] toc shows empty in overview at first?
 - [ ] to document: the fact that #svg can take a string or a typst path() (needed for non-html output)
@@ -62,6 +69,9 @@
 
 ## TODO v3 (3.0.0) (polish and plugins?)
 
+- [ ] make a simple quarto export that uses the bundle version (no typst ?), with a simple clean theme, maybe inspired by some of the existing ones, maybe typst even https://github.com/christopherkenny/projector
+- [ ] anim: actually allow a very generic stuff like @foreach(sel, (e) => {...})) but might need an undo or clean (or init?) inspired by https://github.com/fradav/quarto-revealjs-animate
+- [ ] typst autosplit (as an option) follow maybe reveal etc https://github.com/gvwilson/mrsp/blob/main/burnout/slides.qmd (I would split at h1, h2, h3 (which is typst html ==)
 - [ ] (overview) put the slide number on the side/outside of the slide, or maybe ensure visible
 - [ ] (chunklets) show "no chunklet" instead of nothing when bar is shown
 - [ ] (typst) can we have a typst-based preview in tinymist etc... at least view all slides allow clicking etc (when?)

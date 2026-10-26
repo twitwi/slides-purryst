@@ -59,6 +59,7 @@ AUTHORING.md
 node_modules/
 ### for typst only
 index.html
+slides-purryst
 ,,sp-*/
 ```
 
