@@ -3,6 +3,7 @@
 import http from 'http'
 import fs from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 import { fileURLToPath } from 'url'
 import { handleEdit } from '../lib/edit-handler.mjs'
 import { startTypstDev, ensureTypstLink, wrapPage, extractBody } from '../lib/typst-dev.mjs'
@@ -16,7 +17,7 @@ let root = process.cwd()
 let watchDir = null
 let host = '127.0.0.1'
 let port = 9999
-let specifiedFile = ''
+let specifiedFiles = []
 let copyBundle = false
 let copyAgents = false
 let copyFonts = false
@@ -54,11 +55,18 @@ for (let i = 2; i < process.argv.length; i++) {
   } else if (arg === '--link-typst') {
     linkTypst = true
   } else if (!arg.startsWith('-')) {
-    specifiedFile = arg
+    specifiedFiles.push(arg)
   }
 }
 
 const bundleFile = path.join(distDir, 'slides-purryst.bundle.js')
+// Cache-bust the bundle reference with a content hash so a rebuilt bundle is
+// always re-fetched by the browser (avoids stale JS after a server restart).
+const bundleHash = (() => {
+  try {
+    return crypto.createHash('md5').update(fs.readFileSync(bundleFile)).digest('hex').slice(0, 8)
+  } catch { return Date.now().toString(16) }
+})()
 const agentsFile = path.join(pkgDir, 'AGENTS.md')
 const authoringFile = path.join(pkgDir, 'AUTHORING.md')
 const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
@@ -163,7 +171,7 @@ function serveFile(res, filePath) {
   const contentType = MIME[ext] || 'application/octet-stream'
   try {
     const data = fs.readFileSync(filePath)
-    res.writeHead(200, { 'Content-Type': contentType })
+    res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'no-cache' })
     res.end(data)
   } catch {
     res.writeHead(404)
@@ -182,24 +190,29 @@ function resolveFilePath(urlPath) {
 }
 
 // --- Typst compilation (shared pipeline) ---
-let typstProcess = null
-if (specifiedFile && specifiedFile.endsWith('.typ')) {
-  const htmlRel = specifiedFile.replace(/\.typ$/, '.html')
-  const depth = htmlRel.split('/').length - 1
-  const jsPath = (depth ? '../'.repeat(depth) : './') + 'slides-purryst.bundle.js'
-  try {
-    const { stop } = startTypstDev({
-      pkgDir,
-      rootDir: root,
-      fileArg: specifiedFile,
-      jsPath,
-      useModule: false,
-      wrapOutput: (raw) => wrapPage(extractBody(raw), { title: 'SlidesPurryst', author: '', jsPath, useModule: false, designWidth: 1920, designHeight: 1080 }),
-    })
-    typstProcess = { kill: stop }
-  } catch (e) {
-    console.error(`\n${e.message}\n`)
-    process.exit(1)
+// Each .typ entry point gets its own isolated startTypstDev pipeline.
+const typFiles = specifiedFiles.filter(f => f.endsWith('.typ'))
+const typstStops = []
+if (typFiles.length) {
+  for (const f of typFiles) {
+    const htmlRel = f.replace(/\.typ$/, '.html')
+    const depth = htmlRel.split('/').length - 1
+    const jsPath = (depth ? '../'.repeat(depth) : './') + 'slides-purryst.bundle.js?v=' + bundleHash
+    try {
+      const { stop } = startTypstDev({
+        pkgDir,
+        rootDir: root,
+        fileArg: f,
+        errorKey: f,
+        jsPath,
+        useModule: false,
+        wrapOutput: (raw) => wrapPage(extractBody(raw), { title: 'SlidesPurryst', author: '', jsPath, useModule: false, designWidth: 1920, designHeight: 1080, filepath: f }),
+      })
+      typstStops.push(stop)
+    } catch (e) {
+      console.error(`\n${e.message}\n`)
+      process.exit(1)
+    }
   }
 }
 
@@ -217,7 +230,7 @@ const server = http.createServer((req, res) => {
     res.write('event: connected\ndata: \n\n')
     sseRegisterClient(res)
     const errs = getTypstErrors()
-    if (errs.length) res.write(`event: typst-error\ndata: ${JSON.stringify(errs)}\n\n`)
+    if (Object.keys(errs).length) res.write(`event: typst-error\ndata: ${JSON.stringify(errs)}\n\n`)
     return
   }
 
@@ -235,20 +248,25 @@ const server = http.createServer((req, res) => {
 server.listen(port, host, () => {
   const addr = `http://${host}:${port}`
   console.log(`\n  SlidesPurryst dev server running at ${addr}`)
-  console.log(`  Serving ${root}${specifiedFile ? '  (' + specifiedFile + ')' : ''}\n`)
-  const servedFile = specifiedFile && specifiedFile.endsWith('.typ') ? specifiedFile.replace(/\.typ$/, '.html') : specifiedFile
-  const openUrl = servedFile ? `${addr}/${servedFile}` : addr
-  console.log(`  🚀 URL: ${openUrl}`)
-  if (autoOpen) {
-    const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
-    import('child_process').then(({ spawn }) => {
-      try { spawn(cmd, [openUrl], { stdio: 'ignore' }) } catch {}
-    })
-  }
+  console.log(`  Serving ${root}${specifiedFiles.length ? '  (' + specifiedFiles.join(', ') + ')' : ''}\n`)
+  // Defer the URL banner a moment so the first typst build's own output (watch
+  // emits "compiling..."/"compiled successfully") lands first and the URLs stay
+  // visible at the bottom without scrolling.
+  setTimeout(() => {
+    const urls = specifiedFiles.map(f => `${addr}/${f.replace(/\.typ$/, '.html')}`)
+    const openUrl = urls[0] || addr
+    urls.forEach(u => console.log(`  🚀 URL: ${u}`))
+    if (autoOpen) {
+      const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
+      import('child_process').then(({ spawn }) => {
+        try { spawn(cmd, [openUrl], { stdio: 'ignore' }) } catch {}
+      })
+    }
+  }, 1000)
 })
 
 const cleanup = () => {
-  if (typstProcess) typstProcess.kill()
+  typstStops.forEach(stop => stop())
   process.exit()
 }
 process.on('SIGINT', cleanup)

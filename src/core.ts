@@ -411,8 +411,26 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
     es.addEventListener('typst-error', (event: MessageEvent) => {
       clearGlobalErrorMessages()
       try {
-        const msgs = JSON.parse(event.data ?? '[]')
-        ;(Array.isArray(msgs) ? msgs : [msgs]).forEach(msg => addGlobalErrorMessage(msg))
+        // Errors arrive as a map keyed by entry-point file, e.g.
+        // `{ "a.typ": ["msg", ...], "b.typ": [] }`. Show only the messages for
+        // this page's own file (from data-sp-filepath) so other entry points'
+        // errors never leak in. If the page doesn't declare a file, fall back
+        // to flattening everything. A flat array (older payload) is accepted
+        // as-is for backwards compatibility. Non-string entries are dropped so
+        // the raw map/object is never rendered.
+        const data = JSON.parse(event.data ?? '{}')
+        const filepath = (document.querySelector('#sp-presentation') as HTMLElement | null)?.getAttribute('data-sp-filepath')
+        let raw: unknown[] = []
+        if (Array.isArray(data)) {
+          raw = data
+        } else if (data && typeof data === 'object') {
+          const map = data as Record<string, unknown>
+          const own = filepath ? map[filepath] : null
+          raw = Array.isArray(own) ? own : (filepath ? [] : Object.values(map))
+        }
+        for (const msg of raw) {
+          if (typeof msg === 'string' && msg) addGlobalErrorMessage(msg)
+        }
       } catch {}
     })
   }

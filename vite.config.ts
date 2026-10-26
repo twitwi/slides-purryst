@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
             res.write('event: connected\ndata: \n\n')
             sseRegisterClient(res)
             const errs = getTypstErrors()
-            if (errs.length) res.write(`event: typst-error\ndata: ${JSON.stringify(errs)}\n\n`)
+            if (Object.keys(errs).length) res.write(`event: typst-error\ndata: ${JSON.stringify(errs)}\n\n`)
           })
 
           server.middlewares.use('/__sp_edit', (req, res) => {

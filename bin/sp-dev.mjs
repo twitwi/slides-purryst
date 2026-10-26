@@ -12,7 +12,7 @@ let watchDir = '.'
 let rootDir = '.'
 let host = '127.0.0.1'
 let port = 9999
-let fileArg = ''
+let fileArgs = []
 let autoOpen = true
 
 for (let i = 2; i < process.argv.length; i++) {
@@ -27,28 +27,30 @@ for (let i = 2; i < process.argv.length; i++) {
   else if (arg.startsWith('--root=')) rootDir = arg.split('=')[1]
   else if (arg === '--open') autoOpen = true
   else if (arg === '--no-open') autoOpen = false
-  else if (!arg.startsWith('-')) fileArg = arg
+  else if (!arg.startsWith('-')) fileArgs.push(arg)
 }
 
-let viteHtml = fileArg
-
 // --- Typst compilation (shared pipeline) ---
-let typstProcess = null
-if (fileArg && fileArg.endsWith('.typ')) {
-  viteHtml = fileArg.replace(/\.typ$/, '.html')
+// Each .typ entry point gets its own isolated startTypstDev pipeline.
+const typFiles = fileArgs.filter(f => f.endsWith('.typ'))
+const typstStops = []
+if (typFiles.length) {
   const serverRoot = resolve(process.cwd(), rootDir)
   const slidesPurrystPath = serverRoot === pkgDir ? '../src/index.ts' : 'slides-purryst'
-  const wrapOpts = { title: 'SlidesPurryst', author: '', jsPath: slidesPurrystPath, useModule: true, designWidth: 1920, designHeight: 1080 }
 
-  const { stop } = startTypstDev({
-    pkgDir,
-    rootDir: serverRoot,
-    fileArg,
-    jsPath: slidesPurrystPath,
-    useModule: true,
-    wrapOutput: (raw) => wrapPage(extractBody(raw), wrapOpts),
-  })
-  typstProcess = { kill: stop }
+  for (const f of typFiles) {
+    const wrapOpts = { title: 'SlidesPurryst', author: '', jsPath: slidesPurrystPath, useModule: true, designWidth: 1920, designHeight: 1080, filepath: f }
+    const { stop } = startTypstDev({
+      pkgDir,
+      rootDir: serverRoot,
+      fileArg: f,
+      errorKey: f,
+      jsPath: slidesPurrystPath,
+      useModule: true,
+      wrapOutput: (raw) => wrapPage(extractBody(raw), wrapOpts),
+    })
+    typstStops.push(stop)
+  }
 }
 
 // --- Vite server ---
@@ -78,19 +80,25 @@ await server.listen()
 
 console.log(`\n  SlidesPurryst dev server running at http://${host}:${port}`)
 console.log(`  Serving ${serverRoot}`)
-const openUrl = fileArg ? `http://${host}:${port}/${viteHtml}` : `http://${host}:${port}/`
-console.log(`  🚀 URL: ${openUrl}`)
-if (autoOpen) {
-    const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
-    import('child_process').then(({ spawn }) => {
-      try { spawn(cmd, [openUrl], { stdio: 'ignore' }) } catch {}
-    })
-}
-console.log()
+// Defer the URL banner a moment so the first typst build's own output (watch
+// emits "compiling..."/"compiled successfully") lands first and the URLs stay
+// visible at the bottom without scrolling.
+setTimeout(() => {
+  const urls = fileArgs.map(f => `http://${host}:${port}/${f.replace(/\.typ$/, '.html')}`)
+  const openUrl = urls[0] || `http://${host}:${port}/`
+  urls.forEach(u => console.log(`  🚀 URL: ${u}`))
+  if (autoOpen) {
+      const cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open'
+      import('child_process').then(({ spawn }) => {
+        try { spawn(cmd, [openUrl], { stdio: 'ignore' }) } catch {}
+      })
+  }
+  console.log()
+}, 1000)
 
 // --- Cleanup ---
 const cleanup = () => {
-  if (typstProcess) typstProcess.kill()
+  typstStops.forEach(stop => stop())
   process.exit()
 }
 process.on('SIGINT', cleanup)
