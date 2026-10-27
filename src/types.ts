@@ -70,6 +70,7 @@ export interface SPSlidesOptions {
   presenter?: boolean
   theme?: string
   variants?: string[] | string // space separated
+  cssVars?: Record<string, string | number | boolean | null> // custom props on <html>; `x` means `--sp-x`, `--x` verbatim, `null` unset
   components?: Record<string, Component>
   seed?: number
   cacheIgnore?: string[]

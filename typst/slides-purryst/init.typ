@@ -6,7 +6,10 @@
 //   - `config`      merges into the "page author" layer of init params (see
 //                   AGENTS.md §1.2). `createSlidesPurryst({...})` wins over it;
 //                   it wins over individual `data-*` attributes on
-//                   `#sp-presentation`; framework defaults come last.
+//                   `#sp-presentation`; framework defaults come last. Styling
+//                   knobs (hues, `base-font-size`, `scale`, your own vars) go in
+//                   its `css-vars` sub-dict: bare keys are namespaced `--sp-`,
+//                   a leading `--` is verbatim, `none` removes the property.
 //   - `css`         raw CSS injected into `<head>` before the app mounts.
 //   - `js`          raw JS run at the very start of `createSlidesPurryst()`
 //                   (define globals, install plugin hooks, ...).

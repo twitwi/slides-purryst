@@ -114,6 +114,25 @@ function applyThemeVariants(classes: string[]) {
   classes.forEach((c) => c.startsWith('!') ? el.classList.remove(c.substring(1)) : el.classList.add(c))
 }
 
+// Apply the `css-vars` config: a flat `{ name: value }` bag of custom properties
+// set inline on `<html>`. A leading `--` is used verbatim, anything else is
+// namespaced with `--sp-` (an existing `sp-` prefix is not doubled). Inline on
+// `:root` beats the framework defaults and the `.is-*` theme variants without
+// `!important`, while CSS keeps control through a direct declaration on a
+// descendant (e.g. `.sp-slide { --sp-scale: .5 }`, which wins over the inherited
+// value) or an `!important` rule. `null` removes the property (fall back to the
+// framework default), `undefined` is ignored.
+function applyCssVars(vars: unknown) {
+  if (!vars || typeof vars !== 'object') return
+  const style = document.documentElement.style
+  for (const [raw, value] of Object.entries(vars as Record<string, unknown>)) {
+    if (value === undefined) continue
+    const name = raw.startsWith('--') ? raw : `--${raw.startsWith('sp-') ? '' : 'sp-'}${raw}`
+    if (value === null) style.removeProperty(name)
+    else style.setProperty(name, String(value))
+  }
+}
+
 // Read the "page author" layer of init params off `#sp-presentation`:
 // individual `data-*` scalars, then a `data-sp-init` JSON blob (wins).
 function readPresentationParams(): Record<string, unknown> {
@@ -178,6 +197,9 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   // short label shown in the browser tab, while `title` is the full deck title.
   const tabTitle = resolved['tab-title'] || resolved.tabTitle || resolved.title
   if (tabTitle) document.title = String(tabTitle)
+
+  // Deck-wide CSS custom properties (`css-vars` config, see applyCssVars).
+  applyCssVars(resolved['css-vars'] ?? resolved.cssVars)
 
   const allPlugins: SlidesPlugin[] = [...(plugins ?? createPluginPack('default'))]
   if (activate) {

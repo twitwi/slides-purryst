@@ -185,6 +185,7 @@ createSlidesPurryst({
   tabTitle: 'PGM1',        // Short tab label; wins over `title` when set
   presenter: false,        // Force presenter mode
   theme: 'simple',         // <html> class theme-* (see themes registry)
+  cssVars: { scale: 0.7 }, // Custom props on <html>: `x` → `--sp-x` (see §3.4)
   seed: 12345678,          // Favicon seed
   plugins: [],             // See §19
   activate: (api) => {},   // Inline plugin
@@ -247,6 +248,8 @@ payload consumed at boot:
   needed. A `tab-title` key (or `tabTitle`) takes priority over `title` when
   present — use it for the short browser-tab label (e.g.
   `config: (title: "Probabilistic Models", tab-title: "PGM1")`).
+  Styling knobs (hues, font size, `--sp-scale`, your own vars) go in
+  `css-vars` — see §3.4.
 - **`css`** — injected into `<head>` before the app mounts.
 - **`js`** — runs at the very start of `createSlidesPurryst()` (before options
   resolve / mount). `window.__sp__` does **not** exist yet — use it to define
@@ -274,9 +277,46 @@ to `<\/` so it can never terminate the raw-text `<script>` early.
 The `theme` option is a **class name only**: the framework swaps the
 `.theme-*` class on `<html>`. Built-in themes (`simple`, `conference`, `draft`,
 `funky`) and variants (`is-small`, `is-sharp`, `is-paper`, …) live in
-`src/style/themes.css`. Colors stay in CSS; custom hues via
-`--sp-theme-hue` / `--sp-theme-secondary-hue`, and you can inject arbitrary
-overrides with the `css:` key of `#sp-init`.
+`src/style/themes.css`. Colors stay in CSS; tune them through the `css-vars`
+config below, or inject arbitrary overrides with the `css:` key of `#sp-init`.
+
+#### Tuning with `css-vars`
+
+`css-vars` (Typst) / `cssVars` (JS) is a flat bag of CSS custom properties
+applied inline on `<html>`. It replaces the usual `#style(":root { … }")` block:
+
+```typst
+#sp-init(config: (
+  theme: "conference",
+  css-vars: (
+    theme-hue: 140,             // → --sp-theme-hue
+    theme-secondary-hue: 200,   // → --sp-theme-secondary-hue
+    base-font-size: "48px",     // → --sp-base-font-size
+    scale: 0.7,                 // → --sp-scale (overall content size)
+    --my-ink: teal,             // leading `--` → used verbatim
+    sp-shadow-scale: 0.5,       // an existing `sp-` prefix is not doubled
+  ),
+))
+```
+
+- **Naming** — a leading `--` is used verbatim, anything else is namespaced with
+  `--sp-`. Keep the rest kebab-case: custom-property names are case-sensitive
+  and no case conversion is done.
+- **Values** — numbers and strings, plus Typst values that stringify to valid
+  CSS: a length (`36pt` → `"36pt"`), a ratio (`70%`), a color
+  (`teal` → `rgb("#39cccc")`). Note that `px` is **not** a Typst unit, so pixel
+  sizes must be written as strings (`"48px"`). `null` (Typst `none`) removes the
+  property again — handy to cancel a value coming from a shared base config, so
+  the framework default applies once more — and `undefined` is ignored.
+- **Cascade** — the inline declaration on `:root` beats the framework defaults
+  and the `.is-*` theme variants, so **no `!important` is needed**. CSS keeps
+  full control: a direct declaration on a descendant
+  (`.sp-slide { --sp-scale: .5 }`) wins over the inherited `:root` value, and an
+  `!important` rule wins outright.
+
+For overall content size, prefer `css-vars: (scale: 0.7)` over the old
+`html .sp-slide { --sp-scale: … !important }` hack; per-slide overrides stay
+plain CSS as before.
 
 ---
 
@@ -638,6 +678,11 @@ place for theme overrides:
 ```
 
 **Typst:** `#style("h1 { color: red; }")` emits `<sp-style css="...">`.
+
+For plain custom-property tweaks, the `css-vars` config (§3.4) is shorter than a
+`:root { … }` block — and note it is applied *inline* on `<html>`, so it wins
+over a `:root { … }` rule like the one above (use `!important`, or declare on a
+descendant, if you need CSS to take precedence).
 
 ## 13. Chunklets (reusable snippets)
 
