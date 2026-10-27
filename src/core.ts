@@ -170,6 +170,14 @@ export async function createSlidesPurryst(options: SPSlidesOptions = {}) {
   if (theme) applyThemeClass(String(theme))
   if (variants) applyThemeVariants(typeof variants === 'string' ? variants.split(' ') : variants)
 
+  // Honor a `title` in the resolved config (from `#sp-init` config, a
+  // `data-sp-init` blob, or `createSlidesPurryst({...})`) by setting the
+  // document title — removes the old `js:` hack
+  // (`document.querySelector('head>title').innerText = ...`).
+  // A `tab-title` (or `tabTitle`) takes priority over `title`: it is the
+  // short label shown in the browser tab, while `title` is the full deck title.
+  const tabTitle = resolved['tab-title'] || resolved.tabTitle || resolved.title
+  if (tabTitle) document.title = String(tabTitle)
 
   const allPlugins: SlidesPlugin[] = [...(plugins ?? createPluginPack('default'))]
   if (activate) {

@@ -181,6 +181,8 @@ createSlidesPurryst({
   designWidth: 1920,       // Design size, default 1920×1080
   designHeight: 1080,
   author: 'Your Name',     // Footer text
+  title: 'My talk',        // Sets the document <title> (default: left as-is)
+  tabTitle: 'PGM1',        // Short tab label; wins over `title` when set
   presenter: false,        // Force presenter mode
   theme: 'simple',         // <html> class theme-* (see themes registry)
   seed: 12345678,          // Favicon seed
@@ -239,7 +241,12 @@ payload consumed at boot:
 </script>
 ```
 
-- **`config`** — merges into the page-author layer (see precedence above).
+- **`config`** — merges into the page-author layer (see precedence above). A
+  `title` key is honored at boot: it sets `document.title`, so the old
+  `js: "document.querySelector('head>title').innerText = …"` hack is no longer
+  needed. A `tab-title` key (or `tabTitle`) takes priority over `title` when
+  present — use it for the short browser-tab label (e.g.
+  `config: (title: "Probabilistic Models", tab-title: "PGM1")`).
 - **`css`** — injected into `<head>` before the app mounts.
 - **`js`** — runs at the very start of `createSlidesPurryst()` (before options
   resolve / mount). `window.__sp__` does **not** exist yet — use it to define

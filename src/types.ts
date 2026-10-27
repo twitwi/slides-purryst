@@ -65,6 +65,8 @@ export interface SPSlidesOptions {
   designWidth?: number
   designHeight?: number
   author?: string
+  title?: string
+  tabTitle?: string
   presenter?: boolean
   theme?: string
   variants?: string[] | string // space separated
