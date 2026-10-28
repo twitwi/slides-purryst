@@ -257,16 +257,52 @@ payload consumed at boot:
 - **`js-mounted`** — runs right after mount; `window.__sp__` / `spApi` and the
   DOM are live.
 
-In Typst this is a single helper call at the top of your deck (the preprocessor
-auto-appends `#sp-init-defs()`, which writes the payload element):
+In Typst this is a helper call at the top of your deck (the preprocessor
+auto-appends `#sp-init-defs()`, which writes the payload element). `sp-init` is a
+simple **register**: it stores one payload. Build the config dict first with
+`merge-config`, which deep-merges any number of config dicts left-to-right
+(later wins; nested dicts like `css-vars` merge key-by-key, arrays and scalars
+are replaced):
 
 ```typst
+#let cfg = merge-config(
+  (title: "Courses", author: "John Doe", css-vars: (scale: 0.7)),
+  (tab-title: "C1", css-vars: (theme-hue: 200)),
+)
+
 #sp-init(
-  config: (transition: "fade", theme: "conference", presenter: false),
+  config: cfg,
   css: "html.theme-conference { --sp-scale: .97; }",
   js: "window.__myPlugin = { activate(api) { ... } }",
   js-mounted: "console.log('booted', window.__sp__.total)",
 )
+```
+
+`merge-config` returns the merged dict, so you can **reuse it in the deck body**
+(registering and returning can't be one call in Typst, which is why they're
+separate):
+
+```typst
+#let cfg = merge-config(base-config, (tab-title: "PGM1"))
+#sp-init(config: cfg)
+#slide[= #cfg.title — tab #cfg.tab-title]
+```
+
+To **share a base config across lesson files**, put it (plus a `base-init`
+helper for the shared `css`/`js`) in a common file, then merge the per-lesson
+delta in each deck:
+
+```typst
+// common.typ
+#import "slides-purryst/lib.typ": merge-config, sp-init
+#let base-config = (title: "Courses", author: "John Doe", css-vars: (scale: 0.7))
+#let base-init(cfg, css: "@import \"slides.css\";") = sp-init(config: cfg, css: css)
+
+// lesson.typ
+#import "common.typ": *
+#let cfg = merge-config(base-config, (tab-title: "PGM1"))
+#base-init(cfg)
+#slide[= #cfg.title — tab #cfg.tab-title]
 ```
 
 Values must be JSON-serializable; the payload is JSON-encoded with `</` escaped
