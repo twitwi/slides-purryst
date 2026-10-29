@@ -243,12 +243,11 @@ payload consumed at boot:
 ```
 
 - **`config`** — merges into the page-author layer (see precedence above). A
-  `title` key is honored at boot: it sets `document.title`, so the old
-  `js: "document.querySelector('head>title').innerText = …"` hack is no longer
-  needed. A `tab-title` key (or `tabTitle`) takes priority over `title` when
-  present — use it for the short browser-tab label (e.g.
+  `title` key is honored at boot: it sets `document.title`. A `tab-title` key
+  (or `tabTitle`) takes priority over `title` when present — use it for the
+  short browser-tab label (e.g.
   `config: (title: "Probabilistic Models", tab-title: "PGM1")`).
-  Styling knobs (hues, font size, `--sp-scale`, your own vars) go in
+  Styling knobs (hues, font size, scale, your own vars) go in
   `css-vars` — see §3.4.
 - **`css`** — injected into `<head>` before the app mounts.
 - **`js`** — runs at the very start of `createSlidesPurryst()` (before options
@@ -350,9 +349,6 @@ applied inline on `<html>`. It replaces the usual `#style(":root { … }")` bloc
   (`.sp-slide { --sp-scale: .5 }`) wins over the inherited `:root` value, and an
   `!important` rule wins outright.
 
-For overall content size, prefer `css-vars: (scale: 0.7)` over the old
-`html .sp-slide { --sp-scale: … !important }` hack; per-slide overrides stay
-plain CSS as before.
 
 ---
 
@@ -534,8 +530,18 @@ actions within a step.
 | `@-class cls sel` | Remove class |
 | `@play(sel, rewind?)` | Play video |
 | `@pause(sel)` | Pause video |
+| `@viewbox(sel)` | Pan/zoom an `<svg>`'s viewBox to frame element `sel` (see below) |
 | `100ms .foo` | Delay 100ms then show `.foo` |
 | `0.5s @add(hl, .bar)` | Delay 500ms then add class |
+
+**`@viewbox(sel)`** — animate the SVG containing `sel` so its `viewBox` zooms
+onto `sel`. Each `@viewbox` step frames the given element;
+`@viewbox(.cls > svg)` resets to the original full viewBox, where `.cls` is a
+class on the `<sp-svg>` wrapper (the `> svg` selects the SVG itself;
+`svg:has(#sel)` is an alternative when you can't add a class). Works on the
+inlined SVG that Typst emits for `#svg(...)`. Useful to zoom into parts of a
+figure step by step. Requires the element to be inside an `<svg>` with a
+`viewBox`. The animation is skipped (instant snap) in fast/backward mode.
 
 **`at`**: step offset. Relative (`+N`) is resolved to absolute at compile time.
 Default `+0`. **`no-jump`**: don't advance the step counter.
@@ -698,6 +704,18 @@ optionally transforms the source before display. A named `header` slot
 ```
 
 Inside a slide, the CSS is scoped to that slide's `.sp-slide-{num}` class.
+
+Within that scope, `&` refers to the slide element itself, so you can target
+or scale the slide without a dedicated class:
+
+```typ
+#style("& { --sp-scale: 0.8 }")          // compact a dense slide
+#style("& .cb { font-size: .6em }")      // target the slide's children
+```
+
+`--sp-scale` multiplies the slide's base font size, so scaling it down shrinks
+headings, text, code and math together. This is the per-slide equivalent of the
+`css-vars: (scale: …)` override (§3.4).
 
 ### Global
 
@@ -1070,6 +1088,14 @@ rendered `.sp-slide` (main view, presenter, and `?print=slides` / `?print=steps`
 after slide, step, or content changes. Refinements must be **idempotent** — they
 can be applied many times. The step-aware bibliography filter (§14) is the
 built-in refinement (`bib`), registered through this same API.
+
+**Built-in: `math-token-class`.** The default plugin pack also ships a
+refinement that turns a `class:foo` label inside MathML into a real CSS class.
+Typst renders inline math as MathML, so `text("class:start-accent")` inside a
+formula becomes `<mtext>class:start-accent</mtext>`. The refinement strips the
+`class:` prefix onto the element's class and hides the label text, so a single
+token inside a formula is addressable from CSS — e.g.
+`.start-accent ~ *:not(.end-accent ~ *) { color: var(--sp-accent) }`.
 
 ### 19.8 Inline `activate`
 

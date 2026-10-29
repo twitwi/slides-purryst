@@ -733,6 +733,14 @@ await createSlidesPurryst({
   </sp-slide>
 
   <sp-slide>
+    <h3><code>sp-anim</code> − @viewbox (zoom into an SVG)</h3>
+    <p>Zoom the logo's viewBox onto one of its paths (<code>#path1-94</code>), then back to the whole SVG:</p>
+    <div class="eg-spec eg-small">@viewbox(#path1-94) | @viewbox(.logozoom > svg)</div>
+    <sp-svg src="./slides-purryst-banner-sticker.svg" width="60%" class="logozoom"></sp-svg>
+    <sp-anim spec="@viewbox(#path1-94) | @viewbox(.logozoom > svg)" />
+  </sp-slide>
+
+  <sp-slide>
     <h3><code>sp-anim</code> − delaying animations</h3>
     <p><b>Delayed animation:</b> prefix an action with a duration to delay it, typically useful for staggered effects:</p>
     <div class="eg-spec eg-small">@add(hi, .d1) <br/>| .d2 ^ 750ms @add(hi, .d2) ^ 1s .d2 span <br/>| 1s -.d1</div>

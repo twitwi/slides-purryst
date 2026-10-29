@@ -367,7 +367,7 @@
     svg #cat:hover #catfill { fill: yellow; }
   ")
 
-  #drag(rbox: "1176|227|707|288|33.2")[
+  #drag(rbox: "1204|241|707|288|33.2")[
     Draggable cat
     #svg(path("./slides-purryst-banner-sticker.svg"), wrap: true, class: "smallcat")
   ]
@@ -843,6 +843,27 @@
 ]
 
 #slide[
+  == anim — `@viewbox` (zoom into an SVG)
+
+  Zoom the logo's viewBox onto one of its paths (`#path1-94`), then back to
+  the whole SVG:
+
+  #div(class: "eg-spec", [
+    #ccode([
+      `@viewbox(#path1-94) | @viewbox(.logozoom > svg)`
+    ])
+  ])
+
+  #svg(path("./slides-purryst-banner-sticker.svg"), width: "60%", class: "logozoom")
+
+  #anim("@viewbox(#path1-94) | @viewbox(.logozoom > svg)")
+
+  `@viewbox(sel)` animates the containing `<svg>`'s `viewBox` to frame `sel`;
+  `@viewbox(.logozoom > svg)` resets to the full drawing (the class sits on the
+  `<sp-svg>` wrapper; `> svg` selects the SVG itself).
+]
+
+#slide[
   == anim — `@play` / `@pause` video
 
   Control video playback through steps:
@@ -991,6 +1012,8 @@
     World
   ]", lang: "typst")
   ]
+
+  #style(".cb { font-size: 0.55em; line-height: 1.4; padding: 0.4em 0.8em; margin-bottom: 0.4em; }")
 ]
 
 #slide[
@@ -1003,13 +1026,26 @@
   Display:
   $ sum_(k=0)^n k = (n(n+1)) / 2 $
 
-  #step(from: "1")[
-    Matrices: $ mat(1, 2; 3, 4) vec(5, 6) = vec(17, 39) $
-  ]
+  #pause
+  Matrices: $ mat(1, 2; 3, 4) vec(5, 6) = vec(17, 39) $
 
-  #step(from: "2")[
-    Cases: $ f(x) = cases(0 & "if " x < 0, 1 & "otherwise") $
-  ]
+  #pause
+  Cases: $ f(x) = cases(0 & "if " x < 0, 1 & "otherwise") $
+
+  #pause
+  Highlight part of a formula via `class:` MathML tokens:
+  $ f(x) = text("class:start-accent") x^2 + 2x + 1 text("class:end-accent") $
+
+  #style(".start-accent ~ *:not(.end-accent ~ *) {
+     color: var(--sp-accent);
+     font-weight: bold;
+     &:hover {
+       filter: blur(2px);
+       transition: filter 1s;
+     }
+  }")
+  #style("& { --sp-scale: 0.7; }")
+  #style("math[display=\"block\"] { margin: 0.3em 0; }")
 ]
 
 #slide[

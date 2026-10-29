@@ -180,6 +180,101 @@ const builtinActionTypes: Record<string, ActionTypeHandler> = {
       }
     },
   },
+  // --- viewbox: pan/zoom an SVG's viewBox onto a target element ---
+  viewbox: {
+    init(container, action: ActionWithSelector) {
+      const target = container.querySelector(action.selector)
+      const svg = target?.closest('svg') as SvgWithViewbox | null
+      if (!target || !svg) return
+      svg.spOriginalViewbox ??= svg.getAttribute('viewBox') ?? ''
+      svg.spViewboxStack ??= []
+      svg.spInited ??= new Set()
+
+      if (!svg.spInited.has(action)) {
+        // NB: init runs actions in reverse order, so the stack is too.
+        const vb = viewBoxFor(svg, target)
+        if (vb) svg.spViewboxStack.push(vb)
+        action._viewboxIndex = svg.spViewboxStack.length - 1
+        svg.spInited.add(action)
+        svg.spIndex = spApi.stepIndex === 0 ? 0 : svg.spViewboxStack.length - 1
+      }
+
+      if (!svg.querySelector('& > animate.spViewbox')) {
+        const animate = svgCreate('animate')
+        animate.setAttribute('class', 'spViewbox')
+        animate.setAttribute('attributeName', 'viewBox')
+        animate.setAttribute('fill', 'freeze')
+        svg.appendChild(animate)
+      }
+      const animate = svg.querySelector('& > animate.spViewbox') as SVGAnimationElement | null
+      if (!animate) return
+      animate.setAttribute('from', svg.spOriginalViewbox)
+      animate.setAttribute('to', svg.spOriginalViewbox)
+      animate.setAttribute('dur', '1s')
+      animate.beginElement()
+    },
+    apply(container, action: ActionWithSelector, fast) {
+      const svg = container.querySelector(action.selector)?.closest('svg') as SvgWithViewbox | null
+      if (!svg) return
+      doViewboxStep(svg, action._viewboxIndex, fast)
+    },
+  },
+}
+
+// --- viewbox helpers ---
+
+// Expando state kept on the target `<svg>` element while it animates.
+interface SvgWithViewbox extends SVGElement {
+  spOriginalViewbox: string
+  spViewboxStack: string[]
+  spInited: Set<AnimAction>
+  spIndex: number
+}
+
+function svgCreate(tag: string): SVGElement {
+  return document.createElementNS('http://www.w3.org/2000/svg', tag)
+}
+
+// Compute the viewBox that frames `target` (a descendant of `svg`), by
+// mapping the target's on-screen bounding rect back into the SVG's own
+// coordinate space via the original viewBox.
+function viewBoxFor(svg: SvgWithViewbox, target: Element): string | undefined {
+  const [ox, oy, ow, oh] = svg.spOriginalViewbox.split(/\s+/).map(Number)
+  if (!(ow > 0) || !(oh > 0)) return undefined
+  const sRect = svg.getBoundingClientRect()
+  const tRect = target.getBoundingClientRect()
+  const scaleX = ow / sRect.width
+  const scaleY = oh / sRect.height
+  const nx = ox + (tRect.x - sRect.x) * scaleX
+  const ny = oy + (tRect.y - sRect.y) * scaleY
+  const nw = tRect.width * scaleX
+  const nh = tRect.height * scaleY
+  return `${nx} ${ny} ${nw} ${nh}`
+}
+
+// Animate the `<svg>` between the current viewBox and `stack[stackIndex]`.
+// `fast` (skipped steps / backward rebuild) snaps instantly instead of animating.
+function doViewboxStep(svg: SvgWithViewbox, stackIndex: number, fast?: boolean) {
+  const stack = [...svg.spViewboxStack, svg.spOriginalViewbox]
+  const currentViewbox = stack[stackIndex + 1]
+  const newViewbox = stack[stackIndex]
+  const animate = svg.querySelector('& > animate.spViewbox') as SVGAnimationElement | null
+  if (!animate) return
+  if (animate.getAttribute('to') === newViewbox) return
+  svg.setAttribute('viewBox', currentViewbox)
+  animate.endElement()
+  if (fast) {
+    animate.setAttribute('from', newViewbox)
+    animate.setAttribute('to', newViewbox)
+    animate.setAttribute('dur', '0')
+    animate.beginElement()
+    return
+  }
+  // Inspired by https://rgbstudios.org/blog/animate-svg-viewbox
+  animate.setAttribute('from', currentViewbox)
+  animate.setAttribute('to', newViewbox)
+  animate.setAttribute('dur', '300ms')
+  animate.beginElement()
 }
 
 // --- Built-in commands ---
@@ -285,6 +380,12 @@ const builtinCommands: Record<string, AnimCommandHandler> = {
       const args = parseArgs(argsStr)
       const sel = args[0] || 'video'
       return [{ type: 'pause', selector: sel }]
+    },
+  },
+  viewbox: {
+    countSteps: () => 1,
+    parse(argsStr) {
+      return [{ type: 'viewbox', selector: argsStr.trim() }]
     },
   },
 }

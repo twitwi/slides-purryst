@@ -1,6 +1,7 @@
 
 # NEXT
 
+- [ ] consider using watch instead of watchFile? (will need import rename)
 - [ ] have a sidecar/sidekick view plugin, some small window or embedded view (choice) in which we can persist information (typically notations, overview, whatever, that are not totally mandatory but nice to have in case of screen space
 - [ ] see slidev studio and some components like slidev/vue bubble (see discord)
 - [ ] allow setting tab title from the config
