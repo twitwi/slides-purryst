@@ -1,11 +1,13 @@
 
 # NEXT
 
+- [ ] review authoring
+- [ ] review demo that has too many draggable tests that ended commited?
+- [ ] have a --help
+
 - [ ] consider using watch instead of watchFile? (will need import rename)
 - [ ] have a sidecar/sidekick view plugin, some small window or embedded view (choice) in which we can persist information (typically notations, overview, whatever, that are not totally mandatory but nice to have in case of screen space
 - [ ] see slidev studio and some components like slidev/vue bubble (see discord)
-- [ ] allow setting tab title from the config
-- [x] have a simple build of typst, no watch etc, for export scripts
 - [ ] drag edit, have a "force to remain on one (or N) line" that during edit will scale the font size to ensure it fits (not live at "runtime", just at edit time)
 - [ ] drag edit, allow ctrl, shift etc modifiers to snap etc (use inkscape convention)
 - [ ] check theme size (top level seem too big compared to bullets and second level bullets somewhare are too small
