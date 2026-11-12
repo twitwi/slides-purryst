@@ -216,6 +216,8 @@ It is also a means of freezing the version of the framework for a given presenta
 
 `--copy-agents` copies `AGENTS.md` and `AUTHORING.md` to the current directory so you can read the full reference offline.
 
+`--copy-fonts` copies the default font (`nunito.css` and its two `.woff2` files) to `./assets/`, which is where the framework's stylesheet looks for it (`/assets/nunito.css`). The font is no longer inlined in `slides-purryst.bundle.js`, so run this once per project to get Nunito; without it the slides fall back to the system sans-serif. This is also the place to swap the font: edit `assets/nunito.css`, or declare your own `@font-face` there. Note that the import is root-absolute, so it resolves when the slides are served with the project root as document root — not when a page is opened directly via `file://`.
+
 
 **`sp-dev`** (Vite dev server for npm dependency projects), examples: 
 

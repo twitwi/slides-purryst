@@ -9,9 +9,13 @@ Guiding principle:
 Theme authors can use the pattern used below, with:
 - the "is-" convention for variants / facets
 - the "theme-" convention for themes
+
+Fonts must be imported at the top of this file.
+The ?v=nobundle (any query parameter actually) is used to avoid bundling the font files into the main bundle.
+The user is expected to copy the fonts of interest explicitly, or use other sources (also explicitly).
 */
 
-@import url(/example/nunito.css);
+@import url(/assets/nunito.css?v=nobundle);
 /*@import url(https://fonts.bunny.net/css?family=roboto-flex:400);*/
 @import url(https://fonts.bunny.net/css?family=cedarville-cursive:400);
 @import url(https://fonts.bunny.net/css?family=cabin-sketch:400,700);

@@ -12,6 +12,7 @@
     "bin",
     "lib",
     "typst",
+    "assets",
     "AUTHORING.md",
     "AGENTS.md"
   ],

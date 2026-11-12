@@ -123,18 +123,30 @@ if (copyBundle) {
 }
 
 if (copyFonts) {
-  const files = ['example/nunito.css', 'example/nunito-latin-wght-italic.woff2', 'example/nunito-latin-wght-normal.woff2']
+  // The framework's stylesheet imports the font as `/assets/nunito.css` (see
+  // src/style/themes.css), so the copy lands in `<root>/assets/` — the same
+  // layout the package itself uses.
+  const files = ['nunito.css', 'nunito-latin-wght-italic.woff2', 'nunito-latin-wght-normal.woff2']
+  const destDir = path.join(root, 'assets')
+  let failed = 0
+  try {
+    fs.mkdirSync(destDir, { recursive: true })
+  } catch (e) {
+    console.error(`Failed to create ${destDir}: ${e.message}`)
+    process.exit(1)
+  }
   files.forEach(f => {
-    const src = path.join(pkgDir, f)
-    const dest = path.join(root, f.replace(/^.*\//, ''))
+    const src = path.join(pkgDir, 'assets', f)
+    const dest = path.join(destDir, f)
     try {
-      fs.copyFileSync(bundleFile, dest)
-      console.log(`Copied file to ${dest}`)
+      fs.copyFileSync(src, dest)
+      console.log(`Copied ${f} to ${dest}`)
     } catch (e) {
-      console.error(`Failed to copy: ${e.message}`)
-      //process.exit(1)
+      console.error(`Failed to copy ${f}: ${e.message}`)
+      failed++
     }
   })
+  if (failed) process.exit(1)
   oneShot= true
 }
 

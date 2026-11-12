@@ -4,6 +4,7 @@
 - [ ] review authoring
 - [ ] review demo that has too many draggable tests that ended commited?
 - [ ] have a --help
+- [ ] have a --copy that prompts for what to copy (bundle, agents, fonts, typst, etc) and maybe the folder to copy assets to (default assets) (have clean code with some "groups", e.g. fonts (current --copy-fonts) etc)
 
 - [ ] consider using watch instead of watchFile? (will need import rename)
 - [ ] have a sidecar/sidekick view plugin, some small window or embedded view (choice) in which we can persist information (typically notations, overview, whatever, that are not totally mandatory but nice to have in case of screen space
