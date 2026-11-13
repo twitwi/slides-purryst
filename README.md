@@ -55,7 +55,7 @@ Typical `.gitignore`
 
 ```
 AGENTS.md
-AUTHORING.md
+assets/AUTHORING.md
 node_modules/
 ### for typst only
 index.html
@@ -206,7 +206,7 @@ pnpm sp-dev
 pnpm slides-purryst --port=8080 my-talk.html   # custom port and file
 pnpm slides-purryst --watch ./slides --root .  # watch only a subdirectory, serve from root (so as /slides/... here)
 pnpm slides-purryst --copy-bundle              # copy bundle to cwd and exit
-pnpm slides-purryst --copy-agents              # copy agents.md to cwd and exit
+pnpm slides-purryst --copy-agents              # copy agents.md to cwd (and authoring to assets), and exit
 pnpm slides-purryst --copy-fonts               # copy fonts and associated css to cwd and exit
 pnpm slides-purryst --copy-fonts --copy-bundle --copy-agents
 ```
@@ -214,7 +214,7 @@ pnpm slides-purryst --copy-fonts --copy-bundle --copy-agents
 `--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
 It is also a means of freezing the version of the framework for a given presentation.
 
-`--copy-agents` copies `AGENTS.md` and `AUTHORING.md` to the current directory so you can read the full reference offline.
+`--copy-agents` copies `AGENTS.md` (and `AUTHORING.md`) to the current directory (and `assets/`) so you can read the full reference offline.
 
 `--copy-fonts` copies the default font (`nunito.css` and its two `.woff2` files) to `./assets/`, which is where the framework's stylesheet looks for it (`/assets/nunito.css`). The font is no longer inlined in `slides-purryst.bundle.js`, so run this once per project to get Nunito; without it the slides fall back to the system sans-serif. This is also the place to swap the font: edit `assets/nunito.css`, or declare your own `@font-face` there. Note that the import is root-absolute, so it resolves when the slides are served with the project root as document root — not when a page is opened directly via `file://`.
 
@@ -277,7 +277,7 @@ bash scripts/release.sh --no-latest v0.1.0  # backport fix to existing tag
 
 ## Documentation
 
-See [AUTHORING.md](AUTHORING.md) for the full authoring reference: step system,
+See [assets/AUTHORING.md](assets/AUTHORING.md) for the full authoring reference: step system,
 animation spec syntax, all `sp-*` components, navigation, presenter mode,
 chunklets, plugins, and architecture.
 

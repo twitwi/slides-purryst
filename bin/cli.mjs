@@ -18,11 +18,11 @@ let watchDir = null
 let host = '127.0.0.1'
 let port = 9999
 let specifiedFiles = []
-let copyBundle = false
-let copyAgents = false
-let copyFonts = false
-let autoOpen = true
+let toCopy = []
 let linkTypst = false
+let forceCopy = false
+let promptCopy = false
+let autoOpen = true
 let compileOnly = false
 
 for (let i = 2; i < process.argv.length; i++) {
@@ -44,11 +44,15 @@ for (let i = 2; i < process.argv.length; i++) {
   } else if (arg.startsWith('--root=')) {
     root = path.resolve(process.cwd(), arg.split('=')[1])
   } else if (arg === '--copy-bundle') {
-    copyBundle = true
+    toCopy.push('#bundle')
   } else if (arg === '--copy-agents') {
-    copyAgents = true
+    toCopy.push('#agents')
   } else if (arg === '--copy-fonts') {
-    copyFonts = true
+    toCopy.push('#fonts')
+  } else if (arg === '--force') {
+    forceCopy = true
+  } else if (arg === '--copy') {
+    promptCopy = true
   } else if (arg === '--no-open') {
     autoOpen = false
   } else if (arg === '--open') {
@@ -71,10 +75,48 @@ const bundleHash = (() => {
   } catch { return Date.now().toString(16) }
 })()
 const agentsFile = path.join(pkgDir, 'AGENTS.md')
-const authoringFile = path.join(pkgDir, 'AUTHORING.md')
+const authoringFile = path.join(pkgDir, 'assets', 'AUTHORING.md')
 const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
 
 let oneShot = false
+
+const assets = 'assets'
+const bundles = {
+  '#bundle': [[bundleFile, '/slides-purryst.bundle.js']],
+  '#agents': [[agentsFile, '/AGENTS.md'], [authoringFile, 'AUTHORING.md']],
+  '#fonts': ['nunito.css', 'nunito-latin-wght-italic.woff2', 'nunito-latin-wght-normal.woff2'],
+}
+
+function installAsset(src, dest, { srcDir=assets, destDir=assets, force=forceCopy, ignoreFailed=false } = {}) {
+  if (dest.startsWith('/')) {
+    destDir = ''
+    dest = dest.slice(1)
+  }
+  const srcPath = src.startsWith('/') ? src : path.join(pkgDir, srcDir, src)
+  const destPath = path.join(root, destDir, dest)
+  if (!force && fs.existsSync(destPath)) {
+    console.log(`Skipped ${destPath} (already exists)`)
+    return
+  }
+  // Ensure the destination directory exists
+  try {
+    fs.mkdirSync(path.dirname(destPath), { recursive: true })
+  } catch (e) {
+    console.error(`Failed to create directory for ${destPath}: ${e.message}`)
+    if (!ignoreFailed) {
+      process.exit(1)
+    }
+  }
+  try {
+    fs.copyFileSync(srcPath, destPath)
+    console.log(`Copied ${srcPath} → ${destPath}`)
+  } catch (e) {
+    console.error(`Failed to copy ${srcPath} → ${destPath}: ${e.message}`)
+    if (!ignoreFailed) {
+      process.exit(1)
+    }
+  }
+}
 
 if (linkTypst) {
   try {
@@ -87,66 +129,31 @@ if (linkTypst) {
   oneShot= true
 }
 
-if (copyAgents) {
-  const dest = path.join(root, 'AGENTS.md')
-  try {
-    const content = fs.readFileSync(agentsFile, 'utf-8')
-    const cutIdx = content.indexOf('...... (CUTMARK) ......')
-    const copied = cutIdx === -1 ? content : content.slice(content.indexOf('\n', cutIdx) + 1)
-    fs.writeFileSync(dest, copied)
-    console.log(`Copied AGENTS.md to ${dest}`)
-  } catch (e) {
-    console.error(`Failed to copy AGENTS.md: ${e.message}`)
-    process.exit(1)
-  }
-  const authoringDest = path.join(root, 'AUTHORING.md')
-  try {
-    fs.copyFileSync(authoringFile, authoringDest)
-    console.log(`Copied AUTHORING.md to ${authoringDest}`)
-  } catch (e) {
-    console.error(`Failed to copy AUTHORING.md: ${e.message}`)
-    process.exit(1)
-  }
-  oneShot= true
-}
-
-if (copyBundle) {
-  const dest = path.join(root, 'slides-purryst.bundle.js')
-  try {
-    fs.copyFileSync(bundleFile, dest)
-    console.log(`Copied slides-purryst.bundle.js to ${dest}`)
-  } catch (e) {
-    console.error(`Failed to copy bundle: ${e.message}`)
-    process.exit(1)
-  }
-  oneShot= true
-}
-
-if (copyFonts) {
-  // The framework's stylesheet imports the font as `/assets/nunito.css` (see
-  // src/style/themes.css), so the copy lands in `<root>/assets/` — the same
-  // layout the package itself uses.
-  const files = ['nunito.css', 'nunito-latin-wght-italic.woff2', 'nunito-latin-wght-normal.woff2']
-  const destDir = path.join(root, 'assets')
-  let failed = 0
-  try {
-    fs.mkdirSync(destDir, { recursive: true })
-  } catch (e) {
-    console.error(`Failed to create ${destDir}: ${e.message}`)
-    process.exit(1)
-  }
-  files.forEach(f => {
-    const src = path.join(pkgDir, 'assets', f)
-    const dest = path.join(destDir, f)
-    try {
-      fs.copyFileSync(src, dest)
-      console.log(`Copied ${f} to ${dest}`)
-    } catch (e) {
-      console.error(`Failed to copy ${f}: ${e.message}`)
-      failed++
+function processSpec(spec) {
+  if (typeof spec === 'string' && spec.startsWith('#')) {
+    const bundleSpec = bundles[spec]
+    if (!bundleSpec) {
+      console.error(`Unknown copy specifier: ${spec}`)
+      process.exit(1)
     }
-  })
-  if (failed) process.exit(1)
+    processSpecList(bundleSpec)
+    return
+  }
+  if (Array.isArray(spec)) {
+    const [src, dest] = spec
+    installAsset(src, dest)
+  } else {
+    installAsset(spec, spec)
+  }
+}
+function processSpecList(specList) {
+  for (const spec of specList) {
+    processSpec(spec)
+  }
+}
+
+if (toCopy.length > 0) {
+  processSpecList(toCopy)
   oneShot= true
 }
 
@@ -221,7 +228,7 @@ if (typFiles.length) {
       const packaged = fs.readFileSync(bundleFile)
       if (!local.equals(packaged)) {
         staleBundleWarning = `\n  ⚠ Local slides-purryst.bundle.js is out of date (differs from the bundled version).\n` +
-          `    The generated HTML will load this stale copy. Re-copy it with:  slides-purryst --copy-bundle .`
+          `    The generated HTML will load this stale copy. Re-copy it with:  slides-purryst --force --copy-bundle .`
       }
     } catch {}
   }

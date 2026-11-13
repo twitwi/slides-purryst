@@ -12,7 +12,7 @@ Working rules for AI agents and contributors:
 
 ## Documentation
 
-- **[AUTHORING.md](AUTHORING.md)** — the full authoring guide: quick start,
+- **[assets/AUTHORING.md](assets/AUTHORING.md)** — the full authoring guide: quick start,
   configuration (incl. the `#sp-init` payload and the init-param layer
   precedence), every HTML `<sp-*>` component with its Typst counterpart,
   steps / animations / chunklets / bibliographies, presenting (keymap, spApi),

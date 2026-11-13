@@ -16,7 +16,7 @@ There are two authoring paths that produce the **same** intermediate markup:
 Every feature in this guide is shown for both paths, side by side.
 
 > **For agents** working on the framework code, a short rule list lives in
-> [`AGENTS.md`](AGENTS.md). The internal architecture (pipeline, project
+> [`../AGENTS.md`](../AGENTS.md). The internal architecture (pipeline, project
 > layout, development and release commands) is covered in
 > [Part IV](#part-iv-extending--contributing).
 
