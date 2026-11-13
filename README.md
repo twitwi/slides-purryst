@@ -209,6 +209,9 @@ pnpm slides-purryst --copy-bundle              # copy bundle to cwd and exit
 pnpm slides-purryst --copy-agents              # copy agents.md to cwd (and authoring to assets), and exit
 pnpm slides-purryst --copy-fonts               # copy fonts and associated css to cwd and exit
 pnpm slides-purryst --copy-fonts --copy-bundle --copy-agents
+pnpm slides-purryst --copy                     # asks what to copy, then exits
+pnpm slides-purryst --copy=fonts,bundle        # same, non-interactively (scripts, CI)
+pnpm slides-purryst --copy-fonts --force       # overwrite instead of skipping existing files
 ```
 
 `--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
@@ -217,6 +220,14 @@ It is also a means of freezing the version of the framework for a given presenta
 `--copy-agents` copies `AGENTS.md` (and `AUTHORING.md`) to the current directory (and `assets/`) so you can read the full reference offline.
 
 `--copy-fonts` copies the default font (`nunito.css` and its two `.woff2` files) to `./assets/`, which is where the framework's stylesheet looks for it (`/assets/nunito.css`). The font is no longer inlined in `slides-purryst.bundle.js`, so run this once per project to get Nunito; without it the slides fall back to the system sans-serif. This is also the place to swap the font: edit `assets/nunito.css`, or declare your own `@font-face` there. Note that the import is root-absolute, so it resolves when the slides are served with the project root as document root — not when a page is opened directly via `file://`.
+
+`--copy` asks instead of deciding up front: it lists the copyable groups (`bundle`, `agents`, `fonts`) with the
+files each one writes, and you tick them — `↑`/`↓` (or `j`/`k`) to move, `space` or the item's number to toggle,
+`a` / `n` for all / none, `q` / `Esc` to quit, Enter to copy. Everything starts checked; naming any `--copy-*`
+flag narrows the pre-selection to just those groups, so `--copy-fonts --copy` opens with the fonts ticked and
+lets you add the rest. Files that are already there are marked `(exists)` and skipped unless you pass `--force`.
+It needs a terminal; in a pipe or CI it lists the groups and exits, so use the non-interactive
+`--copy=fonts,bundle` there. New groups only need an entry in the `bundles` table of `bin/cli.mjs` to show up here.
 
 
 **`sp-dev`** (Vite dev server for npm dependency projects), examples: 

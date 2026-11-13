@@ -127,6 +127,7 @@ above.
 | Serve a Typst deck | `pnpm slides-purryst index.typ` |
 | Custom port / file | `pnpx slides-purryst --port=7070 my-talk.html` |
 | Copy the bundle next to your HTML and quit | `pnpx slides-purryst --copy-bundle` |
+| Choose interactively what to copy | `pnpx slides-purryst --copy` |
 | Vite dev server (npm-dependency setup) | `pnpm sp-dev` |
 | Hacking on the framework itself | `pnpm dev` (serves `example/`) |
 `--copy-bundle` copies `slides-purryst.bundle.js` into the current directory so
@@ -1115,9 +1116,10 @@ This is sugar for a plugin with `order: 100`.
 
 ```
 bin/
-  cli.mjs              # CLI entry: HTTP server, live reload, --copy-bundle
+  cli.mjs              # CLI entry: HTTP server, live reload, --copy groups
 lib/
   edit-handler.mjs     # Shared /__sp_edit handler (drag, chunklets, typst)
+  copy-menu.mjs        # Dependency-free checkbox list behind the --copy selector
 src/
   index.ts              # Public API exports
   core.ts               # createSlidesPurryst(), builtin components, boot sequence

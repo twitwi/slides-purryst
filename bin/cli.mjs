@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 import { handleEdit } from '../lib/edit-handler.mjs'
 import { startTypstDev, ensureTypstLink, wrapPage, extractBody } from '../lib/typst-dev.mjs'
 import { sseRegisterClient, sseBroadcast, getTypstErrors } from '../lib/sse.mjs'
+import { pickItems } from '../lib/copy-menu.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const pkgDir = path.resolve(__dirname, '..')
@@ -53,6 +54,12 @@ for (let i = 2; i < process.argv.length; i++) {
     forceCopy = true
   } else if (arg === '--copy') {
     promptCopy = true
+  } else if (arg.startsWith('--copy=')) {
+    // Non-interactive form of --copy: --copy=#fonts,#bundle (the # is optional).
+    // This is how future groups become usable without minting a new flag.
+    for (const spec of arg.slice('--copy='.length).split(/[\s,]+/).filter(Boolean)) {
+      toCopy.push(spec.startsWith('#') ? spec : `#${spec}`)
+    }
   } else if (arg === '--no-open') {
     autoOpen = false
   } else if (arg === '--open') {
@@ -81,19 +88,55 @@ const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
 let oneShot = false
 
 const assets = 'assets'
+// Named groups of files that can be copied into a project. An entry is either
+// 'name' (taken from the package's assets/ and mirrored to <root>/assets/) or
+// [src, dest] when the two differ; see assetPaths(). `desc` is what --copy
+// shows in its selector, so adding a group here makes it selectable too.
 const bundles = {
-  '#bundle': [[bundleFile, '/slides-purryst.bundle.js']],
-  '#agents': [[agentsFile, '/AGENTS.md'], [authoringFile, 'AUTHORING.md']],
-  '#fonts': ['nunito.css', 'nunito-latin-wght-italic.woff2', 'nunito-latin-wght-normal.woff2'],
+  '#bundle': {
+    desc: 'framework bundle · freezes this version for the project',
+    files: [[bundleFile, '/slides-purryst.bundle.js']],
+  },
+  '#agents': {
+    desc: 'offline documentation for AI agents',
+    files: [[agentsFile, '/AGENTS.md'], [authoringFile, 'AUTHORING.md']],
+  },
+  '#fonts': {
+    desc: 'default font (Nunito) and its @font-face css',
+    files: ['nunito.css', 'nunito-latin-wght-italic.woff2', 'nunito-latin-wght-normal.woff2'],
+  },
 }
 
-function installAsset(src, dest, { srcDir=assets, destDir=assets, force=forceCopy, ignoreFailed=false } = {}) {
-  if (dest.startsWith('/')) {
-    destDir = ''
-    dest = dest.slice(1)
+// Resolves one copy entry to source and destination paths. Sources are relative
+// to the package, destinations to --root, both under assets/ by default. A
+// leading '/' on dest means "from the project root" instead, and an absolute
+// src is used as-is: that is how the built bundle (dist/) and the package-root
+// AGENTS.md join groups that are otherwise about assets/.
+function assetPaths(src, dest = src) {
+  const fromRoot = dest.startsWith('/')
+  if (fromRoot) dest = dest.slice(1)
+  return {
+    srcPath: path.isAbsolute(src) ? src : path.join(pkgDir, assets, src),
+    destPath: path.join(root, fromRoot ? '' : assets, dest),
   }
-  const srcPath = src.startsWith('/') ? src : path.join(pkgDir, srcDir, src)
-  const destPath = path.join(root, destDir, dest)
+}
+
+// Human-readable preview of a group, for the --copy selector. The markers come
+// from the same resolution the installer uses, so the menu cannot drift from
+// what actually gets written: "(exists)" means it will be Skipped without
+// --force, "(source missing!)" means the copy would fail mid-batch (e.g. dist/
+// before a build).
+function groupPreview(files) {
+  return files.map((entry) => {
+    const [src, dest] = Array.isArray(entry) ? entry : [entry, entry]
+    const { srcPath, destPath } = assetPaths(src, dest)
+    const mark = !fs.existsSync(srcPath) ? ' (source missing!)' : fs.existsSync(destPath) ? ' (exists)' : ''
+    return path.relative(root, destPath) + mark
+  }).join(', ')
+}
+
+function installAsset(src, dest, { force = forceCopy, ignoreFailed = false } = {}) {
+  const { srcPath, destPath } = assetPaths(src, dest)
   if (!force && fs.existsSync(destPath)) {
     console.log(`Skipped ${destPath} (already exists)`)
     return
@@ -133,10 +176,10 @@ function processSpec(spec) {
   if (typeof spec === 'string' && spec.startsWith('#')) {
     const bundleSpec = bundles[spec]
     if (!bundleSpec) {
-      console.error(`Unknown copy specifier: ${spec}`)
+      console.error(`Unknown copy specifier: ${spec} (known groups: ${Object.keys(bundles).join(', ')})`)
       process.exit(1)
     }
-    processSpecList(bundleSpec)
+    processSpecList(bundleSpec.files)
     return
   }
   if (Array.isArray(spec)) {
@@ -150,6 +193,35 @@ function processSpecList(specList) {
   for (const spec of specList) {
     processSpec(spec)
   }
+}
+
+if (promptCopy) {
+  const keys = Object.keys(bundles)
+  if (!process.stdin.isTTY) {
+    console.error('--copy needs a terminal to ask what to copy.')
+    console.error(`Groups: ${keys.join(' ')}`)
+    console.error(`Select them as flags (${keys.map((k) => `--copy-${k.slice(1)}`).join(' ')}) or as --copy=${keys.map((k) => k.slice(1)).join(',')}`)
+    process.exit(1)
+  }
+  // Any --copy-* flag narrows the pre-selection to what was asked for; a bare
+  // --copy starts with everything checked, Enter being then "detach it all".
+  const prechecked = toCopy.length > 0 ? new Set(toCopy) : new Set(keys)
+  const chosen = await pickItems(`What to copy into ${root}?`, keys.map((key) => ({
+    id: key,
+    label: key.slice(1),
+    hint: bundles[key].desc,
+    detail: groupPreview(bundles[key].files),
+    checked: prechecked.has(key),
+  })))
+  if (!chosen) {
+    console.log('Aborted, nothing copied.')
+    process.exit(130)
+  }
+  // Replace rather than append: the pre-checked groups must not be copied twice.
+  toCopy = chosen
+  // Set unconditionally, so leaving everything unchecked exits rather than booting the server.
+  oneShot = true
+  if (toCopy.length === 0) console.log('\nNothing selected — nothing to copy.')
 }
 
 if (toCopy.length > 0) {
