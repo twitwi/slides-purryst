@@ -105,6 +105,10 @@ const bundles = {
     desc: 'default font (Nunito) and its @font-face css',
     files: ['nunito.css', 'nunito-latin-wght-italic.woff2', 'nunito-latin-wght-normal.woff2'],
   },
+  '#csl': {
+    desc: 'Compact bibliography format (Citation Style Language, CSL)',
+    files: ['compact.csl'],
+  },
 }
 
 // Resolves one copy entry to source and destination paths. Sources are relative

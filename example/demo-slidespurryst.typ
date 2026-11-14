@@ -1197,7 +1197,7 @@
 // against this file). `#slide-bib()` then includes it per slide, filtered at
 // runtime to the references cited on the current slide.
 #sp-bibliography(path("demo.bib"),
-  style: path("compact.csl"),
+  style: path("assets/compact.csl"),
   title: "")
 //#sp-bibliography(path("demo.bib"))
 
