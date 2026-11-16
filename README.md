@@ -81,7 +81,7 @@ pnpm slides-purryst index.typ
 ```
 
 NB: this will create
-- `slides-purryst/` link so your presentation can `#import "slides-purryst/..."`,
+- `slides-purryst/` link so your presentation can `#import "slides-purryst/..."` (checked on each run and re-pointed if it goes stale after an update, see [CLI options](#clis-options)),
 - `,,sp-preprocess/` folder with temporary build files,
 - `index.html` the final compiled presentation as html (SlidesPurr sources).
 - you can add `"dev": "pnpm exec slides-purryst index.typ"` to the "script" section of `package.json` to have a `pnpm dev` shortcut. 
@@ -212,6 +212,7 @@ pnpm slides-purryst --copy-fonts --copy-bundle --copy-agents
 pnpm slides-purryst --copy                     # asks what to copy, then exits
 pnpm slides-purryst --copy=fonts,bundle        # same, non-interactively (scripts, CI)
 pnpm slides-purryst --copy-fonts --force       # overwrite instead of skipping existing files
+pnpm slides-purryst --link-typst               # (re)create the Typst library link, and exit
 ```
 
 `--copy-bundle` copies `slides-purryst.bundle.js` to the current directory so you can open the HTML directly via `file://` without the server.
@@ -220,6 +221,8 @@ It is also a means of freezing the version of the framework for a given presenta
 `--copy-agents` copies `AGENTS.md` (and `AUTHORING.md`) to the current directory (and `assets/`) so you can read the full reference offline.
 
 `--copy-fonts` copies the default font (`nunito.css` and its two `.woff2` files) to `./assets/`, which is where the framework's stylesheet looks for it (`/assets/nunito.css`). The font is no longer inlined in `slides-purryst.bundle.js`, so run this once per project to get Nunito; without it the slides fall back to the system sans-serif. This is also the place to swap the font: edit `assets/nunito.css`, or declare your own `@font-face` there. Note that the import is root-absolute, so it resolves when the slides are served with the project root as document root — not when a page is opened directly via `file://`.
+
+The Typst path needs a `slides-purryst` entry next to your `.typ` files, linking to the Typst library of the installed package, so that `#import "slides-purryst/lib.typ"` resolves. Running a `.typ` creates it (and `--link-typst` does only that), then checks it on every run: a link that points at a location that no longer exists — the usual result of updating the package, or of moving/renaming the project folder — is re-pointed and reported, since typst otherwise fails on `slides-purryst/lib.typ` with no hint of the cause. A `slides-purryst` that is a real folder (the documented way to copy the library and edit it) is never touched, and a link to another *existing* copy is kept with a warning; add `--force` to re-point that one.
 
 `--copy` asks instead of deciding up front: it lists the copyable groups (`bundle`, `agents`, `fonts`) with the
 files each one writes, and you tick them — `↑`/`↓` (or `j`/`k`) to move, `space` or the item's number to toggle,

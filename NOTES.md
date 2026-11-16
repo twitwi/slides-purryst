@@ -1,6 +1,8 @@
 
 # NEXT
 
+- [ ] code in dark mode etc, should invert? problem with dark java?
+- [ ] when running, if slides-purryst link is outdate, at least warn and suggest to update it
 - [ ] review authoring
 - [ ] review demo that has too many draggable tests that ended commited?
 - [ ] have a --help
@@ -68,7 +70,7 @@
 
 - [ ] (demo(s)) check overflow (TOC mainly?)
 - [ ] Track useless recomputes (loopy + process html only once + overview+liveupate=memhog)
-- [ ] when updating, the symlink (slides-purryst) is not updated on run, causing issues, should automatically update (if symlink) and warn it did
+- [x] (symlink) when updating, the symlink (slides-purryst) is not updated on run, causing issues, should automatically update (if symlink) and warn it did — done: `reconcileLibLink` in `lib/typst-dev.mjs` checks the link itself (lstat) on each run at the root, in the `.typ`'s folder and in the sandbox; dangling is re-pointed and reported, a real folder (local copy) is left alone, another existing target is kept with a warning (`--force` re-points)
 - [ ] same when adding a file (it is not seen...), typically the bib
 
 ## TODO v3 (3.0.0) (polish and plugins?)

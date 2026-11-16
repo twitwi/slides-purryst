@@ -6,7 +6,7 @@ import path from 'path'
 import crypto from 'crypto'
 import { fileURLToPath } from 'url'
 import { handleEdit } from '../lib/edit-handler.mjs'
-import { startTypstDev, ensureTypstLink, wrapPage, extractBody } from '../lib/typst-dev.mjs'
+import { startTypstDev, ensureTypstLink, libLinkMessage, wrapPage, extractBody } from '../lib/typst-dev.mjs'
 import { sseRegisterClient, sseBroadcast, getTypstErrors } from '../lib/sse.mjs'
 import { pickItems } from '../lib/copy-menu.mjs'
 
@@ -83,7 +83,6 @@ const bundleHash = (() => {
 })()
 const agentsFile = path.join(pkgDir, 'AGENTS.md')
 const authoringFile = path.join(pkgDir, 'assets', 'AUTHORING.md')
-const typstLibSrc = path.join(pkgDir, 'typst', 'slides-purryst')
 
 let oneShot = false
 
@@ -166,13 +165,19 @@ function installAsset(src, dest, { force = forceCopy, ignoreFailed = false } = {
 }
 
 if (linkTypst) {
-  try {
-    const dest = ensureTypstLink(pkgDir, root)
-    console.log(`Linked ${dest} → ${typstLibSrc}`)
-  } catch (e) {
-    console.error(`Failed to link typst library: ${e.message}`)
+  const link = ensureTypstLink(pkgDir, root, { force: forceCopy })
+  const msg = libLinkMessage(link)
+  const text = msg ? msg.text
+    : link.status === 'kept-local' ? `${link.linkPath} is a copy of the library, left as is`
+    : `${link.linkPath} → ${link.to} (already linked)`
+  // Anything we could not do, or that leaves the project unbuildable, is a failure
+  // of this one-shot command rather than something to just mention. A link to
+  // another existing copy is not: that project does compile, just on other sources.
+  if (['error', 'missing-lib', 'broken-local'].includes(link.status)) {
+    console.error(`\n${text}\n`)
     process.exit(1)
   }
+  console.log(text)
   oneShot= true
 }
 
