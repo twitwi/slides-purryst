@@ -261,9 +261,10 @@ You can also create your own HTML in the `example/` folder.
 
 ## Version History
 
-Freeze at current latest with `github:twitwi/slides-purryst#v2.2.0`
+Freeze at current latest with `github:twitwi/slides-purryst#v2.3.0`
 
-- **v2.2.0** (`latest`) — Author improvements (css-vars, integrate @viewbox)
+- **v2.3.0** (`latest`) — Command line improvements (better --copy, assets)
+- **v2.2.0** — Author improvements (css-vars, integrate @viewbox)
 - **v2.1.0** — Improve CLI (multi typ files, --compile)
 - **v2.0.0** — Consolidate theme, draggable, typst helpers, bib handling.
 - **v1.0.0** — PDF Export (via browser), consolidate theme CSS, first version including typst (build script, live reload, bibliography, cetz, lilaq).
